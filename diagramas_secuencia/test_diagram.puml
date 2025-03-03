@@ -1,0 +1,38 @@
+@startuml
+autonumber
+actor Usuario
+boundary administrador.route.js as adminRoute
+boundary index.ejs as indexView
+control usuarios_administracion.controller.js as adminController
+entity DataAnalyst.model as DataAnalystModel
+database NovusTecDev as novusDB
+
+Usuario -> adminRoute : GET/administrador/\ndata_analyst
+
+activate adminRoute
+adminRoute -> adminController: getDataAnalystMenu
+deactivate adminRoute
+activate adminController
+
+adminController ->> DataAnalystModel: getLastMonth\n(startDate, endDate)
+activate DataAnalystModel
+
+
+DataAnalystModel ->> novusDB : Consulta Pendiente
+activate novusDB
+
+novusDB ->> DataAnalystModel : [usuario, fieldData]
+deactivate novusDB
+DataAnalystModel ->> adminController: [usuario, fieldData]
+deactivate DataAnalystModel
+
+adminController -> adminController: average = rows2.\nmap(row => ({\nactividad: row.actividad,\ncantidad: row.cantidad\n}));
+adminController -> indexView: render('NovusTec/Administrador/Usuarios/index', \n { accion: accion, cantidad: cantidad})
+deactivate adminController
+activate indexView
+
+indexView -> indexView: onClick = getGraphic()
+
+indexView -> Usuario: HTML
+deactivate indexView
+@enduml
