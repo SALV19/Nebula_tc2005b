@@ -1,21 +1,25 @@
 const express = require("express")
 const router = express.Router()
 
-router.get("/", (req, res) => {
-  res.send("Home")
-})
-router.get("/goals", (req, res) => {
-  res.send("Goals")
-})
-router.get("/requests", (req, res) => {
-  res.send("Requests")
-})
-router.get("/follow_ups", (req, res) => {
-  res.send("Follow ups")
-})
-router.get("/personal_info", (req, res) => {
-  res.send("Personal Info")
-})
+router.get("/", (request, response) => {
+  response.send("Home");
+});
+router.get("/goals", (request, response) => {
+  response.send("Goals");
+});
+router.get("/requests", (request, response) => {
+  response.send("Requests");
+});
+router.get("/follow_ups", (request, response) => {
+  response.send("Follow ups");
+});
+router.get("/personal_info", (request, response) => {
+  response.send("Personal Info");
+});
+router.get("/reports", (request, response) => {
+  response.send("Reports");
+});
+
 
 
 

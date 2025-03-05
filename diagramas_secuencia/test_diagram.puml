@@ -1,4 +1,4 @@
-@startuml
+@startuml Prueba
 autonumber
 actor Usuario
 boundary administrador.route.js as adminRoute

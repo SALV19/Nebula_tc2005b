@@ -2,9 +2,9 @@ const express = require("express");
 
 const app = express();
 
-const middleware_auth = (req, res, next) => {
+const middleware_auth = (request, response, next) => {
   console.log("User not signed in")
-  // res.redirect("/login")
+  // response.redirect("/login")
   next()
 }
 
