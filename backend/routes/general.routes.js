@@ -13,6 +13,9 @@ router.get("/requests", (req, res) => {
 router.get("/follow_ups", (req, res) => {
   res.send("Follow ups")
 })
+router.get("/personal_info", (req, res) => {
+  res.send("Personal Info")
+})
 
 
 
