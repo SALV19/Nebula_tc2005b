@@ -19,7 +19,9 @@ router.get("/personal_info", (request, response) => {
 router.get("/reports", (request, response) => {
   response.send("Reports");
 });
-
+router.get("/view_collabs", (request, response) => {
+  response.send("View Collabs")
+})
 
 
 
