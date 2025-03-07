@@ -1,9 +1,9 @@
-const express = require("express")
-const router = express.Router()
+const express = require("express");
+const router = express.Router();
 
-router.get("/", (request, response) => {
-  response.send("Home");
-});
+const general_routes = require("../controller/general.controller");
+
+router.get("/", general_routes.get_home);
 router.get("/goals", (request, response) => {
   response.send("Goals");
 });
@@ -20,9 +20,7 @@ router.get("/reports", (request, response) => {
   response.send("Reports");
 });
 router.get("/view_collabs", (request, response) => {
-  response.send("View Collabs")
-})
-
-
+  response.send("View Collabs");
+});
 
 module.exports = router;
