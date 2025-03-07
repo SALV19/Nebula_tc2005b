@@ -1,0 +1,29 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary log_in.routes as lgr
+control log_in.controller as lgc
+entity log_in.model as lgm
+database Nebula as db
+
+activate u
+u -> lgr : GET /log_in
+deactivate u
+
+activate lgr
+lgr -> u : response("log_in")
+deactivate lgr
+
+activate u
+u -> lgr : POST /log_in (email, password)
+deactivate u
+
+activate lgr
+lgr -> lgc : getUserLogin()
+deactivate lgr
+
+activate lgc
+lgc -> lgm : (email, password)
+
+
+@enduml
