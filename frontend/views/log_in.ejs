@@ -16,6 +16,7 @@
                   type="email"
                   placeholder="e.g. bobsmith@gmail.com"
                   class="input"
+                  id="email"
                   name="email"
                   required
                 />
@@ -31,6 +32,8 @@
                   type="password"
                   placeholder="*******"
                   class="input"
+                  id="password"
+                  name="password"
                   required
                 />
                 <span class="icon is-small is-left">
@@ -40,14 +43,16 @@
             </div>
             <hr />
             <div class="control has-icons-left">
-              <button class="button is-white is-fullwidth">Google</button>
+              <a class="button is-white is-fullwidth">Google</a>
               <span class="icon is-small is-left">
                 <img src="/icons/google.webp" class="image is-24x24" />
               </span>
             </div>
 
             <div class="field is-flex is-justify-content-center">
-              <button class="button is-half nebula-login">Log In</button>
+              <button type="submit" class="button is-half nebula-login">
+                Log In
+              </button>
             </div>
           </form>
         </div>
