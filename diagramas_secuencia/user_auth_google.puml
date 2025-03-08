@@ -1,0 +1,63 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary log_in.routes as lgr
+control log_in.controller as lgc
+control auth.js as auth
+entity log_in.model as lgm
+database Nebula as db
+actor Google
+
+activate u
+u -> lgr : GET /log_in
+deactivate u
+
+activate lgr
+lgr -> u : HTML "log_in.ejs"
+deactivate lgr
+
+activate u
+u -> lgr : GET /auth/google 
+deactivate u
+
+activate lgr
+lgr -> lgc : getGoogleAuth()
+deactivate lgr
+activate lgc
+lgc -> auth : passport.authenticate('google', \n{scope: ['email', 'profile']})
+deactivate lgc
+activate auth
+auth -> Google : passport.authenticate()
+activate Google
+Google -> auth : callback('/google/callback')
+auth -> lgm : getUser(email)
+deactivate Google
+deactivate auth
+activate lgm
+lgm ->> db : getCollab(email)
+activate db
+db -->> lgm : [collab_info]
+deactivate db
+lgm -> lgc: [collab_info]
+deactivate lgm
+activate lgc
+lgc -> lgr : callback('/google/callback')
+deactivate lgc
+
+activate lgr
+lgr -> lgc : passport.authenticate('google', \n{successRedirect: '/', failureRedirect: '/401'})
+deactivate lgr
+activate lgc
+lgc -> lgc : isLoggedIn()
+lgc -> lgr : request.redrect('/')
+deactivate lgc
+activate lgr
+lgr -> u : HTML home_page
+deactivate lgr
+
+
+
+
+activate u
+
+@enduml
