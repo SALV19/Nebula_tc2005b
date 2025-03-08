@@ -11,7 +11,7 @@ u -> lgr : GET /log_in
 deactivate u
 
 activate lgr
-lgr -> u : response("log_in")
+lgr -> u : HTML "log_in.ejs"
 deactivate lgr
 
 activate u
@@ -23,7 +23,21 @@ lgr -> lgc : getUserLogin()
 deactivate lgr
 
 activate lgc
-lgc -> lgm : (email, password)
+lgc -> lgm : getUserLoginInfo(user_email, user_password)
+activate lgm
+lgm ->> db : SELECT email, password \nFROM Colaboradores \nWHERE email = user_email
+activate db
+db -->> lgm : [email, password]
+deactivate db
+lgm -> lgc : [email, password]
+deactivate lgm
+lgc ->> lgc : user_email == email && \nargon2.verify(user_password, password)
+lgc -> lgr : request.redirect("/")
 
+deactivate lgc
+activate lgr
+lgr -> u : HTML home.ejs
+deactivate lgr
+activate u
 
 @enduml
