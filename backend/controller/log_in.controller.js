@@ -3,13 +3,9 @@ exports.get_log_in = (request, response) => {
 };
 
 exports.post_log_in = (request, response) => {
-  request.session.username = request.body.username;
+  console.log("post_login");
+  request.session.email = request.body.email;
   request.session.password = request.body.password;
-  console.log(request.body.username);
-  console.log(request.body.password);
-  response.redirect('/');
+
+  response.status(200);
 };
-
-
-
-  
