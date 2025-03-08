@@ -1,6 +1,57 @@
 <%- include('../views/includes/_header.ejs') %>
-<main class="container is-flex">
-  <form class="container max-tablet">
-    <input class="input" />
-  </form>
-</main>
+<link rel="stylesheet" href="/css/login.css" />
+<section class="hero is-fullheight">
+  <div class="hero-body">
+    <div class="container">
+      <div class="columns is-centered">
+        <div
+          class="column is-5-tablet is-4-desktop is-3-widescreen is-flex is-justify-content-center is-align-items-center is-flex-direction-column"
+        >
+          <img class="image column" src="/img/nebula.png" />
+          <form action="/log_in" method="POST" class="">
+            <div class="field">
+              <label for="" class="label">Email</label>
+              <div class="control has-icons-left">
+                <input
+                  type="email"
+                  placeholder="e.g. bobsmith@gmail.com"
+                  class="input"
+                  name="email"
+                  required
+                />
+                <span class="icon is-small is-left">
+                  <i class="bi bi-envelope"></i>
+                </span>
+              </div>
+            </div>
+            <div class="field">
+              <label for="" class="label">Password</label>
+              <div class="control has-icons-left">
+                <input
+                  type="password"
+                  placeholder="*******"
+                  class="input"
+                  required
+                />
+                <span class="icon is-small is-left">
+                  <i class="bi bi-shield-lock"></i>
+                </span>
+              </div>
+            </div>
+            <hr />
+            <div class="control has-icons-left">
+              <button class="button is-white is-fullwidth">Google</button>
+              <span class="icon is-small is-left">
+                <img src="/icons/google.webp" class="image is-24x24" />
+              </span>
+            </div>
+
+            <div class="field is-flex is-justify-content-center">
+              <button class="button is-half nebula-login">Log In</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

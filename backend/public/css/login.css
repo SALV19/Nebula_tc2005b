@@ -1,0 +1,12 @@
+.nebula-login {
+  background-color: #635d99;
+  padding: 0.5rem 5rem;
+  color: white;
+  border: solid #4b5263 2px;
+  margin-top: 1rem;
+}
+
+.image {
+  height: 192px;
+  width: 192px;
+}

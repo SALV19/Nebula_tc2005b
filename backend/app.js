@@ -29,7 +29,6 @@ const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
 
 app.use("/log_in", login_routes);
-
 app.use("/", middleware_auth, general_routes);
 
 app.listen(3000, () => {
