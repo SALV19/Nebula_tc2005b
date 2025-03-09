@@ -2,6 +2,9 @@ const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+
+const User = require("./models/user.model");
+
 const app = express();
 
 app.set("view engine", "ejs");
@@ -19,8 +22,15 @@ app.use(
   })
 );
 
-const middleware_auth = (request, response, next) => {
+const middleware_auth = async (request, response, next) => {
   console.log("User not signed in");
+  request.session.email = "santialducin@gmail.com";
+  request.session.permisions = await User.getPermissions(
+    request.session.email
+  ).then((permission_arr) =>
+    permission_arr[0].map((permision) => permision.nombre_permiso)
+  );
+  console.log(request.session.permisions);
   // response.redirect("/login")
   next();
 };
