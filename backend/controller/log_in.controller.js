@@ -35,3 +35,7 @@ async function getUserLoginInfo(email) {
 
   return user_info;
 }
+
+exports.auth_fail = (request, response) => {
+  response.send("Failure to authenticate");
+};
