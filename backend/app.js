@@ -8,7 +8,10 @@ const User = require("./models/user.model");
 const app = express();
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", [
+  path.join(__dirname, "../frontend/views"),
+  path.join(__dirname, "../frontend/views/error"),
+]);
 app.use(express.static(path.join(__dirname, "./public")));
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -22,6 +25,7 @@ app.use(
   })
 );
 
+// TO-FIX -> ramas de autentificación tienen el verdadero middleware
 const middleware_auth = async (request, response, next) => {
   console.log("User not signed in");
   request.session.email = "santialducin@gmail.com";
@@ -30,7 +34,6 @@ const middleware_auth = async (request, response, next) => {
   ).then((permission_arr) =>
     permission_arr[0].map((permision) => permision.nombre_permiso)
   );
-  console.log(request.session.permisions);
   // response.redirect("/login")
   next();
 };
@@ -38,9 +41,13 @@ const middleware_auth = async (request, response, next) => {
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
 
+const other_controllers = require("./controller/other.controller");
+
 app.use("/log_in", login_routes);
 
 app.use("/", middleware_auth, general_routes);
+
+app.use(other_controllers.get_404);
 
 app.listen(3000, () => {
   console.log("App started in: http://localhost:3000");
