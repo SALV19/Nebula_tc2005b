@@ -19,17 +19,13 @@ app.use(
   })
 );
 
-const middleware_auth = (request, response, next) => {
-  console.log("User not signed in");
-  // response.redirect("/login")
-  next();
-};
+const auth_middleware = require("./routes/auth_middleware.routes");
 
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
 
 app.use("/log_in", login_routes);
-app.use("/", middleware_auth, general_routes);
+app.use("/", auth_middleware, general_routes);
 
 app.listen(3000, () => {
   console.log("App started in: http://localhost:3000");

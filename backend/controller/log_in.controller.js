@@ -14,7 +14,8 @@ exports.post_log_in = async (request, response) => {
 
   if (await argon2.verify(user_info[0][0].contrasena, password)) {
     console.log("login success");
-    request.redirect("/");
+    request.session.user = user_info;
+    response.redirect("/");
   }
 };
 
