@@ -12,6 +12,20 @@
             <div class="field">
               <label for="" class="label">Email</label>
               <div class="control has-icons-left">
+                <% if (error == "user_not_found") {%>
+                <input
+                  type="email"
+                  placeholder="e.g. bobsmith@gmail.com"
+                  class="input is-danger"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <span class="icon is-small is-left is-error">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <p class="help is-danger">User not found</p>
+                <% } else { %>
                 <input
                   type="email"
                   placeholder="e.g. bobsmith@gmail.com"
@@ -20,13 +34,30 @@
                   name="email"
                   required
                 />
-                <span class="icon is-small is-left">
+                <span class="icon is-small is-left is-error">
                   <i class="bi bi-envelope"></i>
                 </span>
+                <%}%>
               </div>
             </div>
             <div class="field">
               <label for="" class="label">Password</label>
+              <% if (error == "wrong_password") {%>
+              <div class="control has-icons-left">
+                <input
+                  type="password"
+                  placeholder="*******"
+                  class="input is-danger"
+                  id="password"
+                  name="password"
+                  required
+                />
+                <span class="icon is-small is-left">
+                  <i class="bi bi-shield-lock"></i>
+                </span>
+                <p class="help is-danger">Password incorrect</p>
+              </div>
+              <%} else {%>
               <div class="control has-icons-left">
                 <input
                   type="password"
@@ -40,10 +71,11 @@
                   <i class="bi bi-shield-lock"></i>
                 </span>
               </div>
+              <%}%>
             </div>
             <hr />
             <div class="control has-icons-left">
-              <a class="button is-white is-fullwidth">Google</a>
+              <a class="button is-white is-fullwidth">Log in with Google</a>
               <span class="icon is-small is-left">
                 <img src="/icons/google.webp" class="image is-24x24" />
               </span>
