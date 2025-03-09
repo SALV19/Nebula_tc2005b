@@ -10,10 +10,9 @@ passport.use(
       callbackURL: "http://localhost:3000/log_in/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
-      // User.findOrCreate({ googleId: profile.id }, function (err, user) {
-      //   return cb(err, user);
-      // });
-      return cb(null, profile);
+      User.fetchByEmail(profile.emails[0].value, function (err, user) {
+        return cb(err, profile);
+      });
     }
   )
 );
