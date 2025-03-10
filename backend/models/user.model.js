@@ -40,7 +40,23 @@ module.exports = class User {
       [email]
     );
   }
-  static async getCollabsInfo(department) {
-    return db.execute("SELECT nombre");
+
+  static async getCollabsInfo(email) {
+    const colaboradores = await db.execute(`SELECT c.*
+                                          FROM colaborador c
+                                          INNER JOIN equipo e
+                                            ON e.id_colaborador = c.id_colaborador
+                                          INNER JOIN departamento d
+                                            ON d.id_departamento = e.id_departamento
+                                          WHERE d.nombre_departamento = (SELECT nombre_departamento
+                                          FROM colaborador c
+                                          INNER JOIN equipo e
+                                            ON c.id_colaborador = e.id_colaborador
+                                          INNER JOIN departamento d
+                                            ON d.id_departamento = e.id_departamento
+                                          WHERE c.email = "santialducin@gmail.com")
+                                          AND c.email <> "santialducin@gmail.com";
+                                          `)
+    console.log(colaboradores);
   }
 };

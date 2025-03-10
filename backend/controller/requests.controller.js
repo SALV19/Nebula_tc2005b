@@ -1,4 +1,4 @@
 exports.get_requests = (request, response) => {
-    response.render("home_page");
-  };
-  
+  console.log(request.session)
+  response.render("requests_page");
+};
