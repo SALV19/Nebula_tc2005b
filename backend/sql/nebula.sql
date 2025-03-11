@@ -32,7 +32,7 @@ CREATE TABLE `colaborador` (
   `nombre` varchar(250) NOT NULL,
   `apellidos` varchar(250) NOT NULL,
   `fechaNacimiento` date NOT NULL,
-  `telefono` int(13) NOT NULL,
+  `telefono` int(13),
   `puesto` varchar(250) NOT NULL,
   `email` varchar(250) NOT NULL,
   `contrasena` varchar(250) NOT NULL,
@@ -105,7 +105,7 @@ CREATE TABLE `evaluaciones_de_seguimiento` (
   `id_evaluacion` int(8) NOT NULL,
   `id_colaborador` varchar(8) NOT NULL,
   `fechaAgendada` date NOT NULL,
-  `notas` varchar(250) NOT NULL
+  `notas` varchar(250)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -224,9 +224,9 @@ CREATE TABLE `solicitudes_falta` (
   `fecha_finalizacion` date NOT NULL,
   `estado` tinyint(1) NOT NULL,
   `tipo_falta` varchar(250) NOT NULL,
-  `descripcion` varchar(250) NOT NULL,
+  `descripcion` varchar(250),
   `ubicacion` varchar(250) NOT NULL,
-  `evidencia` varchar(250) NOT NULL
+  `evidencia` varchar(250) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 --
