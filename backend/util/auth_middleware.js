@@ -4,6 +4,7 @@ module.exports = (request, response, next) => {
   if (request.session.user || request.user) {
     next();
   } else {
-    response.redirect("/log_in");
+    // response.redirect("/log_in");
+    next();
   }
 };
