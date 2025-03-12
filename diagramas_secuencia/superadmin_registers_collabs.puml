@@ -1,0 +1,56 @@
+@startuml REQ-29
+autonumber
+actor superAdmin
+boundary general.route.js as collabsRoute
+boundary collabs.ejs as CollabsView
+boundary saveSucces.ejs as saveSucces
+
+control collabs.controller.js as collabsController
+entity collab.model as collabModel
+database Nebula as nebula
+
+superAdmin -> collabsRoute : GET/view_collabs
+activate collabsRoute
+
+collabsRoute -> collabsController: get_addCollabs(request, response)
+deactivate collabsRoute
+activate collabsController
+
+collabsController -> CollabsView: response.render('addCollabs.ejs')
+deactivate collabsController
+activate CollabsView
+
+CollabsView -> superAdmin: HTML
+deactivate CollabsView
+activate superAdmin
+
+superAdmin -> collabsRoute: POST/addCollabs
+deactivate superAdmin
+activate collabsRoute
+
+collabsRoute -> collabsController: post_addCollabs
+deactivate collabsRoute
+activate collabsController
+
+collabsController -> collabModel: new Model(request.body.valor)
+activate collabModel
+
+collabModel -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
+activate nebula
+
+nebula -->> collabModel: Query ok
+deactivate nebula
+
+collabModel -->> collabsController: promesa
+deactivate collabModel
+
+collabsController -> saveSucces: response.render
+deactivate collabsController
+activate saveSucces
+
+saveSucces -> superAdmin: HTML
+deactivate saveSucces
+activate superAdmin
+deactivate superAdmin
+
+@enduml
