@@ -2,6 +2,8 @@
 autonumber
 actor Usuario as u
 boundary log_in.routes as lgr
+boundary log_in.ejs as lge
+boundary home_page.ejs as h
 control log_in.controller as lgc
 control auth.js as auth
 entity log_in.model as lgm
@@ -13,8 +15,14 @@ u -> lgr : GET /log_in
 deactivate u
 
 activate lgr
-lgr -> u : HTML "log_in.ejs"
+lgr -> lgc : get_login()
 deactivate lgr
+activate lgc
+lgc -> lge : render("login")
+deactivate lgc
+activate lge
+lge -> u : HTML login.ejs
+deactivate lge 
 
 activate u
 u -> lgr : GET /auth/google 
@@ -25,22 +33,20 @@ lgr -> lgc : getGoogleAuth()
 deactivate lgr
 activate lgc
 lgc -> auth : passport.authenticate('google', \n{scope: ['email', 'profile']})
-deactivate lgc
 activate auth
-auth -> Google : passport.authenticate()
+auth ->> Google : passport.authenticate()
 activate Google
-Google -> auth : callback('/google/callback')
-auth -> lgm : getUser(email)
+Google -->> auth : callback('/google/callback')
 deactivate Google
+auth -> lgm : getUser(email)
 deactivate auth
 activate lgm
 lgm ->> db : getCollab(email)
 activate db
 db -->> lgm : [collab_info]
 deactivate db
-lgm -> lgc: [collab_info]
+lgm -->> lgc: [collab_info]
 deactivate lgm
-activate lgc
 lgc -> lgr : callback('/google/callback')
 deactivate lgc
 
@@ -52,8 +58,14 @@ lgc -> lgc : isLoggedIn()
 lgc -> lgr : request.redrect('/')
 deactivate lgc
 activate lgr
-lgr -> u : HTML home_page
+lgr -> lgc : get_home()
 deactivate lgr
+activate lgc
+lgc -> h : render("home_page")
+deactivate lgc
+activate h
+h -> u : HTML login.ejs
+deactivate h 
 
 
 

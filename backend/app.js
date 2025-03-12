@@ -29,7 +29,7 @@ app.use(
 app.use(passport.authenticate("session"));
 
 //  Routes and middlewares
-const auth_middleware = require("./routes/auth_middleware.routes");
+const auth_middleware = require("./util/auth_middleware");
 
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
