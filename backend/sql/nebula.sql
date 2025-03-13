@@ -1,20 +1,20 @@
--- DROP TABLE dias_solicitados;
--- DROP TABLE dias_feriados;
--- DROP TABLE equipo;
--- DROP TABLE empresa;
--- DROP TABLE departamento;
--- DROP TABLE preguntas_evaluacion;
--- DROP TABLE respuestas_pregunta;
--- DROP TABLE permisos;
--- DROP TABLE rol_permisos;
--- DROP TABLE rol;
--- DROP TABLE indicador;
--- DROP TABLE metrica_indicadores;
--- DROP TABLE evaluaciones_de_seguimiento;
--- DROP TABLE fa;
--- DROP TABLE evento;
--- DROP TABLE solicitudes_falta;
--- DROP TABLE colaborador;
+DROP TABLE dias_solicitados;
+DROP TABLE dias_feriados;
+DROP TABLE equipo;
+DROP TABLE empresa;
+DROP TABLE departamento;
+DROP TABLE preguntas_evaluacion;
+DROP TABLE respuestas_pregunta;
+DROP TABLE permisos;
+DROP TABLE rol_permisos;
+DROP TABLE rol;
+DROP TABLE indicador;
+DROP TABLE metrica_indicadores;
+DROP TABLE evaluaciones_de_seguimiento;
+DROP TABLE fa;
+DROP TABLE evento;
+DROP TABLE solicitudes_falta;
+DROP TABLE colaborador;
 
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
