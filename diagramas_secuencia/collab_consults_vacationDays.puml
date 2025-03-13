@@ -23,13 +23,14 @@ activate nebula
 nebula -->> homeModel: rows
 deactivate nebula
 
-
 homeModel -->> homeController: promesa
 deactivate homeModel
 
-homeController -> collab: HTML
+homeController -> homeView: response.render
 deactivate homeController
+activate homeView
 
-
+homeView -> collab: HTML
+deactivate homeView
 
 @enduml
