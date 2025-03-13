@@ -14,7 +14,7 @@ homeRoute -> homeController: get_vacationDays(request, response)
 deactivate homeRoute
 activate homeController
 
-homeController -> homeModel: fetAll()
+homeController -> homeModel: fetchAll()
 activate homeModel
 
 homeModel -> nebula: execute("SELECT FROM Modelo")
