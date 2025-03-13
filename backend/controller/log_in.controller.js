@@ -1,9 +1,6 @@
-<<<<<<< HEAD
-=======
 const User = require("../models/user.model");
 const argon2 = require("argon2");
 
->>>>>>> develop
 exports.get_log_in = (request, response) => {
   response.render("log_in", {
     error: null,
