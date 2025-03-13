@@ -1,3 +1,4 @@
+-- SQLBook: Code
 SELECT nombre_departamento
 FROM colaborador c
 INNER JOIN equipo e

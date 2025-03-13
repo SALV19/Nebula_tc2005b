@@ -15,7 +15,12 @@ exports.post_log_in = async (request, response) => {
 
   if (!!user_info[0].length) {
     if (await argon2.verify(user_info[0][0].contrasena, password)) {
-      console.log("login success");
+      const permissions = await User.getPermissions(email);
+      const per_arr = permissions[0].map((p) => p.nombre_permiso);
+      console.log(per_arr);
+      request.session.permissions = per_arr;
+      console.log(request.session.permissions);
+
       request.session.user = user_info;
       response.redirect("/");
     } else {
