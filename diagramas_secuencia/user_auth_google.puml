@@ -5,8 +5,10 @@ boundary log_in.routes as lgr
 boundary log_in.ejs as lge
 boundary home_page.ejs as h
 control log_in.controller as lgc
+control auth.js as auth
 entity log_in.model as lgm
 database Nebula as db
+actor Google
 
 activate u
 u -> lgr : GET /log_in
@@ -23,26 +25,38 @@ lge -> u : HTML login.ejs
 deactivate lge 
 
 activate u
-u -> lgr : POST /log_in (email, password)
+u -> lgr : GET /auth/google 
 deactivate u
 
 activate lgr
-lgr -> lgc : getUserLogin()
+lgr -> lgc : getGoogleAuth()
 deactivate lgr
-
 activate lgc
-lgc -> lgm : getUserLoginInfo(user_email, user_password)
+lgc -> auth : passport.authenticate('google', \n{scope: ['email', 'profile']})
+activate auth
+auth ->> Google : passport.authenticate()
+activate Google
+Google -->> auth : callback('/google/callback')
+deactivate Google
+auth -> lgm : getUser(email)
+deactivate auth
 activate lgm
-lgm ->> db : SELECT email, password \nFROM Colaboradores \nWHERE email = user_email
+lgm ->> db : getCollab(email)
 activate db
-db -->> lgm : [email, password]
+db -->> lgm : [collab_info]
 deactivate db
-lgm -->> lgc : [email, password]
+lgm -->> lgc: [collab_info]
 deactivate lgm
-lgc ->> lgc : user_email == email && \nargon2.verify(user_password, password)
-lgc -> lgr : request.redirect("/")
+lgc -> lgr : callback('/google/callback')
 deactivate lgc
 
+activate lgr
+lgr -> lgc : passport.authenticate('google', \n{successRedirect: '/', failureRedirect: '/401'})
+deactivate lgr
+activate lgc
+lgc -> lgc : isLoggedIn()
+lgc -> lgr : request.redrect('/')
+deactivate lgc
 activate lgr
 lgr -> lgc : get_home()
 deactivate lgr
@@ -52,6 +66,8 @@ deactivate lgc
 activate h
 h -> u : HTML login.ejs
 deactivate h 
+
+
 
 
 activate u

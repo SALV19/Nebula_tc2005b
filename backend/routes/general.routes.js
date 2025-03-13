@@ -9,7 +9,7 @@ const personal_info_routes = require("../controller/personal_info.controller");
 const reports_routes = require("../controller/reports.controller");
 const requests_routes = require("../controller/requests.controller");
 
-const permission_middleware = require("../controller/permission_middleware.controller");
+const permission_middleware = require("../controller/permission.middleware");
 
 router.get("/", home_routes.get_home);
 router.get(

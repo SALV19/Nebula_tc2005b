@@ -56,7 +56,7 @@ module.exports = class User {
                                             ON d.id_departamento = e.id_departamento
                                           WHERE c.email = "santialducin@gmail.com")
                                           AND c.email <> "santialducin@gmail.com";
-                                          `)
+                                          `);
     console.log(colaboradores);
   }
 };

@@ -1,10 +1,14 @@
+// Requirements
 const express = require("express");
 const path = require("path");
 const session = require("express-session");
 const bodyParser = require("body-parser");
+const passport = require("passport");
 
-const User = require("./models/user.model");
+require("dotenv").config();
+require("./util/google_auth");
 
+// Server set-up
 const app = express();
 
 app.set("view engine", "ejs");
@@ -25,18 +29,10 @@ app.use(
   })
 );
 
-// TO-FIX -> ramas de autentificación tienen el verdadero middleware
-const middleware_auth = async (request, response, next) => {
-  console.log("User not signed in");
-  request.session.email = "santialducin@gmail.com";
-  request.session.permisions = await User.getPermissions(
-    request.session.email
-  ).then((permission_arr) =>
-    permission_arr[0].map((permision) => permision.nombre_permiso)
-  );
-  // response.redirect("/login")
-  next();
-};
+app.use(passport.authenticate("session"));
+
+//  Routes and middlewares
+const auth_middleware = require("./util/auth_middleware");
 
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
@@ -44,11 +40,11 @@ const general_routes = require("./routes/general.routes");
 const other_controllers = require("./controller/other.controller");
 
 app.use("/log_in", login_routes);
-
-app.use("/", middleware_auth, general_routes);
+app.use("/", auth_middleware, general_routes);
 
 app.use(other_controllers.get_404);
 
+// Start server
 app.listen(3000, () => {
   console.log("App started in: http://localhost:3000");
 });
