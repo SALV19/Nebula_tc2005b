@@ -1,4 +1,4 @@
-@startuml REQ-29
+@startuml REQ-19
 autonumber
 actor collab
 boundary general.route.js as homeRoute
@@ -7,7 +7,9 @@ control home.controller.js as homeController
 entity home.model as homeModel
 database Nebula as nebula
 
+activate collab
 collab -> homeRoute : GET /
+deactivate collab
 activate homeRoute
 
 homeRoute -> homeController: get_vacationDays(request, response)
@@ -32,5 +34,6 @@ activate homeView
 
 homeView -> collab: HTML
 deactivate homeView
+activate collab
 
 @enduml

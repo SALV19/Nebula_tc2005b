@@ -4,7 +4,6 @@ actor superAdmin
 boundary general.route.js as collabsRoute
 boundary collabs.ejs as CollabsView
 boundary saveSucces.ejs as saveSucces
-
 control collabs.controller.js as collabsController
 entity collab.model as collabModel
 database Nebula as nebula
