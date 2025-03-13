@@ -35,6 +35,8 @@ activate collabsController
 collabsController -> collabModel: new Model(request.body.valor)
 activate collabModel
 
+collabsController ->> collabModel: save()
+
 collabModel -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
 activate nebula
 
