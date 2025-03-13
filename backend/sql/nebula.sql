@@ -53,7 +53,7 @@ CREATE TABLE `colaborador` (
 --
 
 CREATE TABLE `departamento` (
-  `id_departamento` int(8) PRIMARY KEY,
+  `id_departamento` int(8) PRIMARY KEY AUTO_INCREMENT,
   `nombre_departamento` varchar(250) NOT NULL,
   `id_empresa` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -65,7 +65,7 @@ CREATE TABLE `departamento` (
 --
 
 CREATE TABLE `dias_feriados` (
-  `id_diaFeriado` int(8) PRIMARY KEY,
+  `id_diaFeriado` int(8) PRIMARY KEY AUTO_INCREMENT,
   `fecha_inicio` date NOT NULL,
   `fecha_fin` date,
   'hora_inicio' time,
@@ -81,7 +81,7 @@ CREATE TABLE `dias_feriados` (
 --
 
 CREATE TABLE `empresa` (
-  `id_empresa` int(8) PRIMARY KEY,
+  `id_empresa` int(8) PRIMARY KEY AUTO_INCREMENT,
   `nombre_empresa` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -104,7 +104,7 @@ CREATE TABLE `equipo` (
 --
 
 CREATE TABLE `evaluaciones_de_seguimiento` (
-  `id_evaluacion` int(8) PRIMARY KEY,
+  `id_evaluacion` int(8) PRIMARY KEY AUTO_INCREMENT,
   `id_colaborador` varchar(36) NOT NULL,
   `fechaAgendada` date NOT NULL,
   `notas` varchar(250)
@@ -128,7 +128,7 @@ CREATE TABLE `evento` (
 --
 
 CREATE TABLE `fa` (
-  `id_fa` int(8) PRIMARY KEY,
+  `id_fa` int(8) PRIMARY KEY AUTO_INCREMENT,
   `id_colaborador` varchar(36) NOT NULL,
   `motivo` varchar(250) NOT NULL,
   `fecha` date NOT NULL
@@ -175,7 +175,7 @@ CREATE TABLE `permisos` (
 --
 
 CREATE TABLE `preguntas_evaluacion` (
-  `id_pregunta` int(8) PRIMARY KEY,
+  `id_pregunta` int(8) PRIMARY KEY AUTO_INCREMENT,
   `pregunta` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -198,7 +198,7 @@ CREATE TABLE `respuestas_pregunta` (
 --
 
 CREATE TABLE `rol` (
-  `id_rol` int(8) PRIMARY KEY,
+  `id_rol` int(8) PRIMARY KEY AUTO_INCREMENT,
   `tipo_rol` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -220,7 +220,7 @@ CREATE TABLE `rol_permisos` (
 --
 
 CREATE TABLE `solicitudes_falta` (
-  `id_solicitud_falta` int(8) PRIMARY KEY,
+  `id_solicitud_falta` int(8) PRIMARY KEY AUTO_INCREMENT,
   `id_colaborador` varchar(36) NOT NULL,
   `estado` tinyint(1) NOT NULL,
   `tipo_falta` varchar(250) NOT NULL,
@@ -246,7 +246,6 @@ ALTER TABLE `equipo`
 -- Indices de la tabla `evaluaciones_de_seguimiento`
 --
 ALTER TABLE `evaluaciones_de_seguimiento`
-  ADD PRIMARY KEY (`id_evaluacion`),
   ADD KEY `id_colaborador` (`id_colaborador`);
 
 --
@@ -260,14 +259,7 @@ ALTER TABLE `evento`
 -- Indices de la tabla `fa`
 --
 ALTER TABLE `fa`
-  ADD PRIMARY KEY (`id_fa`),
   ADD KEY `fk_colaborador` (`id_colaborador`);
-
---
--- Indices de la tabla `indicador`
---
-ALTER TABLE `indicador`
-  ADD PRIMARY KEY (`id_indicador`);
 
 --
 -- Indices de la tabla `metrica_indicadores`
@@ -277,29 +269,11 @@ ALTER TABLE `metrica_indicadores`
   ADD KEY `fk_indicador` (`id_indicador`);
 
 --
--- Indices de la tabla `permisos`
---
-ALTER TABLE `permisos`
-  ADD PRIMARY KEY (`nombre_permiso`);
-
---
--- Indices de la tabla `preguntas_evaluacion`
---
-ALTER TABLE `preguntas_evaluacion`
-  ADD PRIMARY KEY (`id_pregunta`);
-
---
 -- Indices de la tabla `respuestas_pregunta`
 --
 ALTER TABLE `respuestas_pregunta`
   ADD PRIMARY KEY (`id_pregunta`,`id_evaluacion`),
   ADD KEY `fk_evaluacionR` (`id_evaluacion`);
-
---
--- Indices de la tabla `rol`
---
-ALTER TABLE `rol`
-  ADD PRIMARY KEY (`id_rol`);
 
 --
 -- Indices de la tabla `rol_permisos`
@@ -312,74 +286,8 @@ ALTER TABLE `rol_permisos`
 -- Indices de la tabla `solicitudes_falta`
 --
 ALTER TABLE `solicitudes_falta`
-  ADD PRIMARY KEY (`id_solicitud_falta`),
   ADD KEY `fk_colaboradorf` (`id_colaborador`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `departamento`
---
-ALTER TABLE `departamento`
-  MODIFY `id_departamento` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `dias_feriados`
---
-ALTER TABLE `dias_feriados`
-  MODIFY `id_diaFeriado` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `empresa`
---
-ALTER TABLE `empresa`
-  MODIFY `id_empresa` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `evaluaciones_de_seguimiento`
---
-ALTER TABLE `evaluaciones_de_seguimiento`
-  MODIFY `id_evaluacion` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `fa`
---
-ALTER TABLE `fa`
-  MODIFY `id_fa` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `indicador`
---
-ALTER TABLE `indicador`
-  MODIFY `id_indicador` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `preguntas_evaluacion`
---
-ALTER TABLE `preguntas_evaluacion`
-  MODIFY `id_pregunta` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `rol`
---
-ALTER TABLE `rol`
-  MODIFY `id_rol` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `solicitudes_falta`
---
-ALTER TABLE `solicitudes_falta`
-  MODIFY `id_solicitud_falta` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `equipo`
---
 ALTER TABLE `equipo`
   ADD CONSTRAINT `fk_equipo_colaborador` FOREIGN KEY (`id_colaborador`) REFERENCES `colaborador` (`id_colaborador`),
   ADD CONSTRAINT `fk_equipo_departamento` FOREIGN KEY (`id_departamento`) REFERENCES `departamento` (`id_departamento`),
