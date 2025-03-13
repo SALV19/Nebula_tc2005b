@@ -2,8 +2,8 @@
 autonumber
 actor Collaborator
 boundary general.route.js as gRoutes
-boundary total_days_of_absence.ejs as absView
-control total_days_of_absence.controller.js as absController
+boundary home_page.ejs as homeView
+control home.controller.js as homeController
 entity request.model as absModel
 database nebula as neb
 
@@ -12,11 +12,11 @@ Collaborator -> gRoutes : GET/
 deactivate Collaborator
 
 activate gRoutes
-gRoutes -> absController: get_home()
+gRoutes -> homeController: get_home()
 deactivate gRoutes
 
-activate absController
-absController ->> absModel: get_home_total_abs()
+activate homeController
+homeController ->> absModel: get_home_total_abs()
 
 activate absModel
 absModel ->> neb: (SELECT * FROM solicitudesFalta)>\n <(SELECT * FROM dias_solicitud)
@@ -25,19 +25,19 @@ activate neb
 neb-->> absModel: [status, type, fistDate, lastDate]
 deactivate neb
 
-absModel -->> absController: [{stats, type, fistDate, lastDate}]
-absController -> absController: calculate_abs()
+absModel -->> homeController: [{stats, type, fistDate, lastDate}]
+homeController -> homeController: calculate_abs()
 deactivate absModel
 
-absController -->> absView: response
+homeController -->> homeView: response
 
-deactivate absController
+deactivate homeController
 
 
 
-activate absView
-absView -> Collaborator: html
-deactivate absView
+activate homeView
+homeView -> Collaborator: html
+deactivate homeView
 
 activate Collaborator
 deactivate Collaborator
