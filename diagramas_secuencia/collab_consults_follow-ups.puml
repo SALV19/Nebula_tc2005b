@@ -4,7 +4,8 @@ actor collab
 boundary general.route.js as followUpsRoutes
 boundary followUps.ejs as followUpsViews
 control follow_ups.controller.js as followUpsController
-entity followUps.model as followUpsModel
+entity FollowUps.model as followUpsModel
+
 database Nebula as nebula
 
 collab -> followUpsRoutes : GET/follow_ups
@@ -42,19 +43,20 @@ followUpsRoutes -> followUpsController: post_addNotes(request, response)
 deactivate followUpsRoutes
 activate followUpsController
 
-followUpsController -> followUpsModel: new Model
-activate followUpsModel
+create entity model
+followUpsController -> model: new Model
+activate model
 
-followUpsController ->> followUpsModel: save()
+followUpsController ->> model: save()
 
-followUpsModel ->> nebula: execute("INSERT INTO Model(?), this.valor)
+model ->> nebula: execute("INSERT INTO Model(?), this.valor)
 activate nebula
 
-nebula -->> followUpsModel: Query ok
+nebula -->> model: Query ok
 deactivate nebula
 
-followUpsModel -->> followUpsController: promesa
-deactivate followUpsModel
+model -->> followUpsController: promesa
+deactivate model
 
 followUpsController -> followUpsViews: response.render
 deactivate followUpsController
