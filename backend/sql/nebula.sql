@@ -59,7 +59,7 @@ CREATE TABLE `colaborador` (
   `ubicacion` varchar(250) NOT NULL,
   `modalidad` tinyint(4) NOT NULL,
   `estado` tinyint(1) NOT NULL,
-  `foto` varchar(250) NOT NULL,
+  `foto` varchar(250),
   `curp` varchar(250) NOT NULL UNIQUE,
   `rfc` varchar(250) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
