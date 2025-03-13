@@ -54,9 +54,11 @@ rController -->> rView : [events]
 deactivate rController
 
 rView -> Collaborator : Opens pop up for registration
+activate Collaborator
+Collaborator -> Collaborator : verify_data()
 deactivate rView
 
-activate Collaborator
+
 Collaborator -> gRoutes :POST/request
 deactivate Collaborator
 
