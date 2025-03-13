@@ -1,0 +1,59 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary log_in.routes as lgr
+boundary log_in.ejs as lge
+boundary home_page.ejs as h
+control log_in.controller as lgc
+entity log_in.model as lgm
+database Nebula as db
+
+activate u
+u -> lgr : GET /log_in
+deactivate u
+
+activate lgr
+lgr -> lgc : get_login()
+deactivate lgr
+activate lgc
+lgc -> lge : render("login")
+deactivate lgc
+activate lge
+lge -> u : HTML login.ejs
+deactivate lge 
+
+activate u
+u -> lgr : POST /log_in (email, password)
+deactivate u
+
+activate lgr
+lgr -> lgc : getUserLogin()
+deactivate lgr
+
+activate lgc
+lgc -> lgm : getUserLoginInfo(user_email, user_password)
+activate lgm
+lgm ->> db : SELECT email, password \nFROM Colaboradores \nWHERE email = user_email
+activate db
+db -->> lgm : [email, password]
+deactivate db
+lgm -->> lgc : [email, password]
+deactivate lgm
+lgc ->> lgc : user_email == email && \nargon2.verify(user_password, password)
+lgc -> lgr : request.redirect("/")
+deactivate lgc
+
+activate lgr
+lgr -> lgc : get_home()
+deactivate lgr
+activate lgc
+lgc -> h : render("home_page")
+deactivate lgc
+activate h
+h -> u : HTML login.ejs
+deactivate h 
+
+
+activate u
+
+@enduml

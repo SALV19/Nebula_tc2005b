@@ -1,0 +1,75 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary log_in.routes as lgr
+boundary log_in.ejs as lge
+boundary home_page.ejs as h
+control log_in.controller as lgc
+control auth.js as auth
+entity log_in.model as lgm
+database Nebula as db
+actor Google
+
+activate u
+u -> lgr : GET /log_in
+deactivate u
+
+activate lgr
+lgr -> lgc : get_login()
+deactivate lgr
+activate lgc
+lgc -> lge : render("login")
+deactivate lgc
+activate lge
+lge -> u : HTML login.ejs
+deactivate lge 
+
+activate u
+u -> lgr : GET /auth/google 
+deactivate u
+
+activate lgr
+lgr -> lgc : getGoogleAuth()
+deactivate lgr
+activate lgc
+lgc -> auth : passport.authenticate('google', \n{scope: ['email', 'profile']})
+activate auth
+auth ->> Google : passport.authenticate()
+activate Google
+Google -->> auth : callback('/google/callback')
+deactivate Google
+auth -> lgm : getUser(email)
+deactivate auth
+activate lgm
+lgm ->> db : getCollab(email)
+activate db
+db -->> lgm : [collab_info]
+deactivate db
+lgm -->> lgc: [collab_info]
+deactivate lgm
+lgc -> lgr : callback('/google/callback')
+deactivate lgc
+
+activate lgr
+lgr -> lgc : passport.authenticate('google', \n{successRedirect: '/', failureRedirect: '/401'})
+deactivate lgr
+activate lgc
+lgc -> lgc : isLoggedIn()
+lgc -> lgr : request.redrect('/')
+deactivate lgc
+activate lgr
+lgr -> lgc : get_home()
+deactivate lgr
+activate lgc
+lgc -> h : render("home_page")
+deactivate lgc
+activate h
+h -> u : HTML login.ejs
+deactivate h 
+
+
+
+
+activate u
+
+@enduml
