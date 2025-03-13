@@ -1,3 +1,21 @@
+-- DROP TABLE dias_solicitados;
+-- DROP TABLE dias_feriados;
+-- DROP TABLE equipo;
+-- DROP TABLE empresa;
+-- DROP TABLE departamento;
+-- DROP TABLE preguntas_evaluacion;
+-- DROP TABLE respuestas_pregunta;
+-- DROP TABLE permisos;
+-- DROP TABLE rol_permisos;
+-- DROP TABLE rol;
+-- DROP TABLE indicador;
+-- DROP TABLE metrica_indicadores;
+-- DROP TABLE evaluaciones_de_seguimiento;
+-- DROP TABLE fa;
+-- DROP TABLE evento;
+-- DROP TABLE solicitudes_falta;
+-- DROP TABLE colaborador;
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -68,10 +86,10 @@ CREATE TABLE `dias_feriados` (
   `id_diaFeriado` int(8) PRIMARY KEY AUTO_INCREMENT,
   `fecha_inicio` date NOT NULL,
   `fecha_fin` date,
-  'hora_inicio' time,
-  'hora_fin' time,
-  `motivo` varchar(250) DEFAULT NULL,
-  `tipo` varchar(250) DEFAULT NULL
+  `hora_inicio` time,
+  `hora_fin` time,
+  `motivo` varchar(250),
+  `tipo` varchar(250)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
