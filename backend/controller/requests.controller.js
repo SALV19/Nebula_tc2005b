@@ -1,4 +1,10 @@
+let settings = {
+  selectedOption: 'requests',
+}
+
 exports.get_requests = (request, response) => {
-  console.log(request.session)
-  response.render("requests_page");
+  response.render("requests_page", {
+    ...settings,
+    permissions: request.session.permissions
+  });
 };

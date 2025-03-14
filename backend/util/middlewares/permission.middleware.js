@@ -1,12 +1,13 @@
-exports.get_collabs = (request, response, next) => {
-  console.log(request.session.permissions);
-  if (request.session.permissions) {
-    if (request.session.permissions.includes("view_collabs")) {
-      next();
-    } else {
-      response.render("error_401");
-    }
-  } else {
-    response.redirect("/log_in");
-  }
+exports.get_requests = (request, response, next) => {
+  // console.log(request.session.permissions);
+  // if (request.session.permissions) {
+  //   if (request.session.permissions.includes("accept_requests") 
+  //       || request.session.permissions.includes("accept_requests_team")) {
+  //     next();
+  //   } else {
+  //     response.render("error_401");
+  //   }
+  // } else {
+  //   response.redirect("/log_in");
+  // }
 };

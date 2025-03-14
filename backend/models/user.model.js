@@ -57,6 +57,6 @@ module.exports = class User {
                                           WHERE c.email = "santialducin@gmail.com")
                                           AND c.email <> "santialducin@gmail.com";
                                           `);
-    console.log(colaboradores);
+    return colaboradores;
   }
 };

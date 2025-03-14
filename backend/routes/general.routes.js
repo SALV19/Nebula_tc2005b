@@ -11,11 +11,7 @@ const requests_routes = require("../controller/requests.controller");
 
 const permission_middleware = require("../util/middlewares/permission.middleware");
 
-router.get(
-  "/view_collabs",
-  permission_middleware.get_collabs,
-  collabs_routes.get_collabs
-);
+router.get("/view_collabs", collabs_routes.get_collabs);
 router.get("/follow_ups", follow_ups_routes.get_follow_ups);
 router.get("/goals", goals_routes.get_goals);
 router.get("/personal_info", personal_info_routes.get_personal_info);

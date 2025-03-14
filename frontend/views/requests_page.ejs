@@ -1,3 +1,43 @@
 <%- include('../components/nav_bar.ejs') %> 
-<%- include ('../components/request_table.ejs') %>
+<link rel="stylesheet" href="/css/table.css">
+<main class="hero column">
+  <section class="hero-body">
+    <div class="container is-widescreen">
+      <div class="columns has-text-centered overhead is-vcentered offset">
+        <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
+        <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
+        <%if (permissions?.include('accept_requests')) {%>
+          <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
+          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+        <% } else {%>
+          <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
+        <% } %>
+          <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
+          <i class="bi bi-funnel subtitle is-clickable"></i>
+        </div>
+      </div>
+    </div>
+    <hr class=""/>
+    <table class="table is-fullwidth">
+      <thead>
+        <tr class="columns">
+          <th class="column is-one-quarter">Name</th>
+          <th class="column is-2">Start-date</th>
+          <th class="column is-2">End-date</th>
+          <th class="column is-2">Request-type</th>
+          <th class="column is-2">Status</th>
+          <th class="column is-1">Action</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (selectedOption === 'requests') {%>
+
+        <% } else if (selectedOption === 'requests') {%>
+        <%} else if (selectedOption === 'requests') { %>
+        <%}%>
+      </tbody>
+    </table>
+  </section>
+</main>
+
 <%- include('includes/_footer.ejs') %>

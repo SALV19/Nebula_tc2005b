@@ -39,6 +39,7 @@ const general_routes = require("./routes/general.routes");
 
 const other_controllers = require("./controller/other.controller");
 
+// app.use("/public", express.static('public'))
 app.use("/log_in", login_routes);
 app.use("/", auth_middleware, general_routes);
 
