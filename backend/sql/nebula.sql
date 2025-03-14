@@ -271,8 +271,7 @@ ALTER TABLE `evaluaciones_de_seguimiento`
 --
 
 ALTER TABLE `tiene_evento`
-  ADD PRIMARY KEY (`id_colaborador`,`id_evento`),
-  ADD KEY `fk_tieneEvento_evento` (`id_evento`);
+  ADD PRIMARY KEY (`id_colaborador`,`id_evento`);
 
 --
 -- Indices de la tabla `fa`
@@ -321,9 +320,9 @@ ALTER TABLE `evaluaciones_de_seguimiento`
 --
 -- Filtros para la tabla `evento`
 --
-ALTER TABLE `evento`
+ALTER TABLE `tiene_evento`
   ADD CONSTRAINT `fk_evento_colaborador` FOREIGN KEY (`id_colaborador`) REFERENCES `colaborador` (`id_colaborador`),
-  ADD CONSTRAINT `fk_evento_diaFeriado` FOREIGN KEY (`id_diaFeriado`) REFERENCES `dias_feriados` (`id_diaFeriado`);
+  ADD CONSTRAINT `fk_evento` FOREIGN KEY (`id_evento`) REFERENCES `evento`(`id_evento`);
 
 --
 -- Filtros para la tabla `fa`
