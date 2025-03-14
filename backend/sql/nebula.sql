@@ -182,7 +182,7 @@ CREATE TABLE `metrica_indicadores` (
 --
 
 CREATE TABLE `permisos` (
-  `nombre_permiso` varchar(50) PRIMARY KEY,
+  `nombre_permiso` varchar(250) PRIMARY KEY,
   `descripcion` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
