@@ -6,7 +6,7 @@
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
         <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
-        <%if (permissions?.include('accept_requests')) {%>
+        <%if (permissions?.includes('accept_requests')) {%>
           <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
           <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
         <% } else {%>

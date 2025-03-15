@@ -15,12 +15,8 @@ exports.post_log_in = async (request, response) => {
 
   if (!!user_info[0].length) {
     if (await argon2.verify(user_info[0][0].contrasena, password)) {
-      const permissions = await User.getPermissions(email);
-      const per_arr = permissions[0].map((p) => p.nombre_permiso);
-      request.session.permissions = per_arr;
-
-      request.session.user = user_info;
-      response.redirect("/");
+      request.session.email = request.body.email;
+      response.redirect("/log_in/success");
     } else {
       response.render("log_in", {
         error: "wrong_password",
