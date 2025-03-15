@@ -13,7 +13,11 @@
     "argon2": "^0.41.1",
     "body-parser": "^1.20.3",
     "bootstrap-icons": "^1.11.3",
+<<<<<<< HEAD
     "csurf": "^1.11.0",
+=======
+    "csurf": "^1.10.0",
+>>>>>>> develop
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
     "express": "^4.21.2",

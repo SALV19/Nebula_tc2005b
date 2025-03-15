@@ -1,9 +1,14 @@
 const User = require("../models/user.model");
 const argon2 = require("argon2");
 
+let status = {
+  error: null,
+}
+
 exports.get_log_in = (request, response) => {
   response.render("log_in", {
-    error: null,
+    ...status, 
+    csrfToken: request.csrfToken(),
   });
 };
 
@@ -13,18 +18,22 @@ exports.post_log_in = async (request, response) => {
 
   const user_info = await getUserLoginInfo(email, password);
 
-  if (!!user_info[0].length) {
+  if (user_info[0].length) {
     if (await argon2.verify(user_info[0][0].contrasena, password)) {
       request.session.email = request.body.email;
       response.redirect("/log_in/success");
     } else {
+      status.error = 'wrong_password'
       response.render("log_in", {
-        error: "wrong_password",
+        ...status, 
+        csrfToken: request.csrfToken(),
       });
     }
   } else {
+    status.error = 'user_not_found'
     response.render("log_in", {
-      error: "user_not_found",
+      ...status, 
+      csrfToken: request.csrfToken(),
     });
   }
 };
