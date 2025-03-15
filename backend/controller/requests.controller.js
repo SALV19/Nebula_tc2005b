@@ -1,10 +1,11 @@
 let settings = {
-  selectedOption: 'requests',
+  selectedOption: 'vacations',
 }
 
 exports.get_requests = (request, response) => {
   response.render("requests_page", {
     ...settings,
-    permissions: request.session.permissions
+    permissions: request.session.permissions,
+    csrfToken: request.csrfToken(),
   });
 };

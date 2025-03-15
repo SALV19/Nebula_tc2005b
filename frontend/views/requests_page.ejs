@@ -1,12 +1,13 @@
 <%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
 <main class="hero column">
+  <input type="hidden" id="_csrf" value=<%= csrfToken %>>
   <section class="hero-body">
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
         <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
-        <%if (permissions?.includes('accept_requests')) {%>
+        <%if (permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) {%>
           <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
           <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
         <% } else {%>
@@ -30,10 +31,12 @@
         </tr>
       </thead>
       <tbody>
-        <% if (selectedOption === 'requests') {%>
+        <% if (selectedOption === 'vacations') {%>
 
-        <% } else if (selectedOption === 'requests') {%>
-        <%} else if (selectedOption === 'requests') { %>
+        <% } else if (selectedOption === 'abscences') {%>
+
+        <%} else if (selectedOption === 'requests' && permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) { %>
+
         <%}%>
       </tbody>
     </table>
@@ -41,3 +44,29 @@
 </main>
 
 <%- include('includes/_footer.ejs') %>
+
+<script>
+  const get_info = (selected_option) => {
+    fetch('/requests', {
+      method: GET,
+      headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+        }
+
+    })
+  }
+  
+  const options = document.querySelectorAll(".option")
+  for (let i=0; i<options.length; i++) {
+    options[i].addEventListener('click', (b) => {
+      options.forEach((element) => {
+        element.classList.remove('selected')
+      })
+      options[i].classList.add('selected')
+
+      get_info(options[i])
+    })
+  }
+  
+</script>

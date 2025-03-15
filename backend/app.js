@@ -28,6 +28,11 @@ app.use(
     saveUninitialized: false,
   })
 );
+const csrf = require('csurf');
+const csrfProtection = csrf();
+app.use(csrfProtection); 
+
+
 
 app.use(passport.authenticate("session"));
 
