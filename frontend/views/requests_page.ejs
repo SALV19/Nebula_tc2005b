@@ -19,54 +19,9 @@
       </div>
     </div>
     <hr class=""/>
-    <table class="table is-fullwidth">
-      <thead>
-        <tr class="columns">
-          <th class="column is-one-quarter">Name</th>
-          <th class="column is-2">Start-date</th>
-          <th class="column is-2">End-date</th>
-          <th class="column is-2">Request-type</th>
-          <th class="column is-2">Status</th>
-          <th class="column is-1">Action</th>
-        </tr>
-      </thead>
-      <tbody>
-        <% if (selectedOption === 'vacations') {%>
-
-        <% } else if (selectedOption === 'abscences') {%>
-
-        <%} else if (selectedOption === 'requests' && permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) { %>
-
-        <%}%>
-      </tbody>
-    </table>
+      <%- include ('../components/requests/accept_requests_table.ejs')%>
   </section>
 </main>
 
 <%- include('includes/_footer.ejs') %>
 
-<script>
-  const get_info = (selected_option) => {
-    fetch('/requests', {
-      method: GET,
-      headers: {
-            'Content-Type': 'application/json',
-            'csrf-token': csrf
-        }
-
-    })
-  }
-  
-  const options = document.querySelectorAll(".option")
-  for (let i=0; i<options.length; i++) {
-    options[i].addEventListener('click', (b) => {
-      options.forEach((element) => {
-        element.classList.remove('selected')
-      })
-      options[i].classList.add('selected')
-
-      get_info(options[i])
-    })
-  }
-  
-</script>

@@ -26,3 +26,8 @@ hr {
   border-radius: 30px 30px 0 0 ;
   color: #485FC7;
 }
+
+.status {
+  border-radius: 30px;
+  text-align: center;
+}

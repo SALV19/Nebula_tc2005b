@@ -1,3 +1,82 @@
-<% for (request in requests) { %>
-  Hola
-<%}%>
+<table class="table is-fullwidth" id="requests_table">
+  
+</table>
+
+
+<script>
+  function formatDate(date) {
+    const d = new Date(date);
+    const day = String(d.getDate()).padStart(2, '0');
+    const month = String(d.getMonth() + 1).padStart(2, '0'); 
+    const year = d.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+  }
+  function createTableRequests(data) {
+    console.log(data.requests[0])
+    const table = document.querySelector('#requests_table')
+    let table_content = `<thead>
+    <tr>
+      <th >Name</th>
+      <th >Start-date</th>
+      <th >End-date</th>
+      <th >Request-type</th>
+      <th >Status</th>
+      <th >Action</th>
+    </tr>
+  </thead>
+  <tbody >`
+    data.requests[0].forEach((d) => {
+      console.log(d)
+      table_content += `<tr>`;
+      table_content += `<td>${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td>${formatDate(d.start)}</td>`
+      table_content += `<td>${formatDate(d.end)}</td>`
+      table_content += `<td>${d.tipo_falta}</td>`
+      console.log(d.estado)
+      if (d.estado == 0) {
+        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+      }
+      else if (d.estado == 1) {
+        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+      }
+      else if (d.estado == 2) {
+        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+      }
+      table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
+      table_content += '</tr>';
+    })
+    table_content += '</tbody>'
+    table.innerHTML = table_content
+  }
+  
+  const get_info = (selected_option) => {
+    const csrf = document.getElementById('_csrf').value
+    const route = selected_option.innerHTML
+    fetch(`/requests/${route}`, {
+      method: 'GET',
+      headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+      // console.log(data)
+      createTableRequests(data)
+    })
+    .catch(e => console.log(e))
+  }
+  
+  const options = document.querySelectorAll(".option")
+  for (let i=0; i<options.length; i++) {
+    options[i].addEventListener('click', (b) => {
+      options.forEach((element) => {
+        element.classList.remove('selected')
+      })
+      options[i].classList.add('selected')
+
+      get_info(options[i])
+    })
+  }
+</script>
