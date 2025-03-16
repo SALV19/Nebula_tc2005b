@@ -31,3 +31,24 @@ hr {
   border-radius: 30px;
   text-align: center;
 }
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.pagination {
+  background: transparent;
+  border: transparent;
+  color: white;
+  border-bottom: 1px solid white;
+  width: 2rem;
+  margin: 0.2rem 0;
+}

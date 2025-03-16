@@ -5,7 +5,7 @@ module.exports = class Requests {
 
   }
 
-  static async fetchTeamRequests(email) {
+  static async fetchTeamRequests(email, offset) {
     return db.execute(`SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
             FROM solicitudes_falta sf
             JOIN dias_solicitados ds
@@ -23,8 +23,9 @@ module.exports = class Requests {
                 ON c.id_colaborador = e.id_colaborador
               INNER JOIN departamento d
                 ON d.id_departamento = e.id_departamento
-              WHERE c.email = (?)
+              WHERE c.email = ?
             )
-            GROUP BY sf.id_solicitud_falta`, [email])
+            GROUP BY sf.id_solicitud_falta
+            LIMIT 10 OFFSET ?`, [email, offset])
   }
 }
