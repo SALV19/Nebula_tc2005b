@@ -7,7 +7,7 @@ control register.controller.js as SController
 entity register_followUp.model as SModel
 database Nebula as db
 
-' ---- REGISTRAR SEGUIMIENTO ----
+' ---- REGISTER FOLLOW UP ----
 activate S
 S -> Route : POST /follow_ups
 deactivate S
@@ -22,7 +22,7 @@ SController -> SModel: new FollowUp(request.body.follow_up)
 SController -> SModel : save()
 
 activate SModel
-SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento (campo) VALUES (?)", this.follow_up)
+SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento (id_evaluacion, id_colaborador, fechaAgendada, notas) VALUES (?)", this.follow_up)
 activate db
 db -->> SModel : Query OK
 deactivate db
