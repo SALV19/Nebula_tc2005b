@@ -1,0 +1,14 @@
+
+@startuml REQ_27
+autonumber
+actor Usuario
+boundary superadmin.routes.json as SuperAdminRoute
+control superadmin.controller.js as SuperAdminController
+entity SuperAdmin.model as SuperAdminModel
+database NovusTecDev as novusDB
+
+
+
+@enduml 
+
+
