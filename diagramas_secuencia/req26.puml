@@ -1,0 +1,20 @@
+
+@startuml REQ_27
+autonumber
+actor SuperAdmin as S
+boundary general.routes.json as SRoute
+boundary approve_requests.ejs as Requests
+control requests.controller.js as SController
+entity SuperAdmin.model as SModel
+database Nebula as db
+
+activate S
+S -> SRoute : Get/requests
+deactivate S
+
+activate SRoute
+SRoute -> SController : get_requests()
+deactivate SRoute
+
+activate SController
+SController -> SModel : getRequests()
