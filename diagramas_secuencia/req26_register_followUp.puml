@@ -1,0 +1,40 @@
+@startuml REQ_26
+autonumber
+actor SuperAdmin as S
+boundary general.routes.json as Route
+boundary register_followUp.ejs as Register
+control register.controller.js as SController
+entity register_followUp.model as SModel
+database Nebula as db
+
+' ---- REGISTRAR SEGUIMIENTO ----
+activate S
+S -> Route : POST /follow_ups
+deactivate S
+
+activate Route
+Route -> SController : post_follow_ups(request.body.follow_up)
+deactivate Route
+
+activate SController
+create SModel 
+SController -> SModel: new FollowUp(request.body.follow_up)
+SController -> SModel : save()
+
+activate SModel
+SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento (campo) VALUES (?)", this.follow_up)
+activate db
+db -->> SModel : Query OK
+deactivate db
+
+SModel -->> SController : resolve('Success') / reject('Error')
+deactivate SModel
+
+SController -> Register : response.render('register_followUp.ejs', { message: 'Success' })
+deactivate SController
+
+activate Register
+Register -> S : HTML register_followUp.ejs
+deactivate Register
+
+@enduml
