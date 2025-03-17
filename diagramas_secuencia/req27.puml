@@ -1,0 +1,69 @@
+
+@startuml REQ_27
+autonumber
+actor SuperAdmin as S
+boundary general.routes.json as SRoute
+boundary approve_requests.ejs as Requests
+control requests.controller.js as SController
+entity SuperAdmin.model as SModel
+database Nebula as db
+
+activate S
+S -> SRoute : Get/requests
+deactivate S
+
+activate SRoute
+SRoute -> SController : get_requests()
+deactivate SRoute
+
+activate SController
+SController -> SModel : getRequests()
+
+activate SModel 
+SModel -> db : SELECT * FROM Solicitudes_Falta WHERE estado='pending'
+activate db
+db -->> SModel : rows
+deactivate db
+SModel -->> SController : Requests List
+deactivate SModel
+
+SController -> Requests : response.render('approve_requests.ejs')
+deactivate SController
+
+activate Requests
+Requests -> S : HTML approve_requests.ejs
+deactivate Requests
+
+activate S
+S -> SRoute : POST/requests
+deactivate S
+
+activate SRoute
+SRoute -> SController : post_approve_requests(requests_id)
+deactivate SRoute
+
+activate SController 
+SController -> SModel : approveRequest(request_id)
+
+
+activate SModel
+SModel -> db : UPDATE Solicitudes_Falta SET estado='approved' WHERE id=request_id
+activate db
+db -->> SModel : Query OK (Rows Affected)
+deactivate db
+SModel -->> SController : resolve('Success') / reject('Error')
+deactivate SModel
+
+SController -> Requests : response.render('approve_requests.ejs', { updatedRequests })
+deactivate SController
+
+activate Requests
+Requests -> S : HTML approve_requests.ejs
+deactivate Requests
+
+activate S
+
+
+@enduml 
+
+
