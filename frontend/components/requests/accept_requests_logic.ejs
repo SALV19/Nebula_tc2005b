@@ -7,6 +7,7 @@
     
     return `${day}/${month}/${year}`;
   }
+
   function createTableRequests(data) {
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
@@ -20,8 +21,8 @@
     </tr>
   </thead>
   <tbody >`
-    data.requests[0].forEach((d) => {
-      table_content += `<tr>`;
+    data.requests[0].forEach((d, idx) => {
+      table_content += `<tr id='request' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
@@ -37,9 +38,59 @@
       }
       table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
       table_content += '</tr>';
+      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+                          <td colspan='6'>
+                            <div class='columns'>
+                              <div class="column">
+                                <p><strong>Type: </strong>${d.tipo_falta}</p>
+                                <p>Calendario...</p>
+                              </div>
+                              <div class="column">
+                                <p><strong>Reason: </strong></p>
+                                <p class='has-background-black p-3 box'>${d.descripcion}</p>
+                                ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
+                              </div>
+                              <div class="column">
+                                <p><strong>Location:</strong></p>
+                                <p class='is-underlined	'>${d.ubicacion}</p>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>`;
+      // `<tr class="additional-row has-background-dark" id="additional-row-${idx}" style="display: none;">
+      //                   <td class='additional-row'>
+      //                     <div class=''>
+      //                       <h1><strong>Type: </strong> ${d.tipo_falta}</h1>
+      //                       <p>Calendario</p>
+      //                     </div>
+      //                     <div class=' is-flex is-flex-direction-column	'>
+      //                       <h1><strong>Reason: </strong></h1>
+      //                       <p class='has-background-black'>${d.descripcion}</p>
+      //                       ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
+      //                     </div>
+      //                     <div class=''>
+      //                       <h1><strong>Location: </strong></h1>
+      //                       <p>${d.ubicacion}</p>
+      //                     </div>
+      //                   </td>
+      //                 </tr>`;
+
     })
     table_content += '</tbody>'
     table.innerHTML = table_content
+
+    const entries = document.querySelectorAll('#request')
+    entries.forEach((node, idx) => {
+      node.addEventListener('click', (v) => {
+        const additionalRow = document.getElementById(`additional-row-${idx}`)
+        if (additionalRow.style.display === "none") {
+          additionalRow.style.display = "table-row";
+        } else {
+          additionalRow.style.display = "none";
+        }
+      })
+    })
+
   }
   
   const get_info = (selected_option, pagination) => {

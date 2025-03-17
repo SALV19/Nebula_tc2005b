@@ -52,3 +52,11 @@ input[type=number] {
   width: 2rem;
   margin: 0.2rem 0;
 }
+
+.hidden {
+  display: none; 
+}
+
+.show {
+  display: table-row;
+}
