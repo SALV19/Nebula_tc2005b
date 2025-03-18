@@ -1,5 +1,5 @@
 <%- include('../views/includes/_header.ejs') %>
-<body>
+<!-- <body>
   <div id="app">
     <nav>
       <section class="main-content columns is-fullheight">   
@@ -7,38 +7,26 @@
           <p class="menu-label is-hidden-touch">Nebula</p>
           <ul class="menu-list">
             <li>
-              <a href="/" class="">
-                <span class="icon"><i class="bi bi-calendar"></i></span> Calendar
-              </a>
+              
             </li>
             <li>
-              <a href="/requests" class="">
-                <span class="icon"><i class="bi bi-question-square"></i></span> Request
-              </a>
+              
             </li>
             <li>
               <ul>
                 <li>
-                  <a href="/follow_ups">
-                    <span class="icon is-small"><i class="bi bi-graph-up"></i></span> Follow-ups
-                  </a>
+                  
                 </li>
                 <li>
-                  <a href="/view_collabs">
-                    <span class="icon is-small"><i class="bi bi-people-fill"></i></span> Collabs
-                  </a>
+                  
                 </li>
               </ul>
             </li>
             <li>
-              <a href="/reports" class="">
-                <span class="icon"><i class="bi bi-pie-chart"></i></span> Reports
-              </a>
+              
             </li>
             <li>
-              <a href="/personal_info" class="">
-                <span class="icon"><i class="bi bi-person-fill"></i></span> Personal Info
-              </a>
+              
             </li>
           </ul>
         </aside>
@@ -53,5 +41,38 @@
       </div>
     </footer>    
   </div>
-</body>
-</html>
+</body> -->
+<link rel="stylesheet" href="/css/nav.css">
+<nav class="sidenav">
+  <a href="#">
+    <img src="/icons/nuclea.png" alt="" style="width: 30px; height: 30px;">
+    <span><img src="/icons/nuclea_nombre.png" alt="" style="height: 15px;"></span>
+  </a>
+  <div class="is-flex is-flex-direction-column is-justify-content-center	is-align-content-center">
+    <a href="/" >
+      <i class="bi bi-calendar"></i>
+      <span>Calendar</span>
+    </a>
+    <a href="/requests" >
+      <i class="bi bi-question-square"></i> 
+      <span>Request</span>
+    </a>
+    <a href="/follow_ups">
+      <i class="bi bi-graph-up"></i> 
+      <span>Follow-ups</span>
+    </a>
+    <a href="/view_collabs">
+      <i class="bi bi-people-fill"></i> 
+      <span>Collabs</span>
+    </a>
+    <a href="/reports" class="">
+      <i class="bi bi-pie-chart"></i> 
+      <span>Reports</span>
+    </a>
+  </div>
+  <a href="/personal_info" class="">
+    <i class="bi bi-person-fill"></i> 
+    <span>Personal Info</span>
+  </a>
+  
+</nav>
