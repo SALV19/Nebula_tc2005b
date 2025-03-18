@@ -81,7 +81,6 @@ module.exports = class Requests {
       }
       query += `ORDER BY sf.estado ASC
                 LIMIT 10 OFFSET ?`
-      console.log(query)
       return db.execute(query, [email, offset])
     }
   }
