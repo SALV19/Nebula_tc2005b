@@ -6,7 +6,7 @@ boundary home.ejs as home
 control home.controller.js as HController
 entity holiday_info.model as HModel
 database Nebula as db
-entity GoogleCalendarAPI as GoogleAPI
+actor GoogleCalendarAPI as GoogleAPI
 
 ' --- Consultar días feriados desde la BD ---
 activate C
@@ -28,13 +28,11 @@ HModel -->> HController : holiday_dates
 deactivate HModel
 
 activate HController
-HController -> home : response.render("home.ejs", { holidays: holiday_dates })
+HController -> home : response.render
 deactivate HController
 
 ' --- Mostrar datos en Google Calendar (Frontend) ---
 activate home
-home -> GoogleAPI : Insert holidays into Google Calendar 
-GoogleAPI -->> home : Render calendar with holidays
 home -> C : Show updated calendar
 deactivate home
 
