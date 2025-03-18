@@ -14,20 +14,20 @@
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
           <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
-          <i class="bi bi-funnel subtitle is-clickable"></i>
+          <i class="bi bi-funnel subtitle is-clickable" id="filter"></i>
         </div>
       </div>
     </div>
     <hr class=""/>
-      <%- include ('../components/requests/accept_requests_table.ejs')%>
+      <%- include ('../components/requests/consult_requests_table.ejs')%>
       <div class="is-flex is-justify-content-flex-end	my_buttons">
         <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
         <input type="number" value="1" class="pagination" id="pagination"/>
         <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
       </div>
-      <%- include ('../components/requests/accept_requests_logic.ejs') %>
+      <%- include ('../components/requests/consult_requests_logic.ejs') %>
+      <!-- <%-include ('../components/pop-up.ejs')%> -->
     </section>
-
 </main>
 
 <%- include('includes/_footer.ejs') %>

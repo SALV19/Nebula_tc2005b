@@ -1,4 +1,5 @@
 <script>
+  
   function formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -8,6 +9,7 @@
     return `${day}/${month}/${year}`;
   }
 
+  // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
@@ -21,6 +23,7 @@
     </tr>
   </thead>
   <tbody >`
+    // Información por cada rengrlón de la tabla
     data.requests[0].forEach((d, idx) => {
       table_content += `<tr id='request' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
@@ -38,6 +41,7 @@
       }
       table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
       table_content += '</tr>';
+      // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
@@ -61,6 +65,7 @@
     table_content += '</tbody>'
     table.innerHTML = table_content
 
+    // Añade función para expandir el contenido extra
     const entries = document.querySelectorAll('#request')
     entries.forEach((node, idx) => {
       node.addEventListener('click', (v) => {
@@ -74,7 +79,8 @@
     })
 
   }
-  
+
+  // Consulta a db para la información de solicitudes
   const get_info = (selected_option, pagination) => {
     const csrf = document.getElementById('_csrf').value
     const route = selected_option.innerHTML
@@ -95,6 +101,7 @@
     .catch(e => console.log(e))
   }
   
+  // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
   for (let i=0; i<options.length; i++) {
     options[i].addEventListener('click', (b) => {
@@ -111,6 +118,7 @@
   const next_button = document.querySelector("#next-page");
   const pagination_value = document.querySelector("#pagination");
 
+  // Cambiar de página / ver los siguientes 10 registros
   prev_button.addEventListener('click', () => {
     pagination_value.value = 
     pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
