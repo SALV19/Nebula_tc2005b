@@ -1,11 +1,96 @@
 @startuml REQ_26
 autonumber
 actor SuperAdmin as S
-boundary general.routes.json as Route
+boundary general.routes.js as Route
 boundary register_followUp.ejs as Register
 control register.controller.js as SController
 entity register_followUp.model as SModel
+entity register_followUp.model as Model
+entity collabs.model as cm
 database Nebula as db
+
+' --- GET COLLABS ---
+activate S
+S -> Route : GET /view_collabs
+deactivate S
+
+activate Route
+Route -> SController : get_collabs()
+deactivate Route
+
+activate SController
+SController ->> cm : fetchAll()
+
+activate cm
+cm ->> db : execute(SELECT * FROM colaborador)
+
+activate db
+db ->> cm : info colaborador
+deactivate db
+
+cm -->> SController : promesa
+deactivate cm 
+
+SController -> Register : response.render
+deactivate SController
+
+activate Register
+Register -> S : HTML
+deactivate Register
+
+
+' --- GET INFO OF QUESTIONS ---
+activate S
+S -> Route : GET /follow_ups
+deactivate S
+
+activate Route
+Route -> SController : getQuestions()
+deactivate Route
+
+activate SController
+SController ->> Model : fetchAll()
+
+activate Model 
+Model ->> db : execute(SELECT * FROM preguntas_evaluacion)
+activate db
+db ->> Model : info preguntas_evaluacion
+deactivate db
+
+Model -->> SController : promesa
+deactivate Model 
+SController -> Register : response.render
+deactivate SController
+
+activate Register
+Register -> S : HTML
+deactivate Register
+
+' --- GET INFO INDICADORES ---
+activate S
+S -> Route : GET /follow_ups
+deactivate S
+
+activate Route
+Route -> SController : getIndicadores()
+deactivate Route
+
+activate SController
+SController ->> Model : fetchAll()
+activate Model 
+Model ->> db : execute(SELECT * FROM indicadores)
+activate db
+db -->> Model : info indicadores
+deactivate db
+Model -->> SController : info indicadores
+deactivate Model 
+
+SController -> Register : response.render
+deactivate SController
+
+activate Register
+Register -> S : HTML
+deactivate Register
 
 ' ---- REGISTER FOLLOW UP ----
 activate S
@@ -13,24 +98,24 @@ S -> Route : POST /follow_ups
 deactivate S
 
 activate Route
-Route -> SController : post_follow_ups(request.body.follow_up)
+Route -> SController : post_follow_ups()
 deactivate Route
 
 activate SController
 create SModel 
-SController -> SModel: new FollowUp(request.body.follow_up)
+SController -> SModel: new FollowUp()
 SController -> SModel : save()
 
 activate SModel
-SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento (id_evaluacion, id_colaborador, fechaAgendada, notas) VALUES (?)", this.follow_up)
+SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento")
 activate db
 db -->> SModel : Query OK
 deactivate db
 
-SModel -->> SController : resolve('Success') / reject('Error')
+SModel -->> SController : promise
 deactivate SModel
 
-SController -> Register : response.render('register_followUp.ejs', { message: 'Success' })
+SController -> Register : response.render('register_followUp.ejs')
 deactivate SController
 
 activate Register
