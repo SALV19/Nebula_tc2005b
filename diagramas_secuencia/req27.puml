@@ -1,10 +1,11 @@
 @startuml REQ_27
 autonumber
 actor SuperAdmin as S
-boundary general.routes.json as SRoute
+boundary general.routes.js as SRoute
 boundary approve_requests.ejs as Requests
 control requests.controller.js as SController
 entity SolicitudesFalta.model as SModel
+entity SolicitudFalta.model as Model
 database Nebula as db
 
 ' ---- CONSULTAR SOLICITUDES ----
@@ -17,20 +18,16 @@ SRoute -> SController : get_requests()
 deactivate SRoute
 
 activate SController
-SController -> SModel : getRequests()
-deactivate SController
+SController ->> Model : fetchAll()
 
-activate SModel 
-SModel -> db : SELECT * FROM Solicitudes_Falta ORDER BY estado ASC
+activate Model 
+Model ->> db : SELECT * FROM Solicitudes_Falta ORDER BY estado ASC
 activate db
-db -->> SModel : rows
+db -->> Model : rows
 deactivate db
-
-SModel -->> SController : Requests List
-deactivate SModel
-
-activate SController
-SController -> Requests : response.render('approve_requests.ejs', { requestsList })
+Model -->> SController : rows
+deactivate Model
+SController -> Requests : response.render('approve_requests.ejs', { rows})
 deactivate SController
 
 activate Requests
@@ -43,16 +40,16 @@ S -> SRoute : POST /requests
 deactivate S
 
 activate SRoute
-SRoute -> SController : post_approve_requests(requests_id)
+SRoute -> SController : post_approve_requests(requests_id, estado)
 deactivate SRoute
 
 activate SController 
 create SModel
-SController -> SModel : new SolicitudesFalta(request_id)
-SController -> SModel : approveRequest()
+SController -> SModel : new SolicitudesFalta(request_id, estado)
+SController ->> SModel : save()
 
 activate SModel
-SModel -> db : UPDATE Solicitudes_Falta SET estado = 1 WHERE id = request_id
+SModel ->> db : UPDATE Solicitudes_Falta SET estado = ? WHERE id = request_id , (estado)
 activate db
 db -->> SModel : Query OK (Rows Affected)
 deactivate db
