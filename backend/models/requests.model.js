@@ -26,6 +26,40 @@ module.exports = class Requests {
               WHERE c.email = ?
             )
             GROUP BY sf.id_solicitud_falta
-            LIMIT 10 OFFSET ?`, [email, offset])
+            ORDER BY sf.estado ASC
+            LIMIT 10 OFFSET ?
+            `, [email, offset])
+  }
+  static async fetchAllRequests(offset) {
+    return db.execute(`SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+            FROM solicitudes_falta sf
+            JOIN dias_solicitados ds
+              ON ds.id_solicitud_falta = sf.id_solicitud_falta
+            JOIN colaborador c
+              ON c.id_colaborador = sf.id_colaborador
+            JOIN equipo e 
+              ON e.id_colaborador = c.id_colaborador
+            JOIN departamento d
+              ON d.id_departamento = e.id_departamento
+            WHERE d.nombre_departamento = (
+              SELECT nombre_departamento
+              FROM colaborador c
+              INNER JOIN equipo e
+                ON c.id_colaborador = e.id_colaborador
+              INNER JOIN departamento d
+                ON d.id_departamento = e.id_departamento
+            )
+            GROUP BY sf.id_solicitud_falta
+            LIMIT 10 OFFSET ?
+            ORDER BY sf.estado ASC`, [offset ?? 0])
+  }
+
+  static fetchRequests(email, offset) {
+    if (email) {
+      fetchTeamRequests(email, offset)
+    }
+    else {
+      fetchAllRequests()
+    }
   }
 }
