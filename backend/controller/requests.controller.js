@@ -15,7 +15,8 @@ exports.get_requests = (request, response) => {
 exports.get_collabs_requests = async (request, response) => {  
   settings.selectedOption = 'requests'
   const offset = request.body.offset * 10;
-  const requests = await Requests.fetchTeamRequests(request.session.email, offset)
+  const filter = request.body.filter;
+  const requests = await Requests.fetchRequests(request.session.email, offset, filter)
     .then(data =>  data)
     .catch(e => console.log(e))
   // console.log(requests)

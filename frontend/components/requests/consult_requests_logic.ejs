@@ -81,8 +81,9 @@
   }
 
   // Consulta a db para la información de solicitudes
-  const get_info = (selected_option, pagination) => {
+  const get_info = (pagination=0, filter=null) => {
     const csrf = document.getElementById('_csrf').value
+    const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
     fetch(`/requests/${route}`, {
       method: 'POST',
@@ -92,6 +93,7 @@
         },
       body: JSON.stringify({
         offset: pagination,
+        filter: filter,
       }),
     })
     .then(response => response.json())
@@ -110,7 +112,7 @@
       })
       options[i].classList.add('selected')
 
-      get_info(options[i], 0)
+      get_info()
     })
   }
 
@@ -131,9 +133,7 @@
     
     pagination_value.dispatchEvent(new Event('change'));
   })
-  const selected_option = document.querySelector('.selected')
   pagination_value.addEventListener('change', (v) => {
-    console.log(pagination_value.value)
-    get_info(selected_option, pagination_value.value-1)
+    get_info(pagination_value.value-1)
   })
 </script>

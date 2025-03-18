@@ -52,3 +52,26 @@ INSERT INTO dias_solicitados(id_solicitud_falta, fecha) VALUES
 	(24, '2025-03-30'),
 	(24, '2025-03-31'),
 	(24, '2025-03-01');
+
+
+SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+                  FROM solicitudes_falta sf
+                  JOIN dias_solicitados ds
+                    ON ds.id_solicitud_falta = sf.id_solicitud_falta
+                  JOIN colaborador c
+                    ON c.id_colaborador = sf.id_colaborador
+                  JOIN equipo e
+                    ON e.id_colaborador = c.id_colaborador
+                  JOIN departamento d
+                    ON d.id_departamento = e.id_departamento
+                  WHERE d.nombre_departamento = (
+                      SELECT nombre_departamento
+                      FROM colaborador c
+                      INNER JOIN equipo e
+                        ON c.id_colaborador = e.id_colaborador
+                      INNER JOIN departamento d
+                        ON d.id_departamento = e.id_departamento
+                      WHERE c.email = 'santialducin@gmail.com'
+                    )
+                  GROUP BY sf.id_solicitud_falta HAVING MIN(ds.fecha) > '2025-01-11' AND MAX(ds.fecha) < '2025-03-31' ORDER BY sf.estado ASC
+                LIMIT 10 OFFSET 0
