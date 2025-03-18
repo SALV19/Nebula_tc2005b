@@ -1,0 +1,140 @@
+<script>
+    function addCollab() {
+        const popup = document.getElementById("pop-up");
+        if (popup) {
+            popup.style.display = "flex";
+        }
+    }
+
+    function closePopup() {
+        const popup = document.getElementById("pop-up");
+        if (popup) {
+            popup.style.display = "none";
+        }
+    }
+
+    function createTableRequests(data) {
+    const table = document.querySelector('#requests_table')
+    let table_content = `<thead>
+    <tr>
+        <th >Name</th>
+        <th >Position</th>
+        <th >Department</th>
+        <th >Company</th>
+    </tr>
+    </thead>
+    <tbody >`
+        // Información por cada renglón de la tabla
+        data.requests[0].forEach((d, idx) => {
+        table_content += `<tr id='request' key='${idx}'>`;
+        table_content += `<td>${d.nombre} ${d.apellidos}</td>`
+        table_content += `<td>${formatDate(d.start)}</td>`
+        table_content += `<td>${formatDate(d.end)}</td>`
+        table_content += `<td>${d.tipo_falta}</td>`
+        if (d.estado == 0) {
+            table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+        }
+        else if (d.estado == 1) {
+            table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+        }
+        else if (d.estado == 2) {
+            table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+        }
+        table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
+        table_content += '</tr>';
+        // Contenido desplegable
+        table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+                            <td colspan='6'>
+                                <div class='columns'>
+                                <div class="column">
+                                    <p><strong>Type: </strong>${d.tipo_falta}</p>
+                                    <p>Calendario...</p>
+                                </div>
+                                <div class="column">
+                                    <p><strong>Reason: </strong></p>
+                                    <p class='has-background-black p-3 box'>${d.descripcion}</p>
+                                    ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
+                                </div>
+                                <div class="column">
+                                    <p><strong>Location:</strong></p>
+                                    <p class='is-underlined	'>${d.ubicacion}</p>
+                                </div>
+                                </div>
+                            </td>
+                            </tr>`;
+        })
+        table_content += '</tbody>'
+        table.innerHTML = table_content
+
+        // Añade función para expandir el contenido extra
+        const entries = document.querySelectorAll('#request')
+        entries.forEach((node, idx) => {
+        node.addEventListener('click', (v) => {
+            const additionalRow = document.getElementById(`additional-row-${idx}`)
+            if (additionalRow.style.display === "none") {
+            additionalRow.style.display = "table-row";
+            } else {
+            additionalRow.style.display = "none";
+            }
+        })
+        })
+
+    }
+
+    // Consulta a db para la información de solicitudes
+    const get_info = (pagination=0, filter=null) => {
+        const csrf = document.getElementById('_csrf').value
+        const selected_option = document.querySelector('.selected')
+        const route = selected_option.innerHTML
+        fetch(`/requests/${route}`, {
+        method: 'POST',
+        headers: {
+                'Content-Type': 'application/json',
+                'csrf-token': csrf
+            },
+        body: JSON.stringify({
+            offset: pagination,
+            filter: filter,
+        }),
+        })
+        .then(response => response.json())
+        .then(data => {
+        createTableRequests(data)
+        })
+        .catch(e => console.log(e))
+    }
+    
+    // Permite cambiar entre pestañas
+    const options = document.querySelectorAll(".option")
+    for (let i=0; i<options.length; i++) {
+        options[i].addEventListener('click', (b) => {
+        options.forEach((element) => {
+            element.classList.remove('selected')
+        })
+        options[i].classList.add('selected')
+
+        get_info()
+        })
+    }
+
+    const prev_button = document.querySelector("#prev-page");
+    const next_button = document.querySelector("#next-page");
+    const pagination_value = document.querySelector("#pagination");
+
+    // Cambiar de página / ver los siguientes 10 registros
+    prev_button.addEventListener('click', () => {
+        pagination_value.value = 
+        pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
+        
+        pagination_value.dispatchEvent(new Event('change'));
+    })
+
+    next_button.addEventListener('click', () => {
+        pagination_value.value = Number(pagination_value.value) + 1
+        
+        pagination_value.dispatchEvent(new Event('change'));
+    })
+    pagination_value.addEventListener('change', (v) => {
+        get_info(pagination_value.value-1)
+    })
+</script>
