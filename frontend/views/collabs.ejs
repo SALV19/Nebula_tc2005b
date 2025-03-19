@@ -1,5 +1,6 @@
 <%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
+<link rel="stylesheet" href="/css/collabs.css">
 <main class="hero column">
     <input type="hidden" id="_csrf" value=<%= csrfToken %>>
     <section class="hero-body">
@@ -18,7 +19,136 @@
                 <aside id="pop-up" class="pop-up" style="display: none;">
                     <div class="pop-up-content">
                         <i class="bi bi-x-lg cancelButton" onclick="closePopup()"></i>
-                        <p>Colaborador agregado con éxito</p>
+                        <div class="fixed-grid">
+                            <div class="grid">
+                                <div class="cell">
+                                    <div>
+                                        <label class="subtitleForm">Name
+                                        </label>
+                                    </div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert name" class="line-input">
+                                    </section>
+
+                                    <div>
+                                        <label class="subtitleForm">Position</label>
+                                    </div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Position</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Department</label></div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Department</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Mail</label></div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert mail" class="line-input">
+                                    </section>
+
+                                    <div><label class="subtitleForm">Location</label></div>
+                                    <section class="input-container">
+                                        <input type="text" class="line-input">
+                                    </section>
+
+                                    <div><label class="subtitleForm">Modality</label></div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Modality</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Phone</label></div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert phone" class="line-input">
+                                    </section>
+                                </div>
+
+                                <div class="cell">
+                                    <div>
+                                        <label class="subtitleForm">Last Name</label>
+                                    </div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert last name" class="line-input">
+                                    </section>
+
+                                    <div>
+                                        <label class="subtitleForm">Second Last Name</label>
+                                    </div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert second last name" class="line-input">
+                                    </section>
+
+                                    <div><label class="subtitleForm">Role</label></div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Role</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Birthday</label></div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Birthday</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Entry Date</label></div>
+                                    <section class="input-container">
+                                        <select class="line-input dropdown">
+                                            <option value="" disabled selected>Select Entry Date</option>
+                                            <option value="Manager">Manager</option>
+                                            <option value="Engineer">Engineer</option>
+                                            <option value="Designer">Designer</option>
+                                            <option value="Intern">Intern</option>
+                                        </select>
+                                    </section>
+
+                                    <div>
+                                        <label class="subtitleForm">RFC</label>
+                                    </div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert RFC" class="line-input">
+                                    </section>
+
+                                    <div>
+                                        <label class="subtitleForm">CURP</label>
+                                    </div>
+                                    <section class="input-container">
+                                        <input type="text" placeholder="Insert CURP" class="line-input">
+                                    </section>
+
+                                    <div class="buttons">
+                                        <button class="button is-save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </aside>
             <% } %>
@@ -70,4 +200,3 @@
 </main>
 
 <%- include('includes/_footer.ejs') %>
-
