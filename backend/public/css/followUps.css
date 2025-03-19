@@ -1,0 +1,39 @@
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; /* Cambiado a vh */
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; /* Cambiado de px a vh */
+    background: transparent;
+    font-size: 2vh; /* Cambiado de px a vh */
+    color: #747474;
+    margin-bottom: 2vh; /* Cambiado de px a vh */
+    margin-top: 3vw;
+    margin-left: 30vw;
+}
+
+.input-container {
+    max-width: 12rem; 
+    width: 80%; 
+}
+
+
+.buttons {
+    position: relative;
+    width: 100%;
+    display: flex; /* Añadido flexbox */
+    justify-content: flex-end; /* Alinea los elementos al final, es decir, a la derecha */
+}
+
+.button.is-save {
+    background-color: #59A250; 
+    color: #fff; 
+    border: none; 
+    margin-top: 1vh;
+}
+
+.dropdown.is-active .dropdown-menu {
+    background-color: #747474; /* Gris claro */
+    border-radius: 5px; /* Opcional, para esquinas redondeadas */
+    padding: 0.5vh; /* Espaciado */
+}

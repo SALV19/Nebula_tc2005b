@@ -1,4 +1,15 @@
-exports.get_follow_ups = (request, response) => {
-    response.render("home_page");
-  };
-  
+const Collab = require('../models/collabs.model')
+// const QuestionsFollow = require('../models/follow_ups_questions.models')
+
+exports.get_collabs = (request, response) => {
+    Collab.fetchAll()
+    .then(([rows, fieldData]) => {
+      console.log("Datos de la tabla:", fieldData);
+      console.log("Colaboradores:", rows);
+      response.render('register_followUp', {colaboradores: rows});
+    })
+    .catch((error) => {
+      console.log(error);
+      response.status(500).send("Error al obtener colaboradores");
+    })
+};
