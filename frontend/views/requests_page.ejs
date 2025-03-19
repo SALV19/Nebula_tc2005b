@@ -1,13 +1,13 @@
-<%- include('../components/nav_bar.ejs') %>
+<%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
 <main class="hero column">
   <input type="hidden" id="_csrf" value=<%= csrfToken %>>
   <section class="hero-body">
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
-        <p class="option <%= selectedOption === 'collaboratos' ? 'selected' : ''%>">Collaboratos</p>
-        <p class="option <%= selectedOption === 'register' ? 'selected' : ''%>">Register</p>
-        <%if (permissions?.includes('register_one_on_one_comments') || (permissions?.includes('register_one_on_one') {%>
+        <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
+        <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
+        <%if (permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) {%>
           <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
           <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
         <% } else {%>
