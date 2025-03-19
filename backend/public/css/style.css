@@ -1,5 +1,26 @@
-body, section, table, thead, tr {
+body, section, table, thead, tr, footer {
   background-color: #242424;
+}
+
+body {
+  height: 102vh;
+}
+
+.example::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.example {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+footer {
+  position: absolute; 
+  top: 95%;
+  right: 0;
+  width: 100vw;
 }
 
 .pop-up {
