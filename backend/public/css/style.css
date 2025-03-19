@@ -2,6 +2,7 @@ html,
 body,
 #app {
   height: 100%;
+  background-color: #242424;
 }
 #app {
   min-height: 100%;

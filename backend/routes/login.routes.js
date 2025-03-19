@@ -20,4 +20,11 @@ router.get(
 );
 router.get("/auth/failure", log_in_routes.auth_fail);
 
+const reset_password_routes = require("../controller/reset_password.controller");
+router.get("/forgot_password", reset_password_routes.get_reset_password_request);
+router.post("/forgot_password", reset_password_routes.post_reset_password_request);
+
+router.get("/token", reset_password_routes.get_token);
+router.post("/token", reset_password_routes.post_token);
+
 module.exports = router;
