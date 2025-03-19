@@ -1,27 +1,33 @@
-<%- include('./includes/_header.ejs') %>
 <%- include('../components/nav_bar.ejs') %>
+
 <body>
     <div>
-        <!-- Main Content -->
         <main class="column is-10 p-5">
-            <div class="dropdown-trigger">
-                <button class="select-button"aria-haspopup="true" aria-controls="dropdown-menu3">
-                    <span>Click me</span>
-                    <span class="icon is-small">
-                    <i class="fas fa-angle-down" aria-hidden="true"></i>
-                    </span>
-                </button>
+            <div class="dropdown is-active"> 
+                <div class="dropdown-trigger">
+                    <button class="button" aria-haspopup="true" aria-controls="dropdown-menu3" name="collab">
+                        <span>Click me</span>
+                        <span class="icon is-small">
+                            <i class="fas fa-angle-down" aria-hidden="true"></i>
+                        </span>
+                    </button>
+                </div>
+                
+                <div class="dropdown-menu" id="dropdown-menu3" role="menu">
+                    <div class="dropdown-content">
+                        <% if (colaboradores.length > 0) { %>
+                            <% for (let i = 0; i < colaboradores.length; i++) { %>
+                                <a href="#" class="dropdown-item">
+                                    <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
+                                </a>
+                            <% } %>
+                        <% } else { %>
+                            <p class="dropdown-item">No hay colaboradores disponibles.</p>
+                        <% } %>
+                    </div>
+                </div>
             </div>
-                <% if (colaboradores.length > 0) { %>
-                    <% for (let i = 0; i < colaboradores.length; i++) { %>
-                        <a href="#" class="dropdown-item">
-                            <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
-                        </a>
-                    <% } %>
-                <% } else { %>
-                    <p class="dropdown-item">No hay colaboradores disponibles.</p>
-                <% } %>
-            
         </main>
     </div>
 </body>
+

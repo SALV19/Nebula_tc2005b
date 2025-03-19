@@ -31,24 +31,6 @@ deactivate db
 cm -->> SController : promesa
 deactivate cm 
 
-SController -> Register : response.render
-deactivate SController
-
-activate Register
-Register -> S : HTML
-deactivate Register
-
-
-' --- GET INFO OF QUESTIONS ---
-activate S
-S -> Route : GET /follow_ups
-deactivate S
-
-activate Route
-Route -> SController : getQuestions()
-deactivate Route
-
-activate SController
 SController ->> Model : fetchAll()
 
 activate Model 
@@ -59,23 +41,8 @@ deactivate db
 
 Model -->> SController : promesa
 deactivate Model 
-SController -> Register : response.render
-deactivate SController
-
-activate Register
-Register -> S : HTML
-deactivate Register
 
 ' --- GET INFO INDICADORES ---
-activate S
-S -> Route : GET /follow_ups
-deactivate S
-
-activate Route
-Route -> SController : getIndicadores()
-deactivate Route
-
-activate SController
 SController ->> Model : fetchAll()
 activate Model 
 Model ->> db : execute(SELECT * FROM indicadores)
