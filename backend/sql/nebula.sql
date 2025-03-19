@@ -252,6 +252,9 @@ CREATE TABLE `dias_solicitados` (
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
+ALTER TABLE `dias_solicitados` 
+  ADD CONSTRAINT `fk_id_solicitud_falta` FOREIGN KEY (`id_solicitud_falta`) REFERENCES `solicitudes_falta` (`id_solicitud_falta`);
+  
 --
 -- Indices de la tabla `equipo`
 --

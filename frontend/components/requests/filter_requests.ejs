@@ -1,0 +1,45 @@
+<script>
+  const checkboxes = document.querySelectorAll('input[type="checkbox"]');
+  checkboxes.forEach((checkbox) => {
+    checkbox.addEventListener("click", () => {
+      checkbox.classList.toggle("selected_box");
+    });
+  });
+
+  const start = document.querySelector("#filter_start");
+  const end = document.querySelector("#filter_end");
+
+  const cancel = document.querySelector("#cancel_filter_btn");
+  const apply = document.querySelector("#apply_filter_btn");
+
+  cancel.addEventListener("click", () => {
+    end.value = undefined;
+    start.value = undefined;
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = false;
+      checkbox.classList.remove("selected_box");
+    });
+  });
+
+  apply.addEventListener("click", () => {
+    const filter_options = {
+      start_date: start.value,
+      end_date: end.value,
+      pending: document.querySelector("#pending").checked,
+      accepted: document.querySelector("#accepted").checked,
+      denied: document.querySelector("#denied").checked,
+    }
+    
+    get_info(pagination=0, filter=filter_options)
+
+    end.value = undefined;
+    start.value = undefined;
+
+    checkboxes.forEach((checkbox) => {
+      checkbox.checked = false;
+      checkbox.classList.remove("selected_box");
+    });
+  });
+  
+</script>
