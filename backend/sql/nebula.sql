@@ -82,8 +82,8 @@ CREATE TABLE `departamento` (
 -- Estructura de tabla para la tabla `dias_feriados`
 --
 
-CREATE TABLE `dias_feriados` (
-  `id_diaFeriado` int(8) PRIMARY KEY AUTO_INCREMENT,
+CREATE TABLE `evento` (
+  `id_evento` int(8) PRIMARY KEY AUTO_INCREMENT,
   `fecha_inicio` date NOT NULL,
   `fecha_fin` date,
   `hora_inicio` time,
@@ -134,9 +134,9 @@ CREATE TABLE `evaluaciones_de_seguimiento` (
 -- Estructura de tabla para la tabla `evento`
 --
 
-CREATE TABLE `evento` (
+CREATE TABLE `tiene_evento` (
   `id_colaborador` varchar(36) NOT NULL,
-  `id_diaFeriado` int(8) NOT NULL
+  `id_evento` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -252,6 +252,9 @@ CREATE TABLE `dias_solicitados` (
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
+ALTER TABLE `dias_solicitados` 
+  ADD CONSTRAINT `fk_id_solicitud_falta` FOREIGN KEY (`id_solicitud_falta`) REFERENCES `solicitudes_falta` (`id_solicitud_falta`);
+  
 --
 -- Indices de la tabla `equipo`
 --
@@ -269,9 +272,10 @@ ALTER TABLE `evaluaciones_de_seguimiento`
 --
 -- Indices de la tabla `evento`
 --
-ALTER TABLE `evento`
-  ADD PRIMARY KEY (`id_colaborador`,`id_diaFeriado`),
-  ADD KEY `fk_evento_diaFeriado` (`id_diaFeriado`);
+
+ALTER TABLE `tiene_evento`
+  ADD PRIMARY KEY (`id_colaborador`,`id_evento`),
+  ADD KEY `fk_tieneEvento_evento` (`id_evento`);
 
 --
 -- Indices de la tabla `fa`
