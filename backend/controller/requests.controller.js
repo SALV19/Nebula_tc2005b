@@ -10,6 +10,6 @@ exports.get_requests = (request, response) => {
   })
   .catch((error) => {
     console.log(error);
-    res.status(500).send("Error al obtener colaboradores");
+    response.status(500).send("Error al obtener colaboradores");
   })
 };

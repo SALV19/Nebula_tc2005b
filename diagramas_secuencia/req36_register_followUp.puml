@@ -1,4 +1,4 @@
-@startuml REQ_26
+@startuml REQ_36
 autonumber
 actor SuperAdmin as S
 boundary general.routes.js as Route
