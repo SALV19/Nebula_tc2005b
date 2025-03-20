@@ -33,7 +33,7 @@
     font-size: 2vh;
     text-align: center;
     margin-top: 2vh;
-    margin-left: 2vw;
+    margin-left: 3.5vw;
     margin-bottom: 2vh;
 }
 
@@ -57,7 +57,7 @@
     width: 37vw;
     background: transparent;
     font-size: 2vh;
-    color: #fff;
+    color: #ABB1BF;
     margin-top: 3vh;
     display: flex;  /* Use flexbox */
     justify-content: space-between;  /* Push text to the left, icon to the right */
@@ -82,21 +82,71 @@
     padding-bottom: 0vw;
 }
 
-.progress-container {
-    width: 300px;
-    height: 20px;
-    background: #60508F;
-    border-radius: 10px;
-    margin: 10px auto;
-    overflow: hidden;
-}
-.progress-bar {
-    height: 100%;
-    width: 50%;
-    accent-color: #60508F;
-    transition: width 0.3s ease;
-}
-
 .hidden-textarea {
     display: none;
+}
+
+.column-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2vw;
+}
+
+.column{
+    flex: 1;  
+    min-width: 300px;
+}
+
+.radar-graph{
+    background-color: aliceblue;
+    height: 18vw;
+    width:20vw;
+    text-align: center;
+    margin-bottom: 1vw;
+}
+
+.progress-text{
+    text-align: justify;
+    color: #ABB1BF;
+    font-size: medium;
+}
+
+.progress-bar{
+    width: 37vw;
+}
+
+.radar-container{
+    align-items: center;
+    justify-content: center;
+    /* height: 20vw;
+    width: 20vw; */
+}
+
+.numbers-container{
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    width:37vw;
+}
+
+.numbers{
+    font-size: small;
+}
+
+.approve-button {
+    background-color: #59A250;
+    color: #FFFF;
+    width: 5vw;
+    height: 2vw;
+    border-radius: 0.5vw;
+    margin-top: 1vw;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente (opcional) */
+    height: 100px; /* Ajusta la altura según necesites */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
