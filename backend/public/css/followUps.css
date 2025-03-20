@@ -1,39 +1,102 @@
+.subtitleForm {
+    font-size: 2vh; /* Cambiado de px a vh */
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; /* Cambiado de px a vh */
+    align-items: center;
+    gap: 0.8vw; /* Cambiado de px a vw */
+}
+
 .line-input {
     border: none;
-    border-bottom: 0.04vh solid #fff; /* Cambiado a vh */
+    border-bottom: 0.04vh solid #fff;
     outline: none;
-    width: 100%;
-    padding: 0.5vh 0; /* Cambiado de px a vh */
+    width: 20vw;
     background: transparent;
-    font-size: 2vh; /* Cambiado de px a vh */
+    font-size: 2vh; 
     color: #747474;
-    margin-bottom: 2vh; /* Cambiado de px a vh */
-    margin-top: 3vw;
-    margin-left: 30vw;
 }
 
 .input-container {
-    max-width: 12rem; 
-    width: 80%; 
+    display: flex;
+    align-items: center; /* Aligns label and dropdown in one line */
+    width: 15vw;
 }
 
-
-.buttons {
-    position: relative;
-    width: 100%;
-    display: flex; /* Añadido flexbox */
-    justify-content: flex-end; /* Alinea los elementos al final, es decir, a la derecha */
+.dateLine {
+    color: #747474; /* Color del texto */
+    background: transparent;
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 20vw;
+    font-size: 2vh;
+    text-align: center;
+    margin-top: 2vh;
+    margin-left: 2vw;
+    margin-bottom: 2vh;
 }
 
-.button.is-save {
-    background-color: #59A250; 
-    color: #fff; 
-    border: none; 
-    margin-top: 1vh;
+/* Aplica un filtro blanco al icono del calendario */
+.dateLine::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Invierte los colores, haciendo el negro blanco */
 }
 
-.dropdown.is-active .dropdown-menu {
-    background-color: #747474; /* Gris claro */
-    border-radius: 5px; /* Opcional, para esquinas redondeadas */
-    padding: 0.5vh; /* Espaciado */
+.text-style{
+    text-align: center;
+}
+
+.styling {
+    margin-right: 2vw;
+}
+
+.line-questions {
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 37vw;
+    background: transparent;
+    font-size: 2vh;
+    color: #fff;
+    margin-top: 3vh;
+    display: flex;  /* Use flexbox */
+    justify-content: space-between;  /* Push text to the left, icon to the right */
+    align-items: center; /* Align text and icon vertically */
+}
+
+.hidden-textarea {
+    display: none; /* Oculto inicialmente */
+    width: 37vw;
+    height: 5vw;
+    margin-top: 1vw;
+    padding: 1vw;
+    font-size: 1.5vh;
+    background-color: #454545;
+    color: #fff;
+    resize: none;
+    border-radius: 1vw;
+}
+
+.hero-body {
+    background-color: #242424;
+    padding-bottom: 0vw;
+}
+
+.progress-container {
+    width: 300px;
+    height: 20px;
+    background: #60508F;
+    border-radius: 10px;
+    margin: 10px auto;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    width: 50%;
+    accent-color: #60508F;
+    transition: width 0.3s ease;
+}
+
+.hidden-textarea {
+    display: none;
 }

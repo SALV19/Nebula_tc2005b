@@ -5,7 +5,7 @@ module.exports = class FollowUp {
         this.question = questions;
     }
 
-    static fetchAll(){
+    static fetchAllQuestions(){
         return db.execute('SELECT pregunta FROM preguntas_evaluacion')
     }
 }

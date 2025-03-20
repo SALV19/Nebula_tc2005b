@@ -1,0 +1,97 @@
+
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      // Funcionalidad para alternar la visibilidad de los textareas
+      document.querySelectorAll(".toggle-textarea").forEach(icon => {
+        icon.addEventListener("click", function () {
+          const index = this.getAttribute("dropdown_icon");
+          const textarea = document.getElementById(`textarea-${index}`);
+          
+          // Alternar visibilidad
+          textarea.style.display = (textarea.style.display === "none" || textarea.style.display === "") ? "block" : "none";
+        });
+      });
+
+    // Manejo de selección de pestañas de los botones
+    document.querySelectorAll(".option").forEach(option => {
+      option.addEventListener("click", (event) => {
+        // Eliminar la clase 'selected' de todos
+        document.querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
+
+        // Agregar la clase 'selected' al botón clickeado
+        option.classList.add("selected");
+
+        // Obtener y mostrar el contenido del botón
+        const buttonText = option.textContent.trim();
+        console.log("Botón seleccionado:", buttonText);
+
+        // Puedes hacer algo con buttonText, como pasarlo a otra función
+        get_info(buttonText);
+      });
+    });
+
+    // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
+    function get_info(selectedOption) {
+      console.log("Ejecutando get_info con opción:", selectedOption);
+      
+      // Seleccionar el contenedor donde se mostrará el contenido
+      const contentContainer = document.getElementById("content-section");
+
+      if (selectedOption == 'Register'){
+        contentContainer.innerHTML = `
+          <section>
+            <div>
+              <label class="is-size-6 styling" for="collaborators">Employee</label>
+              <select id="collaborators" class="line-input text-style">
+                <option value="default" disabled selected>Select Collaborator</option>
+                <% if (colaboradores.length > 0) { %>
+                  <% for (let i = 0; i < colaboradores.length; i++) { %>
+                    <option value="<%= colaboradores[i].id %>">
+                      <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
+                    </option>
+                  <% } %>
+                <% } else { %>
+                      <option disabled> No hay colaboradores disponibles </option>
+                <% } %>
+              </select>
+            </div>  
+        
+            <div>
+              <label class="is-size-6 text-style styling">Date</label>
+              <input class="dateLine" type="date" id="filter_end"/>
+            </div>
+        
+            <div>
+              <% questions.forEach((p, index) => { %>
+                <div class="question-container">
+                  <p class="line-questions">
+                    <span><%= p.pregunta %></span>
+                    <i class="bi bi-caret-down-fill toggle-textarea" dropdown_icon="<%= index %>"></i>
+                  </p>
+                  <textarea class="hidden-textarea" id="textarea-<%= index %>"></textarea>
+                </div>
+              <% }) %>
+            </div>
+        
+            <div class="container">
+              <input class="progress-container progressBar" type="range" id="progressInput" min="0" max="100" value="50">
+            </div>
+              
+          </section>
+
+        `;
+      } else if (selectedOption == 'Collaborators'){
+        contentContainer.innerHTML = `
+          <h2>Collabs section</h2>
+          <p> Lol </p>
+        `;
+      } else {
+        console.log('meeting')
+        contentContainer.innerHTML = `
+          <h2>Meetings</h2>
+          
+        `;
+      }
+    }
+  });
+</script>

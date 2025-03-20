@@ -6,6 +6,7 @@ body {
   height: 102vh;
 }
 
+
 .example::-webkit-scrollbar {
   display: none;
 }
@@ -63,4 +64,5 @@ footer {
 .hero-body {
   margin-left: 8vw;
   width: 90vw;
+  position: relative; 
 }
