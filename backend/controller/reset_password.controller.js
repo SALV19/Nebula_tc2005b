@@ -1,5 +1,5 @@
 const { response } = require("express");
-const User = require("../models/user.model");
+const User = require("../models/password_token.model");
 
 
 exports.get_reset_password_request = (request, response, next) => {
