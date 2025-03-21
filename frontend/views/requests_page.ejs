@@ -1,4 +1,5 @@
 <%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/requests.css">
 <link rel="stylesheet" href="/css/table.css">
 <main class="hero column">
   <input type="hidden" id="_csrf" value=<%= csrfToken %>>
@@ -14,11 +15,74 @@
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
           <i id="openRequestForm" class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
-            <!-- Pop-up para registrar solicitud -->
+            <!-- Pop-up para registrar solicitud Prueba-->
             <div id="requestPopup" class="pop-up" style="display: none;">
               <div class="pop-up-content">
-                  <button id="closeRequestForm">X</button>
-                  <p>Este es un pop-up de prueba</p>
+                    <form action="/requests/insert_request" method="post">
+                      <!-- Tipo de solicitud -->
+                      <div class="field">
+                        <label class="label">Type of Request</label>
+                        <div class="control">
+                            <div class="select">
+                                <select id="requestType" name="requestType" required>
+                                    <option value="Vacation">Vacation</option>
+                                    <option value="Absence">Absence</option>
+                                </select>
+                            </div>
+                        </div>
+                      <!-- Fecha de inicio -->
+                      <div class="field">
+                        <label class="label">Start Date</label>
+                        <div class="control">
+                            <input type="date" id="startDate" name="startDate" class="input" required>
+                        </div>
+                      </div>
+
+                      <!-- Fecha de fin -->
+                      <div class="field">
+                        <label class="label">End Date</label>
+                        <div class="control">
+                            <input type="date" id="endDate" name="endDate" class="input" required>
+                        </div>
+                      </div>
+                    
+                      <!-- Location -->
+                      <div class="field">
+                        <label class="label">Location</label>
+                        <div class="control">
+                          <imput id="location" name="location" class="input" placeholder="Enter Location"></imput>
+                      </div>
+                      </div>
+                     
+                      <!-- Descripción (Motivo de la falta) -->
+                      <div class="field">
+                        <label class="label">Reason (Optional)</label>
+                        <div class="control">
+                            <textarea id="description" name="description" class="textarea" placeholder="Enter the reason"></textarea>
+                        </div>
+                      </div>
+                     
+                      <!-- Evidencia (Solo si la falta es mayor a 3 días) -->
+                      <div class="field" id="evidenceContainer" style="display: none;">
+                        <label class="label">Attach Evidence</label>
+                        <div class="control">
+                            <input type="file" id="evidence" name="evidence" class="input">
+                        </div>
+                      </div>
+                     
+                      <!-- Botones de acción -->
+                      <div class="field is-grouped">
+                        <div class="control">
+                            <button type="submit" class="button is-success">Save</button>
+                        </div>
+                        <div class="control">
+                            <button type="button" id="closeRequestForm" class="button is-danger">Cancel</button>
+                        </div>
+                      </div>
+                   </form>
+
+                </div>
+
               </div>
             </div>
           <i class="bi bi-funnel subtitle is-clickable dropdown" id="filter">
@@ -68,6 +132,7 @@
     </section>
 </main>
 
+<!--Para mandar ej js-->
 <script src="/js/requestForm.js"></script>
 
 <%- include('includes/_footer.ejs') %>
