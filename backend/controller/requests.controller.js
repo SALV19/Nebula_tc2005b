@@ -40,6 +40,22 @@ exports.get_abscences = (request, response) => {
   });
 }
 
+function weekendsOff(startDate, endDate) {
+  let start = new Date(startDate);
+  const end = new Date(endDate);
+  let days = [];
+
+  while (start <= end) {
+      let day = start.getDay(); // 0 = Domingo, 6 = Sábado
+      if (day !== 0 && day !== 6) {
+          days.push(day)
+      }
+      start.setDate(start.getDate() + 1); // Siguiente día
+  }
+
+  return days
+}
+
 exports.post_abscence_requests = async (request, response, next) => {
   console.log(request.body)
   console.log('requestType', request.body.requestType)
@@ -49,7 +65,9 @@ exports.post_abscence_requests = async (request, response, next) => {
   console.log('description', request.body.description)
   console.log('evidence', request.body.evidence)
 
-  await Requests.
+  const dates = weekendsOff(request.body.start, request.body.end)
+  const request_register = new Requests(request.session.email, request.body.requestType, dates, request.body.location, request.body.description, request.body.evidence)
+  await request_register.save().then(e => console.log("Success")).catch(e => console.log(e))
 
   response.send("hwrogjrfpjwes")
 }
