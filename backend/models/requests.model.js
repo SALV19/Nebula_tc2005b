@@ -11,9 +11,6 @@ module.exports = class Requests {
   }
 
   save() {
-    // return db.execute(`SELECT id_colaborador 
-    //                     FROM colaborador c 
-    //                     WHERE c.email = ?`, [this.colab_email])
     return db.execute(`INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
                     VALUES((
                       SELECT id_colaborador 
