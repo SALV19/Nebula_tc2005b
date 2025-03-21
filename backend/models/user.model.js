@@ -27,4 +27,36 @@ module.exports = class User {
       callback(err, user);
     }
   }
+
+  static async getPermissions(email) {
+    return db.execute(
+      `SELECT nombre_permiso
+        FROM colaborador c
+        JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        JOIN rol r ON r.id_rol = e.id_rol
+        JOIN rol_permisos rp ON rp.id_rol = r.id_rol
+        WHERE c.email = (?);
+      `,
+      [email]
+    );
+  }
+
+  static async getCollabsInfo(email) {
+    const colaboradores = await db.execute(`SELECT c.*
+                                          FROM colaborador c
+                                          INNER JOIN equipo e
+                                            ON e.id_colaborador = c.id_colaborador
+                                          INNER JOIN departamento d
+                                            ON d.id_departamento = e.id_departamento
+                                          WHERE d.nombre_departamento = (SELECT nombre_departamento
+                                          FROM colaborador c
+                                          INNER JOIN equipo e
+                                            ON c.id_colaborador = e.id_colaborador
+                                          INNER JOIN departamento d
+                                            ON d.id_departamento = e.id_departamento
+                                          WHERE c.email = "santialducin@gmail.com")
+                                          AND c.email <> "santialducin@gmail.com";
+                                          `);
+    return colaboradores;
+  }
 };
