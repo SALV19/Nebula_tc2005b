@@ -1,4 +1,4 @@
-body, section, table, thead, tr, footer {
+body, section, table, thead, tr {
   background-color: #242424;
 }
 
@@ -41,4 +41,11 @@ footer {
   border-radius: 30px;
   width: 40%;
   height: 60%;
+}
+
+
+.hero-body {
+  margin-left: 8vw;
+  width: 90vw;
+  position: relative; 
 }

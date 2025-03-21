@@ -39,8 +39,12 @@
       else if (d.estado == 2) {
         table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
       }
-      table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
-      table_content += '</tr>';
+      table_content += `
+            <td>
+              <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>
+              <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+            </td>
+          </tr>`;
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
@@ -79,6 +83,23 @@
     })
 
   }
+
+    // Agregar eventos de clic a los íconos después de que existan en el DOM
+    document.querySelectorAll('.accept-icon').forEach(icon => {
+      icon.addEventListener('click', function () {
+        const requestId = this.getAttribute('data-id'); 
+        alert(`Has aceptado la solicitud con ID: ${requestId}`);
+        sendRequestStatus(requestId, 1); // Enviar estado aceptado (1)
+      });
+    });
+
+    document.querySelectorAll('.deny-icon').forEach(icon => {
+      icon.addEventListener('click', function () {
+        const requestId = this.getAttribute('data-id');
+        alert(`Has denegado la solicitud con ID: ${requestId}`);
+        sendRequestStatus(requestId, 2); // Enviar estado denegado (2)
+      });
+    });
 
   // Consulta a db para la información de solicitudes
   const get_info = (pagination=0, filter=null) => {
