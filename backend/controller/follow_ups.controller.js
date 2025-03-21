@@ -1,6 +1,7 @@
 const Collab = require('../models/collabs.model');
-const QuestionsFollow = require('../models/followUp.model');
+const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
+const Questions = require('../models/questions_answers.model');
 
 let settings = {
   selectedOption: 'active',
@@ -9,22 +10,15 @@ let settings = {
 exports.get_requests = async (request, response) => {
   try {
     // Ejecuta ambas consultas en paralelo y espera sus resultados
-    const [collabsData, questionsData, indicatorsData] = await Promise.all([
+    const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
       Collab.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
       Indicator.fetchAllindicators(),
     ]);
 
-    // Extrae las filas de cada consulta
     const [rows, fieldData] = collabsData;
     const [rows_ques, fieldData_ques] = questionsData;
     const [rows_indi, fieldData_indi] = indicatorsData;
-
-    // console.log("Datos de la tabla de colaboradores:", fieldData);
-    console.log("Colaboradores:", rows);
-    // console.log("Datos de la tabla de preguntas:", fieldData_ques);
-    console.log("Preguntas:", rows_ques);
-    console.log("indicadores:", rows_indi);
 
 
     response.render("register_followUp", {
@@ -41,26 +35,25 @@ exports.get_requests = async (request, response) => {
   }
 };
 
-exports.post_follow_ups = (req, res) => {
+exports.post_follow_ups = async (req, res) => {
   console.log(req.body);
+  try {
+    // Crear la evaluación y esperar su guardado
+    const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
+    await evaluation.save();
 
-  const collabID = req.body["selected-collab"];
-  const date = req.body["date-selected"];
+    // Ahora podemos acceder al ID generado
+    const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
+    console.log(id_evaluation);
 
-  const answers = Object.keys(req.body).filter(key => key.startsWith("answer-questions-")).map(key => ({
-    preguntaId: key.replace("answer-questions-", ""),
-    respuesta: req.body[key]
-  }));
+    // Crear y guardar respuestas
+    const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
+    await answer_questions.save(); 
 
-  const indicadores = Object.keys(req.body).filter(key => key.startsWith("value-radar-")).map(key => ({
-      indicadorId: key.replace("value-radar-", ""),
-      valor: req.body[key]
-  }));
-
-  console.log("Colaborador:", colaboradorId);
-  console.log("Fecha:", fecha);
-  console.log("Respuestas:", respuestas);
-  console.log("Indicadores:", indicadores);
-
-
+    // Redirigir después de completar las operaciones
+    res.redirect('/follow_ups');
+  } catch (error) {
+    console.error(error);
+    res.status(500).send("Error al guardar la evaluación");
+  };
 }
