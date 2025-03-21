@@ -16,7 +16,12 @@ module.exports = class Requests {
                       SELECT id_colaborador 
                       FROM colaborador c 
                       WHERE c.email = ?
-                    ), ?, ?, ?, ?, ?)`, [this.colab_email, 0, this.type, this.location, this.reason, this.evidence ]);
+                    ), ?, ?, ?, ?, ?)`, [this.colab_email, 0, this.type, this.reason, this.location,  this.evidence ]);
+  }
+  saveDates(id, idx) {
+    console.log("ID/Date", id, this.dates[idx])
+    return db.execute(`INSERT INTO dias_solicitados(id_solicitud_falta, fecha)
+                      VALUES (?, ?)`, [id, this.dates[idx]])
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {

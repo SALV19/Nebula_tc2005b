@@ -1,8 +1,8 @@
-const Requests = require('../models/requests.model')
+const Requests = require("../models/requests.model");
 
 let settings = {
-  selectedOption: 'vacations',
-}
+  selectedOption: "vacations",
+};
 
 exports.get_requests = (request, response) => {
   response.render("requests_page", {
@@ -12,68 +12,84 @@ exports.get_requests = (request, response) => {
   });
 };
 
-exports.get_collabs_requests = async (request, response) => {  
-  settings.selectedOption = 'requests'
+exports.get_collabs_requests = async (request, response) => {
+  settings.selectedOption = "requests";
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
-  const requests = await Requests.fetchRequests(request.session.email, offset, filter)
-    .then(data =>  data)
-    .catch(e => console.log(e))
+  const requests = await Requests.fetchRequests(
+    request.session.email,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.log(e));
   // console.log(requests)
   response.json({
-    selectedOption: 'requests',
+    selectedOption: "requests",
     requests: requests,
   });
-}
+};
 
-exports.get_vacations = (request, response) => {  
-  settings.selectedOption = 'vacations'
+exports.get_vacations = (request, response) => {
+  settings.selectedOption = "vacations";
   response.json({
     selectedOption: settings.selectedOption,
   });
-}
-exports.get_abscences = (request, response) => {  
-  settings.selectedOption = 'vacations'
-  
+};
+exports.get_abscences = (request, response) => {
+  settings.selectedOption = "vacations";
+
   response.json({
     selectedOption: settings.selectedOption,
   });
-}
+};
 
 function weekendsOff(startDate, endDate) {
-  console.log(startDate)
+  console.log(startDate);
   let start = new Date(startDate);
   const end = new Date(endDate);
   let days = [];
-  console.log(start)
-  console.log(end)
-  console.log(start <= end)
   while (start <= end) {
-      let day = start.getDay(); // 0 = Domingo, 6 = Sábado
-      if (day !== 5 && day !== 6) {
-          days.push(new Date(start))
-      }
-      console.log(start)
-      start.setDate(start.getDate() + 1); // Siguiente día
-      console.log(start)
+    let day = start.getDay(); // 0 = Domingo, 6 = Sábado
+    if (day !== 5 && day !== 6) {
+      console.log(day)
+      days.push(new Date(start).toISOString().split('T')[0]);
+    }
+    start.setDate(start.getDate() + 1); // Siguiente día
   }
-
   console.log(days)
-  return days
+  return days;
 }
 
 exports.post_abscence_requests = async (request, response, next) => {
-  console.log(request.body)
-  console.log('requestType', request.body.requestType)
-  console.log('startDate', request.body.startDate)
-  console.log('endDate', request.body.endDate)
-  console.log('location', request.body.location)
-  console.log('description', request.body.description)
-  console.log('evidence', request.body.evidence)
+  console.log(request.body);
 
-  const dates = weekendsOff(request.body.startDate, request.body.endDate)
-  // const request_register = new Requests(request.session.email, request.body.requestType, dates, request.body.location, request.body.description, request.body.evidence)
-  // await request_register.save().then(e => console.log("Success")).catch(e => console.log(e))
+  const daysOff = weekendsOff(request.body.startDate, request.body.endDate);
+  const request_register = new Requests(
+    request.session.email,
+    request.body.requestType,
+    daysOff,
+    request.body.location,
+    request.body.description,
+    request.body.evidence
+  );
+  if (true) {
+    await request_register
+      .save()
+      .then(async (e) => {
+        for (i in daysOff) {
+          await request_register
+          .saveDates(e[0].insertId, i)
+          .then((e) => e)
+          .catch((e) => {
+            console.log(e);
+            return e;
+          });
+        }
+      })
+      .catch((e) => console.log(e));
 
-  response.redirect("/requests")
-}
+  }
+
+  response.redirect("/requests");
+};
