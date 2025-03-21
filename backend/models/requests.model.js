@@ -1,8 +1,8 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor() {
-
+  constructor(type, start, end, location, reason, evidence) {
+    
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {

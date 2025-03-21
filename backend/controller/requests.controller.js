@@ -39,3 +39,17 @@ exports.get_abscences = (request, response) => {
     selectedOption: settings.selectedOption,
   });
 }
+
+exports.post_abscence_requests = async (request, response, next) => {
+  console.log(request.body)
+  console.log('requestType', request.body.requestType)
+  console.log('startDate', request.body.startDate)
+  console.log('endDate', request.body.endDate)
+  console.log('location', request.body.location)
+  console.log('description', request.body.description)
+  console.log('evidence', request.body.evidence)
+
+  await Requests.
+
+  response.send("hwrogjrfpjwes")
+}

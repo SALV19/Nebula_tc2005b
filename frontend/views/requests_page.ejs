@@ -19,6 +19,7 @@
             <div id="requestPopup" class="pop-up" style="display: none;">
               <div class="pop-up-content">
                     <form action="/requests/insert_request" method="post">
+                      <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
                       <!-- Tipo de solicitud -->
                       <div class="field">
                         <label class="label">Type of Request</label>
@@ -50,7 +51,7 @@
                       <div class="field">
                         <label class="label">Location</label>
                         <div class="control">
-                          <imput id="location" name="location" class="input" placeholder="Enter Location"></imput>
+                          <input id="location" name="location" class="input" placeholder="Enter Location"></input>
                       </div>
                       </div>
                      
