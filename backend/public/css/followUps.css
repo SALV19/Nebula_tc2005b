@@ -91,19 +91,13 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 2vw;
+    font-size: small;
 }
 
 .column{
-    flex: 1;  
-    min-width: 300px;
-}
-
-.radar-graph{
-    background-color: aliceblue;
-    height: 18vw;
-    width:20vw;
-    text-align: center;
-    margin-bottom: 1vw;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
 }
 
 .progress-text{
@@ -113,21 +107,21 @@
 }
 
 .progress-bar{
-    width: 37vw;
+    width: 40vw;
 }
 
-.radar-container{
-    align-items: center;
-    justify-content: center;
-    /* height: 20vw;
-    width: 20vw; */
+.radar-container {
+    display: flex;
+    justify-content: center;  
+    align-items: center;     
+    width: 100%;
 }
-
+  
 .numbers-container{
     display: flex;
     justify-content: space-between;
     position: relative;
-    width:37vw;
+    width:40vw;
 }
 
 .numbers{
@@ -150,3 +144,23 @@
     height: 100px; /* Ajusta la altura según necesites */
     width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
+
+canvas {
+    max-width: 22vw;
+    max-height: 22vw;
+    width: 100%; 
+    height: auto;
+}
+
+.hidden-content {
+    display: none; 
+    background-color: #454545;
+    border-radius: 5px;
+    width: 37vw;
+    height: 5vw;
+    color: #EEEEEE;
+  }
+  
+  .hidden-content.show {
+    display: block;
+  }

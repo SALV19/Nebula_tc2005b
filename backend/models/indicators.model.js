@@ -6,6 +6,6 @@ module.exports = class Indicators {
     }
 
     static fetchAllindicators(){
-        return db.execute('SELECT indicador FROM indicador')
+        return db.execute('SELECT * FROM indicador')
     }
 }

@@ -6,6 +6,6 @@ module.exports = class Collab {
     }
 
     static fetchAllCompleteName(){
-        return db.execute('SELECT nombre, apellidos FROM colaborador')
+        return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador')
     }
 }
