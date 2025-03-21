@@ -13,7 +13,14 @@
         <% } else {%>
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
-          <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
+          <i id="openRequestForm" class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
+            <!-- Pop-up para registrar solicitud -->
+            <div id="requestPopup" class="pop-up" style="display: none;">
+              <div class="pop-up-content">
+                  <button id="closeRequestForm">X</button>
+                  <p>Este es un pop-up de prueba</p>
+              </div>
+            </div>
           <i class="bi bi-funnel subtitle is-clickable dropdown" id="filter">
             <div class="dropdown-content">
               <div class="is-flex">
@@ -60,6 +67,8 @@
       <%- include ('../components/requests/filter_requests.ejs') %>
     </section>
 </main>
+
+<script src="/js/requestForm.js"></script>
 
 <%- include('includes/_footer.ejs') %>
 
