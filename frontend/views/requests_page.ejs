@@ -54,7 +54,7 @@
                           <input id="location" name="location" class="input" placeholder="Enter Location"></input>
                       </div>
                       </div>
-                     
+
                       <!-- Descripción (Motivo de la falta) -->
                       <div class="field">
                         <label class="label">Reason (Optional)</label>
@@ -62,7 +62,7 @@
                             <textarea id="description" name="description" class="textarea" placeholder="Enter the reason"></textarea>
                         </div>
                       </div>
-                     
+
                       <!-- Evidencia (Solo si la falta es mayor a 3 días) -->
                       <div class="field" id="evidenceContainer" style="display: none;">
                         <label class="label">Attach Evidence</label>
@@ -70,7 +70,7 @@
                             <input type="file" id="evidence" name="evidence" class="input">
                         </div>
                       </div>
-                     
+
                       <!-- Botones de acción -->
                       <div class="field is-grouped">
                         <div class="control">
@@ -130,6 +130,7 @@
       </div>
       <%- include ('../components/requests/consult_requests_logic.ejs') %>
       <%- include ('../components/requests/filter_requests.ejs') %>
+      <%- include ('../components/requests/verify_days_off.ejs') %>
     </section>
 </main>
 

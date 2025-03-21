@@ -1,13 +1,13 @@
 const Requests = require("../models/requests.model");
 
-let settings = {
-  selectedOption: "vacations",
-};
-
 exports.get_requests = (request, response) => {
+  
+  await 
+  
   response.render("requests_page", {
-    ...settings,
+    selectedOption: "vacations",
     permissions: request.session.permissions,
+    days_off: days_off,
     csrfToken: request.csrfToken(),
   });
 };
