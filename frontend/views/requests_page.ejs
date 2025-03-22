@@ -1,4 +1,5 @@
 <%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/css/requests.css">
 <link rel="stylesheet" href="/css/table.css">
 <main class="hero column">
@@ -68,6 +69,13 @@
                         <label class="label">Attach Evidence</label>
                         <div class="control">
                             <input type="file" id="evidence" name="evidence" class="input">
+
+                            <p id="evidenceNote" class="help is-danger" style="display: none;">
+                              <span class="icon is-small has-text-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                              </span>
+                              La evidencia es obligatoria.
+                            </p>
                         </div>
                       </div>
 
@@ -80,7 +88,7 @@
                             <button type="button" id="closeRequestForm" class="button is-danger">Cancel</button>
                         </div>
                       </div>
-                   </form>
+                    </form>
 
                 </div>
 

@@ -14,36 +14,58 @@
         return;
     }
 
-    // Abrir pop-up
+    // Abrir el formulario
     openBtn.addEventListener("click", () => {
         requestPopup.style.display = "flex";
     });
 
-    // Cerrar pop-up
+    // Cerrar el formulario
     closeBtn.addEventListener("click", () => {
         requestPopup.style.display = "none";
     });
   });
 
-   // Mostrar evidencia si es ausencia > 3 días
-    function checkEvidenceRequirement() {
-        if (requestType.value === "Absence") {
-            const start = new Date(startDate.value);
-            const end = new Date(endDate.value);
-            const diffDays = (end - start) / (1000 * 60 * 60 * 24); // Diferencia en días
+   // Función para contar días hábiles (sin sábados ni domingos)
+    function weekendsoff(start, end) {
+    let current = new Date(start);
+    const endDate = new Date(end);
+    let count = 0;
 
-            if (diffDays >= 3) {
-                evidenceContainer.style.display = "block";
-            } else {
-                evidenceContainer.style.display = "none";
-            }
-        } else {
-            evidenceContainer.style.display = "none";
-        }
+    while (current <= endDate) {
+      const day = current.getDay(); // 0 = domingo, 6 = sábado
+      if (day !== 0 && day !== 6) {
+        count++;
+      }
+      current.setDate(current.getDate() + 1);
     }
 
-    requestType.addEventListener("change", checkEvidenceRequirement);
-    startDate.addEventListener("change", checkEvidenceRequirement);
-    endDate.addEventListener("change", checkEvidenceRequirement);
+    return count;
+  }
+
+  // Mostrar o esconder el campo de evidencia
+  function checkEvidenceRequirement() {
+    const type = requestType.value;
+    const start = startDate.value;
+    const end = endDate.value;
+
+    if (type === "Absence" && start && end) {
+      const businessDays = weekendsoff(start, end);
+      if (businessDays > 3) {
+        evidenceContainer.style.display = "block";
+        evidenceNote.style.display = "block"; // Muestra la leyenda
+      } else {
+        evidenceContainer.style.display = "none";
+        evidenceNote.style.display = "none"; // Oculta si no aplic
+      }
+    } else {
+      evidenceContainer.style.display = "none";
+      evidenceNote.style.display = "none";
+    }
+  }
+
+  // 👉 Ejecutar checkEvidenceRequirement cuando cambian los campos
+  requestType.addEventListener("change", checkEvidenceRequirement);
+  startDate.addEventListener("change", checkEvidenceRequirement);
+  endDate.addEventListener("change", checkEvidenceRequirement);
 
 </script>
