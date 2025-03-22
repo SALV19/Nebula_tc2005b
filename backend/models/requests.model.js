@@ -71,9 +71,9 @@ module.exports = class Requests {
       }
       query += 'GROUP BY sf.id_solicitud_falta '
       if (filter.start_date) {
-        query += `HAVING MIN(ds.fecha) > '${filter.start_date}' `
+        query += `HAVING MIN(ds.fecha) >= '${filter.start_date}' `
         if (filter.end_date) {
-          query += `AND MAX(ds.fecha) < '${filter.end_date}' `
+          query += `AND MAX(ds.fecha) <= '${filter.end_date}' `
         }
       }
       else if (filter.end_date) {
@@ -81,6 +81,7 @@ module.exports = class Requests {
       }
       query += `ORDER BY sf.estado ASC
                 LIMIT 10 OFFSET ?`
+      console.log(query)
       return db.execute(query, [email, offset])
     }
   }
