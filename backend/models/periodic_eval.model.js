@@ -8,7 +8,7 @@ module.exports = class Evaluation {
 
     // Esperamos a que la consulta termine antes de continuar con la ejecución
     async save() {
-        const [result] = await db.execute(
+        const [result] = await db.query(
             'INSERT INTO evaluaciones_de_seguimiento (id_colaborador, fechaAgendada) VALUES (?, ?)',
             [this.collab, this.date]
         );

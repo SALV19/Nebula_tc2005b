@@ -33,7 +33,7 @@
                 </div>  
 
                 <div>
-                  <label class="is-size-6 text-style styling">Date</label>
+                  <label class="is-size-6 styling">Date</label>
                   <input class="dateLine" type="date" id="filter_end" name="fechaAgendada"/>
                 </div>
                 
@@ -67,7 +67,8 @@
                   <% for(let i = 0; i < indicator.length; i++) { %>
                     <div class="container">
                       <p class="progress-text"> <%= indicator[i].indicador %> </p>
-                      <input class="progress-bar" name="value-radar-<%= indicator[i].id %>" type="range" min="0" max="5" value="0">
+                      <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
+                      <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
                     </div>
 
                     <div class="numbers-container">
