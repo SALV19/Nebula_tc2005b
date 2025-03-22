@@ -160,6 +160,7 @@ canvas {
     width: 37vw;
     height: 5vw;
     color: #EEEEEE;
+    margin-top: 1vw;
   }
   
   .hidden-content.show {

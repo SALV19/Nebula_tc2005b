@@ -41,8 +41,16 @@
       }
       table_content += `
             <td>
-              <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>
-              <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+              <form action="/requests" method="POST">
+                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+                <input type="hidden" name="id_solicitud_falta" value="${d.id_solicitud_falta}">
+                <button type="submit" name="estado" value="1">
+                  <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
+                </button>
+                <button ype="submit" name="estado" value="2">
+                  <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+                </button>
+              </form>
             </td>
           </tr>`;
       // Contenido desplegable
@@ -74,6 +82,13 @@
     entries.forEach((node, idx) => {
       node.addEventListener('click', (v) => {
         const additionalRow = document.getElementById(`additional-row-${idx}`)
+        
+        // hacer que en los botones de aceptar o rechazar no se expanda la vista
+        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
+        if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
+          return;
+        }
+
         if (additionalRow.style.display === "none") {
           additionalRow.style.display = "table-row";
         } else {
@@ -83,23 +98,6 @@
     })
 
   }
-
-    // Agregar eventos de clic a los íconos después de que existan en el DOM
-    document.querySelectorAll('.accept-icon').forEach(icon => {
-      icon.addEventListener('click', function () {
-        const requestId = this.getAttribute('data-id'); 
-        alert(`Has aceptado la solicitud con ID: ${requestId}`);
-        sendRequestStatus(requestId, 1); // Enviar estado aceptado (1)
-      });
-    });
-
-    document.querySelectorAll('.deny-icon').forEach(icon => {
-      icon.addEventListener('click', function () {
-        const requestId = this.getAttribute('data-id');
-        alert(`Has denegado la solicitud con ID: ${requestId}`);
-        sendRequestStatus(requestId, 2); // Enviar estado denegado (2)
-      });
-    });
 
   // Consulta a db para la información de solicitudes
   const get_info = (pagination=0, filter=null) => {

@@ -1,8 +1,13 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor() {
-
+  constructor(id_solicitud, id_collab, estado, tipo_falta, descripcion, ubicacion, evidencia) {
+    this.sol = id_solicitud;
+    this.colllab = id_collab;
+    this.esta = estado;
+    this.tipo = tipo_falta;
+    this.descripcion = descripcion;
+    this.ubi = ubicacion;
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {
@@ -110,4 +115,12 @@ module.exports = class Requests {
       return Requests.fetchAllRequests(offset, filter)
     }
   }
+
+  static save_State(estado, id_solicitud_falta){
+    return db.execute(
+      'UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?',
+      [estado, id_solicitud_falta]
+    );  
+  }
+
 }

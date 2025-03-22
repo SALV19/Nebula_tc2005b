@@ -39,3 +39,24 @@ exports.get_abscences = (request, response) => {
     selectedOption: settings.selectedOption,
   });
 }
+
+exports.update_estado = async (req, res) => {
+  console.log(req.body);
+
+  Requests.save_State(req.body.estado, req.body.id_solicitud_falta)
+  .then(()=>{
+    res.redirect("/requests");
+  })
+  .catch((error) => {
+    console.error(error);
+    res.status(500).send("Error al guardar la evaluación");
+  })
+
+  // try {
+  //   await Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
+  //   res.redirect("/requests");
+
+  // } catch(error){
+    
+  // }
+}
