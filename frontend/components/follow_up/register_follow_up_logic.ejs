@@ -10,42 +10,52 @@
       const contentContainer = document.getElementById("content-section");
       if (selectedOption == 'Register'){
         contentContainer.innerHTML = `
-          <form id="follow_ups" action="/follow_ups" method="POST">
+          <form action="/follow_ups" method="POST">
             <input type="hidden" name="_csrf" value="<%= csrfToken %>">
             <div class="column-container">
               <section class='column'>
-                <div>
+                <div name="nombre">
                   <label class="is-size-6 styling" for="collaborators">Employee</label>
-                  <select id="collaborators" class="line-input text-style" name="select-collab">
+                  <select id="collaborators" class="line-input text-style" name="id_colaborador">
                     <option value="default" disabled selected>Select Collaborator</option>
                     <% if (colaboradores.length > 0) { %>
+
                       <% for (let i = 0; i < colaboradores.length; i++) { %>
-                        <option value="<%= colaboradores[i].id %>">
+                        <option value="<%= colaboradores[i].id_colaborador %>">
                           <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
                         </option>
                       <% } %>
                     <% } else { %>
                       <option disabled> No hay colaboradores disponibles </option>
                     <% } %>
+
                   </select>
                 </div>  
 
                 <div>
-                  <label class="is-size-6 text-style styling">Date</label>
-                  <input class="dateLine" type="date" id="filter_end" name="date-selected"/>
+                  <label class="is-size-6 styling">Date</label>
+                  <input class="dateLine" type="date" id="filter_end" name="fechaAgendada"/>
                 </div>
                 
                 <div id="questions-container">
                   <% for(let i = 0; i < questions.length; i++) { %>
                     <div class="question-container">
                       <p class="line-questions">
-                        <span><%= questions[i].pregunta %></span>
+                        <span>
+                          <%= questions[i].pregunta %>
+                        </span>
                         <i class="bi bi-caret-down-fill toggle-icon"></i>
                       </p>
-                      <input class="hidden-content" name="answer-question-<%= questions[i].id %>"></input>
+
+                      <!-- Campo oculto para enviar el ID de la pregunta -->
+                      <input type="hidden" name="id_pregunta" value="<%= questions[i].id_pregunta %>">
+
+                      <!-- Campo de entrada para la respuesta -->
+                      <input class="hidden-content" name="respuesta" placeholder="Escribe tu respuesta aquí">
                     </div>
                   <% } %>
                 </div>
+
               </section>
 
               <section class='column'>
@@ -57,7 +67,29 @@
                   <% for(let i = 0; i < indicator.length; i++) { %>
                     <div class="container">
                       <p class="progress-text"> <%= indicator[i].indicador %> </p>
-                      <input class="progress-bar" name="value-radar-<%= indicator[i].id %>" type="range" min="0" max="5" value="0">
+                      <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
+                      <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+                    </div>
+
+                    <div class="numbers-container">
+                      <p class="numbers">
+                        0
+                      </p>
+                      <p class="numbers">
+                        1
+                      </p>
+                      <p class="numbers">
+                        2
+                      </p>
+                      <p class="numbers">
+                        3
+                      </p>
+                      <p class="numbers">
+                        4
+                      </p>
+                      <p class="numbers">
+                        5
+                      </p>
                     </div>
                   <% } %> 
                 </div>
@@ -70,31 +102,31 @@
           </form>
 
         `;
-        
-        document.getElementById("questions-container").addEventListener("click", (event) => {
-          if (event.target.classList.contains("toggle-icon")){
+
+        document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
+          toggleIcon.addEventListener("click", (event) => {
             const questionContainer = event.target.closest(".question-container");
             const hiddenContent = questionContainer.querySelector(".hidden-content");
+
             hiddenContent.classList.toggle("show");
-          }
-        })
+          });
+        });
 
 
         const progressBars = document.querySelectorAll(".progress-bar");
-        console.log(progressBars);
+        // console.log(progressBars);
         const progressTexts = document.querySelectorAll(".progress-text");
-        console.log(progressTexts);
+        // console.log(progressTexts);
         const indicatorLabels = [];
         for (let i = 0; i < progressTexts.length; i++){
           indicatorLabels.push(progressTexts[i].textContent.trim());
         }
-        console.log(indicatorLabels);
+        // console.log(indicatorLabels);
 
         let indicatorValues = new Array(indicatorLabels.length).fill(0);
-        console.log(indicatorValues);
+        // console.log(indicatorValues);
 
         const ctx = document.getElementById("myRadarChart").getContext("2d");
-        console.log(ctx);
         const radar = new Chart(ctx, { 
           type: 'radar',
           data: {
@@ -134,8 +166,7 @@
             }
           } 
         });
-        // console.log('R:', radar);
-
+        
         function updateChart(){
           radar.data.datasets[0].data = indicatorValues;
           radar.update();
@@ -166,12 +197,11 @@
 
         // Obtener y mostrar el contenido del botón
         const buttonText = option.textContent.trim();
-        console.log("Botón seleccionado:", buttonText);
+        // console.log("Botón seleccionado:", buttonText);
 
-        // Puedes hacer algo con buttonText, como pasarlo a otra función
         get_info(buttonText);
       });
     });
-   
+
   });
 </script>

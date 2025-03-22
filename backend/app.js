@@ -28,7 +28,7 @@ app.use(
   })
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const csrf = require('csurf');
 const csrfProtection = csrf();
