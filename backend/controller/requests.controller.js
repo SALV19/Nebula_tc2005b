@@ -2,12 +2,12 @@ const Requests = require("../models/requests.model");
 
 exports.get_requests = (request, response) => {
   
-  await 
+  //await 
   
   response.render("requests_page", {
     selectedOption: "vacations",
     permissions: request.session.permissions,
-    days_off: days_off,
+    //days_off: days_off,
     csrfToken: request.csrfToken(),
   });
 };

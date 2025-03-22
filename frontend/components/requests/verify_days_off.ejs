@@ -3,9 +3,13 @@
     const openBtn = document.getElementById("openRequestForm");
     const closeBtn = document.getElementById("closeRequestForm");
     const requestPopup = document.getElementById("requestPopup");
-
+    const requestType = document.getElementById("requestType");
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+    const evidenceContainer = document.getElementById("evidenceContainer");
+    
     // Verifica si los elementos existen
-    if (!openBtn || !closeBtn || !requestPopup) {
+    if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer) {
         console.error("Error: No se encontraron los elementos del pop-up.");
         return;
     }
@@ -21,5 +25,25 @@
     });
   });
 
+   // Mostrar evidencia si es ausencia > 3 días
+    function checkEvidenceRequirement() {
+        if (requestType.value === "Absence") {
+            const start = new Date(startDate.value);
+            const end = new Date(endDate.value);
+            const diffDays = (end - start) / (1000 * 60 * 60 * 24); // Diferencia en días
+
+            if (diffDays >= 3) {
+                evidenceContainer.style.display = "block";
+            } else {
+                evidenceContainer.style.display = "none";
+            }
+        } else {
+            evidenceContainer.style.display = "none";
+        }
+    }
+
+    requestType.addEventListener("change", checkEvidenceRequirement);
+    startDate.addEventListener("change", checkEvidenceRequirement);
+    endDate.addEventListener("change", checkEvidenceRequirement);
 
 </script>
