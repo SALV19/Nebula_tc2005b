@@ -13,6 +13,70 @@
         }
     }
 
+    function validateRFC() {
+        const rfcInput = document.getElementById("rfc-input");
+        const rfcpError = document.getElementById("rfc-error");
+    
+        if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
+            rfcpError.style.display = "block"; 
+        } else {
+            rfcpError.style.display = "none";
+        }
+    }
+    
+    function validateCURP() {
+        const curpInput = document.getElementById("curp-input");
+        const curpError = document.getElementById("curp-error");
+    
+        if (curpInput.value.length !== 18) {
+            curpError.style.display = "block"; 
+        } else {
+            curpError.style.display = "none";
+        }
+    }
+
+    const rfcInput = document.querySelector('input[placeholder="Insert RFC"]');
+    rfcInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+    const curpInput = document.querySelector('input[placeholder="Insert CURP"]');
+    curpInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+        
+    function validateMail() {    
+        const mailInput = document.getElementById("mail-input");
+        const mailError = document.getElementById("mail-error");
+        const validDomain = /@nuclea\.solutions$/;
+
+            if (!validDomain.test(mailInput.value)) {
+                mailError.style.display = "block";
+            } else {
+                mailError.style.display = "none";
+            }
+    }
+
+    function validatePhone() {
+        const phoneInput = document.getElementById("phone-input");
+        const phoneError = document.getElementById("phone-error");
+        
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+        if (phoneInput.value.length < 10 || phoneInput.value.length > 15){
+            phoneError.style.display = "block"; 
+        } else {
+            phoneError.style.display = "none";
+        }
+    }
+
+    
+
+
+
+
+
+
+
     // function createTableRequests(data) {
     // const table = document.querySelector('#requests_table')
     // let table_content = `<thead>

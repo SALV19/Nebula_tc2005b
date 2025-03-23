@@ -3,3 +3,21 @@ body, section, table, thead, tr {
   font-family: "Montserrat", sans-serif;
   font-style: normal;
 }
+
+.dateLine {
+  color: #747474; /* Color del texto */
+  background: transparent;
+  border: none;
+  border-bottom: 0.04vh solid #fff;
+  outline: none;
+  width: 100%;
+  padding: 0.5vh 0;
+  font-size: 2vh;
+  text-align: center;
+  margin-bottom: 2vh;
+}
+
+/* 🔹 Aplica un filtro blanco al icono del calendario */
+.dateLine::-webkit-calendar-picker-indicator {
+  filter: invert(1); /* Invierte los colores, haciendo el negro blanco */
+}

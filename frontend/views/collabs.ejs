@@ -15,186 +15,21 @@
             <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
             <% } %>
             <%if (permissions?.includes('add_collabs')) {%>
-            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
-                <aside id="pop-up" class="pop-up" style="display: none;">
-                    <div class="pop-up-content">
-                        <i class="bi bi-x-lg cancelButton" onclick="closePopup()"></i>
-                        <div class="fixed-grid">
-                            <div class="grid">
-                                <div class="cell">
-                                    <div>
-                                        <label class="subtitleForm">Name
-                                        </label>
-                                    </div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert name" class="line-input">
-                                    </section>
-
-                                    <div>
-                                        <label class="subtitleForm">Position</label>
-                                    </div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Position</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div><label class="subtitleForm">Department</label></div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Department</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div><label class="subtitleForm">Mail</label></div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert mail" class="line-input">
-                                    </section>
-
-                                    <div><label class="subtitleForm">Location</label></div>
-                                    <section class="input-container">
-                                        <input type="text" class="line-input">
-                                    </section>
-
-                                    <div><label class="subtitleForm">Modality</label></div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Modality</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div><label class="subtitleForm">Phone</label></div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert phone" class="line-input">
-                                    </section>
-                                </div>
-
-                                <div class="cell">
-                                    <div>
-                                        <label class="subtitleForm">Last Name</label>
-                                    </div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert last name" class="line-input">
-                                    </section>
-
-                                    <div>
-                                        <label class="subtitleForm">Second Last Name</label>
-                                    </div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert second last name" class="line-input">
-                                    </section>
-
-                                    <div><label class="subtitleForm">Role</label></div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Role</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div><label class="subtitleForm">Birthday</label></div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Birthday</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div><label class="subtitleForm">Entry Date</label></div>
-                                    <section class="input-container">
-                                        <select class="line-input dropdown">
-                                            <option value="" disabled selected>Select Entry Date</option>
-                                            <option value="Manager">Manager</option>
-                                            <option value="Engineer">Engineer</option>
-                                            <option value="Designer">Designer</option>
-                                            <option value="Intern">Intern</option>
-                                        </select>
-                                    </section>
-
-                                    <div>
-                                        <label class="subtitleForm">RFC</label>
-                                    </div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert RFC" class="line-input">
-                                    </section>
-
-                                    <div>
-                                        <label class="subtitleForm">CURP</label>
-                                    </div>
-                                    <section class="input-container">
-                                        <input type="text" placeholder="Insert CURP" class="line-input">
-                                    </section>
-
-                                    <div class="buttons">
-                                        <button class="button is-save">Save</button>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </aside>
+                <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
+                <%- include('includes/_addCollabs_form.ejs') %>
             <% } %>
-            <i class="bi bi-funnel subtitle is-clickable dropdown" id="filter">
-                <div class="dropdown-content">
-                <div class="is-flex">
-                    <div>
-                    <label class="is-size-6">Start-date</label>
-                    <input type="date" id="filter_start" class="mr-2"/>
-                    </div>
-                    <div>
-                    <label class="is-size-6">End-date</label>
-                    <input type="date" id="filter_end"/>
-                    </div>
-                </div>
-                <div class="filter_options">
-                    <label for="pending">
-                    <input type="checkbox" id="pending" class="checkbox" name="pending"/>
-                    Pending
-                    </label>
-                    <label for="accepted">
-                    <input type="checkbox" id="accepted" class="checkbox" name="accepted"/>
-                    Accepted
-                    </label>
-                    <label for="denied">
-                    <input type="checkbox" id="denied" class="checkbox" name="denied"/>
-                    Denied
-                    </label>
-                </div>
-                <div class="is-flex is-justify-content-center">
-                    <button class="button has-text-white is-danger mr-4" id="cancel_filter_btn">Cancel</button>
-                    <button class="button has-text-white is-success" id="apply_filter_btn">Apply</button>
-                </div>
-                </div>
-            </i>
             </div>
         </div>
         </div>
         <hr/>
-        <%- include ('../components/requests/consult_requests_table.ejs')%>
+        <%- include ('../components/collabs/consult_collabs_table.ejs')%>
         <div class="is-flex is-justify-content-flex-end	my_buttons">
             <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
             <input type="number" value="1" class="pagination" id="pagination"/>
             <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
         </div>
-        <%- include ('../components/collabs/add_collabs.ejs') %>
+        <%- include ('../components/collabs/add_collabs_logic.ejs') %>
+        <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
         <%- include ('../components/requests/filter_requests.ejs') %>
     </section>
 </main>

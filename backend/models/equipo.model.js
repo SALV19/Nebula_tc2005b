@@ -1,0 +1,14 @@
+const db = require('../util/database');
+
+module.exports = class Equipo {
+    constructor(id_departamento, id_rol) {
+        this.id_dep = id_departamento;
+        this.id_r = id_rol;
+        }
+
+        save(id_colaborador) {
+            console.log(id_colaborador, this.id_r, this.id_dep)
+            return db.execute('INSERT INTO equipo (id_colaborador, id_rol, id_departamento) VALUES(?,?,?)',
+                                [id_colaborador, this.id_r, this.id_dep])
+        }
+};
