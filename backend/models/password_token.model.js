@@ -24,13 +24,12 @@ module.exports = class PasswordReset {
     }
 
     static createResetToken(email) {
-        console.log(`Buscando email en la base de datos: ${email}`);
         return db.execute(
             "SELECT email FROM colaborador WHERE email = ?", [email]
         ).then(([users]) => {
             if(users.length === 0) {
-                console.error(`Email no encontrado en la base de datos: ${email}`);
-                throw new Error("Email no encontrado");
+                console.error(`Email not found: ${email}`);
+                throw new Error("Email not found");
             }
 
             const token = this.generateToken();
@@ -38,13 +37,13 @@ module.exports = class PasswordReset {
             const success = tokenCache.set(`token:${token}`, email);
 
             if(!success) {
-                console.error(`Error al guardar el token en cache para: ${email}`);
-                throw new Error("Error al guardar el token");
+                console.error(`Error saving token in cache for: ${email}`);
+                throw new Error("Error saving token");
             }
 
             return {email, token};
         }).catch(error => {
-            console.error("Error en createResetToken:", error);
+            console.error("Error in createResetToken:", error);
             throw error;
         })
     }
@@ -54,8 +53,8 @@ module.exports = class PasswordReset {
             const email = tokenCache.get(`token:${token}`);
 
             if(!email) {
-                console.error();
-                reject(new Error("Token invalido o expirado"));
+                console.error("Invalid or expired token");
+                reject(new Error("Invalid or expired token"));
                 return;
             }   
 
@@ -63,31 +62,28 @@ module.exports = class PasswordReset {
         })
     }
 
-    static resetPassword(token, newPassword) {
-        return this.verifyToken(token).then(({valid, email}) => {
-            if(!valid) {
-                throw new Error("Token invalido o expirado");
-            }
+    static resetPassword(token, hashedPassword, email) {
+        if(email) {
             return db.execute(
                 "UPDATE colaborador SET contrasena = ? WHERE email = ?",
-                    [newPassword, email]
+                [hashedPassword, email]  
             ).then(() => {
                 tokenCache.del(`token:${token}`);
                 return { success: true, email };
+            }).catch(error => {
+                console.error("Error updating password:", error);
+                throw error;
             });
-        }).catch(error => {
-            console.error("Error en resetPassword:", error);
-            throw error;
-        })
+        }
     }
 
-    static async invalidateToken(token) {
+    static invalidateToken(token) {
         return new Promise((resolve, reject) => {
             try {
                 tokenCache.del(`token:${token}`);
                 resolve({ success: true });
             } catch (error) {
-                console.error("Error en invalidateToken:", error);
+                console.error("Error in invalidateToken:", error);
                 reject(error);
             }
         });
