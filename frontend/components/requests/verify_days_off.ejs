@@ -129,6 +129,19 @@
       requestPopup.style.display = "none";
     });
 
+    const requestForm = document.querySelector("form"); // o usa id si lo tienes definido
+
+    requestForm.addEventListener("submit", function (e) {
+      const start = startDate.value;
+      const end = endDate.value;
+      const validDays = realsDaysOff(start, end);
+
+      if (validDays.length < 1) {
+        e.preventDefault(); // Evita que se mande
+        alert("⚠ Debes seleccionar al menos un día hábil válido para enviar la solicitud.");
+      }
+    });
+    
   });
 
   // Mostrar o esconder el campo de evidencia
