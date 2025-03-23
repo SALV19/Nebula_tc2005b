@@ -21,6 +21,7 @@
               <div class="pop-up-content">
                     <form action="/requests/insert_request" method="post">
                       <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
+                      <input type="hidden" id="validDaysInput" name="validDays">
                       <!-- Tipo de solicitud -->
                       <div class="field">
                         <label class="label">Type of Request</label>

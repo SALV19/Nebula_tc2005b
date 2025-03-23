@@ -129,8 +129,9 @@
       requestPopup.style.display = "none";
     });
 
-    const requestForm = document.querySelector("form"); // o usa id si lo tienes definido
+    const requestForm = document.querySelector("form"); 
 
+    // Alerta de selecciona minimo un día habil 
     requestForm.addEventListener("submit", function (e) {
       const start = startDate.value;
       const end = endDate.value;
@@ -140,8 +141,11 @@
         e.preventDefault(); // Evita que se mande
         alert("⚠ Debes seleccionar al menos un día hábil válido para enviar la solicitud.");
       }
+    // Pasar los días válidos al input oculto
+    document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+
     });
-    
+
   });
 
   // Mostrar o esconder el campo de evidencia

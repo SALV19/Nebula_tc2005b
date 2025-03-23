@@ -45,23 +45,10 @@ exports.get_abscences = (request, response) => {
   });
 };
 
-function weekendsOff(startDate, endDate) {
-  let start = new Date(startDate);
-  const end = new Date(endDate);
-  let days = [];
-  while (start <= end) {
-    let day = start.getDay(); // 6 = Domingo, 5 = Sábado
-    if (day !== 5 && day !== 6) {
-      days.push(new Date(start).toISOString().split('T')[0]);
-    }
-    start.setDate(start.getDate() + 1); // Siguiente día
-  }
-  return days;
-}
-
 exports.post_abscence_requests = async (request, response, next) => {
-  const daysOff = weekendsOff(request.body.startDate, request.body.endDate);
-  
+  // ahora son los realsDaysOff
+  const daysOff = JSON.parse(request.body.validDays); 
+
   // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
   if (
     request.body.requestType === "Absence" &&
