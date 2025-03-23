@@ -1,29 +1,93 @@
 <script>
   const holidays = <%- JSON.stringify(holidays)%>;
   const all_requests = <%- JSON.stringify(all_requests)%>;
+  
+
   function get_inbetween_dates(start, end) {
-    let current = start.getDate()
-    const dates = []
+    let current = new Date(start);
+    end = new Date(end);
+    const dates = [];
+
     while (current <= end) {
-      dates.push(current)
+      dates.push(current.toISOString().split('T')[0]); // yyyy-mm-dd
       current.setDate(current.getDate() + 1);
     }
+
     return dates;
   }
 
   function get_holidays() {
-    const taken_days = []
+    const taken_days = [];
+
     for (let i=0; i<holidays.length; i++) {
+      const h = holidays[i];
       console.log(holidays[i])
-      if (holidays[i].fecha_inicio != holidays[i].fecha_fin) {
-        taken_days.push(get_inbetween_dates(holidays[i].fecha_fin))
+
+      if (h.fecha_inicio != h.fecha_fin) {
+        const range = get_inbetween_dates(h.fecha_inicio, h.fecha_fin);
+        taken_days.push(...range);
       }
       else {
-        taken_days.push(holidays[i].fecha_inicio)
+        const dateWhithoutTime = new Date(h.fecha_inicio).toISOString().split('T')[0];// yyyy-mm-dd
+        taken_days.push(dateWhithoutTime );
       }
     }
-    console.log(taken_days)
+    console.log("Feriados (formato final):", taken_days);
+    return taken_days;
   }
+
+  function get_approved_days() {
+    const approved_days = [];
+    all_requests.forEach(r => {
+      if (r.estado === 1 && Array.isArray(r.fechas)) {
+        approved_days.push(...r.fechas);
+      }
+    });
+    console.log("Días aprobados del colaborador:", approved_days);
+    return approved_days;
+  }
+
+  // Función para contar días hábiles (sin sábados ni domingos)
+  function realsDaysOff(start, end) {
+    const holidaysList = get_holidays();
+    const approvedDays = get_approved_days();
+    const current = new Date(start);
+    const final = new Date(end);
+    const effective = [];
+
+    while (current <= final) {
+      const dateStr = current.toISOString().split('T')[0];
+      const isWeekend = current.getDay() === 0 || current.getDay() === 6;
+
+      if (!isWeekend && !holidaysList.includes(dateStr) && !approvedDays.includes(dateStr)) {
+        effective.push(dateStr);
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+    console.log("Días solicitados por el usuario:", effective);
+    return effective;
+  }
+
+  function updateDaysCounter() {
+    const start = startDate.value;
+    const end = endDate.value;
+
+    if (start && end) {
+      const validDays = realsDaysOff(start, end);
+
+      if (validDays.length > 0) {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `Estás solicitando <strong>${validDays.length}</strong> días efectivos.`;
+      } else {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ No estás solicitando ningún día válido.</span>`;
+      }
+    } else {
+      daysCounter.style.display = "none";
+    }
+  }
+
 
   document.addEventListener("DOMContentLoaded", function () { 
     const openBtn = document.getElementById("openRequestForm");
@@ -33,9 +97,11 @@
     const startDate = document.getElementById("startDate");
     const endDate = document.getElementById("endDate");
     const evidenceContainer = document.getElementById("evidenceContainer");
+    const daysCounter = document.getElementById("daysCounter");
+    const daysCounterText = document.getElementById("daysCounterText");
     
     // Verifica si los elementos existen
-    if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer) {
+    if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
         console.error("Error: No se encontraron los elementos del pop-up.");
         return;
     }
@@ -45,27 +111,27 @@
         requestPopup.style.display = "flex";
     });
 
+    requestType.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
+    startDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
+    endDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
     // Cerrar el formulario
     closeBtn.addEventListener("click", () => {
-        requestPopup.style.display = "none";
+      requestPopup.style.display = "none";
     });
+
   });
-
-   // Función para contar días hábiles (sin sábados ni domingos)
-  function daysOff(start, end, holidays) {
-    let current = new Date(start);
-    const endDate = new Date(end);
-    let count = 0;
-
-    while (current <= endDate) {
-      const day = current.getDay(); // 0 = domingo, 6 = sábado
-      if (day !== 0 && day !== 6 ) {
-        count++;
-      }
-      current.setDate(current.getDate() + 1);
-    }
-    return count;
-  }
 
   // Mostrar o esconder el campo de evidencia
   function checkEvidenceRequirement() {
@@ -73,11 +139,10 @@
     const start = startDate.value;
     const end = endDate.value;
 
-    const holidays = get_holidays() 
+    const validDays = realsDaysOff(start, end);
     
-    const businessDays = daysOff(start, end, holidays);
     if (type === "Absence" && start && end) {
-      if (businessDays > 3) {
+      if (validDays.length > 3) {
         evidenceContainer.style.display = "block";
         evidenceNote.style.display = "block"; // Muestra la leyenda
       } else {
@@ -90,7 +155,7 @@
     }
   }
 
-  // 👉 Ejecutar checkEvidenceRequirement cuando cambian los campos
+  // Ejecutar checkEvidenceRequirement cuando cambian los campos
   requestType.addEventListener("change", checkEvidenceRequirement);
   startDate.addEventListener("change", checkEvidenceRequirement);
   endDate.addEventListener("change", checkEvidenceRequirement);
