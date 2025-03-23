@@ -20,11 +20,12 @@
 
 .pop-up-content {
     background-color: #242424;
-    padding: 2vw; /* Cambiado a vw para ser responsivo */
-    padding-top: 5vh; /* Cambiado a vh */
+    padding: 2vw;
+    padding-top: 5vh;
     border-radius: 5px;
-    width: 45vw;  /* Cambiado de porcentaje a vw */
-    height: 78vh; /* Cambiado de porcentaje a vh */
+    width: 45vw;
+    max-height: 90vh; /* Opcional para limitar altura total */
+    overflow-y: auto; /* Para poder hacer scroll si el contenido es muy grande */
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
