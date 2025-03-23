@@ -26,6 +26,11 @@ app.use(
   })
 );
 
+const csrf = require('csurf');
+const csrfProtection = csrf();
+app.use(csrfProtection);
+
+
 app.use(passport.authenticate("session"));
 
 //  Routes and middlewares
