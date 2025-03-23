@@ -24,13 +24,13 @@ module.exports = class Requests {
   }
 
   static async fetchDaysApproved(email) {
-    return db.execute(`SELECT * 
+    return db.execute(`SELECT ds.fecha
                         FROM solicitudes_falta sf
                         INNER JOIN dias_solicitados ds
                           ON sf.id_solicitud_falta = ds.id_solicitud_falta
                         INNER JOIN colaborador c
                           ON c.id_colaborador = sf.id_colaborador
-                        WHERE c.email = ?;
+                        WHERE c.email = ? AND sf.estado = 1;
                       `, [email])
   }
   static async fetchTeamRequests(email, offset, filter=null) {

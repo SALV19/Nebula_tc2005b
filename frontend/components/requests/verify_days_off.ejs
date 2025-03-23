@@ -37,14 +37,12 @@
   }
 
   function get_approved_days() {
-    const approved_days = [];
-    all_requests.forEach(r => {
-      if (r.estado === 1 && Array.isArray(r.fechas)) {
-        approved_days.push(...r.fechas);
-      }
+    const approved_days = all_requests.map(r => {
+      return new Date(r.fecha).toISOString().split('T')[0]; // 'yyyy-mm-dd'
     });
+
     console.log("Días aprobados del colaborador:", approved_days);
-    return approved_days;
+      return approved_days;
   }
 
   // Función para contar días hábiles (sin sábados ni domingos)
@@ -57,7 +55,7 @@
 
     while (current <= final) {
       const dateStr = current.toISOString().split('T')[0];
-      const isWeekend = current.getDay() === 0 || current.getDay() === 6;
+      const isWeekend = current.getDay() === 5 || current.getDay() === 6;
 
       if (!isWeekend && !holidaysList.includes(dateStr) && !approvedDays.includes(dateStr)) {
         effective.push(dateStr);

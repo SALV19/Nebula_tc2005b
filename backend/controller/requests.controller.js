@@ -50,7 +50,7 @@ function weekendsOff(startDate, endDate) {
   const end = new Date(endDate);
   let days = [];
   while (start <= end) {
-    let day = start.getDay(); // 0 = Domingo, 6 = Sábado
+    let day = start.getDay(); // 6 = Domingo, 5 = Sábado
     if (day !== 5 && day !== 6) {
       days.push(new Date(start).toISOString().split('T')[0]);
     }
