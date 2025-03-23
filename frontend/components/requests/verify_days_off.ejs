@@ -1,4 +1,30 @@
 <script>
+  const holidays = <%- JSON.stringify(holidays)%>;
+  const all_requests = <%- JSON.stringify(all_requests)%>;
+  function get_inbetween_dates(start, end) {
+    let current = start.getDate()
+    const dates = []
+    while (current <= end) {
+      dates.push(current)
+      current.setDate(current.getDate() + 1);
+    }
+    return dates;
+  }
+
+  function get_holidays() {
+    const taken_days = []
+    for (let i=0; i<holidays.length; i++) {
+      console.log(holidays[i])
+      if (holidays[i].fecha_inicio != holidays[i].fecha_fin) {
+        taken_days.push(get_inbetween_dates(holidays[i].fecha_fin))
+      }
+      else {
+        taken_days.push(holidays[i].fecha_inicio)
+      }
+    }
+    console.log(taken_days)
+  }
+
   document.addEventListener("DOMContentLoaded", function () { 
     const openBtn = document.getElementById("openRequestForm");
     const closeBtn = document.getElementById("closeRequestForm");
@@ -26,19 +52,18 @@
   });
 
    // Función para contar días hábiles (sin sábados ni domingos)
-    function weekendsoff(start, end) {
+  function daysOff(start, end, holidays) {
     let current = new Date(start);
     const endDate = new Date(end);
     let count = 0;
 
     while (current <= endDate) {
       const day = current.getDay(); // 0 = domingo, 6 = sábado
-      if (day !== 0 && day !== 6) {
+      if (day !== 0 && day !== 6 ) {
         count++;
       }
       current.setDate(current.getDate() + 1);
     }
-
     return count;
   }
 
@@ -48,8 +73,10 @@
     const start = startDate.value;
     const end = endDate.value;
 
+    const holidays = get_holidays() 
+    
+    const businessDays = daysOff(start, end, holidays);
     if (type === "Absence" && start && end) {
-      const businessDays = weekendsoff(start, end);
       if (businessDays > 3) {
         evidenceContainer.style.display = "block";
         evidenceNote.style.display = "block"; // Muestra la leyenda

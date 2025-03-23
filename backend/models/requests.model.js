@@ -19,9 +19,19 @@ module.exports = class Requests {
                     ), ?, ?, ?, ?, ?)`, [this.colab_email, 0, this.type, this.reason, this.location,  this.evidence ]);
   }
   saveDates(id, idx) {
-    console.log("ID/Date", id, this.dates[idx])
     return db.execute(`INSERT INTO dias_solicitados(id_solicitud_falta, fecha)
                       VALUES (?, ?)`, [id, this.dates[idx]])
+  }
+
+  static async fetchDaysApproved(email) {
+    return db.execute(`SELECT * 
+                        FROM solicitudes_falta sf
+                        INNER JOIN dias_solicitados ds
+                          ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                        INNER JOIN colaborador c
+                          ON c.id_colaborador = sf.id_colaborador
+                        WHERE c.email = ?;
+                      `, [email])
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {

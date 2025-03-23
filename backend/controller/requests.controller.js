@@ -1,13 +1,15 @@
 const Requests = require("../models/requests.model");
+const Events = require("../models/events.model")
 
-exports.get_requests = (request, response) => {
+exports.get_requests = async (request, response) => {
   
-  //await 
-  
+  const all_requests = await Requests.fetchDaysApproved(request.session.email).then(data => data[0]).catch(e => e);
+  const holidays = await Events.fetchEvents().then(data => data[0]).catch(error => error)
   response.render("requests_page", {
     selectedOption: "vacations",
     permissions: request.session.permissions,
-    //days_off: days_off,
+    all_requests: all_requests,
+    holidays: holidays,
     csrfToken: request.csrfToken(),
   });
 };
@@ -23,7 +25,6 @@ exports.get_collabs_requests = async (request, response) => {
   )
     .then((data) => data)
     .catch((e) => console.log(e));
-  // console.log(requests)
   response.json({
     selectedOption: "requests",
     requests: requests,
@@ -45,25 +46,20 @@ exports.get_abscences = (request, response) => {
 };
 
 function weekendsOff(startDate, endDate) {
-  console.log(startDate);
   let start = new Date(startDate);
   const end = new Date(endDate);
   let days = [];
   while (start <= end) {
     let day = start.getDay(); // 0 = Domingo, 6 = Sábado
     if (day !== 5 && day !== 6) {
-      console.log(day)
       days.push(new Date(start).toISOString().split('T')[0]);
     }
     start.setDate(start.getDate() + 1); // Siguiente día
   }
-  console.log(days)
   return days;
 }
 
 exports.post_abscence_requests = async (request, response, next) => {
-  console.log(request.body);
-
   const daysOff = weekendsOff(request.body.startDate, request.body.endDate);
   
   // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
