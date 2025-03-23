@@ -1,0 +1,168 @@
+.subtitleForm {
+    font-size: 2vh; /* Cambiado de px a vh */
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; /* Cambiado de px a vh */
+    align-items: center;
+    gap: 0.8vw; /* Cambiado de px a vw */
+}
+
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 29vw;
+    background: transparent;
+    font-size: 2vh; 
+    color: #747474;
+}
+
+.input-container {
+    display: flex;
+    align-items: center; /* Aligns label and dropdown in one line */
+    width: 15vw;
+}
+
+.dateLine {
+    color: #747474; /* Color del texto */
+    background: transparent;
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 29vw;
+    font-size: 2vh;
+    text-align: center;
+    margin-top: 2vh;
+    margin-left: 3.5vw;
+    margin-bottom: 2vh;     
+}
+
+/* Aplica un filtro blanco al icono del calendario */
+.dateLine::-webkit-calendar-picker-indicator {
+    filter: invert(1); /* Invierte los colores, haciendo el negro blanco */
+}
+
+.text-style{
+    text-align: center;
+    margin-left: 1vw;
+}
+
+.styling {
+    margin-right: 2vw;
+}
+
+.line-questions {
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 37vw;
+    background: transparent;
+    font-size: 2vh;
+    color: #ABB1BF;
+    margin-top: 3vh;
+    display: flex;  /* Use flexbox */
+    justify-content: space-between;  /* Push text to the left, icon to the right */
+    align-items: center; /* Align text and icon vertically */
+}
+
+.hidden-textarea {
+    display: none; /* Oculto inicialmente */
+    width: 37vw;
+    height: 5vw;
+    margin-top: 1vw;
+    padding: 1vw;
+    font-size: 1.5vh;
+    background-color: #454545;
+    color: #fff;
+    resize: none;
+    border-radius: 1vw;
+}
+
+.hero-body {
+    background-color: #242424;
+    padding-bottom: 0vw;
+}
+
+.hidden-textarea {
+    display: none;
+}
+
+.column-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 2vw;
+    font-size: small;
+}
+
+.column{
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.progress-text{
+    text-align: justify;
+    color: #ABB1BF;
+    font-size: medium;
+}
+
+.progress-bar{
+    width: 40vw;
+}
+
+.radar-container {
+    display: flex;
+    justify-content: center;  
+    align-items: center;     
+    width: 100%;
+}
+  
+.numbers-container{
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    width:40vw;
+}
+
+.numbers{
+    font-size: small;
+}
+
+.approve-button {
+    background-color: #59A250;
+    color: #FFFF;
+    width: 5vw;
+    height: 2vw;
+    border-radius: 0.5vw;
+    margin-top: 1vw;
+}
+
+.button-container {
+    display: flex;
+    justify-content: center; /* Centra horizontalmente */
+    align-items: center; /* Centra verticalmente (opcional) */
+    height: 100px; /* Ajusta la altura según necesites */
+    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+}
+
+canvas {
+    max-width: 20vw;
+    max-height: 20vw;
+    width: 100%; 
+    height: auto;
+}
+
+.hidden-content {
+    display: none; 
+    background-color: #454545;
+    border-radius: 5px;
+    width: 37vw;
+    height: 5vw;
+    color: #EEEEEE;
+    margin-top: 1vw;
+  }
+  
+  .hidden-content.show {
+    display: block;
+  }

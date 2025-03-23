@@ -12,8 +12,12 @@ require("./util/google_auth");
 const app = express(); 
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", [
+  path.join(__dirname, "../frontend/views"),
+  path.join(__dirname, "../frontend/views/error"),
+]);
 app.use(express.static(path.join(__dirname, "./public")));
+app.use(express.json());
 
 app.use(
   session({
@@ -24,7 +28,7 @@ app.use(
   })
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const csrf = require('csurf');
 const csrfProtection = csrf();
@@ -38,8 +42,12 @@ const auth_middleware = require("./util/auth_middleware");
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
 
+const other_controllers = require("./controller/other.controller");
+
 app.use("/log_in", login_routes);
 app.use("/", auth_middleware, general_routes);
+
+app.use(other_controllers.get_404);
 
 // Start server
 app.listen(3000, () => {
