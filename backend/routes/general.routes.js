@@ -15,6 +15,6 @@ router.get("/goals", goals_routes.get_goals);
 router.get("/personal_info", personal_info_routes.get_personal_info);
 router.get("/reports", reports_routes.get_reports);
 router.use("/requests", request_routes);
-router.get("/", home_routes.get_home);
+router.get("/", home_routes);
 
 module.exports = router;
