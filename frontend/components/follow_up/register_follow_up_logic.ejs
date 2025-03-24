@@ -184,6 +184,116 @@
         };
 
       }
+      
+      if (selectedOption == 'Meetings') {
+        contentContainer.innerHTML = `
+          <div class="meetings-container">
+            <h2 class="title is-4">Scheduled Meetings</h2>
+            
+            <table class="table is-fullwidth">
+              <thead>
+                <tr>
+                  <th>Employee</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                <% if (followUps && followUps.length > 0) { %>
+                  <% followUps.forEach(followUp => { %>
+                    <tr>
+                      <td><%= followUp.nombre_colaborador %> <%= followUp.apellidos_colaborador %></td>
+                      <td><%= new Date(followUp.fechaAgendada).toLocaleDateString() %></td>
+                      <td><span class="tag <%= followUp.estatus === 'Pendiente' ? 'is-warning' : (followUp.estatus === 'Completado' ? 'is-success' : 'is-danger') %>">
+                        <%= followUp.estatus %>
+                      </span></td>
+                      <td>
+                        <div class="buttons is-centered">
+                          <a href="/follow_ups/detail/<%= followUp.id_seguimiento %>" class="button is-small is-info">
+                            <i class="bi bi-eye"></i>
+                          </a>
+                          <% if (followUp.estatus === 'Pendiente') { %>
+                            <a href="/follow_ups/edit/<%= followUp.id_seguimiento %>" class="button is-small is-primary">
+                              <i class="bi bi-pencil"></i>
+                            </a>
+                          <% } %>
+                        </div>
+                      </td>
+                    </tr>
+                  <% }) %>
+                <% } else { %>
+                  <tr>
+                    <td colspan="4" class="has-text-centered">No hay reuniones programadas</td>
+                  </tr>
+                <% } %>
+              </tbody>
+            </table>
+            
+            <div class="meeting-filters mt-4">
+              <div class="field is-horizontal">
+                <div class="field-label is-normal">
+                  <label class="label">Filter by:</label>
+                </div>
+                <div class="field-body">
+                  <div class="field">
+                    <div class="control">
+                      <div class="select">
+                        <select id="statusFilter">
+                          <option value="all">All Status</option>
+                          <option value="Pendiente">Pending</option>
+                          <option value="Completado">Completed</option>
+                          <option value="Cancelado">Cancelled</option>
+                        </select>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="control">
+                      <input class="input" type="date" id="dateFilter">
+                    </div>
+                  </div>
+                  <div class="field">
+                    <div class="control">
+                      <button class="button is-primary" id="applyFilter">Apply Filter</button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+        
+        // Add event listeners for the filters
+        const statusFilter = document.getElementById('statusFilter');
+        const dateFilter = document.getElementById('dateFilter');
+        const applyFilterBtn = document.getElementById('applyFilter');
+        
+        if (applyFilterBtn) {
+          applyFilterBtn.addEventListener('click', () => {
+            const status = statusFilter.value;
+            const date = dateFilter.value;
+            
+            // Filter the table rows based on the selected criteria
+            filterMeetings(status, date);
+          });
+        }
+        
+        function filterMeetings(status, date) {
+          const tableRows = document.querySelectorAll('.meetings-container tbody tr');
+          
+          tableRows.forEach(row => {
+            const rowStatus = row.querySelector('td:nth-child(3) span').textContent.trim();
+            const rowDate = row.querySelector('td:nth-child(2)').textContent.trim();
+            
+            let statusMatch = status === 'all' || rowStatus === status;
+            let dateMatch = !date || rowDate === new Date(date).toLocaleDateString();
+            
+            row.style.display = statusMatch && dateMatch ? '' : 'none';
+          });
+        }
+      }
+
     }
 
     // Manejo de selección de pestañas de los botones
