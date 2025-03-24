@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model")
 
@@ -11,23 +10,10 @@ exports.get_requests = async (request, response) => {
     permissions: request.session.permissions,
     all_requests: all_requests,
     holidays: holidays,
-=======
-const Requests = require('../models/requests.model')
-
-let settings = {
-  selectedOption: 'vacations',
-}
-
-exports.get_requests = (request, response) => {
-  response.render("requests_page", {
-    ...settings,
-    permissions: request.session.permissions,
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
     csrfToken: request.csrfToken(),
   });
 };
 
-<<<<<<< HEAD
 exports.get_collabs_requests = async (request, response) => {
   settings.selectedOption = "requests";
   const offset = request.body.offset * 10;
@@ -105,32 +91,3 @@ exports.post_abscence_requests = async (request, response, next) => {
 
   response.redirect("/requests");
 };
-=======
-exports.get_collabs_requests = async (request, response) => {  
-  settings.selectedOption = 'requests'
-  const offset = request.body.offset * 10;
-  const filter = request.body.filter;
-  const requests = await Requests.fetchRequests(request.session.email, offset, filter)
-    .then(data =>  data)
-    .catch(e => console.log(e))
-  // console.log(requests)
-  response.json({
-    selectedOption: 'requests',
-    requests: requests,
-  });
-}
-
-exports.get_vacations = (request, response) => {  
-  settings.selectedOption = 'vacations'
-  response.json({
-    selectedOption: settings.selectedOption,
-  });
-}
-exports.get_abscences = (request, response) => {  
-  settings.selectedOption = 'vacations'
-  
-  response.json({
-    selectedOption: settings.selectedOption,
-  });
-}
->>>>>>> fa/REQ_29_superadmin_registers_collaborators

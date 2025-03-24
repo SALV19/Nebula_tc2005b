@@ -83,8 +83,4 @@ exports.post_collab = (request, response) => {
   }); 
 };
 
-<<<<<<< HEAD
   
-=======
-  
->>>>>>> fa/REQ_29_superadmin_registers_collaborators

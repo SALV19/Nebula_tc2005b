@@ -1,7 +1,6 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-<<<<<<< HEAD
   constructor(colab_email, type, dates, location, reason, evidence) {
     this.colab_email = colab_email;
     this.type = type
@@ -33,10 +32,6 @@ module.exports = class Requests {
                           ON c.id_colaborador = sf.id_colaborador
                         WHERE c.email = ? AND sf.estado = 1;
                       `, [email])
-=======
-  constructor() {
-
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {

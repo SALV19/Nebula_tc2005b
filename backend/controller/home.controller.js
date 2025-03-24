@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 const Requests = require("../models/home.model");
 
 exports.get_home = async (request, response) => {
@@ -15,8 +14,4 @@ exports.get_home = async (request, response) => {
     total_absences: absences.length,
     csrfToken: request.csrfToken(),
   });
-=======
-exports.get_home = async (request, response) => {
-  response.render("home_page");
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
 };
