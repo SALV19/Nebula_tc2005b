@@ -1,3 +1,3 @@
-exports.get_home = (request, response) => {
+exports.get_home = async (request, response) => {
   response.render("home_page");
 };

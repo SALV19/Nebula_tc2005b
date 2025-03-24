@@ -1,0 +1,97 @@
+@startuml Prueba
+autonumber
+actor Collaborator
+boundary general.route.js as gRoutes
+boundary request.ejs as rView
+control request.controller.js as rController
+entity request.model as rModel
+database nebula as neb
+
+activate Collaborator
+Collaborator -> gRoutes : GET/request
+deactivate Collaborator
+
+activate gRoutes
+gRoutes -> rController: get_request()
+deactivate gRoutes
+
+activate rController
+rController ->> rModel: get_request_Vdata()
+
+activate rModel
+rModel ->> neb: (SELECT * FROM solicitudesFalta)>\n <(SELECT * FROM dias_solicitud)
+
+activate neb
+neb-->> rModel: [stats, type, description, fistDate, lastDate]
+deactivate neb
+
+rModel -->> rController: [{stats, type, description, fistDate, lastDate}]
+deactivate rModel
+
+rController -->> rView: [{stats, type, description, fistDate, lastDate}]
+deactivate rController
+
+activate rView
+rView -> Collaborator: html
+deactivate rView
+
+activate Collaborator
+Collaborator -> rView : register_pop_up()
+deactivate Collaborator
+
+activate rView
+rView -> rController : getEvents()
+activate rController
+rController ->> rModel : getEvents()
+activate rModel
+rModel ->> neb : Select events
+activate neb
+neb -->> rModel : [events]
+deactivate neb
+rModel -->> rController : [events]
+deactivate rModel
+rController -->> rView : [events]
+deactivate rController
+
+rView -->> Collaborator : Opens pop up for registration
+deactivate rView
+activate Collaborator  
+
+
+
+
+Collaborator -> gRoutes :POST/request
+deactivate Collaborator
+
+
+activate gRoutes
+gRoutes -> rController : post_request(type,startDate, endDate, \nubication, description, evidence)
+deactivate gRoutes
+
+' Pre-procesa información antes de guardarla en db
+' De rango a dias específicos que se guardan en db
+
+activate rController
+rController -> rController: process_data()
+rController -> rController : verify_data()
+rController ->> rModel: save()
+
+activate rModel
+rModel ->> neb : INSERT INTO events
+activate neb
+neb -->> rModel : response
+deactivate neb
+rModel -->> rController : reponse
+deactivate rModel
+rController -> rView : response
+deactivate rController
+activate rView 
+rView -> Collaborator : Confirmation
+deactivate rView
+activate Collaborator
+
+
+
+
+
+@enduml

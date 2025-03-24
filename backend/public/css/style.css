@@ -1,4 +1,43 @@
-body {
+body, section, table, thead, tr, footer {
   background-color: #242424;
+}
 
+body {
+  height: 102vh;
+}
+
+.example::-webkit-scrollbar {
+  display: none;
+}
+
+.example {
+  -ms-overflow-style: none;
+  scrollbar-width: none;  
+}
+
+footer {
+  position: absolute; 
+  top: 95%;
+  right: 0;
+  width: 100vw;
+}
+
+.pop-up {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top:0;
+  left: 0;
+  background-color: rgba(0,0,0,30%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pop-up-content {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 30px;
+  width: 40%;
+  height: 60%;
 }
