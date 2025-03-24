@@ -17,8 +17,7 @@ module.exports = class Requests {
                                 ON sf.id_solicitud_falta = ds.id_solicitud_falta
                             INNER JOIN colaborador c
                                 ON c.id_colaborador = sf.id_colaborador
-                            WHERE c.email = ? AND sf.estado = 1;
+                            WHERE c.email = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
                         `, [email])
     }
-
 }
