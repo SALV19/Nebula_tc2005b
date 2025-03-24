@@ -8,7 +8,7 @@ exports.get_home = async (request, response) => {
       return [];
     });
 
-  console.log("Absences fetched for", request.session.email, ":", absences);
+  //console.log("Absences fetched for", request.session.email, ":", absences);
 
   response.render("home_page", {
     total_absences: absences.length,

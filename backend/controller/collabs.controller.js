@@ -30,6 +30,8 @@ exports.get_collabs = async (request, response) => {
 
     request.session.successData = null;
 
+    
+
     response.render("collabs", {
       ...settings,
       permissions: request.session.permissions,

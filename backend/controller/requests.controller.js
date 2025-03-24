@@ -2,9 +2,12 @@ const Requests = require("../models/requests.model");
 const Events = require("../models/events.model")
 
 exports.get_requests = async (request, response) => {
-  
+
   const all_requests = await Requests.fetchDaysApproved(request.session.email).then(data => data[0]).catch(e => e);
   const holidays = await Events.fetchEvents().then(data => data[0]).catch(error => error)
+  
+  console.log(request.session.permissions);
+
   response.render("requests_page", {
     selectedOption: "vacations",
     permissions: request.session.permissions,
@@ -15,7 +18,6 @@ exports.get_requests = async (request, response) => {
 };
 
 exports.get_collabs_requests = async (request, response) => {
-  settings.selectedOption = "requests";
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(

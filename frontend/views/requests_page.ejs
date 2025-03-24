@@ -1,9 +1,6 @@
 <%- include('../components/nav_bar.ejs') %> 
-<<<<<<< HEAD
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <link rel="stylesheet" href="/css/requests.css">
-=======
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
 <link rel="stylesheet" href="/css/table.css">
 <main class="hero column">
   <input type="hidden" id="_csrf" value=<%= csrfToken %>>
@@ -18,7 +15,6 @@
         <% } else {%>
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
-<<<<<<< HEAD
           <i id="openRequestForm" class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
             <!-- Pop-up to register Test request-->
             <div id="requestPopup" class="pop-up" style="display: none;">
@@ -116,9 +112,6 @@
 
               </div>
             </div>
-=======
-          <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
           <i class="bi bi-funnel subtitle is-clickable dropdown" id="filter">
             <div class="dropdown-content">
               <div class="is-flex">
@@ -163,7 +156,6 @@
       </div>
       <%- include ('../components/requests/consult_requests_logic.ejs') %>
       <%- include ('../components/requests/filter_requests.ejs') %>
-<<<<<<< HEAD
       <%- include ('../components/requests/verify_days_off.ejs') %>
     </section>
 </main>
@@ -180,10 +172,5 @@
     </div>
   </div>
 </div>
-=======
-    </section>
-</main>
-
->>>>>>> fa/REQ_29_superadmin_registers_collaborators
 <%- include('includes/_footer.ejs') %>
 
