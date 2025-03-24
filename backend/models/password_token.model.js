@@ -1,5 +1,6 @@
 const db = require("../util/database");
 const NodeCache = require("node-cache");
+const sendMail = require("../util/mailer");
 
 const tokenCache = new NodeCache({ 
     stdTTL: 3600,             
@@ -40,6 +41,8 @@ module.exports = class PasswordReset {
                 console.error(`Error saving token in cache for: ${email}`);
                 throw new Error("Error saving token");
             }
+            
+            sendMail(email, token);
 
             return {email, token};
         }).catch(error => {

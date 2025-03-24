@@ -6,28 +6,34 @@ const transporter = nodemailer.createTransport({
   port: 587,
   secure: false,
   auth: {
-    user: "santialducin@gmail.com",
-    pass: "",
+    user: process.env.MAIL_USERNAME,
+    pass: process.env.MAIL_PASSWORD,
   },
 });
 
-// 
-
-
-
-// async..await is not allowed in global scope, must use a wrapper
-async function main() {
-  // send mail with defined transport object
-  const info = await transporter.sendMail({
-    from: '"Maddison Foo Koch 👻" <nebulahrmsolutions@gmail.com>', // sender address
-    to: "santialducin@gmail.com", // list of receivers
-    subject: "Hello ✔", // Subject line
-    text: "Hello world?", // plain text body
-    html: "<b>Hello world?</b>", // html body
-  });
-
-  console.log("Message sent: %s", info.messageId);
-  // Message sent: <d786aa62-4e0a-070a-47ed-0b0666549519@ethereal.email>
+async function sendMail(email, token) {
+  try {
+    const info = await transporter.sendMail({
+      from: '"Nebula HRSM" <nebulahrmsolutions@gmail.com>', 
+      to: email, // list of receivers
+      subject: "Reset Password Nebula HRSM", 
+      text: `Tu código de restablecimiento es: ${token}`,
+      html: `<div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+            <h2 style="color: #333; text-align: center;">Recuperación de contraseña</h2>
+            <p>Has solicitado restablecer tu contraseña. Utiliza el siguiente código para completar el proceso:</p>
+            <div style="background-color: #f5f5f5; padding: 15px; text-align: center; font-size: 24px; font-weight: bold; margin: 20px 0; border-radius: 4px;">
+              ${token}
+            </div>
+            <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
+            <p>Saludos,<br>Equipo de Nebula HRSM</p>
+          </div>`, 
+    });
+    console.log("Message sent: %s", info.messageId);
+    return info;  
+  } catch (error) {
+    console.error("Error sending email:", error);
+    throw error;
+  } 
 }
 
-main().catch(console.error);
+module.exports = sendMail;

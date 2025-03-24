@@ -93,57 +93,57 @@ exports.get_reset_password = (request, response, next) => {
 };
 
 exports.post_reset_password = async (request, response, next) => {
-    try {
-      console.log("Body in post_reset_password:", request.body);
-      console.log("Session in post_reset_password:", request.session);
-  
-      const password = request.body.password;
-      const password2 = request.body.password2;
-      const token = request.session.resetToken;
-      const email = request.session.resetEmail;
-      
-      if (!password || !password2) {
-        console.error("Error: Passwords not provided");
-        return response.render("reset_password", { error: "Both passwords are required" });
-      }
-      
-      if (!token || !email) {
-        console.error("Error: Token or email not found in session");
-        return response.render("reset_password", { error: "Invalid or expired session" });
-      }
-  
-      if (password !== password2) {
-        console.error("Error: Passwords do not match");
-        return response.render("reset_password", { error: "Passwords do not match" });
-      }
-  
-      const strength = passwordStrength(password, options);
-      
-      if (strength.id < 2) {
-        console.error("Error: Password too weak");
-        return response.render("reset_password", { 
-          error: `Password is ${strength.value.toLowerCase()}. It must be at least medium level.` 
-        });
-      }
-  
-      const hashedPassword = await encryptPassword(password);
-      
-      const result = await PasswordReset.resetPassword(token, hashedPassword, email);
-      
-      console.log("Result of resetPassword:", result);
+  try {
+    console.log("Body in post_reset_password:", request.body);
+    console.log("Session in post_reset_password:", request.session);
 
-      delete request.session.resetToken;
-      delete request.session.resetEmail;
-      
-      return response.redirect('/log_in?message=password_updated');
-      
-    } catch (error) {
-      console.error("Error changing password:", error);
+    const password = request.body.password;
+    const password2 = request.body.password2;
+    const token = request.session.resetToken;
+    const email = request.session.resetEmail;
+    
+    if (!password || !password2) {
+      console.error("Error: Passwords not provided");
+      return response.render("reset_password", { error: "Both passwords are required" });
+    }
+    
+    if (!token || !email) {
+      console.error("Error: Token or email not found in session");
+      return response.render("reset_password", { error: "Invalid or expired session" });
+    }
+
+    if (password !== password2) {
+      console.error("Error: Passwords do not match");
+      return response.render("reset_password", { error: "Passwords do not match" });
+    }
+
+    const strength = passwordStrength(password, options);
+    
+    if (strength.id < 2) {
+      console.error("Error: Password too weak");
       return response.render("reset_password", { 
-        error: "Error changing password: " + error.message 
+        error: `Password is ${strength.value.toLowerCase()}. It must be at least medium level.` 
       });
     }
-  };
+
+    const hashedPassword = await encryptPassword(password);
+    
+    const result = await PasswordReset.resetPassword(token, hashedPassword, email);
+    
+    console.log("Result of resetPassword:", result);
+
+    delete request.session.resetToken;
+    delete request.session.resetEmail;
+    
+    return response.redirect('/log_in?message=password_updated');
+    
+  } catch (error) {
+    console.error("Error changing password:", error);
+    return response.render("reset_password", { 
+      error: "Error changing password: " + error.message 
+    });
+  }
+};
 
 async function encryptPassword(plainPassword) {
     try {
