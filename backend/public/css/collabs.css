@@ -1,0 +1,97 @@
+.cancelButton {
+    position: absolute; 
+    right: 3vw; 
+    top: 3vh;  
+    cursor: pointer;
+}
+
+.pop-up {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; 
+}
+
+.pop-up-content {
+    background-color: #242424;
+    padding: 2vw; 
+    padding-top: 5vh; 
+    border-radius: 5px;
+    width: 45vw;  
+    height: 85vh;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.cell {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 0; 
+    margin: 2vh;
+}
+
+.subtitleForm {
+    font-size: 2vh; 
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; 
+    align-items: center;
+    gap: 0.8vw; 
+}
+
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: #747474;
+    margin-bottom: 2vh; 
+}
+
+.input-container {
+    width: 100%; 
+    margin-top: 0; 
+}
+
+.buttons {
+    position: relative;
+    width: 100%;
+    display: flex; 
+    justify-content: flex-end; 
+}
+
+.button.is-save {
+    background-color: #59A250; 
+    color: #fff; 
+    border: none; 
+    margin-top: 3vh;
+}
+
+.error {
+    color: rgb(255, 138, 138);
+    display: none;
+    font-size: 1.4vh;
+    margin-top: 0.1vh; 
+    margin-bottom: 0.4vh; 
+    text-align: left; 
+}
+
+.swal2-confirm.btn-ok {
+    background-color: #485FC7; 
+    color: white;
+    border: none;
+}
+
+.swal2-confirm.btn-ok:hover {
+    background-color: #304cc7; 
+}
