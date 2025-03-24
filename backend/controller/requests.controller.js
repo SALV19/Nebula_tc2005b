@@ -49,6 +49,7 @@ exports.post_abscence_requests = async (request, response, next) => {
   // ahora son los realsDaysOff
   const daysOff = JSON.parse(request.body.validDays); 
 
+  //Hacer validaciones en el servidor DESPUES
   // // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
   // if (
   //   request.body.requestType === "Absence" &&

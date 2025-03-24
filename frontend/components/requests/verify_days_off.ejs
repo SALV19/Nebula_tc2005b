@@ -133,41 +133,62 @@
 
     // Alerta de selecciona minimo un día habil 
     requestForm.addEventListener("submit", function (e) {
-  const start = startDate.value;
-  const end = endDate.value;
-  const location = document.getElementById("location").value.trim();
-  const evidenceInput = document.getElementById("evidence");
-  const type = requestType.value;
+      const start = startDate.value;
+      const end = endDate.value;
+      const location = document.getElementById("location").value.trim();
+      const evidenceInput = document.getElementById("evidence");
+      const type = requestType.value;
 
-  const validDays = realsDaysOff(start, end);
+      const errors = [];
 
-  const errors = [];
+      // Validaciones de fechas
+      if (!start || !end) {
+        errors.push("⚠ Selecciona la fecha de inicio y fin.");
+      } else {
+        const startDateObj = new Date(start);
+        const endDateObj = new Date(end);
 
-  if (!start || !end) {
-    errors.push("⚠ Selecciona la fecha de inicio y fin.");
-  }
+        if (startDateObj > endDateObj) {
+          errors.push("⚠ La fecha de inicio no puede ser posterior a la fecha de fin.");
+        } else {
+          const validDays = realsDaysOff(start, end);
+          const allInRange = get_inbetween_dates(start, end);
+          const holidaysList = get_holidays();
+          const approvedDays = get_approved_days();
 
-  if (validDays.length < 1) {
-    errors.push("⚠ Selecciona al menos un día hábil válido.");
-  }
+          const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
+          const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
 
-  if (!location) {
-    errors.push("⚠ Ingresa la ubicación.");
-  }
+          if (validDays.length < 1) {
+            if (empalmeFeriados) {
+              errors.push("⚠ Todas las fechas seleccionadas coinciden con días feriados.");
+            } else if (empalmeAprobados) {
+              errors.push("⚠ Todas las fechas seleccionadas ya fueron aprobadas previamente.");
+            } else {
+              errors.push("⚠ Estas seleccionando fechas empalmadas con dias feriados y solicitudes aprobadas.");
+            }
+          }
 
-  if (type === "Absence" && validDays.length > 3 && !evidenceInput.files.length) {
-    errors.push("⚠ Adjunta evidencia para ausencias mayores a 3 días hábiles.");
-  }
+          // Guardar los días válidos solo si hay días válidos
+          document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+        }
+      }
 
-  if (errors.length > 0) {
-    e.preventDefault();
-    showErrorPopup(errors);
-    return;
-  }
+      // Otras validaciones
+      if (!location) {
+        errors.push("⚠ Ingresa la ubicación.");
+      }
 
-  document.getElementById("validDaysInput").value = JSON.stringify(validDays);
-});
+      if (type === "Absence" && start && end && realsDaysOff(start, end).length > 3 && !evidenceInput.files.length) {
+        errors.push("⚠ Adjunta evidencia para ausencias mayores a 3 días hábiles.");
+      }
 
+      // Mostrar errores si existen
+      if (errors.length > 0) {
+        e.preventDefault();
+        showErrorPopup(errors);
+      }
+    });
   });
 
   // Mostrar o esconder el campo de evidencia
