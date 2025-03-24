@@ -5,8 +5,6 @@ boundary general.route.js as collabsRoute
 boundary collabs.ejs as CollabsView
 boundary saveSucces.ejs as saveSucces
 control collabs.controller.js as collabsController
-entity collab.model as collabModel
-database Nebula as nebula
 
 superAdmin -> collabsRoute : GET/view_collabs
 activate collabsRoute
@@ -31,17 +29,22 @@ collabsRoute -> collabsController: post_addCollabs
 deactivate collabsRoute
 activate collabsController
 
-collabsController -> collabModel: new Model(request.body.valor)
-activate collabModel
+create entity model
+collabsController -> model: new Model(request.body.valor)
+activate model
 
-collabModel -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
+collabsController ->> model: save()
+
+database Nebula as nebula
+
+model -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
 activate nebula
 
-nebula -->> collabModel: Query ok
+nebula -->> model: Query ok
 deactivate nebula
 
-collabModel -->> collabsController: promesa
-deactivate collabModel
+model -->> collabsController: promesa
+deactivate model
 
 collabsController -> saveSucces: response.render
 deactivate collabsController
