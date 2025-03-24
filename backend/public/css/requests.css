@@ -30,6 +30,14 @@
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
 
+#errorPopup .pop-up-content {
+    max-width: 40vw;      /* Aumentamos de 30vw a 40vw */
+    max-height: 50vh;     /* Menor altura para que no se extienda tanto */
+    overflow-y: auto;     /* Habilita scroll si hay muchos errores */
+    padding: 2vh 2vw;
+    border-radius: 10px;
+}
+
 .cell {
     display: flex;
     flex-direction: column; 

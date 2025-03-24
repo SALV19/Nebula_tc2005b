@@ -149,5 +149,16 @@
     </section>
 </main>
 
+<!-- Pop-up para errores -->
+<div id="errorPopup" class="pop-up" style="display: none;">
+  <div class="pop-up-content">
+    <div id="errorMessageList" class="content has-text-danger mb-4">
+      <!-- Aquí se insertarán errores como lista -->
+    </div>
+    <div class="is-flex is-justify-content-flex-end">
+      <button class="button is-danger" onclick="closeErrorPopup()">Cerrar</button>
+    </div>
+  </div>
+</div>
 <%- include('includes/_footer.ejs') %>
 

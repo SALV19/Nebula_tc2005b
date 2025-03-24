@@ -133,43 +133,41 @@
 
     // Alerta de selecciona minimo un día habil 
     requestForm.addEventListener("submit", function (e) {
-      const start = startDate.value;
-      const end = endDate.value;
-      const location = document.getElementById("location").value.trim();
-      const evidenceInput = document.getElementById("evidence");
+  const start = startDate.value;
+  const end = endDate.value;
+  const location = document.getElementById("location").value.trim();
+  const evidenceInput = document.getElementById("evidence");
+  const type = requestType.value;
 
-      const validDays = realsDaysOff(start, end);
+  const validDays = realsDaysOff(start, end);
 
-      // Previene el envío si faltan campos obligatorios
-      if (!start || !end) {
-        e.preventDefault();
-        alert("⚠ Debes seleccionar la fecha de inicio y fin.");
-        return;
-      }
+  const errors = [];
 
-      if (validDays.length < 1) {
-        e.preventDefault();
-        alert("⚠ Debes seleccionar al menos un día hábil válido.");
-        return;
-      }
+  if (!start || !end) {
+    errors.push("⚠ Selecciona la fecha de inicio y fin.");
+  }
 
-      if (!location) {
-        e.preventDefault();
-        alert("⚠ Debes ingresar la ubicación (Location).");
-        return;
-      }
+  if (validDays.length < 1) {
+    errors.push("⚠ Selecciona al menos un día hábil válido.");
+  }
 
-      // Validar evidencia solo si es una ausencia > 3 días
-      const type = requestType.value;
-      if (type === "Absence" && validDays.length > 3 && !evidenceInput.files.length) {
-        e.preventDefault();
-        alert("⚠ Debes adjuntar evidencia para ausencias mayores a 3 días hábiles.");
-        return;
-      }
+  if (!location) {
+    errors.push("⚠ Ingresa la ubicación.");
+  }
 
-      // Si todo está bien, se llena el input hidden
-      document.getElementById("validDaysInput").value = JSON.stringify(validDays);
-    });
+  if (type === "Absence" && validDays.length > 3 && !evidenceInput.files.length) {
+    errors.push("⚠ Adjunta evidencia para ausencias mayores a 3 días hábiles.");
+  }
+
+  if (errors.length > 0) {
+    e.preventDefault();
+    showErrorPopup(errors);
+    return;
+  }
+
+  document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+});
+
   });
 
   // Mostrar o esconder el campo de evidencia
@@ -192,6 +190,27 @@
       evidenceContainer.style.display = "none";
       evidenceNote.style.display = "none";
     }
+  }
+
+  function showErrorPopup(messages) {
+    const popup = document.getElementById("errorPopup");
+    const container = document.getElementById("errorMessageList");
+    container.innerHTML = ""; // Limpiar anteriores
+
+    const ul = document.createElement("ul");
+
+    messages.forEach(msg => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="icon has-text-danger mr-1"><i class="fas fa-exclamation-circle"></i></span> ${msg}`;
+      ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+    popup.style.display = "flex";
+  }
+
+  function closeErrorPopup() {
+    document.getElementById("errorPopup").style.display = "none";
   }
 
   // Ejecutar checkEvidenceRequirement cuando cambian los campos
