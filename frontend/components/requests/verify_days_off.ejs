@@ -135,17 +135,41 @@
     requestForm.addEventListener("submit", function (e) {
       const start = startDate.value;
       const end = endDate.value;
+      const location = document.getElementById("location").value.trim();
+      const evidenceInput = document.getElementById("evidence");
+
       const validDays = realsDaysOff(start, end);
 
-      if (validDays.length < 1) {
-        e.preventDefault(); // Evita que se mande
-        alert("⚠ Debes seleccionar al menos un día hábil válido para enviar la solicitud.");
+      // Previene el envío si faltan campos obligatorios
+      if (!start || !end) {
+        e.preventDefault();
+        alert("⚠ Debes seleccionar la fecha de inicio y fin.");
+        return;
       }
-    // Pasar los días válidos al input oculto
-    document.getElementById("validDaysInput").value = JSON.stringify(validDays);
 
+      if (validDays.length < 1) {
+        e.preventDefault();
+        alert("⚠ Debes seleccionar al menos un día hábil válido.");
+        return;
+      }
+
+      if (!location) {
+        e.preventDefault();
+        alert("⚠ Debes ingresar la ubicación (Location).");
+        return;
+      }
+
+      // Validar evidencia solo si es una ausencia > 3 días
+      const type = requestType.value;
+      if (type === "Absence" && validDays.length > 3 && !evidenceInput.files.length) {
+        e.preventDefault();
+        alert("⚠ Debes adjuntar evidencia para ausencias mayores a 3 días hábiles.");
+        return;
+      }
+
+      // Si todo está bien, se llena el input hidden
+      document.getElementById("validDaysInput").value = JSON.stringify(validDays);
     });
-
   });
 
   // Mostrar o esconder el campo de evidencia
