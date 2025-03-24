@@ -1,0 +1,87 @@
+.cancelButton {
+    position: absolute; 
+    right: 3vw; /* Changed from px to vw to be responsive */
+    top: 3vh;  /* Changed from px to vh */
+    cursor: pointer;
+}
+
+.pop-up {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; 
+}
+
+.pop-up-content {
+    background-color: #242424;
+    padding: 2vw;
+    padding-top: 5vh;
+    border-radius: 5px;
+    width: 45vw;
+    max-height: 90vh; /* Optional to limit total height */
+    overflow-y: auto; /*To be able to scroll if the content is too large */
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#errorPopup .pop-up-content {
+    max-width: 40vw;      /* We increased from 30vw to 40vw */
+    max-height: 50vh;     /* Lower height so it doesn't extend as much */
+    overflow-y: auto;    
+    padding: 2vh 2vw;
+    border-radius: 10px;
+}
+
+.cell {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 0; 
+    margin: 2vh; /* Changed from px to vh */
+}
+
+.subtitleForm {
+    font-size: 2vh; /* Changed from px a vh */
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; /* Changed from  px a vh */
+    align-items: center;
+    gap: 0.8vw; /* Changed from px a vw */
+}
+
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; /* Changed to vh */
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; /* Changed from px a vh */
+    background: transparent;
+    font-size: 2vh; /* Changed from px a vh */
+    color: #747474;
+    margin-bottom: 2vh; /* Changed from px a vh */
+}
+
+.input-container {
+    width: 100%; 
+    margin-top: 0; 
+}
+
+.buttons {
+    position: relative;
+    width: 100%;
+    display: flex; /* Added flexbox */
+    justify-content: flex-end; /* Aligns elements to the end, that is, to the right */
+}
+
+.button.is-save {
+    background-color: #59A250; 
+    color: #fff; 
+    border: none; 
+    margin-top: 1vh;
+}

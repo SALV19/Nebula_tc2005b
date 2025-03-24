@@ -1,0 +1,176 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="stylesheet" href="/css/requests.css">
+<link rel="stylesheet" href="/css/table.css">
+<main class="hero column">
+  <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+  <section class="hero-body">
+    <div class="container is-widescreen">
+      <div class="columns has-text-centered overhead is-vcentered offset">
+        <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
+        <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
+        <%if (permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) {%>
+          <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
+          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+        <% } else {%>
+          <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
+        <% } %>
+          <i id="openRequestForm" class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
+            <!-- Pop-up to register Test request-->
+            <div id="requestPopup" class="pop-up" style="display: none;">
+              <div class="pop-up-content">
+                    <form action="/requests/insert_request" method="post">
+                      <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
+                      <input type="hidden" id="validDaysInput" name="validDays">
+                      
+                      <!-- Request type -->
+                      <div class="field">
+                        <label class="label">Request Type</label>
+                        <div class="control">
+                            <div class="select">
+                                <select id="requestType" name="requestType" required>
+                                  <option value="Vacation|Vacation">Vacation</option>
+                                  <option value="Absence|Disease">Disease</option>
+                                  <option value="Vacation|Family Situation">Family Situation</option>
+                                  <option value="Absence|Personal commitment">Personal commitment</option>
+                                  <option value="Vacation|Mourning">Mourning</option>
+                                  <option value="Absence|Medical appointment">Medical appointment</option>
+                                  <option value="Absence|Official Procedures">Official Procedures</option>
+                                  <option value="Vacation|Emergency">Emergency</option>
+                                  <option value="Absence|Academic Status">Academic Status</option>
+                                  <option value="Absence|Work Event">Work Event</option>
+                                  <option value="Absence|Unconfirmed">Unconfirmed</option>
+                                </select>
+                            </div>
+                        </div>
+                      
+                        <!-- Start date -->
+                      <div class="field">
+                        <label class="label">Start Date</label>
+                        <div class="control">
+                            <input type="date" id="startDate" name="startDate" class="input" required></input>
+                        </div>
+                      </div>
+
+                      <!-- End Date -->
+                      <div class="field">
+                        <label class="label">End Date</label>
+                        <div class="control">
+                            <input type="date" id="endDate" name="endDate" class="input" required></input>
+                        </div>
+                      </div>
+
+                      <!-- Requested days counter -->
+                      <div class="mt-2" id="daysCounter" style="display: none;">
+                        <p class="has-text-info" id="daysCounterText">
+                          Días solicitados <strong>0</strong>.
+                        </p>
+                      </div>
+                    
+                      <!-- Location -->
+                      <div class="field">
+                        <label class="label">Location</label>
+                        <div class="control">
+                          <input id="location" name="location" class="input" placeholder="Country, State, City"></input>
+                      </div>
+                      </div>
+
+                      <!-- Description (Reason for the absence) -->
+                      <div class="field">
+                        <label class="label">Reason (Optional)</label>
+                        <div class="control">
+                            <textarea id="description" name="description" class="textarea" placeholder="Enter the reason"></textarea>
+                        </div>
+                      </div>
+
+                      <!-- Evidencia (Only if the absence is greater than 3 days) -->
+                      <div class="field" id="evidenceContainer" style="display: none;">
+                        <label class="label">Attach Evidence</label>
+                        <div class="control">
+                            <input type="file" id="evidence" name="evidence" class="input">
+
+                            <p id="evidenceNote" class="help is-danger" style="display: none;">
+                              <span class="icon is-small has-text-danger">
+                                <i class="fas fa-exclamation-triangle"></i>
+                              </span>
+                              Evidence is required
+                            </p>
+                        </div>
+                      </div>
+                      <!-- Action buttons -->
+                      <div class="field is-grouped">
+                        <div class="control">
+                            <button type="submit" class="button is-success">Save</button>
+                        </div>
+                        <div class="control">
+                            <button type="button" id="closeRequestForm" class="button is-danger">Cancel</button>
+                        </div>
+                      </div>
+                    </form>
+
+                </div>
+
+              </div>
+            </div>
+          <i class="bi bi-funnel subtitle is-clickable dropdown" id="filter">
+            <div class="dropdown-content">
+              <div class="is-flex">
+                <div>
+                  <label class="is-size-6">Start-date</label>
+                  <input type="date" id="filter_start" class="mr-2"/>
+                </div>
+                <div>
+                  <label class="is-size-6">End-date</label>
+                  <input type="date" id="filter_end"/>
+                </div>
+              </div>
+              <div class="filter_options">
+                <label for="pending">
+                  <input type="checkbox" id="pending" class="checkbox" name="pending"/>
+                  Pending
+                </label>
+                <label for="accepted">
+                  <input type="checkbox" id="accepted" class="checkbox" name="accepted"/>
+                  Accepted
+                </label>
+                <label for="denied">
+                  <input type="checkbox" id="denied" class="checkbox" name="denied"/>
+                  Denied
+                </label>
+              </div>
+              <div class="is-flex is-justify-content-center">
+                <button class="button has-text-white is-danger mr-4" id="cancel_filter_btn">Cancel</button>
+                <button class="button has-text-white is-success" id="apply_filter_btn">Apply</button>
+              </div>
+            </div>
+          </i>
+        </div>
+      </div>
+    </div>
+    <hr/>
+      <%- include ('../components/requests/consult_requests_table.ejs')%>
+      <div class="is-flex is-justify-content-flex-end	my_buttons">
+        <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
+        <input type="number" value="1" class="pagination" id="pagination"/>
+        <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
+      </div>
+      <%- include ('../components/requests/consult_requests_logic.ejs') %>
+      <%- include ('../components/requests/filter_requests.ejs') %>
+      <%- include ('../components/requests/verify_days_off.ejs') %>
+    </section>
+</main>
+
+<!--Pop-up for errors -->
+<div id="errorPopup" class="pop-up" style="display: none;">
+  <div class="pop-up-content">
+    <div id="errorMessageList" class="content has-text-danger mb-4">
+      
+      <!-- Errors will be inserted here as a list -->
+    </div>
+    <div class="is-flex is-justify-content-flex-end">
+      <button class="button is-danger" onclick="closeErrorPopup()">Close</button>
+    </div>
+  </div>
+</div>
+<%- include('includes/_footer.ejs') %>
+
