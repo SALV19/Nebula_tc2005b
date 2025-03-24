@@ -9,7 +9,9 @@
     const dates = [];
 
     while (current <= end) {
-      dates.push(current.toISOString().split('T')[0]); // yyyy-mm-dd
+
+      // yyyy-mm-dd
+      dates.push(current.toISOString().split('T')[0]); 
       current.setDate(current.getDate() + 1);
     }
 
@@ -28,24 +30,28 @@
         taken_days.push(...range);
       }
       else {
-        const dateWhithoutTime = new Date(h.fecha_inicio).toISOString().split('T')[0];// yyyy-mm-dd
+
+        // yyyy-mm-dd
+        const dateWhithoutTime = new Date(h.fecha_inicio).toISOString().split('T')[0];
         taken_days.push(dateWhithoutTime );
       }
     }
-    console.log("Feriados (formato final):", taken_days);
+    console.log("Holidays (final format):", taken_days);
     return taken_days;
   }
 
   function get_approved_days() {
     const approved_days = all_requests.map(r => {
-      return new Date(r.fecha).toISOString().split('T')[0]; // 'yyyy-mm-dd'
+      
+      // 'yyyy-mm-dd'
+      return new Date(r.fecha).toISOString().split('T')[0]; 
     });
 
-    console.log("Días aprobados del colaborador:", approved_days);
+    console.log("Approved employee days:", approved_days);
       return approved_days;
   }
 
-  // Función para contar días hábiles (sin sábados ni domingos)
+  // Function to count business days (without Saturdays or Sundays)
   function realsDaysOff(start, end) {
     const holidaysList = get_holidays();
     const approvedDays = get_approved_days();
@@ -63,7 +69,7 @@
 
       current.setDate(current.getDate() + 1);
     }
-    console.log("Días solicitados por el usuario:", effective);
+    console.log("Days requested by the user:", effective);
     return effective;
   }
 
@@ -76,10 +82,10 @@
 
       if (validDays.length > 0) {
         daysCounter.style.display = "block";
-        daysCounterText.innerHTML = `Estás solicitando <strong>${validDays.length}</strong> días efectivos.`;
+        daysCounterText.innerHTML = `You are requesting <strong>${validDays.length}</strong> valid days.`;
       } else {
         daysCounter.style.display = "block";
-        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ No estás solicitando ningún día válido.</span>`;
+        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
       }
     } else {
       daysCounter.style.display = "none";
@@ -98,13 +104,13 @@
     const daysCounter = document.getElementById("daysCounter");
     const daysCounterText = document.getElementById("daysCounterText");
     
-    // Verifica si los elementos existen
+    // Check if the elements exist
     if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
-        console.error("Error: No se encontraron los elementos del pop-up.");
+        console.error("Error: The pop-up elements were not found.");
         return;
     }
 
-    // Abrir el formulario
+    // Open the form
     openBtn.addEventListener("click", () => {
         requestPopup.style.display = "flex";
     });
@@ -124,14 +130,14 @@
       updateDaysCounter();
     });
 
-    // Cerrar el formulario
+    // Close the form
     closeBtn.addEventListener("click", () => {
       requestPopup.style.display = "none";
     });
 
     const requestForm = document.querySelector("form"); 
 
-    // Alerta de selecciona minimo un día habil 
+    // Select alert for at least one business day 
     requestForm.addEventListener("submit", function (e) {
       const start = startDate.value;
       const end = endDate.value;
@@ -141,15 +147,15 @@
 
       const errors = [];
 
-      // Validaciones de fechas
+      // Date validations
       if (!start || !end) {
-        errors.push("⚠ Selecciona la fecha de inicio y fin.");
+        errors.push("Select the start and end date.");
       } else {
         const startDateObj = new Date(start);
         const endDateObj = new Date(end);
 
         if (startDateObj > endDateObj) {
-          errors.push("⚠ La fecha de inicio no puede ser posterior a la fecha de fin.");
+          errors.push("The start date cannot be later than the end date.");
         } else {
           const validDays = realsDaysOff(start, end);
           const allInRange = get_inbetween_dates(start, end);
@@ -161,29 +167,29 @@
 
           if (validDays.length < 1) {
             if (empalmeFeriados) {
-              errors.push("⚠ Todas las fechas seleccionadas coinciden con días feriados.");
+              errors.push("All selected dates overlap with holidays.");
             } else if (empalmeAprobados) {
-              errors.push("⚠ Todas las fechas seleccionadas ya fueron aprobadas previamente.");
+              errors.push("All selected dates overlap with approved requests");
             } else {
-              errors.push("⚠ Estas seleccionando fechas empalmadas con dias feriados y solicitudes aprobadas.");
+              errors.push(" You are selecting dates that overlap with holidays and approved requests.");
             }
           }
 
-          // Guardar los días válidos solo si hay días válidos
+          // Save valid days only if there are valid days
           document.getElementById("validDaysInput").value = JSON.stringify(validDays);
         }
       }
 
-      // Otras validaciones
+      // Other validations
       if (!location) {
-        errors.push("⚠ Ingresa la ubicación.");
+        errors.push("Enter the location.");
       }
 
       if (type === "Absence" && start && end && realsDaysOff(start, end).length > 3 && !evidenceInput.files.length) {
-        errors.push("⚠ Adjunta evidencia para ausencias mayores a 3 días hábiles.");
+        errors.push("Attach evidence for absences greater than 3 business days.");
       }
 
-      // Mostrar errores si existen
+      // Show errors if they exist
       if (errors.length > 0) {
         e.preventDefault();
         showErrorPopup(errors);
@@ -191,7 +197,7 @@
     });
   });
 
-  // Mostrar o esconder el campo de evidencia
+  // Show or hide the evidence field
   function checkEvidenceRequirement() {
     const type = requestType.value;
     const start = startDate.value;
@@ -202,10 +208,12 @@
     if (type === "Absence" && start && end) {
       if (validDays.length > 3) {
         evidenceContainer.style.display = "block";
-        evidenceNote.style.display = "block"; // Muestra la leyenda
+        // Display the legend
+        evidenceNote.style.display = "block"; 
       } else {
         evidenceContainer.style.display = "none";
-        evidenceNote.style.display = "none"; // Oculta si no aplic
+        // Hide
+        evidenceNote.style.display = "none";
       }
     } else {
       evidenceContainer.style.display = "none";
@@ -216,7 +224,9 @@
   function showErrorPopup(messages) {
     const popup = document.getElementById("errorPopup");
     const container = document.getElementById("errorMessageList");
-    container.innerHTML = ""; // Limpiar anteriores
+    
+    // Clear previous
+    container.innerHTML = ""; 
 
     const ul = document.createElement("ul");
 
@@ -234,7 +244,7 @@
     document.getElementById("errorPopup").style.display = "none";
   }
 
-  // Ejecutar checkEvidenceRequirement cuando cambian los campos
+  // Run checkEvidenceRequirement when fields change
   requestType.addEventListener("change", checkEvidenceRequirement);
   startDate.addEventListener("change", checkEvidenceRequirement);
   endDate.addEventListener("change", checkEvidenceRequirement);

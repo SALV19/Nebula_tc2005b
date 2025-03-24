@@ -16,15 +16,16 @@
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
           <i id="openRequestForm" class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
-            <!-- Pop-up para registrar solicitud Prueba-->
+            <!-- Pop-up to register Test request-->
             <div id="requestPopup" class="pop-up" style="display: none;">
               <div class="pop-up-content">
                     <form action="/requests/insert_request" method="post">
                       <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
                       <input type="hidden" id="validDaysInput" name="validDays">
-                      <!-- Tipo de solicitud -->
+                      
+                      <!-- Request type -->
                       <div class="field">
-                        <label class="label">Type of Request</label>
+                        <label class="label">Request Type</label>
                         <div class="control">
                             <div class="select">
                                 <select id="requestType" name="requestType" required>
@@ -33,7 +34,8 @@
                                 </select>
                             </div>
                         </div>
-                      <!-- Fecha de inicio -->
+                      
+                        <!-- Start date -->
                       <div class="field">
                         <label class="label">Start Date</label>
                         <div class="control">
@@ -41,7 +43,7 @@
                         </div>
                       </div>
 
-                      <!-- Fecha de fin -->
+                      <!-- End Date -->
                       <div class="field">
                         <label class="label">End Date</label>
                         <div class="control">
@@ -49,7 +51,7 @@
                         </div>
                       </div>
 
-                      <!-- Contador de días solicitados -->
+                      <!-- Requested days counter -->
                       <div class="mt-2" id="daysCounter" style="display: none;">
                         <p class="has-text-info" id="daysCounterText">
                           Días solicitados <strong>0</strong>.
@@ -60,11 +62,11 @@
                       <div class="field">
                         <label class="label">Location</label>
                         <div class="control">
-                          <input id="location" name="location" class="input" placeholder="Enter Location"></input>
+                          <input id="location" name="location" class="input" placeholder="Country, State, City"></input>
                       </div>
                       </div>
 
-                      <!-- Descripción (Motivo de la falta) -->
+                      <!-- Description (Reason for the absence) -->
                       <div class="field">
                         <label class="label">Reason (Optional)</label>
                         <div class="control">
@@ -72,7 +74,7 @@
                         </div>
                       </div>
 
-                      <!-- Evidencia (Solo si la falta es mayor a 3 días) -->
+                      <!-- Evidencia (Only if the absence is greater than 3 days) -->
                       <div class="field" id="evidenceContainer" style="display: none;">
                         <label class="label">Attach Evidence</label>
                         <div class="control">
@@ -82,11 +84,11 @@
                               <span class="icon is-small has-text-danger">
                                 <i class="fas fa-exclamation-triangle"></i>
                               </span>
-                              La evidencia es obligatoria.
+                              Evidence is required
                             </p>
                         </div>
                       </div>
-                      <!-- Botones de acción -->
+                      <!-- Action buttons -->
                       <div class="field is-grouped">
                         <div class="control">
                             <button type="submit" class="button is-success">Save</button>
@@ -149,14 +151,15 @@
     </section>
 </main>
 
-<!-- Pop-up para errores -->
+<!--Pop-up for errors -->
 <div id="errorPopup" class="pop-up" style="display: none;">
   <div class="pop-up-content">
     <div id="errorMessageList" class="content has-text-danger mb-4">
-      <!-- Aquí se insertarán errores como lista -->
+      
+      <!-- Errors will be inserted here as a list -->
     </div>
     <div class="is-flex is-justify-content-flex-end">
-      <button class="button is-danger" onclick="closeErrorPopup()">Cerrar</button>
+      <button class="button is-danger" onclick="closeErrorPopup()">Close</button>
     </div>
   </div>
 </div>
