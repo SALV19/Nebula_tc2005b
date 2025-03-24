@@ -60,14 +60,17 @@ exports.post_abscence_requests = async (request, response, next) => {
   //   return response.status(400).send("Se requiere evidencia para ausencias mayores a 3 días hábiles.");
   // }
   
+  const [type, subtype] = request.body.requestType.split("|");
+
   const request_register = new Requests(
     request.session.email,
-    request.body.requestType,
+    subtype, // <-- Guardamos solo el subtipo
     daysOff,
     request.body.location,
     request.body.description,
     request.body.evidence
   );
+
   if (true) {
     await request_register
       .save()
