@@ -48,13 +48,13 @@ exports.get_collabs = async (request, response) => {
 
 
 exports.post_collab = (request, response) => {
-  console.log(request.body);
+  // console.log(request.body);
   const new_Colab = new Colaborador(request.body.nombre, request.body.apellidos, 
       request.body.fechaNacimiento, request.body.telefono, request.body.puesto, 
       request.body.email, request.body.fechaIngreso, request.body.ubicacion, 
       request.body.modalidad, request.body.curp, request.body.rfc);
   
-  console.log(new_Colab);
+  // console.log(new_Colab);
   const password = generator.generate({
     length: 10,
     numbers: true
@@ -68,7 +68,7 @@ exports.post_collab = (request, response) => {
       const new_equipo = new Equipo(request.body.id_departamento, request.body.id_rol);
       return new_equipo.save(idcolab);
     }).then(() => {
-      console.log("Equipo guardado");
+      // console.log("Equipo guardado");
 
       request.session.successData = {
         email: request.body.email,

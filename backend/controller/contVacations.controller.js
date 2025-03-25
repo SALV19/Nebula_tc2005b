@@ -20,7 +20,7 @@ exports.get_vacationsLeft = async (request, response) => {
 
         const result = await Colaborador.fetchColabVac(idColaborador).then(e=>e).catch(e=>console.log(e))
         const colaborador = result[0]; 
-        console.log(idColaborador)
+        // console.log(idColaborador)
         // if (!colaborador) {
         //     return request.status(404).send('Colaborador no encontrado');
         // }

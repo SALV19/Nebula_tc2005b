@@ -44,7 +44,6 @@ module.exports = class Colaborador {
         return db.execute(`SELECT id_colaborador from colaborador WHERE id_colaborador = ?`, [idColaborador]);
     }
     static fetchColabVac(idColaborador){
-        console.log("idcolab: ", idColaborador)
         return db.execute(`SELECT sf.id_solicitud_falta, COUNT(ds.fecha) AS diasTomados
                             FROM solicitudes_falta sf
                             JOIN dias_solicitados ds ON ds.id_solicitud_falta = sf.id_solicitud_falta
