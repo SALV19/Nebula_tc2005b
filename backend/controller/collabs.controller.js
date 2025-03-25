@@ -1,24 +1,25 @@
-const Colaborador = require('../models/collabs.model');
-const Departamento = require('../models/departamento.model');
-const Empresa = require('../models/empresa.model');
-const Equipo = require('../models/equipo.model');
-const Rol = require('../models/rol.model');
+const Colaborador = require("../models/collabs.model");
+const Departamento = require("../models/departamento.model");
+const Empresa = require("../models/empresa.model");
+const Equipo = require("../models/equipo.model");
+const Rol = require("../models/rol.model");
 
-const generator = require('generate-password-browser');
+const generator = require("generate-password-browser");
 
 let settings = {
-  selectedOption: 'active',
-}
+  selectedOption: "active",
+};
 
 exports.get_collabs = async (request, response) => {
   try {
-    const [collabsDataPues, collabsDataMod, depData, empData, rolData] = await Promise.all([
-      Colaborador.fetchAllColabPues(),
-      Colaborador.fetchAllColabMod(),
-      Departamento.fetchAllDep(),
-      Empresa.fetchAllEmp(),
-      Rol.fetchAllRol(),
-    ]);
+    const [collabsDataPues, collabsDataMod, depData, empData, rolData] =
+      await Promise.all([
+        Colaborador.fetchAllColabPues(),
+        Colaborador.fetchAllColabMod(),
+        Departamento.fetchAllDep(),
+        Empresa.fetchAllEmp(),
+        Rol.fetchAllRol(),
+      ]);
 
     const [rowsColP, fieldDataColPues] = collabsDataPues;
     const [rowsColM, fieldDataColMod] = collabsDataMod;
@@ -34,45 +35,59 @@ exports.get_collabs = async (request, response) => {
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
-      puesto: rowsColP, 
+      puesto: rowsColP,
       modalidad: rowsColM,
       empresa: rowsEmp,
       departamento: rowsDep,
       rol: rowsRol,
-      successData
+      successData,
     });
   } catch (error) {
     console.log(error);
   }
 };
 
-
 exports.post_collab = (request, response) => {
   // console.log(request.body);
-  const new_Colab = new Colaborador(request.body.nombre, request.body.apellidos, 
-      request.body.fechaNacimiento, request.body.telefono, request.body.puesto, 
-      request.body.email, request.body.fechaIngreso, request.body.ubicacion, 
-      request.body.modalidad, request.body.curp, request.body.rfc);
-  
+  const new_Colab = new Colaborador(
+    request.body.nombre,
+    request.body.apellidos,
+    request.body.fechaNacimiento,
+    request.body.telefono,
+    request.body.puesto,
+    request.body.email,
+    request.body.fechaIngreso,
+    request.body.ubicacion,
+    request.body.modalidad,
+    request.body.curp,
+    request.body.rfc
+  );
+
   // console.log(new_Colab);
   const password = generator.generate({
     length: 10,
-    numbers: true
+    numbers: true,
   });
 
-  new_Colab.save(password)
+  new_Colab
+    .save(password)
     .then(([rows]) => {
-      if (rows.length === 0) throw new Error("No se encontró el colaborador insertado.");
+      if (rows.length === 0)
+        throw new Error("No se encontró el colaborador insertado.");
       const idcolab = rows[0].id_colaborador;
 
-      const new_equipo = new Equipo(request.body.id_departamento, request.body.id_rol);
+      const new_equipo = new Equipo(
+        request.body.id_departamento,
+        request.body.id_rol
+      );
       return new_equipo.save(idcolab);
-    }).then(() => {
+    })
+    .then(() => {
       // console.log("Equipo guardado");
 
       request.session.successData = {
         email: request.body.email,
-        password: password
+        password: password,
       };
 
       response.redirect("/view_collabs");
@@ -80,7 +95,18 @@ exports.post_collab = (request, response) => {
     .catch((error) => {
       console.log(error);
       response.redirect("/view_collabs?error=true");
-  }); 
+    });
 };
 
-  
+exports.get_collabs_info = async () => {
+  settings.selectedOption = "requests";
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const collabs = await Colaborador.fetchCollabs(null, offset, filter)
+    .then((data) => data)
+    .catch((e) => console.log(e));
+  response.json({
+    selectedOption: "Active",
+    collabs: collabs,
+  });
+};
