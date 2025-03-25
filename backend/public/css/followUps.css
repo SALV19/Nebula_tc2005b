@@ -209,3 +209,8 @@ canvas {
 .text-hidden.show {
     display: block;
 }
+
+.calendario{
+    width: 30vw;
+    height: 30vw;
+}

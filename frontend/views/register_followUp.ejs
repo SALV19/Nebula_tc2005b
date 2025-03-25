@@ -9,14 +9,11 @@
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
         <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
-        <% if (permissions?.includes('register_one_on_one') || permissions?.includes('register_one_on_one_meeting')) {%>
-          <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
-          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
-        <% } else {%>
+        <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
+        <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
-        <% } %>
-          <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
-        </div>
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
+          </div>
         </div>
       </div>   
     </div> 
