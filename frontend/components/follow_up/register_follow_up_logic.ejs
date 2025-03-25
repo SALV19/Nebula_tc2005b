@@ -1,13 +1,14 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 <script>
     document.addEventListener("DOMContentLoaded", () => {
+    const contentContainer = document.getElementById("content-section");
 
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
     function get_info(selectedOption) {
       console.log("Ejecutando get_info con opción:", selectedOption);
       
       // Seleccionar el contenedor donde se mostrará el contenido
-      const contentContainer = document.getElementById("content-section");
+      contentContainer.innerHTML = " ";
       if (selectedOption == 'Register'){
         contentContainer.innerHTML = `
           <form action="/follow_ups" method="POST">
@@ -30,11 +31,14 @@
                     <% } %>
 
                   </select>
+                  <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
                 </div>  
 
                 <div>
                   <label class="is-size-6 styling">Date</label>
-                  <input class="dateLine" type="date" id="filter_end" name="fechaAgendada"/>
+                  <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" <%= new Date().toISOString().split('T')[0] %>/>
+                  <p id="dateError" class="text-hidden"> Select a valid date </p>
+
                 </div>
                 
                 <div id="questions-container">
@@ -56,6 +60,11 @@
                   <% } %>
                 </div>
 
+                <div class="button-container">
+                  <button id="submitButton" class="approve-button" type="submit">Submit</button>
+                </div>
+              </section>
+
               </section>
 
               <section class='column'>
@@ -66,10 +75,20 @@
                 <div>
                   <% for(let i = 0; i < indicator.length; i++) { %>
                     <div class="container">
-                      <p class="progress-text"> <%= indicator[i].indicador %> </p>
-                      <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
-                      <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
-                    </div>
+                      <div class="progress-container">
+                          <p class="progress-text"> <%= indicator[i].indicador %> </p>
+                          <i class="bi bi-info-circle elementBar"></i>
+                        </div>
+
+                        <p class="hidden-message showElement dropdown-content" style="display: none;"> 
+                          How does the employee feel about their <%= indicator[i].indicador %>?<br>
+                          0 = unsatisfied | 5 = satisfied
+                        </p>
+
+                        <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
+                        <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+                      </div>
+
 
                     <div class="numbers-container">
                       <p class="numbers">
@@ -93,16 +112,11 @@
                     </div>
                   <% } %> 
                 </div>
-
-                <div class="button-container">
-                  <button class="approve-button" type="submit">Submit</button>
-                </div>
-              </section>
             </div>
           </form>
-
         `;
 
+        // SHOW INPUT BOX FOR QUESTIONS
         document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
           toggleIcon.addEventListener("click", (event) => {
             const questionContainer = event.target.closest(".question-container");
@@ -113,6 +127,7 @@
         });
 
 
+        // RADAR CHART LOGIC AND CREATION
         const progressBars = document.querySelectorAll(".progress-bar");
         // console.log(progressBars);
         const progressTexts = document.querySelectorAll(".progress-text");
@@ -183,10 +198,81 @@
           progressBars[i].addEventListener('input',updateValues);
         };
 
+        //Show info message for progress bars
+        const triggerElement = document.querySelectorAll(".elementBar");
+        const targetElement = document.querySelectorAll(".showElement");
+        triggerElement.forEach((trigger, index) => {
+          trigger.addEventListener("mouseover", () => {
+            targetElement[index].style.display = "block";
+          })
+
+          trigger.addEventListener("mouseout" , () => {
+            targetElement[index].style.display = "none";
+          })
+        })
+
+        // VALIDATE COLLAB AND DATE
+        let collaboratorSelect = document.getElementById("collaborators");
+        let errorMessage = document.getElementById("errorMessage");
+        let submitButton = document.getElementById("submitButton");
+        let selectDate = document.getElementById("filter_end");
+
+        let today = new Date(); 
+        today.setDate(today.getDate() - 1);  
+
+        let currentDate = today.toISOString().split('T')[0]; 
+
+        console.log('hoy', currentDate); 
+        console.log('sel', selectDate.value);  
+
+
+         // VALIDATE DATE
+        selectDate.addEventListener("change", function(){
+          if(selectDate.value >= currentDate){
+            dateError.classList.remove("show");
+          } else {
+            dateError.classList.add("show");
+          };
+        });
+
+         // VALIDATE COLLAB
+        collaboratorSelect.addEventListener("change", function(){
+          if (collaboratorSelect.value != "default"){
+            errorMessage.classList.remove("show");
+          } else {
+            errorMessage.classList.add("show");
+          };
+        });
+
+        // VALIDATE FORM
+        submitButton.addEventListener("click", function (event) {
+          // Validate dates
+          if (selectDate.value < currentDate){
+            event.preventDefault();
+            dateError.classList.add("show");
+          } else {
+            dateError.classList.remove("show");
+          };
+
+          if (collaboratorSelect.value === "default"){
+            event.preventDefault();
+            errorMessage.classList.add("show");
+          } else {
+            errorMessage.classList.remove("show");
+          };
+        });
+
+      }
+      else if (selectedOption == 'Collaborators'){
+       contentContainer.innerHTML= ` <p> Holaaa </p>`;
+      } else {
+        contentContainer.innerHTML= ` <p> Looooool </p>`;
       }
     }
 
-    // Manejo de selección de pestañas de los botones
+    
+
+    // LOGIC FOR THE NAVBAR BUTTONS OF THIS PAGE
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
