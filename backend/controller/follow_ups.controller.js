@@ -39,7 +39,6 @@ exports.get_requests = async (request, response) => {
 exports.post_follow_ups = async (req, res) => {
   console.log(req.body);
   try {
-    // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
     // Ahora podemos acceder al ID generado
@@ -58,6 +57,5 @@ exports.post_follow_ups = async (req, res) => {
     res.redirect('/follow_ups');
   } catch (error) {
     console.error(error);
-    res.status(500).send("Error al guardar la evaluación");
   };
 }
