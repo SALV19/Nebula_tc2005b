@@ -6,13 +6,15 @@ body {
   height: 102vh;
 }
 
+
 .example::-webkit-scrollbar {
   display: none;
 }
 
+/* Hide scrollbar for IE, Edge and Firefox */
 .example {
-  -ms-overflow-style: none;
-  scrollbar-width: none;  
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
 }
 
 footer {
@@ -20,6 +22,7 @@ footer {
   top: 95%;
   right: 0;
   width: 100vw;
+  background: none;
 }
 
 .pop-up {
@@ -40,4 +43,10 @@ footer {
   border-radius: 30px;
   width: 40%;
   height: 60%;
+}
+
+.hero-body {
+  margin-left: 8vw;
+  width: 90vw;
+  position: relative; 
 }

@@ -3,7 +3,7 @@ const db = require('../util/database');
 module.exports = class Colaborador {
     constructor(colab_nombre, colab_apellidos, colab_fechaNacimiento, colab_telefono, 
         colab_puesto, colab_email, colab_fechaIngreso, 
-        colab_ubicacion, colab_modalidad,colab_curp, colab_rfc) {
+        colab_ubicacion, colab_modalidad,colab_curp, colab_rfc, complete_name) {
 
         this.nombre = colab_nombre;
         this.apellidos = colab_apellidos;
@@ -16,6 +16,8 @@ module.exports = class Colaborador {
         this.modalidad = colab_modalidad;
         this.curp = colab_curp;
         this.rfc = colab_rfc;
+
+        this.name = complete_name;
         }
 
         save(password) {
@@ -46,4 +48,8 @@ module.exports = class Colaborador {
         return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
                             WHERE id_colaborador = ?`,[idColaborador]);
     }
-};
+    
+    static fetchAllCompleteName(){
+        return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador ORDER BY nombre ASC')
+    }
+}

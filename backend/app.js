@@ -10,25 +10,32 @@ require("./util/google_auth");
 
 // Server set-up
 const app = express(); 
+const app = express(); 
 
 app.set("view engine", "ejs");
 app.set("views", [
   path.join(__dirname, "../frontend/views"),
   path.join(__dirname, "../frontend/views/error"),
 ]);
+app.set("views", [
+  path.join(__dirname, "../frontend/views"),
+  path.join(__dirname, "../frontend/views/error"),
+]);
 app.use(express.static(path.join(__dirname, "./public")));
+app.use(express.json());
 app.use(express.json());
 
 app.use(
   session({
     secret:
     "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
+    "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
     resave: false,
     saveUninitialized: false,
   })
 );
 
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.urlencoded({ extended: true }));
 
 const csrf = require('csurf');
 const csrfProtection = csrf();
@@ -44,8 +51,12 @@ const general_routes = require("./routes/general.routes");
 
 const other_controllers = require("./controller/other.controller");
 
+const other_controllers = require("./controller/other.controller");
+
 app.use("/log_in", login_routes);
 app.use("/", auth_middleware, general_routes);
+
+app.use(other_controllers.get_404);
 
 app.use(other_controllers.get_404);
 
