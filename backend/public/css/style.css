@@ -1,4 +1,4 @@
-body, section, table, thead, tr, footer {
+body, section, table, thead, tr {
   background-color: #242424;
 }
 
@@ -17,7 +17,7 @@ body {
 
 footer {
   position: absolute; 
-  top: 95%;
+  top: 100%;
   right: 0;
   width: 100vw;
 }

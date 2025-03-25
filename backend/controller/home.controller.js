@@ -9,6 +9,6 @@ exports.get_home = async (request, response) => {
             // total_days: vacationsData.total_days
         });
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };

@@ -18,36 +18,10 @@ exports.get_vacationsLeft = async (request, response) => {
     try {
         const idColaborador = request.session.id_colaborador || request.body.id_colaborador;
 
-        const result = await Colaborador.fetchColabVac(idColaborador).then(e=>e).catch(e=>console.log(e))
+        const result = await Colaborador.fetchColabVac(idColaborador).then(e=>e).catch(e=>console.error(e))
         const colaborador = result[0]; 
-        // console.log(idColaborador)
-        // if (!colaborador) {
-        //     return request.status(404).send('Colaborador no encontrado');
-        // }
-
-        // const fechaIngreso = new Date(colaborador.fechaIngreso);
-        // const fechaActual = new Date();
-
-        // const antiguedad = fechaActual.getFullYear() - fechaIngreso.getFullYear();
-
-        // const totalDiasVacaciones = calcularDiasVacaciones(antiguedad);
-
-        // console.log(totalDiasVacaciones);
         
-        // const [solicitudes] = await Colaborador.fetchColabVac(idColaborador);
-
-        // let diasTomados = 0;
-        // solicitudes.forEach(solicitud => {
-        //     diasTomados += solicitud.diasTomados; // Asume que hay una columna 'diasTomados' o similar
-        // });
-
-        // const diasRestantes = totalDiasVacaciones - diasTomados;
-
-        // response.render('home_page', {
-        //     available_days: diasRestantes,
-        //     total_days: totalDiasVacaciones
-        // });
     } catch (error) {
-        console.log(error);
+        console.error(error);
     }
 };

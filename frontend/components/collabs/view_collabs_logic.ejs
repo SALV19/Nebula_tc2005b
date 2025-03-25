@@ -5,48 +5,46 @@
     let table_content = `<thead>
     <tr>
       <th >Name</th>
-      <th >Start-date</th>
-      <th >End-date</th>
-      <th >Request-type</th>
-      <th >Status</th>
-      <th >Action</th>
+      <th >Position</th>
+      <th >Department</th>
+      <th >Company</th>
     </tr>
   </thead>
   <tbody >`
     // Información por cada rengrlón de la tabla
-    data.requests[0].forEach((d, idx) => {
-      table_content += `<tr id='request' key='${idx}'>`;
+    data.collabs[0].forEach((d, idx) => {
+      console.log(d)
+      table_content += `<tr id='collab' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
-      table_content += `<td>${formatDate(d.start)}</td>`
-      table_content += `<td>${formatDate(d.end)}</td>`
-      table_content += `<td>${d.tipo_falta}</td>`
-      if (d.estado == 0) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
-      }
-      else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
-      }
-      else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
-      }
-      table_content += `<td><i class="bi bi-check-circle is-size-5 is-clickable	 has-text-primary mr-4"></i><i class="bi bi-x-circle is-size-5 is-clickable	 has-text-danger"></i></td>`
+      table_content += `<td>${d.puesto}</td>`
+      table_content += `<td>${d.nombre_departamento} </td>`
+      table_content += `<td>${d.nombre_empresa} </td>`
       table_content += '</tr>';
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
                               <div class="column">
-                                <p><strong>Type: </strong>${d.tipo_falta}</p>
-                                <p>Calendario...</p>
+                                <p class='has-text-weight-bold'>Phone</p>
+                                <p class='has-text-weight-bold'>Mail</p>
+                                <p class='has-text-weight-bold'>Role</p>
+                                <p class='has-text-weight-bold'>Modality</p>
+                                <p class='has-text-weight-bold'>Birthday</p>
                               </div>
                               <div class="column">
-                                <p><strong>Reason: </strong></p>
-                                <p class='has-background-black p-3 box'>${d.descripcion}</p>
-                                ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
+                                  <p>${d.telefono}</p>
+                                  <p>${d.email}</p>
+                                  <p>${d.tipo_rol}</p>
+                                  <p>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
+                                  <p>${d.fechaNacimiento}</p>
                               </div>
-                              <div class="column">
-                                <p><strong>Location:</strong></p>
-                                <p class='is-underlined	'>${d.ubicacion}</p>
+                              <div class="column my-2">
+                                <div class='columns'>
+                                  <div class='is-flex is-flex-direction-column has-text-centered	' style='width: 3rem;'>
+                                    <p class='has-text-danger  is-size-2'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-danger is-flex-direction-column has-text-centered'>Administrative faults</p>
+                                  </div>
+                                </div>
                               </div>
                             </div>
                           </td>
@@ -56,7 +54,7 @@
     table.innerHTML = table_content
 
     // Añade función para expandir el contenido extra
-    const entries = document.querySelectorAll('#request')
+    const entries = document.querySelectorAll('#collab')
     entries.forEach((node, idx) => {
       node.addEventListener('click', (v) => {
         const additionalRow = document.getElementById(`additional-row-${idx}`)
@@ -74,7 +72,6 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
-    console.log(`/view_collabs/${route}`)
     fetch(`/view_collabs/${route}`, {
       method: 'POST',
       headers: {
@@ -90,7 +87,7 @@
     .then(data => {
       createTableRequests(data)
     })
-    .catch(e => console.log(e))
+    .catch(e => console.error(e))
   }
 
   // Permite cambiar entre pestañas

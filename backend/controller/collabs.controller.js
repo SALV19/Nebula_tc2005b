@@ -43,12 +43,11 @@ exports.get_collabs = async (request, response) => {
       successData,
     });
   } catch (error) {
-    console.log(error);
+    console.error(error);
   }
 };
 
 exports.post_collab = (request, response) => {
-  // console.log(request.body);
   const new_Colab = new Colaborador(
     request.body.nombre,
     request.body.apellidos,
@@ -63,7 +62,6 @@ exports.post_collab = (request, response) => {
     request.body.rfc
   );
 
-  // console.log(new_Colab);
   const password = generator.generate({
     length: 10,
     numbers: true,
@@ -83,8 +81,6 @@ exports.post_collab = (request, response) => {
       return new_equipo.save(idcolab);
     })
     .then(() => {
-      // console.log("Equipo guardado");
-
       request.session.successData = {
         email: request.body.email,
         password: password,
@@ -93,18 +89,25 @@ exports.post_collab = (request, response) => {
       response.redirect("/view_collabs");
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       response.redirect("/view_collabs?error=true");
     });
 };
 
-exports.get_collabs_info = async () => {
-  settings.selectedOption = "requests";
+exports.get_collabs_info = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
-  const collabs = await Colaborador.fetchCollabs(null, offset, filter)
-    .then((data) => data)
-    .catch((e) => console.log(e));
+  let collabs;
+  if (request.session.permissions.includes('consult_all_collabs')) {
+    collabs = await Colaborador.fetchCollabs(null, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+  }
+  else {
+    collabs = await Colaborador.fetchCollabs(request.session.email, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+  }
   response.json({
     selectedOption: "Active",
     collabs: collabs,
