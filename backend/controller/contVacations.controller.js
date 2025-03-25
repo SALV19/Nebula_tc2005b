@@ -1,4 +1,6 @@
 const Colaborador = require('../models/collabs.model'); 
+const SolicitudFalta = require('../models/solicitud_falta.model'); 
+const DiasSolicitados = require('../models/dias_solicitados.model'); 
 
 function calcularDiasVacaciones(antiguedad) {
     if (antiguedad >= 31) return 32;
@@ -14,40 +16,41 @@ function calcularDiasVacaciones(antiguedad) {
     return 12;
 }
 
-exports.get_vacationsLeft = async (request, response) => {
-    try {
-        const idColaborador = request.session.id_colaborador || request.body.id_colaborador;
+exports.get_vacationDays = (request, response, next) => {
+    const idColaborador = request.session.id_colaborador;
+    let diasTotales; 
+    let cantDiasSol; 
+    let diasDisponibles; 
+    
+    Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
+        const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
+        const fechaActualFormato = new Date().toISOString().slice(0, 10);
 
-        const result = await Colaborador.fetchColabVac(idColaborador).then(e=>e).catch(e=>console.log(e))
-        const colaborador = result[0]; 
-        console.log(idColaborador)
-        // if (!colaborador) {
-        //     return request.status(404).send('Colaborador no encontrado');
-        // }
+        const fechaIngresoDate = new Date(fechaIngresoFormato); 
+        const fechaActualDate = new Date(fechaActualFormato);   
 
-        // const fechaIngreso = new Date(colaborador.fechaIngreso);
-        // const fechaActual = new Date();
+        const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
+        diasTotales = calcularDiasVacaciones(antiguedad); 
+    }).then(() => {
+        SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
+            const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
 
-        // const antiguedad = fechaActual.getFullYear() - fechaIngreso.getFullYear();
+            DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
+                cantDiasSol = diasSol[0][0].totalDias;
+                diasDisponibles = diasTotales - cantDiasSol;
 
-        // const totalDiasVacaciones = calcularDiasVacaciones(antiguedad);
-
-        // console.log(totalDiasVacaciones);
-        
-        // const [solicitudes] = await Colaborador.fetchColabVac(idColaborador);
-
-        // let diasTomados = 0;
-        // solicitudes.forEach(solicitud => {
-        //     diasTomados += solicitud.diasTomados; // Asume que hay una columna 'diasTomados' o similar
-        // });
-
-        // const diasRestantes = totalDiasVacaciones - diasTomados;
-
-        // response.render('home_page', {
-        //     available_days: diasRestantes,
-        //     total_days: totalDiasVacaciones
-        // });
-    } catch (error) {
+                response.render('home_page', {
+                    diasDisponibles: diasDisponibles,
+                    diasTotales: diasTotales,
+                });
+            }).catch((error) => {
+                console.log(error);
+            });
+        }).catch((error) => {
+            console.log(error);
+        });
+    }).catch((error) => {
         console.log(error);
-    }
+    });
 };
+

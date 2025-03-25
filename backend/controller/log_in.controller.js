@@ -19,6 +19,7 @@ exports.post_log_in = async (request, response) => {
   const user_info = await getUserLoginInfo(email, password);
 
   if (user_info[0].length) {
+  if (user_info[0].length) {
     if (await argon2.verify(user_info[0][0].contrasena, password)) {
       request.session.email = request.body.email;
       request.session.id_colaborador = user_info[0][0].id_colaborador;
@@ -26,19 +27,25 @@ exports.post_log_in = async (request, response) => {
       response.redirect("/log_in/success");
     } else {
       status.error = 'wrong_password'
+      status.error = 'wrong_password'
       response.render("log_in", {
+        ...status, 
+        csrfToken: request.csrfToken(),
         ...status, 
         csrfToken: request.csrfToken(),
       });
     }
   } else {
     status.error = 'user_not_found'
+    status.error = 'user_not_found'
     response.render("log_in", {
+      ...status, 
+      csrfToken: request.csrfToken(),
       ...status, 
       csrfToken: request.csrfToken(),
     });
   }
-};
+}};
 
 async function getUserLoginInfo(email) {
   const user_info = await User.fetchByEmail(email);
