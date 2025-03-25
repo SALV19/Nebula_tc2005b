@@ -22,7 +22,7 @@
             <div class="pop-up-content">
               <i class="bi bi-x-lg cancelButton" id="closeRequestForm"></i>
 
-              <form action="/requests/insert_request" method="post" enctype="multipart/form-data">
+              <form action="/requests/insert_request" method="post">
                 <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
                 <input type="hidden" id="validDaysInput" name="validDays">
                       
