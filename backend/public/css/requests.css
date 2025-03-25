@@ -24,7 +24,7 @@
     padding-top: 5vh;
     border-radius: 5px;
     width: 45vw;
-    max-height: 90vh; /* Optional to limit total height */
+    max-height: 85vh; /* Optional to limit total height */
     overflow-y: auto; /*To be able to scroll if the content is too large */
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -43,9 +43,10 @@
     flex-direction: column; 
     align-items: flex-start; 
     gap: 0; 
-    margin: 2vh; /* Changed from px to vh */
+    margin: 2vh;
 }
 
+/*FORMATO FORM*/
 .subtitleForm {
     font-size: 2vh; /* Changed from px a vh */
     display: flex;
@@ -72,6 +73,7 @@
     margin-top: 0; 
 }
 
+
 .buttons {
     position: relative;
     width: 100%;
@@ -84,4 +86,39 @@
     color: #fff; 
     border: none; 
     margin-top: 1vh;
+}
+
+
+/* leyendas*/
+.error {
+    color: rgb(255, 138, 138);
+    display: none;
+    font-size: 1.4vh;
+    margin-top: 0.1vh; 
+    margin-bottom: 0.4vh; 
+    text-align: left; 
+}
+
+.validity-message {
+    font-size: 1.4vh;  /* Tamaño reducido */
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+.validity-message.error {
+    color: #ff6b6b;  /* rojo */
+}
+
+.validity-message.success {
+    color: #3ec1d3;  /* azul clarito */
+
+/*pop up confirm*/
+.swal2-confirm.btn-ok {
+    background-color: #485FC7; 
+    color: white;
+    border: none;
+}
+
+.swal2-confirm.btn-ok:hover {
+    background-color: #304cc7; 
 }
