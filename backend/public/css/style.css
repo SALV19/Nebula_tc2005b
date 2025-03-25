@@ -41,4 +41,5 @@ footer {
 /* 🔹 Aplica un filtro blanco al icono del calendario */
 .dateLine::-webkit-calendar-picker-indicator {
   filter: invert(1); /* Invierte los colores, haciendo el negro blanco */
+  
 }

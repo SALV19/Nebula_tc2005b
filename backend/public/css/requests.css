@@ -23,8 +23,8 @@
     padding: 2vw;
     padding-top: 5vh;
     border-radius: 5px;
-    width: 35vw;
-    max-height: 85vh; /* Optional to limit total height */
+    width: 30vw;
+    max-height: 90vh; /* Optional to limit total height */
     overflow-y: auto; /*To be able to scroll if the content is too large */
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
@@ -100,7 +100,7 @@
 }
 
 .validity-message {
-    font-size: 1.4vh;  /* Tamaño reducido */
+    font-size: 1.8vh;  /* Tamaño reducido */
     margin-top: 1vh;
     margin-bottom: 1vh;
 }
