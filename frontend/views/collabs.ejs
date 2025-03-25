@@ -1,23 +1,33 @@
 <%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
 <link rel="stylesheet" href="/css/collabs.css">
+<!-- 
+            <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+            } else {%>
+            <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
+            } %>
+            if (permissions?.includes('add_collabs')) {%>
+                <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
+                - include('includes/_addCollabs_form.ejs') %>
+            } %>
+            </div>
+        </div>
+        </div>
+        <hr/> -->
 <main class="hero column">
     <input type="hidden" id="_csrf" value=<%= csrfToken %>>
     <section class="hero-body">
         <div class="container is-widescreen">
-        <div class="columns has-text-centered overhead is-vcentered offset ">
+        <div class="columns has-text-centered overhead is-vcentered offset">
             <p class="option <%= selectedOption === 'active' ? 'selected' : ''%>">Active</p>
             <p class="option <%= selectedOption === 'inactive' ? 'selected' : ''%>">Inactive</p>
-            <%if (permissions?.includes('view_faults')) {%>
-            <p class="option <%= selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
-            <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+            <% if (permissions?.includes('view_faults')) {%>
+                <p class="option = selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
+                <div class="column is-narrow is-offset-9">
             <% } else {%>
-            <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
+            <div class="column is-narrow is-offset-8">
             <% } %>
-            <%if (permissions?.includes('add_collabs')) {%>
-                <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
-                <%- include('includes/_addCollabs_form.ejs') %>
-            <% } %>
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable"></i>
             </div>
         </div>
         </div>
