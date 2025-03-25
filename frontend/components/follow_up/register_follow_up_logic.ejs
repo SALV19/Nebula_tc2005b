@@ -186,114 +186,114 @@
       }
       
       if (selectedOption == 'Meetings') {
+        // 1. Agregar el HTML necesario para el calendario
         contentContainer.innerHTML = `
-          <div class="meetings-container">
-            <h2 class="title is-4">Scheduled Meetings</h2>
-            
-            <table class="table is-fullwidth">
-              <thead>
-                <tr>
-                  <th>Employee</th>
-                  <th>Date</th>
-                  <th>Status</th>
-                  <th>Actions</th>
-                </tr>
-              </thead>
-              <tbody>
-                <% if (followUps && followUps.length > 0) { %>
-                  <% followUps.forEach(followUp => { %>
-                    <tr>
-                      <td><%= followUp.nombre_colaborador %> <%= followUp.apellidos_colaborador %></td>
-                      <td><%= new Date(followUp.fechaAgendada).toLocaleDateString() %></td>
-                      <td><span class="tag <%= followUp.estatus === 'Pendiente' ? 'is-warning' : (followUp.estatus === 'Completado' ? 'is-success' : 'is-danger') %>">
-                        <%= followUp.estatus %>
-                      </span></td>
-                      <td>
-                        <div class="buttons is-centered">
-                          <a href="/follow_ups/detail/<%= followUp.id_seguimiento %>" class="button is-small is-info">
-                            <i class="bi bi-eye"></i>
-                          </a>
-                          <% if (followUp.estatus === 'Pendiente') { %>
-                            <a href="/follow_ups/edit/<%= followUp.id_seguimiento %>" class="button is-small is-primary">
-                              <i class="bi bi-pencil"></i>
-                            </a>
-                          <% } %>
-                        </div>
-                      </td>
-                    </tr>
-                  <% }) %>
-                <% } else { %>
-                  <tr>
-                    <td colspan="4" class="has-text-centered">No hay reuniones programadas</td>
-                  </tr>
-                <% } %>
-              </tbody>
-            </table>
-            
-            <div class="meeting-filters mt-4">
-              <div class="field is-horizontal">
-                <div class="field-label is-normal">
-                  <label class="label">Filter by:</label>
-                </div>
-                <div class="field-body">
-                  <div class="field">
-                    <div class="control">
-                      <div class="select">
-                        <select id="statusFilter">
-                          <option value="all">All Status</option>
-                          <option value="Pendiente">Pending</option>
-                          <option value="Completado">Completed</option>
-                          <option value="Cancelado">Cancelled</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="control">
-                      <input class="input" type="date" id="dateFilter">
-                    </div>
-                  </div>
-                  <div class="field">
-                    <div class="control">
-                      <button class="button is-primary" id="applyFilter">Apply Filter</button>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
+          <div id="demo-desktop-month-view"></div>
         `;
         
-        // Add event listeners for the filters
-        const statusFilter = document.getElementById('statusFilter');
-        const dateFilter = document.getElementById('dateFilter');
-        const applyFilterBtn = document.getElementById('applyFilter');
-        
-        if (applyFilterBtn) {
-          applyFilterBtn.addEventListener('click', () => {
-            const status = statusFilter.value;
-            const date = dateFilter.value;
-            
-            // Filter the table rows based on the selected criteria
-            filterMeetings(status, date);
-          });
+        // 2. Verificar si Mobiscroll ya está cargado, si no, cargarlo dinámicamente
+        if (typeof mobiscroll === 'undefined') {
+          // Crear y añadir la hoja de estilos
+          const styleLink = document.createElement('link');
+          styleLink.rel = 'stylesheet';
+          styleLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/css/mobiscroll.min.css';
+          document.head.appendChild(styleLink);
+          
+          // Crear y añadir el script de Mobiscroll
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/js/mobiscroll.javascript.min.js';
+          
+          // Cuando el script termine de cargar, inicializar el calendario
+          script.onload = function() {
+            initializeCalendar();
+          };
+          
+          document.head.appendChild(script);
+        } else {
+          // Si Mobiscroll ya está disponible, inicializar el calendario directamente
+          initializeCalendar();
         }
         
-        function filterMeetings(status, date) {
-          const tableRows = document.querySelectorAll('.meetings-container tbody tr');
-          
-          tableRows.forEach(row => {
-            const rowStatus = row.querySelector('td:nth-child(3) span').textContent.trim();
-            const rowDate = row.querySelector('td:nth-child(2)').textContent.trim();
+        // 3. Función para inicializar el calendario cuando Mobiscroll esté listo
+        function initializeCalendar() {
+          try {
+            // Inicializar el calendario
+            var inst = mobiscroll.eventcalendar('#demo-desktop-month-view', {
+              locale: mobiscroll.localeEs, // Localización en español
+              theme: 'ios',               // Tema iOS
+              themeVariant: 'light',      // Variante clara del tema
+              clickToCreate: false,       // Desactivar creación al hacer clic
+              dragToCreate: false,        // Desactivar creación por arrastre
+              dragToMove: false,          // Desactivar mover por arrastre
+              dragToResize: false,        // Desactivar redimensionamiento por arrastre
+              eventDelete: false,         // Desactivar eliminación de eventos
+              view: {
+                calendar: { labels: true } // Vista de calendario con etiquetas
+              },
+              onEventClick: function(args) {
+                // Mostrar un toast con el título del evento al hacer clic
+                mobiscroll.toast({
+                  message: args.event.title
+                });
+              }
+            });
             
-            let statusMatch = status === 'all' || rowStatus === status;
-            let dateMatch = !date || rowDate === new Date(date).toLocaleDateString();
-            
-            row.style.display = statusMatch && dateMatch ? '' : 'none';
-          });
+            // Verificar si la instancia se creó correctamente
+            if (inst) {
+              // Opción 1: Cargar eventos desde una API
+              mobiscroll.getJson(
+                'https://trial.mobiscroll.com/events/?vers=5',
+                function(events) {
+                  inst.setEvents(events);
+                },
+                'jsonp'
+              );
+              
+              // Opción 2: Alternativamente, puedes usar eventos locales
+              /*
+              const localEvents = [
+                {
+                  id: 1,
+                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 5),
+                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 6),
+                  title: 'Reunión de Equipo',
+                  color: '#e61d38'
+                },
+                {
+                  id: 2,
+                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 15),
+                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 18),
+                  title: 'Conferencia',
+                  color: '#43a047'
+                },
+                {
+                  id: 3,
+                  recurring: {
+                    repeat: 'weekly',
+                    weekDays: 'MO,WE,FR'
+                  },
+                  title: 'Reunión Semanal',
+                  color: '#3949ab'
+                },
+                {
+                  id: 4,
+                  start: new Date(),
+                  title: 'Hoy - Evento Importante',
+                  color: '#f57c00'
+                }
+              ];
+              
+              inst.setEvents(localEvents);
+              */
+            }
+          } catch (error) {
+            console.error('Error al inicializar el calendario:', error);
+          }
         }
       }
 
+      
+      
     }
 
     // Manejo de selección de pestañas de los botones
