@@ -10,7 +10,7 @@ router.post("/", log_in_routes.post_log_in);
 
 router.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["email", "profile"] })
+  passport.authenticate("google", { scope: ['https://www.googleapis.com/auth/calendar.readonly', "email", "profile"] })
 );
 router.get(
   "/google/callback",
