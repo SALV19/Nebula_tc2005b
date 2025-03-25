@@ -1,7 +1,16 @@
+<link rel="stylesheet" href="/css/home.css">
 <%- include('../components/nav_bar.ejs') %>
-<%- include ('../components/vacations_left.ejs', {
-  available_days: 0,
-  total_days: 0
-}) %>
+<div class="column-container">
+  <div class="column">
+    <%- include('../components/home/home_logic.ejs') %>
+    <div id='calendar' class='calen'></div>
+  </div>
+  <div class="column">
+    <%- include ('../components/vacations_left.ejs', {
+      available_days: 0,
+      total_days: 0
+    }) %>
+  </div>
+</div>
 
 <%- include('includes/_footer.ejs') %>
