@@ -16,14 +16,14 @@ function calcularDiasVacaciones(antiguedad) {
     return 12;
 }
 
-exports.contVac = async (request, responsem, next) => {
+exports.contVac = (request, responsem, next) => {
     const idColaborador = request.session.id_colaborador;
     let diasTotales; 
     let cantDiasSol; 
     let diasDisponibles; 
     
     const espera =
-    await Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
+    Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
         const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
         const fechaActualFormato = new Date().toISOString().slice(0, 10);
     
@@ -32,18 +32,24 @@ exports.contVac = async (request, responsem, next) => {
     
         const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
         diasTotales = calcularDiasVacaciones(antiguedad); 
-    }).then(async() => {
-        return await SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
+        console.log("colabVac:",colabVac);
+
+    }).then(() => {
+        return SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
             const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
             if (idSolFalt.length <= 0){
                 console.log(diasTotales);
                 return({diasDisponibles: diasTotales, diasTotales});
             }
-            DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
+            console.log("solFatT: ",solFalt);
+
+            return DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
                 cantDiasSol = diasSol[0][0].totalDias;
                 diasDisponibles = diasTotales - cantDiasSol;
-    
+                console.log("diasSol:",diasSol);
+                console.log("DD: ", {diasDisponibles,diasTotales})
                 return({diasDisponibles,diasTotales});
+
             }).catch((error) => {
                 console.log(error);
             });
@@ -53,6 +59,6 @@ exports.contVac = async (request, responsem, next) => {
     }).catch((error) => {
         console.log(error);
     });
-    console.log(espera)
+    console.log("espera: ",espera)
     return espera
 }
