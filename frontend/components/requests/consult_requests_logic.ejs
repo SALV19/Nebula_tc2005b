@@ -25,34 +25,38 @@
   <tbody >`
     // Información por cada rengrlón de la tabla
     data.requests[0].forEach((d, idx) => {
+
       table_content += `<tr id='request' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
       if (d.estado == 0) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
-      }
-      else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
-      }
-      else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
-      }
-      table_content += `
-            <td>
-              <form action="/requests" method="POST">
-                <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-                <input type="hidden" name="id_solicitud_falta" value="${d.id_solicitud_falta}">
+        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>
+         <td>
+            <form action="/requests" method="POST">
+              <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+              <input type="hidden" name="id_solicitud_falta" value="${d.id_solicitud_falta}">
                 <button type="submit" name="estado" value="1">
                   <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
                 </button>
-                <button ype="submit" name="estado" value="2">
+                <button type="submit" name="estado" value="2">
                   <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
                 </button>
-              </form>
-            </td>
-          </tr>`;
+            </form>
+          </td>
+          </tr>`
+      }
+      else if (d.estado == 1) {
+        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>
+        <td class="back"></td>
+        </tr>
+`
+      }
+      else if (d.estado == 2) {
+        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>
+        </tr>`
+      }
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
