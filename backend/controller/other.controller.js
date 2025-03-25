@@ -5,12 +5,12 @@ exports.get_404 = (request, response, next) => {
 };
 
 exports.get_permissions = async (request, response, next) => {
-  console.log(request.session.email)
+  // console.log(request.session.email, request.user.emails[0].value)
   const email = request.session.email ?? request.user.emails[0].value;
   const permissions = await User.getPermissions(email);
   const per_arr = permissions[0].map((p) => p.nombre_permiso);
   request.session.permissions = per_arr;
-  console.log(request.session.permissions)
+  // console.log(request.session.permissions)
   
   response.redirect('/')
 }
