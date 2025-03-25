@@ -22,7 +22,6 @@ exports.contVac = async (request, responsem, next) => {
     let cantDiasSol; 
     let diasDisponibles; 
     
-    console.log(idColaborador);
     const espera =
     await Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
         const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
@@ -38,13 +37,13 @@ exports.contVac = async (request, responsem, next) => {
             const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
             if (idSolFalt.length <= 0){
                 console.log(diasTotales);
-                return(diasTotales);
+                return({diasDisponibles: diasTotales, diasTotales});
             }
             DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
                 cantDiasSol = diasSol[0][0].totalDias;
                 diasDisponibles = diasTotales - cantDiasSol;
     
-                return([diasDisponibles,diasTotales]);
+                return({diasDisponibles,diasTotales});
             }).catch((error) => {
                 console.log(error);
             });
