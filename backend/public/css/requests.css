@@ -23,7 +23,7 @@
     padding: 2vw;
     padding-top: 5vh;
     border-radius: 5px;
-    width: 45vw;
+    width: 35vw;
     max-height: 85vh; /* Optional to limit total height */
     overflow-y: auto; /*To be able to scroll if the content is too large */
     position: relative;
@@ -31,7 +31,7 @@
 }
 
 #errorPopup .pop-up-content {
-    max-width: 40vw;      /* We increased from 30vw to 40vw */
+    max-width: 30vw;      /* We increased from 30vw to 40vw */
     max-height: 50vh;     /* Lower height so it doesn't extend as much */
     overflow-y: auto;    
     padding: 2vh 2vw;
@@ -111,6 +111,7 @@
 
 .validity-message.success {
     color: #3ec1d3;  /* azul clarito */
+}
 
 /*pop up confirm*/
 .swal2-confirm.btn-ok {
