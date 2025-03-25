@@ -16,33 +16,35 @@ function calcularDiasVacaciones(antiguedad) {
     return 12;
 }
 
-exports.get_vacationDays = (request, response, next) => {
+exports.contVac = async (request, responsem, next) => {
     const idColaborador = request.session.id_colaborador;
     let diasTotales; 
     let cantDiasSol; 
     let diasDisponibles; 
     
-    Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
+    console.log(idColaborador);
+    const espera =
+    await Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
         const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
         const fechaActualFormato = new Date().toISOString().slice(0, 10);
-
+    
         const fechaIngresoDate = new Date(fechaIngresoFormato); 
         const fechaActualDate = new Date(fechaActualFormato);   
-
+    
         const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
         diasTotales = calcularDiasVacaciones(antiguedad); 
-    }).then(() => {
-        SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
+    }).then(async() => {
+        return await SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
             const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
-
+            if (idSolFalt.length <= 0){
+                console.log(diasTotales);
+                return(diasTotales);
+            }
             DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
                 cantDiasSol = diasSol[0][0].totalDias;
                 diasDisponibles = diasTotales - cantDiasSol;
-
-                response.render('home_page', {
-                    diasDisponibles: diasDisponibles,
-                    diasTotales: diasTotales,
-                });
+    
+                return([diasDisponibles,diasTotales]);
             }).catch((error) => {
                 console.log(error);
             });
@@ -52,5 +54,6 @@ exports.get_vacationDays = (request, response, next) => {
     }).catch((error) => {
         console.log(error);
     });
-};
-
+    console.log(espera)
+    return espera
+}

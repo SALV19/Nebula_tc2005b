@@ -42,6 +42,7 @@ module.exports = class Colaborador {
     }
 
     static fetchColabVac(idColaborador){
+        console.log(idColaborador)
         return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
                             WHERE id_colaborador = ?`,[idColaborador]);
     }
