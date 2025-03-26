@@ -115,11 +115,11 @@
 
 /*pop up confirm*/
 .swal2-confirm.btn-ok {
-    background-color: #485FC7; 
-    color: white;
+    background-color: #59A250; 
+    color: #fff;
     border: none;
 }
 
 .swal2-confirm.btn-ok:hover {
-    background-color: #304cc7; 
+    background-color: #6f916b; 
 }

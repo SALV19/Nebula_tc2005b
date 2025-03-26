@@ -93,6 +93,13 @@ exports.post_abscence_requests = async (request, response, next) => {
 
   }
 
-  request.session.successRequest = true;
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length 
+  };  
   response.redirect("/requests");
 };
