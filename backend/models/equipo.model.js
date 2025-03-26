@@ -7,7 +7,6 @@ module.exports = class Equipo {
         }
 
         save(id_colaborador) {
-            console.log(id_colaborador, this.id_r, this.id_dep)
             return db.execute('INSERT INTO equipo (id_colaborador, id_rol, id_departamento) VALUES(?,?,?)',
                                 [id_colaborador, this.id_r, this.id_dep])
         }

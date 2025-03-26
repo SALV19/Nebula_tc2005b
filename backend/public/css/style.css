@@ -1,3 +1,7 @@
+* {
+  font-family: Montserrat;
+}
+
 body, section, table, thead, tr {
   background-color: #242424;
   font-family: "Montserrat", sans-serif;
@@ -19,11 +23,30 @@ body {
 
 footer {
   position: absolute; 
-  top: 95%;
+  top: 100%;
   right: 0;
   width: 100vw;
 }
 
+.pop-up {
+  height: 100vh;
+  width: 100vw;
+  position: absolute;
+  top:0;
+  left: 0;
+  background-color: rgba(0,0,0,30%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pop-up-content {
+  background-color: #242424;
+  padding: 1rem;
+  border-radius: 30px;
+  width: 40%;
+  height: 60%;
+}
 
 .dateLine {
   color: #747474; /* Color del texto */
@@ -38,7 +61,13 @@ footer {
   margin-bottom: 2vh;
 }
 
-/* 🔹 Aplica un filtro blanco al icono del calendario */
 .dateLine::-webkit-calendar-picker-indicator {
-  filter: invert(1); /* Invierte los colores, haciendo el negro blanco */
+  filter: invert(1);
+}
+
+.flex-centered {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }
