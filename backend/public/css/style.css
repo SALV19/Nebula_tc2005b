@@ -1,3 +1,7 @@
+* {
+  font-family: Montserrat;
+}
+
 body, section, table, thead, tr {
   background-color: #242424;
 }
@@ -57,4 +61,11 @@ footer {
 
 .dateLine::-webkit-calendar-picker-indicator {
   filter: invert(1);
+}
+
+.flex-centered {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }

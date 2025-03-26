@@ -3,13 +3,13 @@
   function createTableRequests(data) {
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
-    <tr>
-      <th >Name</th>
-      <th >Position</th>
-      <th >Department</th>
-      <th >Company</th>
-    </tr>
-  </thead>
+                          <tr >
+                            <th >Name</th>
+                            <th >Position</th>
+                            <th >Department</th>
+                            <th >Company</th>
+                          </tr>
+                        </thead>
   <tbody >`
     // Información por cada rengrlón de la tabla
     data.collabs[0].forEach((d, idx) => {
@@ -24,26 +24,38 @@
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
-                              <div class="column">
-                                <p class='has-text-weight-bold'>Phone</p>
-                                <p class='has-text-weight-bold'>Mail</p>
-                                <p class='has-text-weight-bold'>Role</p>
-                                <p class='has-text-weight-bold'>Modality</p>
-                                <p class='has-text-weight-bold'>Birthday</p>
+                              <div class="column is-1">
+                                <p class='has-text-weight-bold mb-4'>Phone</p>
+                                <p class='has-text-weight-bold mb-4'>Mail</p>
+                                <p class='has-text-weight-bold mb-4'>Role</p>
+                                <p class='has-text-weight-bold mb-4'>Modality</p>
+                                <p class='has-text-weight-bold mb-2'>Birthday</p>
                               </div>
-                              <div class="column">
-                                  <p>${d.telefono}</p>
-                                  <p>${d.email}</p>
-                                  <p>${d.tipo_rol}</p>
-                                  <p>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
-                                  <p>${d.fechaNacimiento}</p>
+                              <div class="column ">
+                                  <p class='mb-4'>${d.telefono}</p>
+                                  <p class='mb-4'>${d.email}</p>
+                                  <p class='mb-4'>${d.tipo_rol}</p>
+                                  <p class='mb-4'>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
+                                  <p class='mb-2'>${d.fechaNacimiento}</p>
                               </div>
                               <div class="column my-2">
-                                <div class='columns'>
-                                  <div class='is-flex is-flex-direction-column has-text-centered	' style='width: 3rem;'>
-                                    <p class='has-text-danger  is-size-2'>0${d.FaltasAdministrativas}</p>
-                                    <p class='has-text-danger is-flex-direction-column has-text-centered'>Administrative faults</p>
+                                <div class='is-flex is-justify-content-space-around	mb-4'>
+                                  <div class='flex-centered'>
+                                    <p class='has-text-danger  is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Faults<br>commited</p>
                                   </div>
+                                  <div class='flex-centered'>
+                                    <p class='is-size-1'>01/0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Days of<br>vacations Left</p>
+                                  </div>
+                                  <div class='flex-centered'>
+                                    <p class='is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Current<br>abscences</p>
+                                  </div>
+                                </div>
+                                <div class='is-flex is-justify-content-center'>
+                                  <p class='mr-6 button is-link is-rounded'>UPDATE</p>
+                                  <p class='ml-6 button is-danger is-rounded has-text-white'>DELETE</p>
                                 </div>
                               </div>
                             </div>
