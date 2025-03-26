@@ -3,12 +3,16 @@ require('dotenv').config()
 
 exports.get_home = async (request, response) => {
 
-  if (request.user.accessToken) {
+  if (request.user?.accessToken) {
     const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, 'http://localhost:3000/log_in/success')
     oauth2Client.setCredentials({
       access_token: request.user.accessToken
     })
-  
+
+    request.session.googleTokenInfo = {
+      accessToken : request.user.accessToken,
+    }
+    
     const tokenInfo = await oauth2Client.getTokenInfo(request.user.accessToken);
     console.log("Token Scopes:", tokenInfo.scopes);
 

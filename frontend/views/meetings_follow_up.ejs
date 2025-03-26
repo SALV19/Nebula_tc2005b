@@ -1,0 +1,86 @@
+
+  <div class="left-form-container">
+      <form action="/follow_ups/meeting" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="column-container">
+          <section class='column'>
+            <div name="nombre">
+              <label class="is-size-6 styling" for="collaborators">Employee</label>
+              <select id="collaborators" class="line-input text-style" name="id_colaborador">
+                <option value="default" disabled selected>Select Collaborator</option>
+                <% if (colaboradores.length > 0) { %>
+    
+                  <% for (let i = 0; i < colaboradores.length; i++) { %>
+                    <option value="<%= colaboradores[i].id_colaborador %>">
+                      <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
+                    </option>
+                  <% } %>
+                <% } else { %>
+                  <option disabled> No hay colaboradores disponibles </option>
+                <% } %>
+    
+              </select>
+              <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
+            </div> 
+    
+            <br> <br>
+    
+            <div>
+                <label class="is-size-6 styling">Date</label>
+                <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value="<%= new Date().toISOString().split('T')[0] %>"/>
+                <p id="dateError" class="text-hidden"> Select a valid date </p>
+            </div> 
+    
+            <br> 
+    
+            <div>
+                <label class="is-size-6 styling">Hour</label>
+                <input class="dateLine" type="time" id="filter_end" name="horaAgendada" min="09:00"
+                max="18:00" value="<%= new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit'}) %>"/>
+                <p id="dateError" class="text-hidden"> Select a valid time </p>
+            </div>
+    
+            <div class="button-container">
+                <button id="submitButton" class="approve-button" type="submit">Submit</button>
+            </div>
+          </section>
+        </div>
+      </form>
+    </div>
+
+    <div id='calendar' class='calendario'></div>
+
+  <script>
+    console.log(colaboradores);
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth'
+    });
+    calendar.render();
+  </script>
+  
+  <style>
+    .left-form-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-start;
+      padding: 20px;
+    }
+    
+    .column-container {
+      width: 100%;
+    }
+    
+    .button-container {
+      margin-top: 20px;
+      display: flex;
+      justify-content: center;
+    }
+    
+    .text-hidden {
+      display: none;
+      color: red;
+      font-size: 12px;
+      margin-top: 5px;
+    }
+  </style>

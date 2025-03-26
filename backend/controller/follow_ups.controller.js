@@ -3,6 +3,8 @@ const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
 const Indicators_metrics = require('../models/metric_indicators.model');
+const Meeting = require('../models/meeting.model');
+const { response } = require('express');
 
 let settings = {
   selectedOption: 'active',
@@ -22,7 +24,7 @@ exports.get_requests = async (request, response) => {
     const [rows_indi, fieldData_indi] = indicatorsData;
 
 
-    response.render("register_followUp", {
+    response.render("followUp", {
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -58,4 +60,37 @@ exports.post_follow_ups = async (req, res) => {
   } catch (error) {
     console.error(error);
   };
+}
+
+exports.get_meeting = (request, response, next) => {
+  console.log("entro a get_meeting");
+  Collab.fetchAllCompleteName()
+    .then(collabs => {
+      const [rows, fieldData] = collabs;
+      response.render('meetings_follow_up', {
+        permissions: request.session.permissions,
+        selectedOption: 'meetings',
+        colaboradores: rows, 
+        csrfToken: request.csrfToken()
+      });
+    })
+    .catch(error => {
+      console.error('Error loading meetings page:', error);
+      response.redirect('/dashboard');
+    });
+}
+
+exports.post_meeting = (request, response, next) => {
+  console.log(request.body);
+  
+  // const fechaHora = new Date
+
+  const meeting = new Meeting(request.body.id_colaborador, request.body.fechaAgendada, request.body.horaAgendada, request.user.accessToken);
+
+  console.log("meeting", meeting);
+
+  console.log("AccessToken de google ",request.user.accessToken);
+  
+  
+  response.redirect('/follow_ups');
 }
