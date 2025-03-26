@@ -114,4 +114,23 @@ exports.get_collabs_info = async (request, response) => {
     selectedOption: "Active",
     collabs: collabs,
   });
+  
 };
+
+exports.get_collab_data = async (req, res) => {
+  try {
+    const id = req.body.id_colaborador;
+
+    const [collabResult] = await Colaborador.fetchCollabById(id);
+    const [equipoResult] = await Equipo.fetchEquipoById(id);
+
+    res.json({
+      colaborador: collabResult[0],
+      equipo: equipoResult[0],
+    });
+  } catch (error) {
+      console.error(error);
+      response.redirect("/view_collabs?error=true");
+  }
+};
+

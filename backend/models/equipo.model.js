@@ -10,4 +10,11 @@ module.exports = class Equipo {
             return db.execute('INSERT INTO equipo (id_colaborador, id_rol, id_departamento) VALUES(?,?,?)',
                                 [id_colaborador, this.id_r, this.id_dep])
         }
+
+    static fetchEquipoById(id) {
+        return db.execute(
+        `SELECT id_rol, id_departamento FROM equipo WHERE id_colaborador = ?`,
+        [id]
+        );
+    }
 };

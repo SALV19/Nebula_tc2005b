@@ -127,4 +127,11 @@ module.exports = class Colaborador {
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
                           WHERE id_colaborador = ?`,[idColaborador]);
   }
+
+  static fetchCollabById(id) {
+    return db.execute(
+      `SELECT * FROM colaborador WHERE id_colaborador = ?`,
+      [id]
+    );
+  }
 };

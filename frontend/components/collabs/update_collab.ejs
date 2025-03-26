@@ -1,5 +1,45 @@
 <script>
-  function update_button(value) {
-    console.log('id',value) 
-  }
+function update_button(id) {
+
+  const csrf = document.getElementById('_csrf').value;
+
+  //Realiza una solicitud POST a /view_collabs/get_collab_data
+  //Regresará los datos del colaborador (data.colaborador) y el equipo (data.equipo)
+  fetch('/view_collabs/get_collab_data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'csrf-token': csrf
+    },
+    body: JSON.stringify({ id_colaborador: id }),
+  })
+  
+    //Lo vuelve un objeto json
+    .then(response => response.json())
+    .then(data => {
+      
+      // Llenado de todos los campos del formulario con data.colaborador y data.equipo
+      const col = data.colaborador;
+      const eq = data.equipo;
+
+      document.getElementById('name').value = col.nombre;
+      document.getElementById('last-name').value = col.apellidos;
+      document.getElementById('birthday').value = col.fechaNacimiento.split('T')[0];
+      document.getElementById('phone-input').value = col.telefono;
+      document.getElementById('position').value = col.puesto;
+      document.getElementById('mail-input').value = col.email;
+      document.getElementById('entry-date').value = col.fechaIngreso.split('T')[0];
+      document.getElementById('location').value = col.ubicacion;
+      document.getElementById('modality').value = col.modalidad;
+      document.getElementById('rfc-input').value = col.rfc;
+      document.getElementById('curp-input').value = col.curp;
+      document.getElementById('department').value = eq.id_departamento;
+      document.getElementById('role').value = eq.id_rol;
+
+       // Abre el pop up 
+      document.getElementById("pop-up").style.display = "flex";
+    })
+    .catch(error => console.error("Error al obtener datos del colaborador:", error));
+}
+
 </script>
