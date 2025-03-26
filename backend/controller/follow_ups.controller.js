@@ -8,6 +8,23 @@ let settings = {
   selectedOption: 'active',
 };
 
+exports.get_collabs = async (req, res) => {
+  Collab.fetchAllCompleteName()
+    .then(collabs => {
+      const [rows, fieldData] = collabs;
+      response.render('home_page', {
+        // permissions: request.session.permissions,
+        colaboradores: rows,
+        // selectedOption: 'collab',
+        csrfToken: request.csrfToken()
+      });
+    })
+    .catch(error => {
+      console.error('Error loading collabs page:', error);
+      // response.redirect('/dashbord');
+    });
+}
+
 exports.get_requests = async (request, response) => {
   try {
     // Ejecuta ambas consultas en paralelo y espera sus resultados
@@ -22,10 +39,11 @@ exports.get_requests = async (request, response) => {
     const [rows_indi, fieldData_indi] = indicatorsData;
 
 
-    response.render("register_followUp", {
+    response.render("register", {
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
+      selectedOption: 'register',
       colaboradores: rows,
       questions: rows_ques,
       indicator: rows_indi,
