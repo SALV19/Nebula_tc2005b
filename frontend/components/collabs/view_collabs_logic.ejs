@@ -13,7 +13,6 @@
   <tbody >`
     // Información por cada rengrlón de la tabla
     data.collabs[0].forEach((d, idx) => {
-      console.log(d)
       table_content += `<tr id='collab' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${d.puesto}</td>`
@@ -54,8 +53,8 @@
                                   </div>
                                 </div>
                                 <div class='is-flex is-justify-content-center'>
-                                  <p class='mr-6 button is-link is-rounded'>UPDATE</p>
-                                  <p class='ml-6 button is-danger is-rounded has-text-white'>DELETE</p>
+                                  <button class='mr-6 button is-link is-rounded' onclick="update_button()">UPDATE</button>
+                                  <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
                                 </div>
                               </div>
                             </div>
