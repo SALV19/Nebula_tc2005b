@@ -208,3 +208,7 @@ canvas {
 .text-hidden.show {
     display: block;
 }
+.styleIcon{
+    margin-bottom: -1.5vw;
+    display:none;
+}
