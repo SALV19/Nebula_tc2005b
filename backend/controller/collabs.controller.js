@@ -4,6 +4,8 @@ const Empresa = require("../models/empresa.model");
 const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 
+const {contVac} = require('../util/contVacations')
+
 const generator = require("generate-password-browser");
 
 let settings = {
@@ -102,6 +104,8 @@ exports.get_collabs_info = async (request, response) => {
     collabs = await Colaborador.fetchCollabs(null, offset, filter)
       .then((data) => data)
       .catch((e) => console.error(e));
+    const [{diasDisponibles,diasTotales}] = await collabs.map((c) => contVac(colab_id=c.id_colaborador))
+    console.log(diasDisponibles,diasTotales)
   }
   else {
     collabs = await Colaborador.fetchCollabs(request.session.email, offset, filter)
