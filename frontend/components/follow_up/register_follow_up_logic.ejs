@@ -184,6 +184,116 @@
         };
 
       }
+      
+      if (selectedOption == 'Meetings') {
+        // 1. Agregar el HTML necesario para el calendario
+        contentContainer.innerHTML = `
+          <div id="demo-desktop-month-view"></div>
+        `;
+        
+        // 2. Verificar si Mobiscroll ya está cargado, si no, cargarlo dinámicamente
+        if (typeof mobiscroll === 'undefined') {
+          // Crear y añadir la hoja de estilos
+          const styleLink = document.createElement('link');
+          styleLink.rel = 'stylesheet';
+          styleLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/css/mobiscroll.min.css';
+          document.head.appendChild(styleLink);
+          
+          // Crear y añadir el script de Mobiscroll
+          const script = document.createElement('script');
+          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/js/mobiscroll.javascript.min.js';
+          
+          // Cuando el script termine de cargar, inicializar el calendario
+          script.onload = function() {
+            initializeCalendar();
+          };
+          
+          document.head.appendChild(script);
+        } else {
+          // Si Mobiscroll ya está disponible, inicializar el calendario directamente
+          initializeCalendar();
+        }
+        
+        // 3. Función para inicializar el calendario cuando Mobiscroll esté listo
+        function initializeCalendar() {
+          try {
+            // Inicializar el calendario
+            var inst = mobiscroll.eventcalendar('#demo-desktop-month-view', {
+              locale: mobiscroll.localeEs, // Localización en español
+              theme: 'ios',               // Tema iOS
+              themeVariant: 'light',      // Variante clara del tema
+              clickToCreate: false,       // Desactivar creación al hacer clic
+              dragToCreate: false,        // Desactivar creación por arrastre
+              dragToMove: false,          // Desactivar mover por arrastre
+              dragToResize: false,        // Desactivar redimensionamiento por arrastre
+              eventDelete: false,         // Desactivar eliminación de eventos
+              view: {
+                calendar: { labels: true } // Vista de calendario con etiquetas
+              },
+              onEventClick: function(args) {
+                // Mostrar un toast con el título del evento al hacer clic
+                mobiscroll.toast({
+                  message: args.event.title
+                });
+              }
+            });
+            
+            // Verificar si la instancia se creó correctamente
+            if (inst) {
+              // Opción 1: Cargar eventos desde una API
+              mobiscroll.getJson(
+                'https://trial.mobiscroll.com/events/?vers=5',
+                function(events) {
+                  inst.setEvents(events);
+                },
+                'jsonp'
+              );
+              
+              // Opción 2: Alternativamente, puedes usar eventos locales
+              /*
+              const localEvents = [
+                {
+                  id: 1,
+                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 5),
+                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 6),
+                  title: 'Reunión de Equipo',
+                  color: '#e61d38'
+                },
+                {
+                  id: 2,
+                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 15),
+                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 18),
+                  title: 'Conferencia',
+                  color: '#43a047'
+                },
+                {
+                  id: 3,
+                  recurring: {
+                    repeat: 'weekly',
+                    weekDays: 'MO,WE,FR'
+                  },
+                  title: 'Reunión Semanal',
+                  color: '#3949ab'
+                },
+                {
+                  id: 4,
+                  start: new Date(),
+                  title: 'Hoy - Evento Importante',
+                  color: '#f57c00'
+                }
+              ];
+              
+              inst.setEvents(localEvents);
+              */
+            }
+          } catch (error) {
+            console.error('Error al inicializar el calendario:', error);
+          }
+        }
+      }
+
+      
+      
     }
 
     // Manejo de selección de pestañas de los botones

@@ -79,3 +79,18 @@ exports.post_follow_ups = async (req, res) => {
     res.status(500).send("Error al guardar la evaluación");
   };
 }
+
+exports.get_meeting = (request, response, next) => {
+  response.render("register_followUp", {
+    ...settings,
+    permissions: request.session.permissions,
+    csrfToken: request.csrfToken(),
+    colaboradores: rows,
+    questions: rows_ques,
+    indicator: rows_indi,
+  });
+}
+
+exports.post_meeting = (request, response, next) => {
+
+}
