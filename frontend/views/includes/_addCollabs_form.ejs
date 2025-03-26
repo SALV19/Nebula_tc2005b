@@ -1,5 +1,6 @@
         <form action="/view_collabs" method="POST" onsubmit="return validateForm()"> 
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+            <input type="hidden" name="id_colaborador" id="id_colaborador">
                 <aside id="pop-up" class="pop-up" style="display: none;">
                     <div class="pop-up-content">
                         <i class="bi bi-x-lg cancelButton" onclick="closePopup()"></i>

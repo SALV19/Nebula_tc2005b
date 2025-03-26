@@ -1,6 +1,7 @@
 <script>
 function update_button(id) {
 
+  console.log("Colab ID a actualizar:", id);
   const csrf = document.getElementById('_csrf').value;
 
   //Realiza una solicitud POST a /view_collabs/get_collab_data
@@ -13,7 +14,7 @@ function update_button(id) {
     },
     body: JSON.stringify({ id_colaborador: id }),
   })
-  
+
     //Lo vuelve un objeto json
     .then(response => response.json())
     .then(data => {
@@ -22,6 +23,7 @@ function update_button(id) {
       const col = data.colaborador;
       const eq = data.equipo;
 
+      document.getElementById('id_colaborador').value = id;
       document.getElementById('name').value = col.nombre;
       document.getElementById('last-name').value = col.apellidos;
       document.getElementById('birthday').value = col.fechaNacimiento.split('T')[0];
