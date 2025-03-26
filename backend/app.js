@@ -10,7 +10,6 @@ require("./util/google_auth");
 
 // Server set-up
 const app = express(); 
-const app = express(); 
 
 app.set("view engine", "ejs");
 app.set("views", [
@@ -28,7 +27,6 @@ app.use(express.json());
 app.use(
   session({
     secret:
-    "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
     "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
     resave: false,
     saveUninitialized: false,
@@ -48,8 +46,6 @@ const auth_middleware = require("./util/auth_middleware");
 
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
-
-const other_controllers = require("./controller/other.controller");
 
 const other_controllers = require("./controller/other.controller");
 

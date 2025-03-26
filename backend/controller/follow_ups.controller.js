@@ -1,4 +1,4 @@
-const Collab = require('../models/collabs.model');
+const Collaborator = require('../models/collabs.model');
 const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
@@ -12,7 +12,7 @@ exports.get_requests = async (request, response) => {
   try {
     // Ejecuta ambas consultas en paralelo y espera sus resultados
     const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
-      Collab.fetchAllCompleteName(),
+      Collaborator.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
       Indicator.fetchAllindicators(),
     ]);
@@ -59,3 +59,5 @@ exports.post_follow_ups = async (req, res) => {
     console.error(error);
   };
 }
+
+exports.get_infoFollowUps
