@@ -122,4 +122,9 @@ module.exports = class Colaborador {
       return Colaborador.fetchAllCollabs(offset, filter);
     }
   }
+  static fetchColabVac(idColaborador){
+      console.log(idColaborador)
+      return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
+                          WHERE id_colaborador = ?`,[idColaborador]);
+  }
 };

@@ -1,14 +1,11 @@
-const vacationsLeftController = require('./contVacations.controller');
+const {contVac} = require("../util/contVacations")
 
-exports.get_home = async (request, response) => {
-    try {
-        const vacationsData = await vacationsLeftController.get_vacationsLeft(request, response)
+exports.get_home = (request, response, next) => {
+    
+    contVac(request)
+    .then(({diasDisponibles,diasTotales}) => {
+        response.render("home_page", {diasDisponibles,diasTotales})
+    })
+    .catch(error => {console.log(error)})
 
-        response.render('home_page', {
-            // available_days: vacationsData.available_days,
-            // total_days: vacationsData.total_days
-        });
-    } catch (error) {
-        console.error(error);
-    }
 };
