@@ -122,7 +122,7 @@ exports.get_collab_data = async (req, res) => {
     const id = req.body.id_colaborador;
 
     const [collabResult] = await Colaborador.fetchCollabById(id);
-    const [equipoResult] = await Equipo.fetchEquipoById(id);
+    const [equipoResult] = await Equipo.fetchEquipoById(id);    
 
     res.json({
       colaborador: collabResult[0],
