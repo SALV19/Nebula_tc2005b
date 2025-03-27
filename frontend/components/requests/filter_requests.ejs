@@ -37,9 +37,8 @@
       accepted: document.querySelector("#accepted").checked,
       denied: document.querySelector("#denied").checked,
     }
-    document.querySelector(".dropdown-content").style.display = 'block'
-
-    get_info(0, filter=filter_options)
+    document.querySelector(".dropdown-content").style.display = 'none'
+    get_info(0, filter_options)
   });
   
 </script>
