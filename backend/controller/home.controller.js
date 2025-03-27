@@ -15,6 +15,7 @@ exports.get_home = async (request, response) => {
     
     const tokenInfo = await oauth2Client.getTokenInfo(request.user.accessToken);
     console.log("Token Scopes:", tokenInfo.scopes);
+    console.log("expire date", tokenInfo.expiry_date);
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client})
     calendar.calendarList.list({}, (err, res) => {

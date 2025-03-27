@@ -5,6 +5,7 @@ const Questions = require('../models/questions_answers.model');
 const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
+const {google} = require('googleapis');
 
 let settings = {
   selectedOption: 'active',
@@ -82,15 +83,83 @@ exports.get_meeting = (request, response, next) => {
 
 exports.post_meeting = (request, response, next) => {
   console.log(request.body);
-  
-  // const fechaHora = new Date
 
-  const meeting = new Meeting(request.body.id_colaborador, request.body.fechaAgendada, request.body.horaAgendada, request.user.accessToken);
+  const id_colaborador = request.body.id_colaborador;
+  const fecha = request.body.fechaAgendada;
+  const hora = request.body.horaAgendada;
+  const emailCollab =  Collab.fetchEmail(id_colaborador);
 
-  console.log("meeting", meeting);
+  Collab.fetchEmail(id_colaborador)
+    .then(emailCollab => {
+      const fechaHora = new Date(`${fecha}T${hora}:00`);
+      const startTimeRFC = fechaHora.toISOString();
+      const endTimeRFC = new Date(fechaHora.getTime() + 30 * 60 * 1000).toISOString();
 
-  console.log("AccessToken de google ",request.user.accessToken);
+      const oauth2Client = new google.auth.OAuth2(
+        process.env.GOOGLE_CLIENT_ID,
+        process.env.GOOGLE_CLIENT_SECRET,
+        'http://localhost:3000/log_in/success'
+      );
+      
+      oauth2Client.setCredentials({
+        access_token: request.user.accessToken
+      });
+      
+      return verificarAccesoCalendario(oauth2Client)
+        .then(tieneAcceso => {
+          console.log("Tiene acceso al calendario:", tieneAcceso);
+          
+          if (!tieneAcceso) {
+            throw new Error("No se tiene acceso al calendario");
+          }
+
+          return Meeting.insertEvents(
+            request.user.accessToken,
+            fecha,
+            startTimeRFC,
+            endTimeRFC,
+            emailCollab
+          );
+        });
+  })
+    .then(() => {
+        console.log("Evento creado exitosamente");
+        response.redirect('/follow_ups');
+    })
+    .catch(error => {
+        console.error("Error al crear la reunión:", error);
+        response.status(500).send("Error al crear la reunión: " + error.message);
+  });
+}
+
+function verificarAccesoCalendario(auth, calendarId = 'primary') {
+  const calendar = google.calendar({ version: 'v3', auth });
   
-  
-  response.redirect('/follow_ups');
+  console.log("Listando calendarios disponibles...");
+  return calendar.calendarList.list()
+      .then(response => {
+          const calendarList = response.data;
+          
+          console.log(`El usuario tiene acceso a ${calendarList.items.length} calendarios:`);
+          calendarList.items.forEach(cal => {
+              console.log(`- ${cal.summary} (${cal.id})`);
+          });
+          
+          const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
+          
+          if (calendarExiste) {
+              console.log(`El usuario tiene acceso al calendario: ${calendarId}`);
+              return true;
+          } else if (calendarId === 'primary') {
+              console.log("Usando el calendario principal del usuario");
+              return true;
+          } else {
+              console.log(`El usuario NO tiene acceso al calendario: ${calendarId}`);
+              return false;
+          }
+      })
+      .catch(error => {
+          console.error("Error al verificar acceso al calendario:", error);
+          return false;
+      });
 }

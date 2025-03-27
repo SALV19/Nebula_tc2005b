@@ -8,4 +8,8 @@ module.exports = class Collab {
     static fetchAllCompleteName(){
         return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador ORDER BY nombre ASC')
     }
+
+    static fetchEmail (id_colaborador) {
+        return db.execute('SELECT email FROM colaborador WHERE id_colaborador = (?) ', [id_colaborador]);
+    }
 }

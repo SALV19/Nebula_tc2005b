@@ -34,11 +34,11 @@
             <br> 
     
             <div>
-                <label class="is-size-6 styling">Hour</label>
-                <input class="dateLine" type="time" id="filter_end" name="horaAgendada" min="09:00"
-                max="18:00" value="<%= new Date().toLocaleTimeString('en-US', {hour12: false, hour: '2-digit', minute:'2-digit'}) %>"/>
-                <p id="dateError" class="text-hidden"> Select a valid time </p>
-            </div>
+              <label class="is-size-6 styling">Hour</label>
+              <input class="dateLine" type="time" id="filter_end" name="horaAgendada" min="09:00" 
+              max="18:00" value="<%= new Date().toTimeString().split(' ')[0].substring(0, 5) %>"/>
+              <p id="dateError" class="text-hidden"> Select a valid time </p>
+          </div>
     
             <div class="button-container">
                 <button id="submitButton" class="approve-button" type="submit">Submit</button>

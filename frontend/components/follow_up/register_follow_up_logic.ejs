@@ -3,7 +3,6 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
     const contentContainer = document.getElementById("content-section");
-    console.log("lol hola");
 
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
     function get_info(selectedOption) {
@@ -265,9 +264,7 @@
         });
 
       } else if(selectedOption == 'Meetings' ) {
-        console.log("si entro al register_follow_up_logic");
 
-        contentContainer.innerHTML = '<div style="text-align: center; padding: 20px;">Cargando reuniones...</div>'; 
         fetch('/follow_ups/meeting')
           .then(response => {
             console.log("Respuesta recibida:", response.status);
@@ -276,7 +273,6 @@
           .then(html => {
             console.log("HTML recibido, actualizando contenido");
             contentContainer.innerHTML = html;  
-            // Inicializar cualquier script necesario después de cargar
           })
           .catch(error => {
             console.error('Error al cargar la vista de meetings:', error);
