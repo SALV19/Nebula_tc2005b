@@ -40,5 +40,10 @@ module.exports = class Colaborador {
         return db.execute(`SELECT DISTINCT modalidad FROM colaborador
                             ORDER BY modalidad ASC`);
     }
-    
+
+    static fetchColabVac(idColaborador){
+        console.log(idColaborador)
+        return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
+                            WHERE id_colaborador = ?`,[idColaborador]);
+    }
 };
