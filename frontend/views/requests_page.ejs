@@ -9,7 +9,7 @@
         <p class="option <%= selectedOption === 'abscences' ? 'selected' : ''%>">Abscences</p>
         <%if (permissions?.includes('accept_requests') || permissions?.includes('accept_requests_team')) {%>
           <p class="option <%= selectedOption === 'requests' ? 'selected' : '' %>">Requests</p>
-          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+          <div class="column is-narrow is-offset-8 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
         <% } else {%>
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
         <% } %>
@@ -56,8 +56,8 @@
         <input type="number" value="1" class="pagination" id="pagination"/>
         <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
       </div>
-      <%- include ('../components/requests/consult_requests_logic.ejs') %>
       <%- include ('../components/requests/filter_requests.ejs') %>
+      <%- include ('../components/requests/consult_requests_logic.ejs') %>
     </section>
 </main>
 

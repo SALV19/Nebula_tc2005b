@@ -26,7 +26,7 @@ module.exports = class Requests {
                             WHERE c.email = ?
                           )
                         GROUP BY sf.id_solicitud_falta
-                        ORDER BY sf.estado ASC
+                        ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
                         `, [email, offset])
     }
@@ -71,16 +71,17 @@ module.exports = class Requests {
       }
       query += 'GROUP BY sf.id_solicitud_falta '
       if (filter.start_date) {
-        query += `HAVING MIN(ds.fecha) > '${filter.start_date}' `
+        query += `HAVING MIN(ds.fecha) >= '${filter.start_date}' `
         if (filter.end_date) {
-          query += `AND MAX(ds.fecha) < '${filter.end_date}' `
+          query += `AND MAX(ds.fecha) <= '${filter.end_date}' `
         }
       }
       else if (filter.end_date) {
-        query += `HAVING MIN(ds.fecha) > '${filter.start_date}' `
+        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `
       }
-      query += `ORDER BY sf.estado ASC
+      query += `ORDER BY sf.estado ASC, ds.fecha ASC
                 LIMIT 10 OFFSET ?`
+      
       return db.execute(query, [email, offset])
     }
   }
@@ -98,7 +99,7 @@ module.exports = class Requests {
                             ON d.id_departamento = e.id_departamento
                           GROUP BY sf.id_solicitud_falta
                           LIMIT 10 OFFSET ?
-                          ORDER BY sf.estado ASC`, [offset ?? 0])
+                          ORDER BY sf.estado ASC, ds.fecha ASC`, [offset ?? 0])
     }
   }
 

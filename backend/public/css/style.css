@@ -5,6 +5,30 @@
 body, section, table, thead, tr {
   background-color: #242424;
 }
+footer {
+  border: 2px solid red;
+  visibility: hidden;
+}
+body {
+  height: 102vh;
+}
+
+.example::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.example {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+footer {
+  position: absolute; 
+  top: 95%;
+  right: 0;
+  width: 100vw;
+}
 
 body {
   height: 102vh;

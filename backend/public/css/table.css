@@ -77,7 +77,7 @@ input[type=number] {
   right: 0;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content, .dropdown-content:focus-within {
   display: block;
 }
 
@@ -103,4 +103,18 @@ input[type=number] {
   display: flex;
   flex-direction: column;
   align-items: start;
+}
+
+.calendar_container {
+  height: 350px;
+  width: 100%;
+}
+
+.fc-scroller {
+  -ms-overflow-style: none; /* For IE and Edge */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.fc-scroller::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
 }

@@ -1,13 +1,14 @@
 @startuml Prueba
 autonumber
 actor Usuario as u
-boundary requests.routes as vcr
-control requests.controller as vcc
-entity requests.model as vcm
+boundary view_collabs.routes as vcr
+boundary view_collabs.ejs as vce
+control view_collabs.controller as vcc
+entity view_collabs.model as vcm
 database Nebula as db
 
 activate u
-u -> vcr : GET /requests
+u -> vcr : GET /view_collabs
 deactivate u
 
 activate vcr
@@ -30,11 +31,11 @@ deactivate db
 vcm -> vcc : [collab_info]
 deactivate vcm
 vcc -> vcc : getAbscences()
-vcc -> vcr : collaborators_info
+vcc -> vce : collaborators_info
 deactivate vcc
-activate vcr
-vcr -> u : HTML view_collaborators.ejs
-deactivate vcr
+activate vce
+vce -> u : HTML view_collaborators.ejs
+deactivate vce
 activate u
 
 
