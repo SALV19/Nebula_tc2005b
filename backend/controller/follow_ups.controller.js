@@ -5,6 +5,6 @@ exports.get_follow_ups = (request, response) => {
     .then(({diasDisponibles,diasTotales}) => {
         response.render("home_page", {diasDisponibles,diasTotales})
     })
-    .catch(error => {console.log(error)})
+    .catch(error => {console.error(error)})
   };
   

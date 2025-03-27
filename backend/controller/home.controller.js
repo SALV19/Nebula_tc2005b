@@ -6,6 +6,6 @@ exports.get_home = (request, response, next) => {
     .then(({diasDisponibles,diasTotales}) => {
         response.render("home_page", {diasDisponibles,diasTotales})
     })
-    .catch(error => {console.log(error)})
+    .catch(error => {console.error(error)})
 
 };
