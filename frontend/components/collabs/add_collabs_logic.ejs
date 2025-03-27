@@ -17,7 +17,7 @@
         const rfcInput = document.getElementById("rfc-input");
         const rfcpError = document.getElementById("rfc-error");
     
-        if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
+        if (rfcInput.value.length !== 13) {
             rfcpError.style.display = "block"; 
         } else {
             rfcpError.style.display = "none";
