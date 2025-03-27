@@ -3,6 +3,7 @@ const db = require('../util/database')
 module.exports = class Evaluation {
     constructor (id_collab, schedule_date ) {
         this.collab = id_collab;
+        console.log(id_collab);
         this.date = schedule_date;
     }
 

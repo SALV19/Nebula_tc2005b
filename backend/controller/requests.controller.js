@@ -52,11 +52,4 @@ exports.update_estado = async (req, res) => {
     res.status(500).send("Error al guardar la evaluación");
   })
 
-  // try {
-  //   await Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
-  //   res.redirect("/requests");
-
-  // } catch(error){
-    
-  // }
 }

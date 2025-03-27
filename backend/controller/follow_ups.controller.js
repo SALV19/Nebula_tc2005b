@@ -8,26 +8,17 @@ let settings = {
   selectedOption: 'active',
 };
 
-exports.get_collabs = async (req, res) => {
-  Collab.fetchAllCompleteName()
-    .then(collabs => {
-      const [rows, fieldData] = collabs;
-      response.render('home_page', {
-        // permissions: request.session.permissions,
-        colaboradores: rows,
-        // selectedOption: 'collab',
-        csrfToken: request.csrfToken()
-      });
-    })
-    .catch(error => {
-      console.error('Error loading collabs page:', error);
-      // response.redirect('/dashbord');
-    });
-}
+exports.get_FollowUp = (request, response) => {
+  response.render("followUp", {
+    ...settings,
+    permissions: request.session.permissions,
+    csrfToken : request.csrfToken(),
+  })
+} 
 
-exports.get_requests = async (request, response) => {
-  try {
-    // Ejecuta ambas consultas en paralelo y espera sus resultados
+exports.get_register = async (request, response) => {
+  console.log("Hola")
+  
     const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
       Collab.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
@@ -38,39 +29,44 @@ exports.get_requests = async (request, response) => {
     const [rows_ques, fieldData_ques] = questionsData;
     const [rows_indi, fieldData_indi] = indicatorsData;
 
+    console.log(rows);
+    console.log(rows_ques);
+    console.log(rows_indi);
 
-    response.render("register", {
+    response.json({
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
-      selectedOption: 'register',
       colaboradores: rows,
       questions: rows_ques,
       indicator: rows_indi,
     });
-
-  } catch (error) {
-    console.error("Error al obtener datos:", error);
-  }
+    
 };
 
 exports.post_follow_ups = async (req, res) => {
   console.log(req.body);
+  console.log("entro al post");
   try {
+    console.log("Entro al try");
     // Crear la evaluación y esperar su guardado
+    console.log(req.body.id_colaborador);
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
+    console.log("Eval: ", evaluation);
 
     // Ahora podemos acceder al ID generado
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-    console.log(id_evaluation);
+    console.log("id:", id_evaluation);
 
     // Crear y guardar respuestas
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
+    console.log("Answer: ", answer_questions);
     await answer_questions.save(); 
 
     const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
+    console.log("Metrica", metrics_answer);
     await metrics_answer.save();
-    console.log(metrics_answer);
+    
 
     // Redirigir después de completar las operaciones
     res.redirect('/follow_ups');
@@ -78,19 +74,4 @@ exports.post_follow_ups = async (req, res) => {
     console.error(error);
     res.status(500).send("Error al guardar la evaluación");
   };
-}
-
-exports.get_meeting = (request, response, next) => {
-  response.render("register_followUp", {
-    ...settings,
-    permissions: request.session.permissions,
-    csrfToken: request.csrfToken(),
-    colaboradores: rows,
-    questions: rows_ques,
-    indicator: rows_indi,
-  });
-}
-
-exports.post_meeting = (request, response, next) => {
-
 }

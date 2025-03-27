@@ -1,302 +1,263 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-
+    })
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
-    function get_info(selectedOption) {
-      console.log("Ejecutando get_info con opción:", selectedOption);
-      
-      // Seleccionar el contenedor donde se mostrará el contenido
+    function get_register(data) {
+      console.log("Datos dentro de get_register: ", data);
       const contentContainer = document.getElementById("content-section");
-      if (selectedOption == 'Register'){
-        contentContainer.innerHTML = `
-          <form action="/follow_ups" method="POST">
-            <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-            <div class="column-container">
-              <section class='column'>
-                <div name="nombre">
-                  <label class="is-size-6 styling" for="collaborators">Employee</label>
-                  <select id="collaborators" class="line-input text-style" name="id_colaborador">
-                    <option value="default" disabled selected>Select Collaborator</option>
-                    <% if (colaboradores.length > 0) { %>
 
-                      <% for (let i = 0; i < colaboradores.length; i++) { %>
-                        <option value="<%= colaboradores[i].id_colaborador %>">
-                          <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
-                        </option>
-                      <% } %>
-                    <% } else { %>
-                      <option disabled> No hay colaboradores disponibles </option>
-                    <% } %>
+      let content = " ";
+      content += ` 
+      <form action="/follow_ups/Register/save" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div class="column-container">
+            <section class='column'>
+            <div name="nombre">
+                <label class="is-size-6 styling" for="collaborators">Employee</label>
+                <select id="collaborators" class="line-input text-style" name="id_colaborador">
+                <option value="default" disabled selected>Select Collaborator</option>
+      `
+      if (data.colaboradores.length > 0) {
+        for (let i = 0; i < data.colaboradores.length; i++) {
 
-                  </select>
-                </div>  
+      content += `<option value="${data.colaboradores[i].id_colaborador}"> `
 
-                <div>
-                  <label class="is-size-6 styling">Date</label>
-                  <input class="dateLine" type="date" id="filter_end" name="fechaAgendada"/>
-                </div>
-                
-                <div id="questions-container">
-                  <% for(let i = 0; i < questions.length; i++) { %>
-                    <div class="question-container">
-                      <p class="line-questions">
-                        <span>
-                          <%= questions[i].pregunta %>
-                        </span>
-                        <i class="bi bi-caret-down-fill toggle-icon"></i>
-                      </p>
+      content += data.colaboradores[i].nombre + " " + data.colaboradores[i].apellidos
 
-                      <!-- Campo oculto para enviar el ID de la pregunta -->
-                      <input type="hidden" name="id_pregunta" value="<%= questions[i].id_pregunta %>">
+      content += `</option>`
 
-                      <!-- Campo de entrada para la respuesta -->
-                      <input class="hidden-content" name="respuesta" placeholder="Escribe tu respuesta aquí">
-                    </div>
-                  <% } %>
-                </div>
-
-              </section>
-
-              <section class='column'>
-                <div class="radar-container">
-                  <canvas id="myRadarChart"></canvas>
-                </div>
-
-                <div>
-                  <% for(let i = 0; i < indicator.length; i++) { %>
-                    <div class="container">
-                      <p class="progress-text"> <%= indicator[i].indicador %> </p>
-                      <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
-                      <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
-                    </div>
-
-                    <div class="numbers-container">
-                      <p class="numbers">
-                        0
-                      </p>
-                      <p class="numbers">
-                        1
-                      </p>
-                      <p class="numbers">
-                        2
-                      </p>
-                      <p class="numbers">
-                        3
-                      </p>
-                      <p class="numbers">
-                        4
-                      </p>
-                      <p class="numbers">
-                        5
-                      </p>
-                    </div>
-                  <% } %> 
-                </div>
-
-                <div class="button-container">
-                  <button class="approve-button" type="submit">Submit</button>
-                </div>
-              </section>
-            </div>
-          </form>
-
-        `;
-
-        document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
-          toggleIcon.addEventListener("click", (event) => {
-            const questionContainer = event.target.closest(".question-container");
-            const hiddenContent = questionContainer.querySelector(".hidden-content");
-
-            hiddenContent.classList.toggle("show");
-          });
-        });
-
-
-        const progressBars = document.querySelectorAll(".progress-bar");
-        // console.log(progressBars);
-        const progressTexts = document.querySelectorAll(".progress-text");
-        // console.log(progressTexts);
-        const indicatorLabels = [];
-        for (let i = 0; i < progressTexts.length; i++){
-          indicatorLabels.push(progressTexts[i].textContent.trim());
         }
-        // console.log(indicatorLabels);
+      } else {
+        content += `<option disabled> No hay colaboradores disponibles </option>`
+      }
+      content += `</select>
+            <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
+        </div>  `
+      
+      content += `
+      <div>
+        <label class="is-size-6 styling">Date</label>
+        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value=${new Date().toISOString().split('T')[0]}/ >
+        <p id="dateError" class="text-hidden"> Select a valid date </p>
 
-        let indicatorValues = new Array(indicatorLabels.length).fill(0);
-        // console.log(indicatorValues);
+      </div>
+      <div id="questions-container"> 
+      ` 
+      for(let i = 0; i < data.questions.length; i++) {
+        content += `
+        <div class="question-container">
+            <p class="line-questions">
+            <span>
+                ${data.questions[i].pregunta}
+            </span>
+            <i class="bi bi-caret-down-fill toggle-icon"></i>
+            </p>
 
-        const ctx = document.getElementById("myRadarChart").getContext("2d");
-        const radar = new Chart(ctx, { 
-          type: 'radar',
-          data: {
-            labels: indicatorLabels,
-            datasets: [{
-              data: indicatorValues,
-              backgroundColor: "#B7A5E6",
-              borderColor: "#EEEEEE",
-              borderWidth: 1,
-            }]
-          },
-          options: {
-            plugins: {
-              legend: {
-                display: false // Hide the legend
-              }
+            <!-- Campo oculto para enviar el ID de la pregunta -->
+            <input type="hidden" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+
+            <!-- Campo de entrada para la respuesta -->
+            <input class="hidden-content" name="respuesta" placeholder="Escribe tu respuesta aquí">
+        </div>
+            ` 
+      }
+      content += `
+      </div>
+        <div class="button-container">
+              <button id="submitButton" class="approve-button" type="submit">Submit</button>
+          </div>
+      </section>
+
+      <section class='column'>
+          <div class="radar-container">
+              <canvas id="myRadarChart"></canvas>
+          </div>
+
+          <div>
+      `
+      for(let i = 0; i < data.indicator.length; i++) {
+        content += `
+          <div class="container">
+                <div class="progress-container">
+                    <p class="progress-text"> ${data.indicator[i].indicador} </p>
+                    <i class="bi bi-info-circle elementBar"></i>
+                </div>
+
+                <p class="hidden-message showElement dropdown-content" style="display: none;"> 
+                    How does the employee feel about their ${data.indicator[i].indicador} ?<br>
+                    0 = unsatisfied | 5 = satisfied
+                </p>
+
+                <input type="hidden" name="id_indicador" value="${ data.indicator[i].id_indicador}">
+                <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+            </div>
+            
+            <div class="numbers-container">
+                <p class="numbers">
+                    0
+                </p>
+                <p class="numbers">
+                    1
+                </p>
+                <p class="numbers">
+                    2
+                </p>
+                <p class="numbers">
+                    3
+                </p>
+                <p class="numbers">
+                    4
+                </p>
+                <p class="numbers">
+                    5
+                </p>
+            </div>
+        `
+      }    
+      content += `
+          </div>
+        </div>
+      </form>
+      `    
+      contentContainer.innerHTML = content;
+
+      logicRegister();
+
+    }
+
+    function logicRegister () {
+          document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
+            toggleIcon.addEventListener("click", (event) => {
+              const questionContainer = event.target.closest(".question-container");
+              const hiddenContent = questionContainer.querySelector(".hidden-content");
+
+              hiddenContent.classList.toggle("show");
+            });
+          });
+
+
+          const progressBars = document.querySelectorAll(".progress-bar");
+          // console.log(progressBars);
+          const progressTexts = document.querySelectorAll(".progress-text");
+          // console.log(progressTexts);
+          const indicatorLabels = [];
+          for (let i = 0; i < progressTexts.length; i++){
+            indicatorLabels.push(progressTexts[i].textContent.trim());
+          }
+          // console.log(indicatorLabels);
+
+          let indicatorValues = new Array(indicatorLabels.length).fill(0);
+          // console.log(indicatorValues);
+
+          const ctx = document.getElementById("myRadarChart")
+          console.log('Graph: ', ctx);
+          ctx.getContext("2d");
+          const radar = new Chart(ctx, { 
+            type: 'radar',
+            data: {
+              labels: indicatorLabels,
+              datasets: [{
+                data: indicatorValues,
+                backgroundColor: "#B7A5E6",
+                borderColor: "#EEEEEE",
+                borderWidth: 1,
+              }]
             },
-            scales: {
-              r: {
-                backgroundColor: "#FFFF",
-                hoverBackgroundColor: "#767574",
-                angleLines: { display: true },
-                suggestedMin: 0,
-                suggestedMax: 5,
-                ticks: {
-                  stepSize: 1,  // Ensures steps of 1
-                  beginAtZero: true
-                },
-                pointLabels: {  
-                  color: "#FFFF",  // Changes the label color
-                  font: {
-                    size: 10,
-                    weight: "italic bold"
+            options: {
+              plugins: {
+                legend: {
+                  display: false // Hide the legend
+                }
+              },
+              scales: {
+                r: {
+                  backgroundColor: "#FFFF",
+                  hoverBackgroundColor: "#767574",
+                  angleLines: { display: true },
+                  suggestedMin: 0,
+                  suggestedMax: 5,
+                  ticks: {
+                    stepSize: 1,  // Ensures steps of 1
+                    beginAtZero: true
+                  },
+                  pointLabels: {  
+                    color: "#FFFF",  // Changes the label color
+                    font: {
+                      size: 10,
+                      weight: "italic bold"
+                    }
                   }
                 }
               }
-            }
-          } 
-        });
-        
-        function updateChart(){
-          radar.data.datasets[0].data = indicatorValues;
-          radar.update();
-        };
-
-        function updateValues(){
-          for (let i = 0; i < progressBars.length; i++){
-            indicatorValues[i] = parseInt(progressBars[i].value); 
-          }
-          updateChart(); 
-        };
-
-        for(let i = 0; i < progressBars.length ; i++){
-          progressBars[i].addEventListener('input',updateValues);
-        };
-
-      }
-      
-      if (selectedOption == 'Meetings') {
-        // 1. Agregar el HTML necesario para el calendario
-        contentContainer.innerHTML = `
-          <div id="demo-desktop-month-view"></div>
-        `;
-        
-        // 2. Verificar si Mobiscroll ya está cargado, si no, cargarlo dinámicamente
-        if (typeof mobiscroll === 'undefined') {
-          // Crear y añadir la hoja de estilos
-          const styleLink = document.createElement('link');
-          styleLink.rel = 'stylesheet';
-          styleLink.href = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/css/mobiscroll.min.css';
-          document.head.appendChild(styleLink);
+            } 
+          });
           
-          // Crear y añadir el script de Mobiscroll
-          const script = document.createElement('script');
-          script.src = 'https://cdnjs.cloudflare.com/ajax/libs/mobiscroll/5.25.1/js/mobiscroll.javascript.min.js';
-          
-          // Cuando el script termine de cargar, inicializar el calendario
-          script.onload = function() {
-            initializeCalendar();
+          function updateChart(){
+            radar.data.datasets[0].data = indicatorValues;
+            radar.update();
           };
-          
-          document.head.appendChild(script);
-        } else {
-          // Si Mobiscroll ya está disponible, inicializar el calendario directamente
-          initializeCalendar();
-        }
-        
-        // 3. Función para inicializar el calendario cuando Mobiscroll esté listo
-        function initializeCalendar() {
-          try {
-            // Inicializar el calendario
-            var inst = mobiscroll.eventcalendar('#demo-desktop-month-view', {
-              locale: mobiscroll.localeEs, // Localización en español
-              theme: 'ios',               // Tema iOS
-              themeVariant: 'light',      // Variante clara del tema
-              clickToCreate: false,       // Desactivar creación al hacer clic
-              dragToCreate: false,        // Desactivar creación por arrastre
-              dragToMove: false,          // Desactivar mover por arrastre
-              dragToResize: false,        // Desactivar redimensionamiento por arrastre
-              eventDelete: false,         // Desactivar eliminación de eventos
-              view: {
-                calendar: { labels: true } // Vista de calendario con etiquetas
-              },
-              onEventClick: function(args) {
-                // Mostrar un toast con el título del evento al hacer clic
-                mobiscroll.toast({
-                  message: args.event.title
-                });
-              }
-            });
-            
-            // Verificar si la instancia se creó correctamente
-            if (inst) {
-              // Opción 1: Cargar eventos desde una API
-              mobiscroll.getJson(
-                'https://trial.mobiscroll.com/events/?vers=5',
-                function(events) {
-                  inst.setEvents(events);
-                },
-                'jsonp'
-              );
-              
-              // Opción 2: Alternativamente, puedes usar eventos locales
-              /*
-              const localEvents = [
-                {
-                  id: 1,
-                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 5),
-                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 6),
-                  title: 'Reunión de Equipo',
-                  color: '#e61d38'
-                },
-                {
-                  id: 2,
-                  start: new Date(new Date().getFullYear(), new Date().getMonth(), 15),
-                  end: new Date(new Date().getFullYear(), new Date().getMonth(), 18),
-                  title: 'Conferencia',
-                  color: '#43a047'
-                },
-                {
-                  id: 3,
-                  recurring: {
-                    repeat: 'weekly',
-                    weekDays: 'MO,WE,FR'
-                  },
-                  title: 'Reunión Semanal',
-                  color: '#3949ab'
-                },
-                {
-                  id: 4,
-                  start: new Date(),
-                  title: 'Hoy - Evento Importante',
-                  color: '#f57c00'
-                }
-              ];
-              
-              inst.setEvents(localEvents);
-              */
+
+          function updateValues(){
+            for (let i = 0; i < progressBars.length; i++){
+              indicatorValues[i] = parseInt(progressBars[i].value); 
             }
-          } catch (error) {
-            console.error('Error al inicializar el calendario:', error);
-          }
-        }
+            updateChart(); 
+          };
+
+          for(let i = 0; i < progressBars.length ; i++){
+            progressBars[i].addEventListener('input',updateValues);
+          };
       }
-
-      
-      
+    
+    
+    const get_info_register = () => {
+      const csrf = document.getElementById('_csrf').value
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML
+      console.log(route)
+      fetch(`/follow_ups/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        console.log(response.body)
+        return response.json()
+      })
+      .then(data => {
+        console.log("Datos recibidos: ", data);
+        get_register(data);
+      })
+      .catch(e => console.log("error", e))
     }
+    // const post_register = () => {
+  
+    //   const csrf = document.getElementById('_csrf').value
+    //   const selected_option = document.querySelector('.selected')
+    //   const submit = document.querySelector(".approve-button");
+    //   submit.addEventListener("click", (event) => {
+    //     event.preventDefault();
 
-    // Manejo de selección de pestañas de los botones
+    //     fetch(`/follow_ups/${route}`, {
+    //         method: 'POST',
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //             'csrf-token': csrf,
+    //         },
+    //         body: JSON.stringify({
+    //             id_colaborador: document.querySelector('[name="id_colaborador"]').value,
+    //             fechaAgendada: document.querySelector('[name="fechaAgendada"]').value,
+    //             id_pregunta: document.querySelector('[name="id_pregunta"]').value,
+    //             respuesta: document.querySelector('[name="respuesta"]').value,
+    //             id_indicador: document.querySelector('[name="id_indicador"]').value,
+    //             valor_metrica: document.querySelector('[name="valor_metrica"]').value
+    //         })
+    //     })
+    //     .then(response => response.json()) // ✅ Correct placement
+    //     .then(data => console.log("respuesta del servidor: ", data))
+    //     .catch(error => console.log("Error: ", error));
+    //   })
+    // }
+
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
@@ -304,14 +265,9 @@
 
         // Agregar la clase 'selected' al botón clickeado
         option.classList.add("selected");
-
-        // Obtener y mostrar el contenido del botón
-        const buttonText = option.textContent.trim();
-        // console.log("Botón seleccionado:", buttonText);
-
-        get_info(buttonText);
+        console.log(event)
+        get_info_register();
       });
     });
-
-  });
+  
 </script>

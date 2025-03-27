@@ -18,7 +18,8 @@ module.exports = class Answers {
                 [this.eval, this.indi[i], this.val[i]]
             );
         };
-        
+
+                
 
     }
     
