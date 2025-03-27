@@ -229,34 +229,7 @@
       })
       .catch(e => console.log("error", e))
     }
-    // const post_register = () => {
-  
-    //   const csrf = document.getElementById('_csrf').value
-    //   const selected_option = document.querySelector('.selected')
-    //   const submit = document.querySelector(".approve-button");
-    //   submit.addEventListener("click", (event) => {
-    //     event.preventDefault();
-
-    //     fetch(`/follow_ups/${route}`, {
-    //         method: 'POST',
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //             'csrf-token': csrf,
-    //         },
-    //         body: JSON.stringify({
-    //             id_colaborador: document.querySelector('[name="id_colaborador"]').value,
-    //             fechaAgendada: document.querySelector('[name="fechaAgendada"]').value,
-    //             id_pregunta: document.querySelector('[name="id_pregunta"]').value,
-    //             respuesta: document.querySelector('[name="respuesta"]').value,
-    //             id_indicador: document.querySelector('[name="id_indicador"]').value,
-    //             valor_metrica: document.querySelector('[name="valor_metrica"]').value
-    //         })
-    //     })
-    //     .then(response => response.json()) // ✅ Correct placement
-    //     .then(data => console.log("respuesta del servidor: ", data))
-    //     .catch(error => console.log("Error: ", error));
-    //   })
-    // }
+    
 
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {

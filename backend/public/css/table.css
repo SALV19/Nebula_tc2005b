@@ -3,6 +3,11 @@ hr {
   margin-top:7px;
   width: 100%;
 }
+
+main {
+  height: 100vh;
+}
+
 .offset {
   margin-left: 0;
 }

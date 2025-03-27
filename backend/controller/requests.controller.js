@@ -42,14 +42,7 @@ exports.get_abscences = (request, response) => {
 
 exports.update_estado = async (req, res) => {
   console.log(req.body);
-
+  
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta)
-  .then(()=>{
-    res.redirect("/requests");
-  })
-  .catch((error) => {
-    console.error(error);
-    res.status(500).send("Error al guardar la evaluación");
-  })
-
+  res.redirect("/requests");
 }
