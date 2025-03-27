@@ -8,32 +8,6 @@ entity SolicitudesFalta.model as SModel
 entity SolicitudFalta.model as Model
 database Nebula as db
 
-' ---- CONSULTAR SOLICITUDES ----
-activate S
-S -> SRoute : Get /requests
-deactivate S
-
-activate SRoute
-SRoute -> SController : get_requests()
-deactivate SRoute
-
-activate SController
-SController ->> Model : fetchAll()
-
-activate Model 
-Model ->> db : SELECT * FROM Solicitudes_Falta ORDER BY estado ASC
-activate db
-db -->> Model : rows
-deactivate db
-Model -->> SController : rows
-deactivate Model
-SController -> Requests : response.render('approve_requests.ejs', { rows})
-deactivate SController
-
-activate Requests
-Requests -> S : HTML approve_requests.ejs
-deactivate Requests
-
 ' ---- APROBAR SOLICITUD ----
 activate S
 S -> SRoute : POST /requests
