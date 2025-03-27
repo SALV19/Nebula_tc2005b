@@ -3,21 +3,19 @@
 <link rel="stylesheet" href="/css/collabs.css">
 <main class="hero column">
     <input type="hidden" id="_csrf" value=<%= csrfToken %>>
-    <section class="hero-body">
+    <section class="hero-body ml-6">
         <div class="container is-widescreen">
         <div class="columns has-text-centered overhead is-vcentered offset">
             <p class="option <%= selectedOption === 'active' ? 'selected' : ''%>">Active</p>
             <p class="option <%= selectedOption === 'inactive' ? 'selected' : ''%>">Inactive</p>
-            <%if (permissions?.includes('view_faults')) {%>
-            <p class="option <%= selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
-            <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+            <% if (permissions?.includes('view_faults')) {%>
+                <p class="option = selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
+                <div class="column is-narrow is-offset-9">
             <% } else {%>
-            <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
+            <div class="column is-narrow is-offset-8">
             <% } %>
-            <%if (permissions?.includes('add_collabs')) {%>
-                <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
-                <%- include('includes/_addCollabs_form.ejs') %>
-            <% } %>
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
+            <%- include('includes/_addCollabs_form.ejs') %>
             </div>
         </div>
         </div>
@@ -30,7 +28,11 @@
         </div>
         <%- include ('../components/collabs/add_collabs_logic.ejs') %>
         <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
-        <%- include ('../components/requests/filter_requests.ejs') %>
+        <%- include ('../components/collabs/view_collabs_logic.ejs') %>
+        <%- include('../components/collabs/update_collab.ejs') %>
+        <%- include('./includes/_modifyCollabs_form.ejs') %>
+        <%- include('../components/collabs/modify_collabs_logic') %>
+        <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
     </section>
 </main>
 

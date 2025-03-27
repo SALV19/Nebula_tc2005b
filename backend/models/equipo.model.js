@@ -7,8 +7,23 @@ module.exports = class Equipo {
         }
 
         save(id_colaborador) {
-            console.log(id_colaborador, this.id_r, this.id_dep)
             return db.execute('INSERT INTO equipo (id_colaborador, id_rol, id_departamento) VALUES(?,?,?)',
                                 [id_colaborador, this.id_r, this.id_dep])
         }
+
+    static fetchEquipoById(id) {
+        return db.execute(
+        `SELECT id_rol, id_departamento FROM equipo WHERE id_colaborador = ?`,
+        [id]
+        );
+    }
+
+    updateById(id_colaborador) {
+        return db.execute(
+        `UPDATE equipo 
+        SET id_departamento = ?, id_rol = ? 
+        WHERE id_colaborador = ?`,
+        [this.id_dep, this.id_r, id_colaborador]
+        );
+    }
 };

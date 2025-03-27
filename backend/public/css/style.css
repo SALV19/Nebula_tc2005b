@@ -1,3 +1,7 @@
+* {
+  font-family: Montserrat;
+}
+
 body, section, table, thead, tr {
   background-color: #242424;
   font-family: "Montserrat", sans-serif;
@@ -19,7 +23,7 @@ body {
 
 footer {
   position: absolute; 
-  top: 95%;
+  top: 100%;
   right: 0;
   width: 100vw;
 }
