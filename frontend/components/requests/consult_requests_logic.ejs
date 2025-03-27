@@ -133,7 +133,7 @@
         element.classList.remove('selected')
       })
       options[i].classList.add('selected')
-
+      pagination_value.value = 1
       get_info()
     })
   }
@@ -156,6 +156,6 @@
     pagination_value.dispatchEvent(new Event('change'));
   })
   pagination_value.addEventListener('change', (v) => {
-    get_info(pagination_value.value-1)
+    get_info(pagination_value.value-1, filter_options ?? null)
   })
 </script>

@@ -77,7 +77,7 @@ input[type=number] {
   right: 0;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content, .dropdown-content:focus-within {
   display: block;
 }
 

@@ -77,11 +77,11 @@ module.exports = class Requests {
         }
       }
       else if (filter.end_date) {
-        query += `HAVING MIN(ds.fecha) > '${filter.start_date}' `
+        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `
       }
       query += `ORDER BY sf.estado ASC
                 LIMIT 10 OFFSET ?`
-      console.log(query)
+      
       return db.execute(query, [email, offset])
     }
   }
