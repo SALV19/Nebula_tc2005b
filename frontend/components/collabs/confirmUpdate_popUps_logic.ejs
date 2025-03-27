@@ -1,17 +1,29 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-        const successData = <%- JSON.stringify(successData || null) %>;
+document.addEventListener("DOMContentLoaded", function () {
+    const successData = <%- JSON.stringify(successData || null) %>;
 
-        if (successData && successData.updated) {
+    if (successData) {
         Swal.fire({
-            icon: "success",
             title: "¡Colaborador actualizado!",
-            html: `<p>Los cambios de <strong>${successData.nombre} ${successData.apellidos}</strong> fueron guardados con éxito.</p>`,
-            confirmButtonText: "OK"
+            html: `
+                <p><b>Nombre:</b> ${successData.nombre} ${successData.apellidos}</p>
+                <p><b>Correo:</b> ${successData.email}</p>
+                <p><b>Teléfono:</b> ${successData.telefono}</p>
+                <p><b>RFC:</b> ${successData.rfc}</p>
+                <p><b>CURP:</b> ${successData.curp}</p>
+                <p><b>Puesto:</b> ${successData.puesto}</p>
+                <p><b>Ubicación:</b> ${successData.ubicacion}</p>
+                <p><b>Modalidad:</b> ${successData.modalidad}</p>
+                <p><b>Rol:</b> ${successData.rol}</p>
+                <p><b>Fecha de Ingreso:</b> ${successData.entryDate}</p>
+                <p><b>Fecha de Nacimiento:</b> ${successData.birthday}</p>
+            `,
+            icon: "success",
+            confirmButtonText: "OK",
         }).then(() => {
             window.history.replaceState({}, document.title, window.location.pathname);
         });
-        }
-    });
+    }
+});
 </script>

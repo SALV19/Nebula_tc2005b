@@ -167,11 +167,44 @@ exports.update_collab = async (request, response) => {
     await edit_equipo.updateById(id);
 
     // Guardamos en sesión los datos para mostrar el SweetAlert
-    request.session.successData = {
-      updated: true,
-      nombre: request.body.nombre,
-      apellidos: request.body.apellidos
+  
+    const rolMap = {
+      1: "Collaborator",
+      2: "Lider",
+      3: "Super Admin"
     };
+
+    const deptoMap = {
+      1: "Finanzas",
+      2: "Logística",
+      3: "Marketing",
+      4: "Tecnología de la Información",
+      // agrega los demás según tus datos
+    };
+
+    const modalidadMap = {
+      0: "In-person",
+      1: "Hybrid",
+      2: "Remote"
+    };
+
+    // Crea un objeto resumen
+    request.session.successData = {
+      nombre: request.body.nombre,
+      apellidos: request.body.apellidos,
+      puesto: request.body.puesto,
+      email: request.body.email,
+      telefono: request.body.telefono,
+      rfc: request.body.rfc,
+      curp: request.body.curp,
+      entryDate: request.body.fechaIngreso,
+      birthday: request.body.fechaNacimiento,
+      ubicacion: request.body.ubicacion,
+      modalidad: modalidadMap[request.body.modalidad],
+      rol: rolMap[request.body.id_rol],
+      departamento: deptoMap[Number(request.body.id_departamento)],
+    };
+
 
     response.redirect("/view_collabs");
   } catch (error) {
