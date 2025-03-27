@@ -69,12 +69,17 @@ exports.get_token = (request, response, next) => {
 exports.post_token = (request, response, next) => {
     const token = request.body.token;
 
+
+    
+
     PasswordReset.verifyToken(token).then((result) => {
         console.log("Token -> ", result);
         if(result.valid) {
             request.session.resetEmail = result.email;
-            request.session.resetToken = token;
+            request.session.userToken = token;
             return response.redirect('/log_in/reset_password');
+        } else {
+
         }
     }).catch(error => {
         console.error("Token verification error", error);
@@ -101,7 +106,7 @@ exports.post_reset_password = async (request, response, next) => {
 
     const password = request.body.password;
     const password2 = request.body.password2;
-    const token = request.session.resetToken;
+    const token = request.session.userToken;
     const email = request.session.resetEmail;
     
     if (!password || !password2) {
