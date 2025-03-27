@@ -159,10 +159,25 @@
         });
 
       }
-      else if (selectedOption == 'Collaborators'){
-        contentContainer.innerHTML= `<%- include ('../components/follow_up/consult_follow_ups.ejs') %>`;
+      // else if (selectedOption == 'Collaborators'){
+      //     fetch('/follow_ups/Collaborators')
+      //     .then(response => {
+      //       console.log("Respuesta recibida:", response.status);
+      //       return response.text();
+      //     })
+      //     .then(html => {
+      //       console.log("HTML recibido, actualizando contenido");
+      //       contentContainer.innerHTML = html;  
+      //     })
+      //     .catch(error => {
+      //       console.error(error);
+      //       contentContainer.innerHTML = '<p>Error al cargar las reuniones. Por favor, intente de nuevo.</p>';
+      //     });
+      // }
+    
+        
 
-      } else {
+      else {
         contentContainer.innerHTML= ` <p> Meetings </p>`;
       }
     }
@@ -182,7 +197,12 @@
         const buttonText = option.textContent.trim();
         // console.log("Botón seleccionado:", buttonText);
 
-        get_info(buttonText);
+        if (option.innerHTML == 'Register'){
+          get_info(buttonText);
+        } else if (option.innerHTML == 'Collaborators'){
+          get_info_FU()
+        }
+
       });
     });
 

@@ -21,9 +21,21 @@ module.exports = class Answers {
             );
         };
         
-
     }
-    
 
+    static fetchAnswers(id_preguntas, id_evaluacion){
+        const placeholdersPreguntas = id_preguntas.map(() => '?').join(', ');
+        const placeholdersEvaluaciones = id_evaluacion.map(() => '?').join(', ');
 
+        const values = [...id_preguntas, ...id_evaluacion];
+
+        const sql = `
+            SELECT id_pregunta, id_evaluacion, respuesta 
+            FROM respuestas_pregunta 
+            WHERE id_pregunta IN (${placeholdersPreguntas}) 
+            AND id_evaluacion IN (${placeholdersEvaluaciones})
+        `;
+
+        return db.execute(sql, values);
+    }
 }

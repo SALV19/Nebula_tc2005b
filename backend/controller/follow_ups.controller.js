@@ -3,9 +3,11 @@ const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
 const Indicators_metrics = require('../models/metric_indicators.model');
+const Evaluation = require('../models/periodic_eval.model');
+const Answers = require('../models/questions_answers.model');
 
 let settings = {
-  selectedOption: 'active',
+  selectedOption: 'Collaborators',
 };
 
 exports.get_requests = async (request, response) => {
@@ -60,4 +62,57 @@ exports.post_follow_ups = async (req, res) => {
   };
 }
 
-exports.get_infoFollowUps
+exports.get_followUps_info = (request, response, next) => {
+  settings.selectedOption = 'Collaborators';
+
+  const idColaborador = request.session.id_colaborador;
+
+  Evaluation.fetchAllInfo([idColaborador])
+    .then(([evalInfo]) => {
+      const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
+
+      const fechasAgendadas = evalInfo.map(evaluacion => {
+        const fecha = new Date(evaluacion.fechaAgendada);
+        const year = fecha.getFullYear().toString().slice(2); 
+        const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        const day = fecha.getDate().toString().padStart(2, '0');
+        return {
+          id_evaluacion: evaluacion.id_evaluacion, 
+          fechaAgendada: `${year}-${month}-${day}` 
+        };
+      });
+      // console.log("Fechas formateadas: ", fechasAgendadas);
+
+      return Promise.all([
+        Evaluation.fetchAllQuestions(),
+        Indicators_metrics.fetchAll(id_evaluacion),
+        Indicator.fetchAllindicators()
+      ]).then(async ([questions, metrics, indicators]) => {
+        const pregunta = questions;
+        const metricas = metrics;
+        const indicadores = indicators;
+
+        const id_pregunta = questions[0].map(q => q.id_pregunta);
+        const value_metric = metrics[0].map(value => value.valor_metrica);
+        const id_indicador = metrics[0].map(value => value.id_indicador);
+
+        const indicator = indicators[0].map(label => label.indicador);
+
+        const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
+
+        response.json({
+          selectedOption: 'Collaborators',
+          fechasAgendadas,
+          pregunta,
+          respuestas,  
+          indicadores,
+          metricas
+        });
+      });
+    })
+    .catch(error => {
+      console.log(error);
+      response.status(500).send("Error al obtener información");
+    });
+};
+

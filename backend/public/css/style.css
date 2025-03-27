@@ -50,3 +50,7 @@ footer {
   width: 90vw;
   position: relative; 
 }
+
+.hidden-row {
+  display: none;
+}
