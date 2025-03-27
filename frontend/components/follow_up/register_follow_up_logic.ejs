@@ -4,9 +4,7 @@
     const contentContainer = document.getElementById("content-section");
 
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
-    function get_info(selectedOption) {
-      console.log("Ejecutando get_info con opción:", selectedOption);
-      
+    function get_info(selectedOption) {      
       // Seleccionar el contenedor donde se mostrará el contenido
       contentContainer.innerHTML = " ";
       if (selectedOption == 'Register'){
@@ -129,17 +127,13 @@
 
         // RADAR CHART LOGIC AND CREATION
         const progressBars = document.querySelectorAll(".progress-bar");
-        // console.log(progressBars);
         const progressTexts = document.querySelectorAll(".progress-text");
-        // console.log(progressTexts);
         const indicatorLabels = [];
         for (let i = 0; i < progressTexts.length; i++){
           indicatorLabels.push(progressTexts[i].textContent.trim());
         }
-        // console.log(indicatorLabels);
 
         let indicatorValues = new Array(indicatorLabels.length).fill(0);
-        // console.log(indicatorValues);
 
         const ctx = document.getElementById("myRadarChart").getContext("2d");
         const radar = new Chart(ctx, { 
@@ -222,10 +216,6 @@
 
         let currentDate = today.toISOString().split('T')[0]; 
 
-        console.log('hoy', currentDate); 
-        console.log('sel', selectDate.value);  
-
-
          // VALIDATE DATE
         selectDate.addEventListener("change", function(){
           if(selectDate.value >= currentDate){
@@ -283,7 +273,6 @@
 
         // Obtener y mostrar el contenido del botón
         const buttonText = option.textContent.trim();
-        // console.log("Botón seleccionado:", buttonText);
 
         get_info(buttonText);
       });

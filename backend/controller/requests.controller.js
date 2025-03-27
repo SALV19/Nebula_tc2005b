@@ -18,8 +18,7 @@ exports.get_collabs_requests = async (request, response) => {
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(request.session.email, offset, filter)
     .then(data =>  data)
-    .catch(e => console.log(e))
-  // console.log(requests)
+    .catch(e => console.error(e))
   response.json({
     selectedOption: 'requests',
     requests: requests,

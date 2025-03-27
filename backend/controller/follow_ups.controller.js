@@ -37,13 +37,11 @@ exports.get_requests = async (request, response) => {
 };
 
 exports.post_follow_ups = async (req, res) => {
-  console.log(req.body);
   try {
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
     // Ahora podemos acceder al ID generado
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-    console.log(id_evaluation);
 
     // Crear y guardar respuestas
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
@@ -51,7 +49,6 @@ exports.post_follow_ups = async (req, res) => {
 
     const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
     await metrics_answer.save();
-    console.log(metrics_answer);
 
     // Redirigir después de completar las operaciones
     res.redirect('/follow_ups');
