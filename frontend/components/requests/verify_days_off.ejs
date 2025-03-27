@@ -1,0 +1,271 @@
+<script>
+  const holidays = <%- JSON.stringify(holidays)%>;
+  const all_requests = <%- JSON.stringify(all_requests)%>;
+  
+
+  function get_inbetween_dates(start, end) {
+    let current = new Date(start);
+    end = new Date(end);
+    const dates = [];
+
+    while (current <= end) {
+
+      // yyyy-mm-dd
+      dates.push(current.toISOString().split('T')[0]); 
+      current.setDate(current.getDate() + 1);
+    }
+
+    return dates;
+  }
+
+  function get_holidays() {
+    const taken_days = [];
+
+    for (let i=0; i<holidays.length; i++) {
+      const h = holidays[i];
+      console.log(holidays[i])
+
+      if (h.fecha_inicio != h.fecha_fin) {
+        const range = get_inbetween_dates(h.fecha_inicio, h.fecha_fin);
+        taken_days.push(...range);
+      }
+      else {
+
+        // yyyy-mm-dd
+        const dateWhithoutTime = new Date(h.fecha_inicio).toISOString().split('T')[0];
+        taken_days.push(dateWhithoutTime );
+      }
+    }
+    console.log("Holidays (final format):", taken_days);
+    return taken_days;
+  }
+
+  function get_approved_days() {
+    const approved_days = all_requests.map(r => {
+      
+      // 'yyyy-mm-dd'
+      return new Date(r.fecha).toISOString().split('T')[0]; 
+    });
+
+    console.log("Approved employee days:", approved_days);
+      return approved_days;
+  }
+
+  // Function to count business days (without Saturdays or Sundays)
+  function realsDaysOff(start, end) {
+    const holidaysList = get_holidays();
+    const approvedDays = get_approved_days();
+    const current = new Date(start);
+    const final = new Date(end);
+    const effective = [];
+
+    while (current <= final) {
+      const dateStr = current.toISOString().split('T')[0];
+      const isWeekend = current.getDay() === 5 || current.getDay() === 6;
+
+      if (!isWeekend && !holidaysList.includes(dateStr) && !approvedDays.includes(dateStr)) {
+        effective.push(dateStr);
+      }
+
+      current.setDate(current.getDate() + 1);
+    }
+    console.log("Days requested by the user:", effective);
+    return effective;
+  }
+
+  function updateDaysCounter() {
+    const start = startDate.value;
+    const end = endDate.value;
+
+    if (start && end) {
+      const validDays = realsDaysOff(start, end);
+
+      if (validDays.length > 0) {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `You are requesting <strong>${validDays.length}</strong> valid days.`;
+      } else {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
+      }
+    } else {
+      daysCounter.style.display = "none";
+    }
+  }
+
+
+  document.addEventListener("DOMContentLoaded", function () { 
+    const openBtn = document.getElementById("openRequestForm");
+    const closeBtn = document.getElementById("closeRequestForm");
+    const requestPopup = document.getElementById("requestPopup");
+    const requestType = document.getElementById("requestType");
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+    const evidenceContainer = document.getElementById("evidenceContainer");
+    const daysCounter = document.getElementById("daysCounter");
+    const daysCounterText = document.getElementById("daysCounterText");
+    
+    // Check if the elements exist
+    if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
+        console.error("Error: The pop-up elements were not found.");
+        return;
+    }
+
+    // Open the form
+    openBtn.addEventListener("click", () => {
+        requestPopup.style.display = "flex";
+    });
+
+    requestType.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
+    startDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
+    endDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter();
+    });
+
+
+
+    // Close the form
+    closeBtn.addEventListener("click", () => {
+
+        document.getElementById("requestType").value = "Absence|Academic Status";
+        document.getElementById("startDate").value = null;
+        document.getElementById("endDate").value = null;
+        document.getElementById("location").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("evidence").value = "";
+
+      requestPopup.style.display = "none";
+
+    });
+
+    const requestForm = document.querySelector("form"); 
+
+    // Select alert for at least one business day 
+    requestForm.addEventListener("submit", function (e) {
+      const start = startDate.value;
+      const end = endDate.value;
+      const location = document.getElementById("location").value.trim();
+      const evidenceInput = document.getElementById("evidence");
+      const [type, subtype] = requestType.value.split("|");
+
+      const errors = [];
+
+      let validDays = [];
+
+      // Date validations
+      if (!start || !end) {
+        errors.push("Select the start and end date.");
+      } else {
+        const startDateObj = new Date(start);
+        const endDateObj = new Date(end);
+
+        if (startDateObj > endDateObj) {
+          errors.push("The start date cannot be later than the end date.");
+        } else {
+          validDays = realsDaysOff(start, end);
+          const allInRange = get_inbetween_dates(start, end);
+          const holidaysList = get_holidays();
+          const approvedDays = get_approved_days();
+
+          const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
+          const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
+
+          if (validDays.length < 1) {
+            if (empalmeFeriados) {
+              errors.push("All selected dates overlap with holidays.");
+            } else if (empalmeAprobados) {
+              errors.push("All selected dates overlap with approved requests");
+            } else {
+              errors.push("You are selecting dates that overlap with holidays and approved requests.");
+            }
+          }
+
+          // Save valid days
+          document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+        }
+      }
+      
+      // Other validations
+      if (!location) {
+        errors.push("Enter the location.");
+      }
+
+
+      const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
+
+      if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.value.trim()) {
+        errors.push("Please attach evidence for absences longer than 3 valid days.");
+      }
+
+
+      // Show errors if they exist
+      if (errors.length > 0) {
+        e.preventDefault();
+        showErrorPopup(errors);
+      }
+    });
+  });
+
+  // Show or hide the evidence field
+  function checkEvidenceRequirement() {
+    const requestValue = requestType.value;
+    const [type, subtype] = requestValue.split("|");
+
+    const start = startDate.value;
+    const end = endDate.value;
+    const validDays = realsDaysOff(start, end);
+
+    const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
+
+    if (type === "Absence" && start && end) {
+      if (validDays.length > 3 && !noEvidenceNeeded.includes(subtype)) {
+        evidenceContainer.style.display = "inline-block";
+        evidenceNote.style.display = "inline-block";
+      } else {
+        evidenceContainer.style.display = "none";
+        evidenceNote.style.display = "none";
+      }
+    } else {
+      evidenceContainer.style.display = "none";
+      evidenceNote.style.display = "none";
+    }
+  }
+
+
+  function showErrorPopup(messages) {
+    const popup = document.getElementById("errorPopup");
+    const container = document.getElementById("errorMessageList");
+    
+    // Clear previous
+    container.innerHTML = ""; 
+
+    const ul = document.createElement("ul");
+
+    messages.forEach(msg => {
+      const li = document.createElement("li");
+      li.innerHTML = `<span class="icon has-text-danger mr-1"><i class="fas fa-exclamation-circle"></i></span> ${msg}`;
+      ul.appendChild(li);
+    });
+
+    container.appendChild(ul);
+    popup.style.display = "flex";
+  }
+
+  function closeErrorPopup() {
+    document.getElementById("errorPopup").style.display = "none";
+  }
+
+  // Run checkEvidenceRequirement when fields change
+  requestType.addEventListener("change", checkEvidenceRequirement);
+  startDate.addEventListener("change", checkEvidenceRequirement);
+  endDate.addEventListener("change", checkEvidenceRequirement);
+
+</script>

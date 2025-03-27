@@ -1,41 +1,105 @@
-const Requests = require('../models/requests.model')
+const Requests = require("../models/requests.model");
+const Events = require("../models/events.model")
 
-let settings = {
-  selectedOption: 'vacations',
-}
+exports.get_requests = async (request, response) => {
 
-exports.get_requests = (request, response) => {
+  const all_requests = await Requests.fetchDaysApproved(request.session.email).then(data => data[0]).catch(e => e);
+  const holidays = await Events.fetchEvents().then(data => data[0]).catch(error => error)
+  
+  const successRequest = request.session.successRequest;
+  delete request.session.successRequest;
+
   response.render("requests_page", {
-    ...settings,
+    selectedOption: "vacations",
     permissions: request.session.permissions,
+    all_requests: all_requests,
+    holidays: holidays,
     csrfToken: request.csrfToken(),
+    successRequest //Para el ejs
   });
 };
 
-exports.get_collabs_requests = async (request, response) => {  
-  settings.selectedOption = 'requests'
+exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
-  const requests = await Requests.fetchRequests(request.session.email, offset, filter)
-    .then(data =>  data)
-    .catch(e => console.log(e))
-  // console.log(requests)
+  const requests = await Requests.fetchRequests(
+    request.session.email,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.log(e));
   response.json({
-    selectedOption: 'requests',
+    selectedOption: "requests",
     requests: requests,
   });
-}
+};
 
-exports.get_vacations = (request, response) => {  
-  settings.selectedOption = 'vacations'
+exports.get_vacations = (request, response) => {
+  settings.selectedOption = "vacations";
   response.json({
     selectedOption: settings.selectedOption,
   });
-}
-exports.get_abscences = (request, response) => {  
-  settings.selectedOption = 'vacations'
+};
+exports.get_abscences = (request, response) => {
+  settings.selectedOption = "vacations";
+
+  response.json({
+    selectedOption: settings.selectedOption,
+  });
+};
+
+exports.post_abscence_requests = async (request, response, next) => {
+  // ahora son los realsDaysOff
+  const daysOff = JSON.parse(request.body.validDays); 
+
+  //Hacer validaciones en el servidor DESPUES
+  // // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
+  // if (
+  //   request.body.requestType === "Absence" &&
+  //   daysOff.length > 3 &&
+  //   !request.body.evidence
+  // ) {
+  //   // Aquí puedes redirigir o mostrar un error
+  //   return response.status(400).send("Se requiere evidencia para ausencias mayores a 3 días hábiles.");
+  // }
   
-  response.json({
-    selectedOption: settings.selectedOption,
-  });
-}
+  const [type, subtype] = request.body.requestType.split("|");
+
+  const request_register = new Requests(
+    request.session.email,
+    subtype, // <-- Guardamos solo el subtipo
+    daysOff,
+    request.body.location,
+    request.body.description,
+    request.body.evidence
+  );
+
+  if (true) {
+    await request_register
+      .save()
+      .then(async (e) => {
+        for (i in daysOff) {
+          await request_register
+          .saveDates(e[0].insertId, i)
+          .then((e) => e)
+          .catch((e) => {
+            console.log(e);
+            return e;
+          });
+        }
+      })
+      .catch((e) => console.log(e));
+
+  }
+
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length 
+  };  
+  response.redirect("/requests");
+};

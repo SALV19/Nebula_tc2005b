@@ -1,8 +1,37 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor() {
+  constructor(colab_email, type, dates, location, reason, evidence) {
+    this.colab_email = colab_email;
+    this.type = type
+    this.dates = dates
+    this.location = location
+    this.reason = reason
+    this.evidence = evidence
+  }
 
+  save() {
+    return db.execute(`INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
+                    VALUES((
+                      SELECT id_colaborador 
+                      FROM colaborador c 
+                      WHERE c.email = ?
+                    ), ?, ?, ?, ?, ?)`, [this.colab_email, 0, this.type, this.reason, this.location,  this.evidence ]);
+  }
+  saveDates(id, idx) {
+    return db.execute(`INSERT INTO dias_solicitados(id_solicitud_falta, fecha)
+                      VALUES (?, ?)`, [id, this.dates[idx]])
+  }
+
+  static async fetchDaysApproved(email) {
+    return db.execute(`SELECT ds.fecha
+                        FROM solicitudes_falta sf
+                        INNER JOIN dias_solicitados ds
+                          ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                        INNER JOIN colaborador c
+                          ON c.id_colaborador = sf.id_colaborador
+                        WHERE c.email = ? AND sf.estado = 1;
+                      `, [email])
   }
   static async fetchTeamRequests(email, offset, filter=null) {
     if (!filter) {
