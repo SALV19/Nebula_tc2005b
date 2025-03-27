@@ -1,4 +1,7 @@
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+<link rel="stylesheet" href="/css/calendario">
 <script>
+
   
   function formatDate(date) {
     const d = new Date(date);
@@ -36,7 +39,7 @@
     // Información por cada rengrlón de la tabla
     data.requests[0].forEach((d, idx) => {
       table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td><i class="bi bi-caret-right-fill"></i> ${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td><i class="bi bi-caret-right-fill" id='caret'></i> ${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
@@ -55,9 +58,9 @@
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
-                              <div class="column">
+                              <div class="column is-half">
                                 <p><strong>Type: </strong>${d.tipo_falta}</p>
-                                <p>Calendario...</p>
+                                <p id='calendar_${idx}' class='calendar_container'></p>
                               </div>
                               <div class="column">
                                 <p><strong>Reason: </strong></p>
@@ -71,6 +74,7 @@
                             </div>
                           </td>
                         </tr>`;
+      table.innerHTML = table_content
     })
     table_content += '</tbody>'
     table.innerHTML = table_content
@@ -88,9 +92,30 @@
         const caret = document.querySelector('#caret')
         if (additionalRow.style.display === "none") {
           additionalRow.style.display = "table-row";
-
           caret.classList.add('bi-caret-down-fill')
           caret.classList.remove('bi-caret-right-fill')
+
+          console.log(data.requests[0][idx].start.split('T')[0])
+          console.log(data.requests[0][idx].end.split('T')[0])
+          const calendarEl = document.getElementById(`calendar_${idx}`)
+          const calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth',
+            aspectRatio: 1, 
+            headerToolbar: {
+              left: 'prev,next',
+              center: 'title',
+              right: ''
+            },
+            events: [
+              {
+                start: data.requests[0][idx].start.split('T')[0],
+                end: data.requests[0][idx].end.split('T')[0],
+                display: 'background',
+                backgroundColor: '#635d991' 
+              }
+            ]
+          })
+          calendar.render()
         } else {
           additionalRow.style.display = "none";
 
