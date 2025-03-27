@@ -19,18 +19,25 @@ function calcularDiasVacaciones(antiguedad) {
 exports.contVac = (request, responsem, next) => {
     const idColaborador = request.session.id_colaborador;
     let diasTotales; 
-    let cantDiasSol = 0;  // Iniciar en 0 para acumular todos los días solicitados
+    let cantDiasSol = 0;
     let diasDisponibles; 
     
     return Colaborador.fetchColabVac(idColaborador)
         .then(([colabVac]) => {
-            const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
-            const fechaActualFormato = new Date().toISOString().slice(0, 10);
-    
-            const fechaIngresoDate = new Date(fechaIngresoFormato); 
-            const fechaActualDate = new Date(fechaActualFormato);   
-    
-            const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
+            const fechaIngreso = new Date(colabVac[0].fechaIngreso);
+            const fechaActual = new Date();
+
+            let antiguedad = fechaActual.getFullYear() - fechaIngreso.getFullYear();
+
+            const mesActual = fechaActual.getMonth();
+            const mesIngreso = fechaIngreso.getMonth();
+            const diaActual = fechaActual.getDate();
+            const diaIngreso = fechaIngreso.getDate();
+
+            if (mesActual < mesIngreso || (mesActual === mesIngreso && diaActual < diaIngreso)) {
+                antiguedad--; 
+            }
+
             diasTotales = calcularDiasVacaciones(antiguedad); 
             console.log("colabVac:", colabVac);
 
@@ -38,14 +45,13 @@ exports.contVac = (request, responsem, next) => {
         })
         .then((solFalt) => {
             if (solFalt[0].length <= 0) {
-                // Si no hay solicitudes, retornar solo los días totales disponibles
                 return { diasDisponibles: diasTotales, diasTotales };
             }
             const solicitudes = solFalt[0];
             const promises = solicitudes.map(solicitud => {
                 return DiasSolicitados.fetchAll(solicitud.id_solicitud_falta)
                     .then((diasSol) => {
-                        cantDiasSol += diasSol[0][0].totalDias;  // Acumular los días solicitados
+                        cantDiasSol += diasSol[0][0].totalDias; 
                     });
             });
             return Promise.all(promises).then(() => {
@@ -58,4 +64,3 @@ exports.contVac = (request, responsem, next) => {
             console.log(error);
         });
 };
-
