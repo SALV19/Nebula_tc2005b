@@ -32,7 +32,7 @@ const options = [
   ];
 
 exports.get_reset_password_request = (request, response, next) => {
-    response.render("reset_password_email");
+    response.render("reset_password_email", { csrfToken: request.csrfToken() });
 };
 
 exports.post_reset_password_request = (request, response, next) => {
@@ -41,7 +41,8 @@ exports.post_reset_password_request = (request, response, next) => {
     if (!email) {
         console.error("Error: Email not provided");
         return response.status(400).render("reset_password_email", { 
-            error: "Please provide an email address"
+            error: "Please provide an email address",
+            csrfToken: request.csrfToken(),
         });
     }
     
@@ -62,7 +63,7 @@ exports.post_reset_password_request = (request, response, next) => {
 };
 
 exports.get_token = (request, response, next) => {
-    response.render("reset_password_token");
+    response.render("reset_password_token", { csrfToken: request.csrfToken() });
 };
 
 exports.post_token = (request, response, next) => {
@@ -78,8 +79,9 @@ exports.post_token = (request, response, next) => {
     }).catch(error => {
         console.error("Token verification error", error);
         return response.status(500).render("reset_password_token", { 
-            error: error.message || "Recovery token verification error" 
-        });
+          error: error.message || "Recovery token verification error",
+          csrfToken: request.csrfToken()
+      });
     });
 };
 
@@ -89,7 +91,7 @@ exports.get_reset_password = (request, response, next) => {
         
         return response.redirect('/log_in/reset_password_request?error=session_expired');
     }
-    response.render("reset_password");
+    response.render("reset_password", { csrfToken: request.csrfToken() });
 };
 
 exports.post_reset_password = async (request, response, next) => {
@@ -104,17 +106,23 @@ exports.post_reset_password = async (request, response, next) => {
     
     if (!password || !password2) {
       console.error("Error: Passwords not provided");
-      return response.render("reset_password", { error: "Both passwords are required" });
+      return response.render("reset_password", { error: "Both passwords are required" ,
+        csrfToken: request.csrfToken()
+      });
     }
     
     if (!token || !email) {
       console.error("Error: Token or email not found in session");
-      return response.render("reset_password", { error: "Invalid or expired session" });
+      return response.render("reset_password", { error: "Invalid or expired session",
+        csrfToken: request.csrfToken()
+       });
     }
 
     if (password !== password2) {
       console.error("Error: Passwords do not match");
-      return response.render("reset_password", { error: "Passwords do not match" });
+      return response.render("reset_password", { error: "Passwords do not match" ,
+        csrfToken: request.csrfToken()
+      });
     }
 
     const strength = passwordStrength(password, options);
@@ -122,7 +130,9 @@ exports.post_reset_password = async (request, response, next) => {
     if (strength.id < 2) {
       console.error("Error: Password too weak");
       return response.render("reset_password", { 
-        error: `Password is ${strength.value.toLowerCase()}. It must be at least medium level.` 
+        error: `Password too weak. Please use at least 8 characters with a mix 
+          of uppercase, lowercase, numbers, and symbols (minimum 3 types).` ,
+        csrfToken: request.csrfToken()
       });
     }
 
@@ -140,7 +150,8 @@ exports.post_reset_password = async (request, response, next) => {
   } catch (error) {
     console.error("Error changing password:", error);
     return response.render("reset_password", { 
-      error: "Error changing password: " + error.message 
+      error: "Error changing password: " + error.message ,
+      csrfToken: request.csrfToken()
     });
   }
 };
