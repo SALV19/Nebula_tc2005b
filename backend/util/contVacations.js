@@ -32,11 +32,13 @@ exports.contVac = (request, responsem, next) => {
     
         const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
         diasTotales = calcularDiasVacaciones(antiguedad); 
+        console.log("colabVac:",colabVac);
 
     }).then(() => {
         return SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
             const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
             if (idSolFalt.length <= 0){
+                console.log(diasTotales);
                 return({diasDisponibles: diasTotales, diasTotales});
             }
             console.log("solFatT: ",solFalt);
@@ -57,5 +59,6 @@ exports.contVac = (request, responsem, next) => {
     }).catch((error) => {
         console.log(error);
     });
+    console.log("espera: ",espera)
     return espera
 }

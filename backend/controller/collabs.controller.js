@@ -203,3 +203,42 @@ exports.update_collab = async (request, response) => {
     response.redirect("/view_collabs?error=true");
   }
 };
+
+
+exports.post_collab = (request, response) => {
+  console.log(request.body);
+  const new_Colab = new Colaborador(request.body.nombre, request.body.apellidos, 
+      request.body.fechaNacimiento, request.body.telefono, request.body.puesto, 
+      request.body.email, request.body.fechaIngreso, request.body.ubicacion, 
+      request.body.modalidad, request.body.curp, request.body.rfc);
+  
+  console.log(new_Colab);
+  const password = generator.generate({
+    length: 10,
+    numbers: true
+  });
+
+  new_Colab.save(password)
+    .then(([rows]) => {
+      if (rows.length === 0) throw new Error("No se encontró el colaborador insertado.");
+      const idcolab = rows[0].id_colaborador;
+
+      const new_equipo = new Equipo(request.body.id_departamento, request.body.id_rol);
+      return new_equipo.save(idcolab);
+    }).then(() => {
+      console.log("Equipo guardado");
+
+      request.session.successData = {
+        email: request.body.email,
+        password: password
+      };
+
+      response.redirect("/view_collabs");
+    })
+    .catch((error) => {
+      console.log(error);
+      response.redirect("/view_collabs?error=true");
+  }); 
+};
+
+  

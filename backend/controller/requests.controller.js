@@ -6,7 +6,8 @@ exports.get_requests = async (request, response) => {
   const all_requests = await Requests.fetchDaysApproved(request.session.email).then(data => data[0]).catch(e => e);
   const holidays = await Events.fetchEvents().then(data => data[0]).catch(error => error)
   
-  console.log(request.session.permissions);
+  const successRequest = request.session.successRequest;
+  delete request.session.successRequest;
 
   response.render("requests_page", {
     selectedOption: "vacations",
@@ -14,6 +15,7 @@ exports.get_requests = async (request, response) => {
     all_requests: all_requests,
     holidays: holidays,
     csrfToken: request.csrfToken(),
+    successRequest //Para el ejs
   });
 };
 
@@ -91,5 +93,13 @@ exports.post_abscence_requests = async (request, response, next) => {
 
   }
 
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length 
+  };  
   response.redirect("/requests");
 };

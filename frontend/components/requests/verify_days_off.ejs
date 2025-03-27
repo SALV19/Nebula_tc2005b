@@ -130,9 +130,20 @@
       updateDaysCounter();
     });
 
+
+
     // Close the form
     closeBtn.addEventListener("click", () => {
+
+        document.getElementById("requestType").value = "Absence|Academic Status";
+        document.getElementById("startDate").value = null;
+        document.getElementById("endDate").value = null;
+        document.getElementById("location").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("evidence").value = "";
+
       requestPopup.style.display = "none";
+
     });
 
     const requestForm = document.querySelector("form"); 
@@ -190,8 +201,8 @@
 
       const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
 
-      if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.files.length) {
-        errors.push("⚠ Please attach evidence for absences longer than 3 valid days.");
+      if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.value.trim()) {
+        errors.push("Please attach evidence for absences longer than 3 valid days.");
       }
 
 
@@ -216,8 +227,8 @@
 
     if (type === "Absence" && start && end) {
       if (validDays.length > 3 && !noEvidenceNeeded.includes(subtype)) {
-        evidenceContainer.style.display = "block";
-        evidenceNote.style.display = "block";
+        evidenceContainer.style.display = "inline-block";
+        evidenceNote.style.display = "inline-block";
       } else {
         evidenceContainer.style.display = "none";
         evidenceNote.style.display = "none";
