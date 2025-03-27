@@ -1,6 +1,5 @@
 var MobiscrollCalendar = {
   init: function(elementId) {
-    console.log('Inicializando calendario en:', elementId);
     var element = document.getElementById(elementId);
     if (!element) {
       console.error('Elemento no encontrado:', elementId);
@@ -26,17 +25,14 @@ var MobiscrollCalendar = {
           calendar: { labels: true }
         },
         onEventClick: function(args) {
-          console.log('Evento clickeado:', args.event);
           mobiscroll.toast({
             message: args.event.title
           });
         }
       });
       
-      console.log('Calendario inicializado correctamente');
       return inst;
     } catch (error) {
-      console.error('Error al inicializar el calendario:', error);
       return null;
     }
   },
@@ -48,11 +44,9 @@ var MobiscrollCalendar = {
     }
     
     try {
-      console.log('Cargando eventos desde:', url);
       mobiscroll.getJson(
         url,
         function(events) {
-          console.log('Eventos cargados:', events.length);
           calendar.setEvents(events);
           if (typeof callback === 'function') {
             callback(events);
@@ -72,7 +66,6 @@ var MobiscrollCalendar = {
     }
     
     try {
-      console.log('Estableciendo eventos locales:', events.length);
       calendar.setEvents(events);
     } catch (error) {
       console.error('Error al establecer eventos locales:', error);

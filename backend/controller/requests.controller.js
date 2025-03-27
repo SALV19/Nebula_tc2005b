@@ -18,8 +18,7 @@ exports.get_collabs_requests = async (request, response) => {
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(request.session.email, offset, filter)
     .then(data =>  data)
-    .catch(e => console.log(e))
-  // console.log(requests)
+    .catch(e => console.error(e))
   response.json({
     selectedOption: 'requests',
     requests: requests,
@@ -41,7 +40,6 @@ exports.get_abscences = (request, response) => {
 }
 
 exports.update_estado = async (req, res) => {
-  console.log(req.body);
   
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta)
   res.redirect("/requests");

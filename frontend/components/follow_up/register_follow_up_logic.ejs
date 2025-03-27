@@ -4,7 +4,6 @@
     })
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
     function get_register(data) {
-      console.log("Datos dentro de get_register: ", data);
       const contentContainer = document.getElementById("content-section");
 
       let content = " ";
@@ -138,20 +137,16 @@
 
 
           const progressBars = document.querySelectorAll(".progress-bar");
-          // console.log(progressBars);
           const progressTexts = document.querySelectorAll(".progress-text");
-          // console.log(progressTexts);
+
           const indicatorLabels = [];
           for (let i = 0; i < progressTexts.length; i++){
             indicatorLabels.push(progressTexts[i].textContent.trim());
           }
-          // console.log(indicatorLabels);
 
           let indicatorValues = new Array(indicatorLabels.length).fill(0);
-          // console.log(indicatorValues);
 
           const ctx = document.getElementById("myRadarChart")
-          console.log('Graph: ', ctx);
           ctx.getContext("2d");
           const radar = new Chart(ctx, { 
             type: 'radar',
@@ -215,19 +210,17 @@
       const csrf = document.getElementById('_csrf').value
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML
-      console.log(route)
+
       fetch(`/follow_ups/${route}`, {
         method: 'GET',
       })
       .then(response => {
-        console.log(response.body)
         return response.json()
       })
       .then(data => {
-        console.log("Datos recibidos: ", data);
         get_register(data);
       })
-      .catch(e => console.log("error", e))
+      .catch(e => console.error("error", e));
     }
     
 
@@ -238,7 +231,6 @@
 
         // Agregar la clase 'selected' al botón clickeado
         option.classList.add("selected");
-        console.log(event)
         get_info_register();
       });
     });

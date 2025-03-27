@@ -113,8 +113,6 @@
           confirmButtonText: "Yes, update it!"
         }).then((result) => {
           if (result.isConfirmed) {
-            console.log(postId);
-            console.log(newValue);
             updateField(postId, newValue);
             get_info();
           }
@@ -176,7 +174,7 @@
     .then(data => {
       createTableRequests(data)
     })
-    .catch(e => console.log(e))
+    .catch(e => console.error(e))
   }
   
   // Permite cambiar entre pestañas

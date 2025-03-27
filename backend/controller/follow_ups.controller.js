@@ -17,8 +17,6 @@ exports.get_FollowUp = (request, response) => {
 } 
 
 exports.get_register = async (request, response) => {
-  console.log("Hola")
-  
     const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
       Collab.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
@@ -28,10 +26,6 @@ exports.get_register = async (request, response) => {
     const [rows, fieldData] = collabsData;
     const [rows_ques, fieldData_ques] = questionsData;
     const [rows_indi, fieldData_indi] = indicatorsData;
-
-    console.log(rows);
-    console.log(rows_ques);
-    console.log(rows_indi);
 
     response.json({
       ...settings,
@@ -45,26 +39,18 @@ exports.get_register = async (request, response) => {
 };
 
 exports.post_follow_ups = async (req, res) => {
-  console.log(req.body);
-  console.log("entro al post");
   try {
-    console.log("Entro al try");
     // Crear la evaluación y esperar su guardado
-    console.log(req.body.id_colaborador);
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
-    console.log("Eval: ", evaluation);
 
     // Ahora podemos acceder al ID generado
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-    console.log("id:", id_evaluation);
 
     // Crear y guardar respuestas
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
-    console.log("Answer: ", answer_questions);
     await answer_questions.save(); 
 
     const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
-    console.log("Metrica", metrics_answer);
     await metrics_answer.save();
     
 
