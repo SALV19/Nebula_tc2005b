@@ -8,14 +8,15 @@
 
       let content = " ";
       content += ` 
-      <form action="/follow_ups/Register/save" method="POST">
-        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
-        <div class="column-container">
-            <section class='column'>
-            <div name="nombre">
-                <label class="is-size-6 styling" for="collaborators">Employee</label>
-                <select id="collaborators" class="line-input text-style" name="id_colaborador">
-                <option value="default" disabled selected>Select Collaborator</option>
+      <div class="container-scroll">
+        <form action="/follow_ups/Register/save" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="column-container">
+              <section class='column'>
+              <div name="nombre">
+                  <label class="is-size-6 styling" for="collaborators">Employee</label>
+                  <select id="collaborators" class="line-input text-style" name="id_colaborador">
+                  <option value="default" disabled selected>Select Collaborator</option>
       `
       if (data.colaboradores.length > 0) {
         for (let i = 0; i < data.colaboradores.length; i++) {
@@ -45,27 +46,49 @@
       ` 
       for(let i = 0; i < data.questions.length; i++) {
         content += `
-        <div class="question-container">
-            <p class="line-questions">
-            <span>
-                ${data.questions[i].pregunta}
-            </span>
-            <i class="bi bi-caret-down-fill toggle-icon"></i>
-            </p>
+         `
+            if (i === 0){
+            content += `
+              <div class="question-container">
+                  <p class="line-questions icon-close">
+                  <span>
+                      ${data.questions[i].pregunta}
+                  </span>
+                  <i class="bi bi-caret-down-fill"></i>
+                  </p>
+              
+                  <!-- Campo oculto para enviar el ID de la pregunta -->
+                  <input type="hidden" class="show-question-container" name="id_pregunta" value="${data.questions[i].id_pregunta}">
 
-            <!-- Campo oculto para enviar el ID de la pregunta -->
-            <input type="hidden" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="show-question-container" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+            `
+            } else if (i > 0) {
+            content +=  `
+            <div class="question-container">
+                  <p class="line-questions toggle-icon">
+                  <span>
+                      ${data.questions[i].pregunta}
+                  </span>
+                  <i class="bi bi-caret-down-fill"></i>
+                  </p>
 
-            <!-- Campo de entrada para la respuesta -->
-            <input class="hidden-content" name="respuesta" placeholder="Escribe tu respuesta aquí">
+                  <!-- Campo oculto para enviar el ID  la pregunta -->
+                  <input type="hidden" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="hidden-content"  id="lenghtVal" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+                  <p class="text-length"> TEXT </p>
+            `
+            }
+            content += `
         </div>
             ` 
       }
       content += `
       </div>
-        <div class="button-container">
-              <button id="submitButton" class="approve-button" type="submit">Submit</button>
-          </div>
       </section>
 
       <section class='column'>
@@ -77,17 +100,16 @@
       `
       for(let i = 0; i < data.indicator.length; i++) {
         content += `
-          <div class="container">
+          <div class="container ">
                 <div class="progress-container">
                     <p class="progress-text"> ${data.indicator[i].indicador} </p>
                     <i class="bi bi-info-circle elementBar"></i>
                 </div>
-
                 <p class="hidden-message showElement dropdown-content" style="display: none;"> 
                     How does the employee feel about their ${data.indicator[i].indicador} ?<br>
                     0 = unsatisfied | 5 = satisfied
                 </p>
-
+                
                 <input type="hidden" name="id_indicador" value="${ data.indicator[i].id_indicador}">
                 <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
             </div>
@@ -115,9 +137,13 @@
         `
       }    
       content += `
+            </div>
           </div>
-        </div>
-      </form>
+          <div class="button-container">
+              <button id="submitButton" class="approve-button" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
       `    
       contentContainer.innerHTML = content;
 
@@ -126,14 +152,18 @@
     }
 
     function logicRegister () {
-          document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
-            toggleIcon.addEventListener("click", (event) => {
-              const questionContainer = event.target.closest(".question-container");
-              const hiddenContent = questionContainer.querySelector(".hidden-content");
+          document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
+              toggleIcon.addEventListener("click", (event) => {
+                  const questionContainer = event.target.closest(".question-container");
+                  const textArea = questionContainer.querySelector("textarea"); // Encuentra el textarea del contenedor
 
-              hiddenContent.classList.toggle("show");
-            });
+                  if (textArea) {
+                      textArea.classList.toggle("hidden-content"); // Alterna la visibilidad
+                      textArea.classList.toggle("show-question-container"); // Alterna la clase de visibilidad
+                  }
+              });
           });
+
 
 
           const progressBars = document.querySelectorAll(".progress-bar");
@@ -179,7 +209,7 @@
                   pointLabels: {  
                     color: "#FFFF",  // Changes the label color
                     font: {
-                      size: 10,
+                      size: 15,
                       weight: "italic bold"
                     }
                   }
@@ -223,6 +253,7 @@
         let errorMessage = document.getElementById("errorMessage");
         let submitButton = document.getElementById("submitButton");
         let selectDate = document.getElementById("filter_end");
+        let lengthV = document.getElementById("lenghtVal");
 
         let today = new Date(); 
         today.setDate(today.getDate() - 1);  
@@ -246,7 +277,7 @@
             errorMessage.classList.add("show");
           };
         });
-
+        
         // VALIDATE FORM
         submitButton.addEventListener("click", function (event) {
           // Validate dates
