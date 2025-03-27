@@ -8,12 +8,12 @@
                                 <div class="cell">
                                     <div><label class="subtitleForm">Name</label></div>
                                     <section class="input-container">
-                                        <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input">
+                                        <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required>
                                     </section>
 
                                     <div><label class="subtitleForm">Position</label></div>
                                     <section class="input-container">
-                                        <select name="puesto" id="position" class="line-input dropdown">
+                                        <select name="puesto" id="position" class="line-input dropdown" required>
                                             <option value="" disabled selected>Select Position</option>
                                             <% if (puesto && puesto.length > 0) { %>
                                                 <% for (let i = 0; i < puesto.length; i++) { %>
@@ -28,7 +28,7 @@
                                     
                                     <div><label class="subtitleForm">Empresa</label></div>
                                     <section class="input-container">
-                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown">
+                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
                                             <option value="" disabled selected>Select Company</option>
                                             <% if (empresa && empresa.length > 0) { %>
                                                 <% for (let i = 0; i < empresa.length; i++) { %>
@@ -42,18 +42,18 @@
                                         
                                     <div><label class="subtitleForm">Mail</label></div>
                                     <section class="input-container">
-                                        <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()">
+                                        <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required>
                                         <p id="mail-error" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
                                     </section>
                                     
                                     <div><label class="subtitleForm">Location</label></div>
                                     <section class="input-container">
-                                        <input name="ubicacion" type="text" id="location" placeholder="Insert location" class="line-input">
+                                        <input name="ubicacion" type="text" id="location" placeholder="Insert location" class="line-input" required>
                                     </section>
                                     
                                     <div><label class="subtitleForm">Modality</label></div>
                                     <section class="input-container">
-                                        <select name="modalidad" id="modality" class="line-input dropdown">
+                                        <select name="modalidad" id="modality" class="line-input dropdown" required>
                                             <option value="" disabled selected>Select Modality</option>
                                             <% if (modalidad && modalidad.length > 0) { %>
                                                 <% for (let i = 0; i < modalidad.length; i++) { %>
@@ -75,7 +75,7 @@
 
                                     <div><label class="subtitleForm">Phone</label></div>
                                         <section class="input-container">
-                                            <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()">
+                                            <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required>
                                             <p id="phone-error" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                         </section>
                                     </div>
@@ -83,12 +83,12 @@
                                     <div class="cell">
                                         <div><label class="subtitleForm">Last Name</label></div>
                                         <section class="input-container">
-                                            <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input">
+                                            <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input" required>
                                         </section>
                                         
                                         <div><label class="subtitleForm">Department</label></div>
                                         <section class="input-container">
-                                            <select name="id_departamento" id="department" class="line-input dropdown">
+                                            <select name="id_departamento" id="department" class="line-input dropdown" required>
                                                 <option value="" disabled selected>Select Department</option>
                                                 <% if (departamento && departamento.length > 0) { %>
                                                     <% for (let i = 0; i < departamento.length; i++) { %>
@@ -103,7 +103,7 @@
 
                                         <div><label class="subtitleForm">Role</label></div>
                                         <section class="input-container">
-                                            <select name="id_rol" id="role" class="line-input dropdown">
+                                            <select name="id_rol" id="role" class="line-input dropdown" required>
                                                 <option value="" disabled selected>Select Role</option>
                                                 <% if (rol && rol.length > 0) { %>
                                                     <% for (let i = 0; i < rol.length; i++) { %>
@@ -124,26 +124,28 @@
                                         </section>
 
                                         <div><label class="subtitleForm">Birthday</label></div>
-                                        <input name="fechaNacimiento" id="birthday" class="dateLine" type="date">
+                                        <input name="fechaNacimiento" id="birthday" class="dateLine" type="date" required>
 
                                         <div><label class="subtitleForm">Entry Date</label></div>
-                                        <input name="fechaIngreso" id="entry-date" class="dateLine" type="date">
+                                        <input name="fechaIngreso" id="entry-date" class="dateLine" type="date" required>
 
                                         <div><label class="subtitleForm">RFC</label></div>
                                         <section class="input-container">
-                                            <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC" class="line-input" oninput="validateRFC()">
+                                            <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC" class="line-input" oninput="validateRFC()" required>
                                             <p id="rfc-error" class="error" style="display: none;">RCF must be of 13 characters</p>
                                         </section>
 
                                         <div><label class="subtitleForm">CURP</label></div>
                                         <section class="input-container">
-                                            <input name="curp" type="text" id="curp-input" placeholder="Insert CURP" class="line-input" oninput="validateCURP()">
+                                            <input name="curp" type="text" id="curp-input" placeholder="Insert CURP" class="line-input" oninput="validateCURP()" required>
                                             <p id="curp-error" class="error" style="display: none;">CURP must be of 18 characters</p>
                                         </section>
 
                                     <div class="buttons">
                                         <button type="submit" class="button is-save">Save</button>
+
                                     </div>
+                                    
                                 </div>
                             </div>
                         </div>
