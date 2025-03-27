@@ -134,4 +134,38 @@ module.exports = class Colaborador {
       [id]
     );
   }
+
+  static updateById(id, data) {
+    return db.execute(
+      `UPDATE colaborador SET 
+        nombre = ?, 
+        apellidos = ?, 
+        fechaNacimiento = ?, 
+        telefono = ?, 
+        puesto = ?, 
+        email = ?, 
+        fechaIngreso = ?, 
+        ubicacion = ?, 
+        modalidad = ?, 
+        curp = ?, 
+        rfc = ? 
+      WHERE id_colaborador = ?`,
+      [
+        data.nombre,
+        data.apellidos,
+        data.fechaNacimiento,
+        data.telefono,
+        data.puesto,
+        data.email,
+        data.fechaIngreso,
+        data.ubicacion,
+        data.modalidad,
+        data.curp,
+        data.rfc,
+        id,
+      ]
+    );
+  }
+  
+
 };

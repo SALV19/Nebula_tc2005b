@@ -23,7 +23,7 @@ function update_button(id) {
       const col = data.colaborador;
       const eq = data.equipo;
 
-      document.getElementById('id_colaborador').value = id;
+      document.getElementById('colab-id').value = id;
       document.getElementById('name').value = col.nombre;
       document.getElementById('last-name').value = col.apellidos;
       document.getElementById('birthday').value = col.fechaNacimiento.split('T')[0];

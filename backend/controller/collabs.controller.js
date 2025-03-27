@@ -134,3 +134,22 @@ exports.get_collab_data = async (req, res) => {
   }
 };
 
+
+exports.update_collab = async (request, response) => {
+  try {
+    const id = request.body.id_colaborador;
+    console.log("Actualizando colaborador:", id);
+
+    // 👇 Agrega esto para inspeccionar lo recibido
+    console.log("Datos recibidos del formulario:");
+    console.log(request.body);
+
+    await Colaborador.updateById(id, request.body);
+    await Equipo.updateById(id, request.body.id_departamento, request.body.id_rol);
+
+    response.redirect("/view_collabs");
+  } catch (error) {
+    console.error("Error al actualizar colaborador:", error);
+    response.redirect("/view_collabs?error=true");
+  }
+};
