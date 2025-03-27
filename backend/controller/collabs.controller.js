@@ -174,14 +174,6 @@ exports.update_collab = async (request, response) => {
       3: "Super Admin"
     };
 
-    const deptoMap = {
-      1: "Finanzas",
-      2: "Logística",
-      3: "Marketing",
-      4: "Tecnología de la Información",
-      // agrega los demás según tus datos
-    };
-
     const modalidadMap = {
       0: "In-person",
       1: "Hybrid",
@@ -202,7 +194,6 @@ exports.update_collab = async (request, response) => {
       ubicacion: request.body.ubicacion,
       modalidad: modalidadMap[request.body.modalidad],
       rol: rolMap[request.body.id_rol],
-      departamento: deptoMap[Number(request.body.id_departamento)],
     };
 
 
