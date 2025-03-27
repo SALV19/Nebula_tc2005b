@@ -135,9 +135,11 @@ module.exports = class Colaborador {
     );
   }
 
-  static updateById(id, data) {
-    return db.execute(
-      `UPDATE colaborador SET 
+
+  updateById(id) {
+    return db
+      .execute(
+        `UPDATE colaborador SET 
         nombre = ?, 
         apellidos = ?, 
         fechaNacimiento = ?, 
@@ -150,21 +152,24 @@ module.exports = class Colaborador {
         curp = ?, 
         rfc = ? 
       WHERE id_colaborador = ?`,
-      [
-        data.nombre,
-        data.apellidos,
-        data.fechaNacimiento,
-        data.telefono,
-        data.puesto,
-        data.email,
-        data.fechaIngreso,
-        data.ubicacion,
-        data.modalidad,
-        data.curp,
-        data.rfc,
-        id,
-      ]
-    );
+        [
+          this.nombre,
+          this.apellidos,
+          this.fechaNacimiento,
+          this.telefono,
+          this.puesto,
+          this.email,
+          this.fechaIngreso,
+          this.ubicacion,
+          this.modalidad,
+          this.curp,
+          this.rfc,
+          id
+        ]
+      )
+      .then(() => {
+        console.log("DATOS GUARDADOS")
+      });
   }
   
 

@@ -140,12 +140,31 @@ exports.update_collab = async (request, response) => {
     const id = request.body.id_colaborador;
     console.log("Actualizando colaborador:", id);
 
+    const edit_Colab = new Colaborador(
+      request.body.nombre,
+      request.body.apellidos,
+      request.body.fechaNacimiento,
+      request.body.telefono,
+      request.body.puesto,
+      request.body.email,
+      request.body.fechaIngreso,
+      request.body.ubicacion,
+      request.body.modalidad,
+      request.body.curp,
+      request.body.rfc
+    );
+
+    const edit_equipo = new Equipo(
+      request.body.id_departamento,
+      request.body.id_rol
+    );
+
     // 👇 Agrega esto para inspeccionar lo recibido
     console.log("Datos recibidos del formulario:");
     console.log(request.body);
 
-    await Colaborador.updateById(id, request.body);
-    await Equipo.updateById(id, request.body.id_departamento, request.body.id_rol);
+    await edit_Colab.updateById(id);
+    await edit_equipo.updateById(id);
 
     response.redirect("/view_collabs");
   } catch (error) {

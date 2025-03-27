@@ -18,12 +18,12 @@ module.exports = class Equipo {
         );
     }
 
-    static updateById(id_colaborador, id_departamento, id_rol) {
+    updateById(id_colaborador) {
         return db.execute(
         `UPDATE equipo 
         SET id_departamento = ?, id_rol = ? 
         WHERE id_colaborador = ?`,
-        [id_departamento, id_rol, id_colaborador]
+        [this.id_dep, this.id_r, id_colaborador]
         );
     }
 };
