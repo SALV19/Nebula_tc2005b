@@ -113,6 +113,7 @@
           confirmButtonText: "Yes, update it!"
         }).then((result) => {
           if (result.isConfirmed) {
+            console.log('ID solicitud:',postId, ' Nuevo valor:', newValue); 
             updateField(postId, newValue);
             get_info();
           }
