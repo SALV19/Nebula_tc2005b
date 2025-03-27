@@ -159,12 +159,19 @@ exports.update_collab = async (request, response) => {
       request.body.id_rol
     );
 
-    // 👇 Agrega esto para inspeccionar lo recibido
+    // Agrega esto para inspeccionar lo recibido
     console.log("Datos recibidos del formulario:");
     console.log(request.body);
 
     await edit_Colab.updateById(id);
     await edit_equipo.updateById(id);
+
+    // Guardamos en sesión los datos para mostrar el SweetAlert
+    request.session.successData = {
+      updated: true,
+      nombre: request.body.nombre,
+      apellidos: request.body.apellidos
+    };
 
     response.redirect("/view_collabs");
   } catch (error) {

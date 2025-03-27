@@ -1,0 +1,17 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const successData = <%- JSON.stringify(successData || null) %>;
+
+        if (successData && successData.updated) {
+        Swal.fire({
+            icon: "success",
+            title: "¡Colaborador actualizado!",
+            html: `<p>Los cambios de <strong>${successData.nombre} ${successData.apellidos}</strong> fueron guardados con éxito.</p>`,
+            confirmButtonText: "OK"
+        }).then(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        });
+        }
+    });
+</script>
