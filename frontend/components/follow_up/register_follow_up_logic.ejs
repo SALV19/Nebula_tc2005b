@@ -202,8 +202,70 @@
 
           for(let i = 0; i < progressBars.length ; i++){
             progressBars[i].addEventListener('input',updateValues);
+
           };
+
+          //Show info message for progress bars
+        const triggerElement = document.querySelectorAll(".elementBar");
+        const targetElement = document.querySelectorAll(".showElement");
+        triggerElement.forEach((trigger, index) => {
+          trigger.addEventListener("mouseover", () => {
+            targetElement[index].style.display = "block";
+          })
+
+          trigger.addEventListener("mouseout" , () => {
+            targetElement[index].style.display = "none";
+          })
+        })
+
+        // VALIDATE COLLAB AND DATE
+        let collaboratorSelect = document.getElementById("collaborators");
+        let errorMessage = document.getElementById("errorMessage");
+        let submitButton = document.getElementById("submitButton");
+        let selectDate = document.getElementById("filter_end");
+
+        let today = new Date(); 
+        today.setDate(today.getDate() - 1);  
+
+        let currentDate = today.toISOString().split('T')[0]; 
+
+         // VALIDATE DATE
+        selectDate.addEventListener("change", function(){
+          if(selectDate.value >= currentDate){
+            dateError.classList.remove("show");
+          } else {
+            dateError.classList.add("show");
+          };
+        });
+
+         // VALIDATE COLLAB
+        collaboratorSelect.addEventListener("change", function(){
+          if (collaboratorSelect.value != "default"){
+            errorMessage.classList.remove("show");
+          } else {
+            errorMessage.classList.add("show");
+          };
+        });
+
+        // VALIDATE FORM
+        submitButton.addEventListener("click", function (event) {
+          // Validate dates
+          if (selectDate.value < currentDate){
+            event.preventDefault();
+            dateError.classList.add("show");
+          } else {
+            dateError.classList.remove("show");
+          };
+
+          if (collaboratorSelect.value === "default"){
+            event.preventDefault();
+            errorMessage.classList.add("show");
+          } else {
+            errorMessage.classList.remove("show");
+          };
+        });
       }
+
     
     
     const get_info_register = () => {
