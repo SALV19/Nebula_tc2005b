@@ -130,9 +130,20 @@
       updateDaysCounter();
     });
 
+
+
     // Close the form
     closeBtn.addEventListener("click", () => {
+
+        document.getElementById("requestType").value = "Absence|Academic Status";
+        document.getElementById("startDate").value = null;
+        document.getElementById("endDate").value = null;
+        document.getElementById("location").value = "";
+        document.getElementById("description").value = "";
+        document.getElementById("evidence").value = "";
+
       requestPopup.style.display = "none";
+
     });
 
     const requestForm = document.querySelector("form"); 
