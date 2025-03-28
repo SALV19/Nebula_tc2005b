@@ -1,13 +1,19 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor(colab_email, type, dates, location, reason, evidence) {
+  constructor(id_solicitud, id_collab, estado, tipo_falta, descripcion, ubicacion, evidencia, colab_email, type, dates, location, reason, evidence) {
+    this.sol = id_solicitud;
+    this.colllab = id_collab;
+    this.esta = estado;
+    this.tipo = tipo_falta;
+    this.descripcion = descripcion;
+    this.ubi = ubicacion;
     this.colab_email = colab_email;
-    this.type = type
-    this.dates = dates
-    this.location = location
-    this.reason = reason
-    this.evidence = evidence
+    this.type = type;
+    this.dates = dates;
+    this.location = location;
+    this.reason = reason;
+    this.evidence = evidence;
   }
 
   save() {
@@ -138,5 +144,12 @@ module.exports = class Requests {
     else {
       return Requests.fetchAllRequests(offset, filter)
     }
+  }
+
+  static save_State(estado, id_solicitud_falta){
+    return db.execute(
+      'UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?',
+      [estado, id_solicitud_falta]
+    );  
   }
 }

@@ -1,5 +1,4 @@
-const db = require("../util/database");
-
+const db = require('../util/database')
 module.exports = class Colaborador {
   constructor(
     colab_nombre,
@@ -12,7 +11,7 @@ module.exports = class Colaborador {
     colab_ubicacion,
     colab_modalidad,
     colab_curp,
-    colab_rfc
+    colab_rfc,
   ) {
     this.nombre = colab_nombre;
     this.apellidos = colab_apellidos;
@@ -25,6 +24,10 @@ module.exports = class Colaborador {
     this.modalidad = colab_modalidad;
     this.curp = colab_curp;
     this.rfc = colab_rfc;
+  }
+
+  static fetchAllCompleteName(){
+    return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador')
   }
 
   save(password) {
@@ -166,9 +169,6 @@ module.exports = class Colaborador {
           id
         ]
       )
-      .then(() => {
-        console.log("DATOS GUARDADOS")
-      });
   }
   
 

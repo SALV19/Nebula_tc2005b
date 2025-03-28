@@ -46,13 +46,13 @@ exports.contVac = (request, responsem, next) => {
                 return({diasDisponibles,diasTotales});
 
             }).catch((error) => {
-                console.log(error);
+                console.error(error);
             });
         }).catch((error) => {
-            console.log(error);
+            console.error(error);
         });
     }).catch((error) => {
-        console.log(error);
+        console.error(error);
     });
     return espera
 }

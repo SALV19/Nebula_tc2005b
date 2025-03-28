@@ -98,7 +98,7 @@ exports.get_reset_password = (request, response, next) => {
 };
 
 exports.post_reset_password = async (request, response, next) => {
-  try {   
+  try {
     const password = request.body.password;
     const password2 = request.body.password2;
     const token = request.session.userToken;
@@ -139,6 +139,7 @@ exports.post_reset_password = async (request, response, next) => {
     const hashedPassword = await encryptPassword(password);
     
     const result = await PasswordReset.resetPassword(token, hashedPassword, email);
+    
 
     delete request.session.resetToken;
     delete request.session.userToken;

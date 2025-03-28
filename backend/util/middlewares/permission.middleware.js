@@ -1,4 +1,5 @@
 exports.get_requests = (request, response, next) => {
+  // console.log(request.session.permissions);
   // if (request.session.permissions) {
   //   if (request.session.permissions.includes("accept_requests") 
   //       || request.session.permissions.includes("accept_requests_team")) {

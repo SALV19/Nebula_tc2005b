@@ -150,7 +150,7 @@ exports.update_collab = async (request, response) => {
       request.body.ubicacion,
       request.body.modalidad,
       request.body.curp,
-      request.body.rfc
+      request.body.rfc,
     );
 
     const edit_equipo = new Equipo(
@@ -230,7 +230,7 @@ exports.post_collab = (request, response) => {
       response.redirect("/view_collabs");
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       response.redirect("/view_collabs?error=true");
   }); 
 };
