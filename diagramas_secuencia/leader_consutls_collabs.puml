@@ -1,0 +1,41 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary requests.routes as vcr
+control requests.controller as vcc
+entity requests.model as vcm
+database Nebula as db
+
+activate u
+u -> vcr : GET /requests
+deactivate u
+
+activate vcr
+vcr -> vcc : getCollabs(user_department)
+deactivate vcr
+
+activate vcc
+vcc -> vcm : getCollabsInfo(user_department)
+
+activate vcm
+vcm ->> db : Consult information of collaborators in the leader's team
+activate db
+db -->> vcm : [id_collaborator, name, last_name, \nposition, phone, mail, role, modality status, \nbirthday, entryDate, department, company]
+vcm ->> db : Consult accepted abscences requests of collaborators
+db -->> vcm : [start_date, end_date, reason, type]
+vcm ->> db : Consult administrative faults
+db -->> vcm : [faults]
+deactivate db
+
+vcm -> vcc : [collab_info]
+deactivate vcm
+vcc -> vcc : getAbscences()
+vcc -> vce : collaborators_info
+deactivate vcc
+activate vce
+vce -> u : HTML view_collaborators.ejs
+deactivate vce
+activate u
+
+
+@enduml

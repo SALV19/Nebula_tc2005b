@@ -2,8 +2,12 @@
 function TableFollowUps(data) {
     console.log("data de tabla: ", data);
 
-    const table = document.querySelector('#followUp_table');
-    let table_content = `<tbody>`;
+    const table = document.querySelector('#content-section');
+    let table_content = `<div class="container-scroll">
+    <table class="table is-fullwidth"">
+
+    
+<tbody>`;
 
     data.fechasAgendadas.forEach((fecha, idx) => {
         console.log(idx);
@@ -47,7 +51,7 @@ function TableFollowUps(data) {
                                     </div>
                                     <!-- Segunda columna -->
                                     <div class="column">
-                                        <div class="radar-container">
+                                        <div class="radar-containerF">
                                             <canvas class="canvas-viewF" id="chart-${idx}"></canvas> <!-- Aquí el id es dinámico -->
                                         </div>
                                     </div>
@@ -60,7 +64,7 @@ function TableFollowUps(data) {
                             </td>
                             </tr>`;
     });
-    table_content += '</tbody>';
+    table_content += '</tbody></table> </div>';
     table.innerHTML = table_content;
 
     // Ahora creamos los gráficos para cada fila adicional después de renderizar el contenido

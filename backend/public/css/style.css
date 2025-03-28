@@ -1,28 +1,29 @@
-body, section, table, thead, tr, footer {
+* {
+  font-family: Montserrat;
+}
+
+body, section, table, thead, tr {
   background-color: #242424;
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
 }
 
 body {
   height: 102vh;
 }
 
-
-.example::-webkit-scrollbar {
-  display: none;
-}
-
-/* Hide scrollbar for IE, Edge and Firefox */
-.example {
-  -ms-overflow-style: none;  /* IE and Edge */
-  scrollbar-width: none;  /* Firefox */
+html,
+body,
+#app {
+  height: 100%;
+  background-color: #242424;
 }
 
 footer {
   position: absolute; 
-  top: 95%;
+  top: 100%;
   right: 0;
   width: 100vw;
-  background: none;
 }
 
 .pop-up {
@@ -53,4 +54,27 @@ footer {
 
 .hidden-row {
   display: none;
+}
+.dateLine {
+  color: #747474; /* Color del texto */
+  background: transparent;
+  border: none;
+  border-bottom: 0.04vh solid #fff;
+  outline: none;
+  width: 100%;
+  padding: 0.5vh 0;
+  font-size: 2vh;
+  text-align: center;
+  margin-bottom: 2vh;
+}
+
+.dateLine::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.flex-centered {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
 }

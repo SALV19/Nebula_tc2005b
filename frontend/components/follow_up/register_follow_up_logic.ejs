@@ -1,100 +1,240 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-    const contentContainer = document.getElementById("content-section");
-
+    })
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
-    function get_info(selectedOption) {
-      console.log("Ejecutando get_info con opción:", selectedOption);
-      
-      // Seleccionar el contenedor donde se mostrará el contenido
-      contentContainer.innerHTML = " ";
-      if (selectedOption == 'Register'){
-        contentContainer.innerHTML = `<%- include ('../components/follow_up/register_followUp.ejs') %>`;
+    function get_register(data) {
+      const contentContainer = document.getElementById("content-section");
+      let content = " ";
+      content += ` 
+      <div class="container-scroll">
+        <form action="/follow_ups/Register/save" method="POST">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="column-container">
+              <section class='column'>
+              <div name="nombre">
+                  <label class="is-size-6 styling" for="collaborators">Employee</label>
+                  <select id="collaborators" class="line-input text-style" name="id_colaborador">
+                  <option value="default" disabled selected>Select Collaborator</option>
+      `
+      if (data.colaboradores.length > 0) {
+        for (let i = 0; i < data.colaboradores.length; i++) {
 
-        // SHOW INPUT BOX FOR QUESTIONS
-        document.querySelectorAll(".toggle-icon").forEach((toggleIcon) => {
-          toggleIcon.addEventListener("click", (event) => {
-            const questionContainer = event.target.closest(".question-container");
-            const hiddenContent = questionContainer.querySelector(".hidden-content");
+      content += `<option value="${data.colaboradores[i].id_colaborador}"> `
 
-            hiddenContent.classList.toggle("show");
-          });
-        });
+      content += data.colaboradores[i].nombre + " " + data.colaboradores[i].apellidos
 
+      content += `</option>`
 
-        // RADAR CHART LOGIC AND CREATION
-        const progressBars = document.querySelectorAll(".progress-bar");
-        // console.log(progressBars);
-        const progressTexts = document.querySelectorAll(".progress-text");
-        // console.log(progressTexts);
-        const indicatorLabels = [];
-        for (let i = 0; i < progressTexts.length; i++){
-          indicatorLabels.push(progressTexts[i].textContent.trim());
         }
-        // console.log(indicatorLabels);
+      } else {
+        content += `<option disabled> No hay colaboradores disponibles </option>`
+      }
+      content += `</select>
+            <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
+        </div>  `
+      
+      content += `
+      <div>
+        <label class="is-size-6 styling">Date</label>
+        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value=${new Date().toISOString().split('T')[0]}/ >
+        <p id="dateError" class="text-hidden"> Select a valid date </p>
 
-        let indicatorValues = new Array(indicatorLabels.length).fill(0);
-        // console.log(indicatorValues);
+      </div>
+      <div id="questions-container"> 
+      ` 
+      for(let i = 0; i < data.questions.length; i++) {
+        content += `
+         `
+            if (i === 0){
+            content += `
+              <div class="question-container">
+                  <p class="line-questions icon-close">
+                  <span>
+                      ${data.questions[i].pregunta}
+                  </span>
+                  <i class="bi bi-caret-down-fill"></i>
+                  </p>
+              
+                  <!-- Campo oculto para enviar el ID de la pregunta -->
+                  <input type="hidden" class="show-question-container" name="id_pregunta" value="${data.questions[i].id_pregunta}">
 
-        const ctx = document.getElementById("myRadarChart").getContext("2d");
-        const radar = new Chart(ctx, { 
-          type: 'radar',
-          data: {
-            labels: indicatorLabels,
-            datasets: [{
-              data: indicatorValues,
-              backgroundColor: "#B7A5E6",
-              borderColor: "#EEEEEE",
-              borderWidth: 1,
-            }]
-          },
-          options: {
-            plugins: {
-              legend: {
-                display: false // Hide the legend
-              }
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="show-question-container" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+            `
+            } else if (i > 0) {
+            content +=  `
+            <div class="question-container">
+                  <p class="line-questions toggle-icon">
+                  <span>
+                      ${data.questions[i].pregunta}
+                  </span>
+                  <i class="bi bi-caret-down-fill"></i>
+                  </p>
+
+                  <!-- Campo oculto para enviar el ID  la pregunta -->
+                  <input type="hidden" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="hidden-content"  id="lenghtVal" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+                  <p class="text-length"> TEXT </p>
+            `
+            }
+            content += `
+        </div>
+            ` 
+      }
+      content += `
+      </div>
+      </section>
+
+      <section class='column'>
+          <div class="radar-container">
+              <canvas class="canvas" id="myRadarChart"></canvas>
+          </div>
+
+          <div>
+      `
+      for(let i = 0; i < data.indicator.length; i++) {
+        content += `
+          <div class="container ">
+                <div class="progress-container">
+                    <p class="progress-text"> ${data.indicator[i].indicador} </p>
+                    <i class="bi bi-info-circle elementBar"></i>
+                </div>
+                <p class="hidden-message showElement dropdown-content" style="display: none;"> 
+                    How does the employee feel about their ${data.indicator[i].indicador} ?<br>
+                    0 = unsatisfied | 5 = satisfied
+                </p>
+                
+                <input type="hidden" name="id_indicador" value="${ data.indicator[i].id_indicador}">
+                <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+            </div>
+            
+            <div class="numbers-container">
+                <p class="numbers">
+                    0
+                </p>
+                <p class="numbers">
+                    1
+                </p>
+                <p class="numbers">
+                    2
+                </p>
+                <p class="numbers">
+                    3
+                </p>
+                <p class="numbers">
+                    4
+                </p>
+                <p class="numbers">
+                    5
+                </p>
+            </div>
+        `
+      }    
+      content += `
+            </div>
+          </div>
+          <div class="button-container">
+              <button id="submitButton" class="approve-button" type="submit">Submit</button>
+          </div>
+        </form>
+      </div>
+      `    
+      contentContainer.innerHTML = content;
+
+      logicRegister();
+
+    }
+
+    function logicRegister () {
+          document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
+              toggleIcon.addEventListener("click", (event) => {
+                  const questionContainer = event.target.closest(".question-container");
+                  const textArea = questionContainer.querySelector("textarea"); // Encuentra el textarea del contenedor
+
+                  if (textArea) {
+                      textArea.classList.toggle("hidden-content"); // Alterna la visibilidad
+                      textArea.classList.toggle("show-question-container"); // Alterna la clase de visibilidad
+                  }
+              });
+          });
+
+
+
+          const progressBars = document.querySelectorAll(".progress-bar");
+          const progressTexts = document.querySelectorAll(".progress-text");
+
+          const indicatorLabels = [];
+          for (let i = 0; i < progressTexts.length; i++){
+            indicatorLabels.push(progressTexts[i].textContent.trim());
+          }
+
+          let indicatorValues = new Array(indicatorLabels.length).fill(0);
+
+          const ctx = document.getElementById("myRadarChart")
+          ctx.getContext("2d");
+          const radar = new Chart(ctx, { 
+            type: 'radar',
+            data: {
+              labels: indicatorLabels,
+              datasets: [{
+                data: indicatorValues,
+                backgroundColor: "#B7A5E6",
+                borderColor: "#EEEEEE",
+                borderWidth: 1,
+              }]
             },
-            scales: {
-              r: {
-                backgroundColor: "#FFFF",
-                hoverBackgroundColor: "#767574",
-                angleLines: { display: true },
-                suggestedMin: 0,
-                suggestedMax: 5,
-                ticks: {
-                  stepSize: 1,  // Ensures steps of 1
-                  beginAtZero: true
-                },
-                pointLabels: {  
-                  color: "#FFFF",  // Changes the label color
-                  font: {
-                    size: 10,
-                    weight: "italic bold"
+            options: {
+              plugins: {
+                legend: {
+                  display: false // Hide the legend
+                }
+              },
+              scales: {
+                r: {
+                  backgroundColor: "#FFFF",
+                  hoverBackgroundColor: "#767574",
+                  angleLines: { display: true },
+                  suggestedMin: 0,
+                  suggestedMax: 5,
+                  ticks: {
+                    stepSize: 1,  // Ensures steps of 1
+                    beginAtZero: true
+                  },
+                  pointLabels: {  
+                    color: "#FFFF",  // Changes the label color
+                    font: {
+                      size: 15,
+                      weight: "italic bold"
+                    }
                   }
                 }
               }
+            } 
+          });
+          
+          function updateChart(){
+            radar.data.datasets[0].data = indicatorValues;
+            radar.update();
+          };
+
+          function updateValues(){
+            for (let i = 0; i < progressBars.length; i++){
+              indicatorValues[i] = parseInt(progressBars[i].value); 
             }
-          } 
-        });
-        
-        function updateChart(){
-          radar.data.datasets[0].data = indicatorValues;
-          radar.update();
-        };
+            updateChart(); 
+          };
 
-        function updateValues(){
-          for (let i = 0; i < progressBars.length; i++){
-            indicatorValues[i] = parseInt(progressBars[i].value); 
-          }
-          updateChart(); 
-        };
+          for(let i = 0; i < progressBars.length ; i++){
+            progressBars[i].addEventListener('input',updateValues);
 
-        for(let i = 0; i < progressBars.length ; i++){
-          progressBars[i].addEventListener('input',updateValues);
-        };
+          };
 
-        //Show info message for progress bars
+          //Show info message for progress bars
         const triggerElement = document.querySelectorAll(".elementBar");
         const targetElement = document.querySelectorAll(".showElement");
         triggerElement.forEach((trigger, index) => {
@@ -112,15 +252,12 @@
         let errorMessage = document.getElementById("errorMessage");
         let submitButton = document.getElementById("submitButton");
         let selectDate = document.getElementById("filter_end");
+        let lengthV = document.getElementById("lenghtVal");
 
         let today = new Date(); 
         today.setDate(today.getDate() - 1);  
 
         let currentDate = today.toISOString().split('T')[0]; 
-
-        console.log('hoy', currentDate); 
-        console.log('sel', selectDate.value);  
-
 
          // VALIDATE DATE
         selectDate.addEventListener("change", function(){
@@ -139,7 +276,7 @@
             errorMessage.classList.add("show");
           };
         });
-
+        
         // VALIDATE FORM
         submitButton.addEventListener("click", function (event) {
           // Validate dates
@@ -157,37 +294,32 @@
             errorMessage.classList.remove("show");
           };
         });
-
       }
-      // else if (selectedOption == 'Collaborators'){
-      //     fetch('/follow_ups/Collaborators')
-      //     .then(response => {
-      //       console.log("Respuesta recibida:", response.status);
-      //       return response.text();
-      //     })
-      //     .then(html => {
-      //       console.log("HTML recibido, actualizando contenido");
-      //       contentContainer.innerHTML = html;  
-      //     })
-      //     .catch(error => {
-      //       console.error(error);
-      //       contentContainer.innerHTML = '<p>Error al cargar las reuniones. Por favor, intente de nuevo.</p>';
-      //     });
-      // }
+
     
-        
+    
+    const get_info_register = () => {
+      const csrf = document.getElementById('_csrf').value
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML
 
-      else {
-        contentContainer.innerHTML= ` <p> Meetings </p>`;
-      }
+      fetch(`/follow_ups/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        get_register(data);
+      })
+      .catch(e => console.error("error", e));
     }
-
     
 
-    // LOGIC FOR THE NAVBAR BUTTONS OF THIS PAGE
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
+        console.log('event')
         document.querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
 
         // Agregar la clase 'selected' al botón clickeado
@@ -198,13 +330,11 @@
         // console.log("Botón seleccionado:", buttonText);
 
         if (option.innerHTML == 'Register'){
-          get_info(buttonText);
+          get_info_register();
         } else if (option.innerHTML == 'Collaborators'){
           get_info_FU()
         }
 
       });
     });
-
-  });
 </script>

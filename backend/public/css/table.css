@@ -3,15 +3,19 @@ hr {
   margin-top:7px;
   width: 100%;
 }
+
+main {
+  height: 100vh;
+}
+
 .offset {
   margin-left: 0;
 }
 
 .option {
   transition: background-color 0.35s ease-in-out; 
-  border-radius: 30px 30px 0 0 ;
+  border-radius: 10px 10px 0 0 ;
   cursor: pointer;
-  margin-top: 30vw;
   margin: 0 0.2rem;
   padding:.5rem 1rem;
   vertical-align: bottom;
@@ -24,12 +28,12 @@ hr {
 .option:hover {
   transition: background-color 0.35s ease-in-out;
   background-color: #EEEEEE;
-  border-radius: 30px 30px 0 0 ;
+  border-radius: 10px 10px 0 0 ;
   color: #485FC7;
 }
 
 .status {
-  border-radius: 30px;
+  border-radius: 10px;
   text-align: center;
 }
 
@@ -78,7 +82,7 @@ input[type=number] {
   right: 0;
 }
 
-.dropdown:hover .dropdown-content {
+.dropdown:hover .dropdown-content, .dropdown-content:focus-within {
   display: block;
 }
 
@@ -104,4 +108,22 @@ input[type=number] {
   display: flex;
   flex-direction: column;
   align-items: start;
+}
+
+.calendar_container {
+  width: 20vw;
+  height: 20vh;
+}
+
+.fc-scroller {
+  -ms-overflow-style: none; /* For IE and Edge */
+  scrollbar-width: none; /* For Firefox */
+}
+
+.fc-scroller::-webkit-scrollbar {
+  display: none; /* For Chrome, Safari, and Opera */
+}
+.back {
+  background-color: #242424;
+  border-bottom: 1px rgb(53, 58, 70) solid;
 }

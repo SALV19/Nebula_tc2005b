@@ -131,6 +131,15 @@
     justify-content: center;  
     align-items: center;     
     width: 100%;
+    margin-top: -6rem;
+    margin-bottom: -7rem;
+}
+
+.radar-containerF {
+    display: flex;
+    justify-content: center;  
+    align-items: center;     
+    width: 100%;
 }
 
 .numbers-container{
@@ -164,11 +173,9 @@
     width: 100%; /* Asegura que ocupe todo el ancho disponible */
 }
 
-canvas {
-    max-width: 24vw;
-    max-height: 24vw;
+.canvas {
     width: 100%; 
-    height: auto;
+    height: 100%;
 }
 
 .canvas-viewF {
@@ -179,11 +186,14 @@ canvas {
 }
 
 .hidden-content {
+    margin-top:1vw;
+    padding: 0.5vw;
     display: none; 
+    resize: none;
     background-color: #454545;
     border-radius: 5px;
     width: 37vw;
-    height: 5vw;
+    height: 10vw;
     color: #EEEEEE;
 }
 
@@ -196,8 +206,21 @@ canvas {
     color: #EEEEEE;
 }
 
+.show-question-container{
+    margin-top:1vw;
+    padding: 0.5vw;
+    display: block; 
+    resize: none;
+    background-color: #454545;
+    border-radius: 5px;
+    width: 37vw;
+    height: 15vw;
+    color: #EEEEEE;
+}
+
 .hidden-content.show {
     display: block;
+    resize: none
 }
 
 .hidden-content-viewF.show {
@@ -243,6 +266,14 @@ canvas {
     display: block;
 }
 
+.text-length{
+    color: rgb(222, 103, 103); 
+    display: none;
+    text-align: center;
+    margin-top: 0.5vw;
+    font-weight: bold;
+}
+
 .has-background {
     background-color: #454545;  
 }
@@ -250,7 +281,6 @@ canvas {
 .has-background .column {
     background-color: #454545; 
 }
-
 .response-text{
     padding: 1vw; 
     margin: 0.5vw 0; 
@@ -279,13 +309,21 @@ canvas {
     outline: none; 
 }
 
+.text-length.show{
+    display:block;
+}
+
+.styleIcon{
+    margin-bottom: -1.5vw;
+    display:none;
+}
+
 .container-scroll{
     width: 84vw;
-    height: 72vh;
+    height:75vh;
     overflow-y: scroll; 
     overflow-x: hidden;
     border: none;
-
 }
 
 .container-scroll::-webkit-scrollbar {
@@ -305,4 +343,3 @@ canvas {
 .container-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
-

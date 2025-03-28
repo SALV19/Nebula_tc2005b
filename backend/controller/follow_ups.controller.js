@@ -10,9 +10,15 @@ let settings = {
   selectedOption: 'Collaborators',
 };
 
-exports.get_requests = async (request, response) => {
-  try {
-    // Ejecuta ambas consultas en paralelo y espera sus resultados
+exports.get_FollowUp = (request, response) => {
+  response.render("followUp", {
+    ...settings,
+    permissions: request.session.permissions,
+    csrfToken : request.csrfToken(),
+  })
+} 
+
+exports.get_register = async (request, response) => {
     const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
       Collaborator.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
@@ -23,8 +29,7 @@ exports.get_requests = async (request, response) => {
     const [rows_ques, fieldData_ques] = questionsData;
     const [rows_indi, fieldData_indi] = indicatorsData;
 
-
-    response.render("register_followUp", {
+    response.json({
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -32,20 +37,15 @@ exports.get_requests = async (request, response) => {
       questions: rows_ques,
       indicator: rows_indi,
     });
-
-  } catch (error) {
-    console.error("Error al obtener datos:", error);
-  }
 };
 
 exports.post_follow_ups = async (req, res) => {
-  console.log(req.body);
   try {
+    // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
     // Ahora podemos acceder al ID generado
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-    console.log(id_evaluation);
 
     // Crear y guardar respuestas
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
@@ -53,7 +53,7 @@ exports.post_follow_ups = async (req, res) => {
 
     const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
     await metrics_answer.save();
-    console.log(metrics_answer);
+    
 
     // Redirigir después de completar las operaciones
     res.redirect('/follow_ups');

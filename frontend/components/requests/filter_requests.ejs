@@ -22,8 +22,9 @@
     });
   });
 
+  let filter_options = {};
   apply.addEventListener("click", () => {
-    const filter_options = {
+    filter_options = {
       start_date: start.value,
       end_date: end.value,
       pending: document.querySelector("#pending").checked,
@@ -33,13 +34,12 @@
     
     get_info(pagination=0, filter=filter_options)
 
-    end.value = undefined;
-    start.value = undefined;
-
-    checkboxes.forEach((checkbox) => {
-      checkbox.checked = false;
-      checkbox.classList.remove("selected_box");
-    });
+    document.querySelector(".dropdown-content").style.display = 'none'
+    setTimeout(() => {
+      console.log("Time out")
+      document.querySelector(".dropdown-content").removeAttribute('style')
+    }, 100)
+    get_info(0, filter_options)
   });
   
 </script>

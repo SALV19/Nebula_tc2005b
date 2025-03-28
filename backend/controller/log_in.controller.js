@@ -9,6 +9,8 @@ exports.get_log_in = (request, response) => {
   response.render("log_in", {
     ...status, 
     csrfToken: request.csrfToken(),
+    ...status, 
+    csrfToken: request.csrfToken(),
   });
 };
 
