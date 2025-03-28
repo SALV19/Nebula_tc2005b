@@ -1,0 +1,143 @@
+<script>
+  // Crea el contenido de la tabla para solicitudes
+  function createTableRequests(data) {
+    const table = document.querySelector('#requests_table')
+    let table_content = `<thead>
+                          <tr >
+                            <th >Name</th>
+                            <th >Position</th>
+                            <th >Department</th>
+                            <th >Company</th>
+                          </tr>
+                        </thead>
+  <tbody >`
+    // Información por cada rengrlón de la tabla
+    data.collabs[0].forEach((d, idx) => {
+      table_content += `<tr id='collab' key='${idx}'>`;
+      table_content += `<td>${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td>${d.puesto}</td>`
+      table_content += `<td>${d.nombre_departamento} </td>`
+      table_content += `<td>${d.nombre_empresa} </td>`
+      table_content += '</tr>';
+      // Contenido desplegable
+      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+                          <td colspan='6'>
+                            <div class='columns'>
+                              <div class="column is-1">
+                                <p class='has-text-weight-bold mb-4'>Phone</p>
+                                <p class='has-text-weight-bold mb-4'>Mail</p>
+                                <p class='has-text-weight-bold mb-4'>Role</p>
+                                <p class='has-text-weight-bold mb-4'>Modality</p>
+                                <p class='has-text-weight-bold mb-2'>Birthday</p>
+                              </div>
+                              <div class="column ">
+                                  <p class='mb-4'>${d.telefono}</p>
+                                  <p class='mb-4'>${d.email}</p>
+                                  <p class='mb-4'>${d.tipo_rol}</p>
+                                  <p class='mb-4'>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
+                                  <p class='mb-2'>${d.fechaNacimiento}</p>
+                              </div>
+                              <div class="column my-2">
+                                <div class='is-flex is-justify-content-space-around	mb-4'>
+                                  <div class='flex-centered'>
+                                    <p class='has-text-danger  is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Faults<br>commited</p>
+                                  </div>
+                                  <div class='flex-centered'>
+                                    <p class='is-size-1'>01/0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Days of<br>vacations Left</p>
+                                  </div>
+                                  <div class='flex-centered'>
+                                    <p class='is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered'>Current<br>abscences</p>
+                                  </div>
+                                </div>
+                                <div class='is-flex is-justify-content-center'>
+                                  <button class='mr-6 button is-link is-rounded' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
+                                  <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>`;
+    })
+    table_content += '</tbody>'
+    table.innerHTML = table_content
+
+    // Añade función para expandir el contenido extra
+    const entries = document.querySelectorAll('#collab')
+    entries.forEach((node, idx) => {
+      node.addEventListener('click', (v) => {
+        const additionalRow = document.getElementById(`additional-row-${idx}`)
+        if (additionalRow.style.display === "none") {
+          additionalRow.style.display = "table-row";
+        } else {
+          additionalRow.style.display = "none";
+        }
+      })
+    })
+
+  }
+  // Consulta a db para la información de solicitudes
+  const get_info = (pagination=0, filter=null) => {
+    const csrf = document.getElementById('_csrf').value
+    const selected_option = document.querySelector('.selected')
+    const route = selected_option.innerHTML
+    fetch(`/view_collabs/${route}`, {
+      method: 'POST',
+      headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+        },
+      body: JSON.stringify({
+        offset: pagination,
+        filter: filter,
+      }),
+    })
+    .then(response => {
+      return response.json()
+    })
+    .then(data => {
+      createTableRequests(data)
+    })
+    .catch(e => console.error(e))
+  }
+
+  // Permite cambiar entre pestañas
+  const options = document.querySelectorAll(".option")
+    for (let i=0; i<options.length; i++) {
+        options[i].addEventListener('click', (b) => {
+        options.forEach((element) => {
+            element.classList.remove('selected')
+        })
+        options[i].classList.add('selected')
+
+        get_info()
+        })
+    }
+
+    const prev_button = document.querySelector("#prev-page");
+    const next_button = document.querySelector("#next-page");
+    const pagination_value = document.querySelector("#pagination");
+
+    // Cambiar de página / ver los siguientes 10 registros
+    prev_button.addEventListener('click', () => {
+        pagination_value.value = 
+        pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
+        
+        pagination_value.dispatchEvent(new Event('change'));
+    })
+
+    next_button.addEventListener('click', () => {
+        pagination_value.value = Number(pagination_value.value) + 1
+        
+        pagination_value.dispatchEvent(new Event('change'));
+    })
+    pagination_value.addEventListener('change', (v) => {
+        get_info(pagination_value.value-1)
+    })
+
+  document.addEventListener("DOMContentLoaded", function() {
+    get_info()
+  })
+</script>

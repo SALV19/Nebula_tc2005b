@@ -9,6 +9,7 @@
   overflow-x: hidden;
   padding: 1rem 0;
   transition: 0.5s;
+  background-color: #242424;
   border-right: #eeeeee solid 2px;
   display: flex;
   flex-flow: column;

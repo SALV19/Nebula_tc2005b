@@ -3,6 +3,7 @@ const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
 const Indicators_metrics = require('../models/metric_indicators.model');
+const {contVac} = require("../util/contVacations")
 
 let settings = {
   selectedOption: 'active',
@@ -61,3 +62,12 @@ exports.post_follow_ups = async (req, res) => {
     res.status(500).send("Error al guardar la evaluación");
   };
 }
+
+exports.get_follow_ups = (request, response) => {
+    contVac(request)
+    .then(({diasDisponibles,diasTotales}) => {
+        response.render("home_page", {diasDisponibles,diasTotales})
+    })
+    .catch(error => {console.error(error)})
+  };
+  

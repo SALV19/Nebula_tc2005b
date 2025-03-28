@@ -14,9 +14,8 @@ main {
 
 .option {
   transition: background-color 0.35s ease-in-out; 
-  border-radius: 30px 30px 0 0 ;
+  border-radius: 10px 10px 0 0 ;
   cursor: pointer;
-  margin-top: 30vw;
   margin: 0 0.2rem;
   padding:.5rem 1rem;
   vertical-align: bottom;
@@ -29,12 +28,12 @@ main {
 .option:hover {
   transition: background-color 0.35s ease-in-out;
   background-color: #EEEEEE;
-  border-radius: 30px 30px 0 0 ;
+  border-radius: 10px 10px 0 0 ;
   color: #485FC7;
 }
 
 .status {
-  border-radius: 30px;
+  border-radius: 10px;
   text-align: center;
 }
 
