@@ -1,6 +1,6 @@
 <script>
   // Crea el contenido de la tabla para solicitudes
-  function createTableRequests(data) {
+  function createTableCollabs(data) {
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
                           <tr >
@@ -98,7 +98,7 @@
       return response.json()
     })
     .then(data => {
-      createTableRequests(data)
+      createTableCollabs(data)
     })
     .catch(e => console.error(e))
   }

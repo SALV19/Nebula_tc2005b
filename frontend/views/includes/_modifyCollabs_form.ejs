@@ -43,8 +43,8 @@
                                         
                                     <div><label class="subtitleForm">Mail</label></div>
                                     <section class="input-container">
-                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMail()" required>
-                                        <p id="mail-error" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
+                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMailModify()" required>
+                                        <p id="mail-error_modify" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
                                     </section>
                                     
                                     <div><label class="subtitleForm">Location</label></div>
@@ -76,8 +76,8 @@
 
                                     <div><label class="subtitleForm">Phone</label></div>
                                         <section class="input-container">
-                                            <input name="telefono" type="text" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required>
-                                            <p id="phone-error" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
+                                            <input name="telefono" type="number" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validatePhoneModify()" required>
+                                            <p id="phone-error_modify" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                         </section>
                                     </div>
                                                             
@@ -132,14 +132,14 @@
 
                                         <div><label class="subtitleForm">RFC</label></div>
                                         <section class="input-container">
-                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC" class="line-input" oninput="validateRFC()" required>
-                                            <p id="rfc-error" class="error" style="display: none;">RCF must be between 12 to 13 characters</p>
+                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC" class="line-input" oninput="validateRFCModify()" required>
+                                            <p id="rfc-error_modify" class="error" style="display: none;">RCF must be between 12 to 13 characters</p>
                                         </section>
 
                                         <div><label class="subtitleForm">CURP</label></div>
                                         <section class="input-container">
-                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP" class="line-input" oninput="validateCURP()" required>
-                                            <p id="curp-error" class="error" style="display: none;">CURP must be of 18 characters</p>
+                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP" class="line-input" oninput="validateCURPModify()" required>
+                                            <p id="curp-error_modify" class="error" style="display: none;">CURP must be of 18 characters</p>
                                         </section>
 
                                     <div class="buttons">
