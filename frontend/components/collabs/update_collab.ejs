@@ -1,7 +1,6 @@
 <script>
   function update_button(id) {
 
-    console.log("Colab ID a actualizar:", id);
     const csrf = document.getElementById('_csrf').value;
 
     const pop_up_modify_collab = document.querySelector('#pop-up_modiify_collab')
@@ -55,5 +54,58 @@
     }
   }
 
-  
+  function validateRFCModify() {
+        const rfcInput = document.getElementById("rfc-input_modify");
+        const rfcpError = document.getElementById("rfc-error_modify");
+        if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
+            rfcpError.style.display = "block"; 
+        } else {
+            rfcpError.style.display = "none";
+        }
+    }
+    
+    function validateCURPModify() {
+        const curpInput = document.getElementById("curp-input_modify");
+        const curpError = document.getElementById("curp-error_modify");
+    
+        if (curpInput.value.length !== 18) {
+            curpError.style.display = "block"; 
+        } else {
+            curpError.style.display = "none";
+        }
+    }
+
+    const rfcInput = document.querySelector('input[placeholder="Insert RFC"]');
+    rfcInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+    const curpInput = document.querySelector('input[placeholder="Insert CURP"]');
+    curpInput.addEventListener('input', function() {
+        this.value = this.value.toUpperCase();
+    });
+        
+    function validateMailModify() {    
+        const mailInput = document.getElementById("mail-input_modify");
+        const mailError = document.getElementById("mail-error_modify");
+        const validDomain = /@nuclea\.solutions$/;
+
+            if (!validDomain.test(mailInput.value)) {
+                mailError.style.display = "block";
+            } else {
+                mailError.style.display = "none";
+            }
+    }
+
+    function validatePhoneModify() {
+        const phoneInput = document.getElementById("phone-input_modify");
+        const phoneError = document.getElementById("phone-error_modify");
+        
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+        if (phoneInput.value.length < 10 || phoneInput.value.length > 15){
+            phoneError.style.display = "block"; 
+        } else {
+            phoneError.style.display = "none";
+        }
+    }
 </script>

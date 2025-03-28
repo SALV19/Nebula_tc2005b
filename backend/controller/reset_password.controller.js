@@ -51,7 +51,6 @@ exports.post_reset_password_request = (request, response, next) => {
         request.session = request.session || {};
         request.session.resetToken = result.token;
         request.session.resetEmail = email;
-        console.log(result.token);
         
         return response.redirect("/log_in/token");
     }).catch((error) => {
@@ -73,7 +72,6 @@ exports.post_token = (request, response, next) => {
     
 
     PasswordReset.verifyToken(token).then((result) => {
-        console.log("Token -> ", result);
         if(result.valid) {
             request.session.resetEmail = result.email;
             request.session.userToken = token;
@@ -100,10 +98,7 @@ exports.get_reset_password = (request, response, next) => {
 };
 
 exports.post_reset_password = async (request, response, next) => {
-  try {
-    console.log("Body in post_reset_password:", request.body);
-    console.log("Session in post_reset_password:", request.session);
-
+  try {   
     const password = request.body.password;
     const password2 = request.body.password2;
     const token = request.session.userToken;
@@ -144,8 +139,6 @@ exports.post_reset_password = async (request, response, next) => {
     const hashedPassword = await encryptPassword(password);
     
     const result = await PasswordReset.resetPassword(token, hashedPassword, email);
-    
-    console.log("Result of resetPassword:", result);
 
     delete request.session.resetToken;
     delete request.session.userToken;

@@ -16,7 +16,6 @@
     function validateRFC() {
         const rfcInput = document.getElementById("rfc-input");
         const rfcpError = document.getElementById("rfc-error");
-    
         if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
             rfcpError.style.display = "block"; 
         } else {
@@ -26,7 +25,7 @@
     
     function validateCURP() {
         const curpInput = document.getElementById("curp-input");
-        const curpError = document.getElementById("curp-error");
+        const rfcpError = document.getElementById("curp-error");
     
         if (curpInput.value.length !== 18) {
             curpError.style.display = "block"; 

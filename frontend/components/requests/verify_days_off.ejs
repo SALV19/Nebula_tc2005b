@@ -23,7 +23,6 @@
 
     for (let i=0; i<holidays.length; i++) {
       const h = holidays[i];
-      console.log(holidays[i])
 
       if (h.fecha_inicio != h.fecha_fin) {
         const range = get_inbetween_dates(h.fecha_inicio, h.fecha_fin);
@@ -36,7 +35,6 @@
         taken_days.push(dateWhithoutTime );
       }
     }
-    console.log("Holidays (final format):", taken_days);
     return taken_days;
   }
 
@@ -47,7 +45,6 @@
       return new Date(r.fecha).toISOString().split('T')[0]; 
     });
 
-    console.log("Approved employee days:", approved_days);
       return approved_days;
   }
 
@@ -69,7 +66,6 @@
 
       current.setDate(current.getDate() + 1);
     }
-    console.log("Days requested by the user:", effective);
     return effective;
   }
 

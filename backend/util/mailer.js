@@ -28,7 +28,6 @@ async function sendMail(email, token) {
             <p>Saludos,<br>Equipo de Nebula HRSM</p>
           </div>`, 
     });
-    console.log("Message sent: %s", info.messageId);
     return info;  
   } catch (error) {
     console.error("Error sending email:", error);
