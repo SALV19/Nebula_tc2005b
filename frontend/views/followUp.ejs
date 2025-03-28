@@ -19,13 +19,13 @@
     <div id="content-section">
       <%- include ('../components/follow_up/consult_follow_ups_logic.ejs') %>
     </div>
-    <%- include ('../components/follow_up/followUps_table.ejs') %>
     <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
 </main>
 
 <%- include('includes/_footer.ejs') %>
 
 <script>
+  
   function showAddForm() {
     // Determinar qué formulario mostrar según la pestaña actual
     const selectedOption = '<%= selectedOption %>';

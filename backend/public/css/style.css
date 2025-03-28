@@ -8,14 +8,12 @@ body, section, table, thead, tr {
   font-style: normal;
 }
 
-body {
-  height: 102vh;
-}
+
 
 html,
 body,
 #app {
-  height: 100%;
+  height: 105vh;
   background-color: #242424;
 }
 
