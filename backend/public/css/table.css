@@ -3,6 +3,11 @@ hr {
   margin-top:7px;
   width: 100%;
 }
+
+main {
+  height: 100vh;
+}
+
 .offset {
   margin-left: 0;
 }
@@ -106,8 +111,8 @@ input[type=number] {
 }
 
 .calendar_container {
-  height: 350px;
-  width: 100%;
+  width: 20vw;
+  height: 20vh;
 }
 
 .fc-scroller {
@@ -117,4 +122,8 @@ input[type=number] {
 
 .fc-scroller::-webkit-scrollbar {
   display: none; /* For Chrome, Safari, and Opera */
+}
+.back {
+  background-color: #242424;
+  border-bottom: 1px rgb(53, 58, 70) solid;
 }

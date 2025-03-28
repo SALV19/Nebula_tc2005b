@@ -5,10 +5,7 @@
 body, section, table, thead, tr {
   background-color: #242424;
 }
-footer {
-  border: 2px solid red;
-  visibility: hidden;
-}
+
 body {
   height: 102vh;
 }
@@ -23,15 +20,16 @@ body {
   scrollbar-width: none;  /* Firefox */
 }
 
-footer {
-  position: absolute; 
-  top: 95%;
-  right: 0;
-  width: 100vw;
+html,
+body,
+#app {
+  height: 100%;
+  background-color: #242424;
 }
-
-body {
-  height: 102vh;
+body, section, table, thead, tr {
+  background-color: #242424;
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
 }
 
 .example::-webkit-scrollbar {
@@ -68,6 +66,13 @@ footer {
   border-radius: 30px;
   width: 40%;
   height: 60%;
+}
+
+
+.hero-body {
+  margin-left: 8vw;
+  width: 90vw;
+  position: relative; 
 }
 
 .dateLine {

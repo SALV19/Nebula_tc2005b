@@ -1,0 +1,82 @@
+@startuml RegistroSolicitudFalta_REQ8
+autonumber
+actor Collaborator
+boundary requests.routes.js as RequestRoutes
+boundary requests_page.ejs as RequestView
+control requests.controller.js as RequestController
+entity requests.model.js as RequestModel
+database nebulaDB as MySQL
+
+Collaborator -> RequestRoutes : GET /requests
+activate RequestRoutes
+RequestRoutes -> RequestController: getRequests()
+deactivate RequestRoutes
+
+activate RequestController
+RequestController ->> RequestModel: fetchUserRequests(id_colaborador)
+
+activate RequestModel
+RequestModel ->> MySQL: SELECT * FROM solicitudes_falta JOIN dias_solicitados \n WHERE id_colaborador = ?
+activate MySQL
+
+MySQL -->> RequestModel: [{stats, type, description, firstDate, lastDate}]
+deactivate MySQL
+
+RequestModel -->> RequestController: [{stats, type, description, firstDate, lastDate}]
+deactivate RequestModel
+
+RequestController -->> RequestView: Render página con solicitudes
+deactivate RequestController
+
+activate RequestView
+RequestView -> Collaborator: Render HTML con tabla de solicitudes
+deactivate RequestView
+
+Collaborator -> RequestView: Presiona "+" para registrar falta
+activate RequestView
+RequestView -> RequestController: getEvents()
+activate RequestController
+RequestController ->> RequestModel: fetchHolidaysAndEvents()
+activate RequestModel
+RequestModel ->> MySQL: SELECT * FROM eventos WHERE tipo='Feriado'
+MySQL -->> RequestModel: [eventos]
+deactivate MySQL
+RequestModel -->> RequestController: [eventos]
+deactivate RequestModel
+RequestController -->> RequestView: Render popup con fechas disponibles
+deactivate RequestController
+RequestView -->> Collaborator: Mostrar pop-up
+deactivate RequestView
+
+Collaborator -> RequestRoutes: POST /requests (type, startDate, endDate, ubication, description, evidence)
+activate RequestRoutes
+RequestRoutes -> RequestController : processNewRequest(data)
+deactivate RequestRoutes
+
+activate RequestController
+RequestController -> RequestController : validateData()
+RequestController ->> RequestModel: checkConflictsAndSave(data)
+
+activate RequestModel
+RequestModel ->> MySQL: Verifica solapamientos, días feriados, evidencia
+activate MySQL
+
+alt Datos válidos
+    MySQL -->> RequestModel: OK
+    RequestModel ->> MySQL: INSERT INTO solicitudes_falta (datos...)
+    MySQL -->> RequestModel: ID generado
+    RequestModel -->> RequestController: { success: true, id: solicitudID }
+else Error de validación
+    MySQL -->> RequestModel: Error (ej. falta motivo, solapamiento)
+    RequestModel -->> RequestController: { success: false, error }
+end
+deactivate MySQL
+deactivate RequestModel
+
+alt Solicitud exitosa
+    RequestController -> RequestView: Mostrar mensaje de éxito y actualizar tabla
+else Error en solicitud
+    RequestController -> RequestView: Mostrar mensaje de error
+end
+deactivate RequestController
+@enduml
