@@ -5,7 +5,6 @@
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
     function get_register(data) {
       const contentContainer = document.getElementById("content-section");
-
       let content = " ";
       content += ` 
       <div class="container-scroll">
@@ -93,7 +92,7 @@
 
       <section class='column'>
           <div class="radar-container">
-              <canvas id="myRadarChart"></canvas>
+              <canvas class="canvas" id="myRadarChart"></canvas>
           </div>
 
           <div>
@@ -320,12 +319,22 @@
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
+        console.log('event')
         document.querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
 
         // Agregar la clase 'selected' al botón clickeado
         option.classList.add("selected");
-        get_info_register();
+
+        // Obtener y mostrar el contenido del botón
+        const buttonText = option.textContent.trim();
+        // console.log("Botón seleccionado:", buttonText);
+
+        if (option.innerHTML == 'Register'){
+          get_info_register();
+        } else if (option.innerHTML == 'Collaborators'){
+          get_info_FU()
+        }
+
       });
     });
-  
 </script>

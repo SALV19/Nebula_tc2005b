@@ -11,6 +11,7 @@ const follow_up_controller = require("../controller/follow_ups.controller");
 // router.post('/meetings', follow_up_controller.post_meeting);
 router.post('/Register/save', follow_up_controller.post_follow_ups);
 router.get('/Register', follow_up_controller.get_register);
+router.post('/Collaborators', follow_up_controller.get_followUps_info)
 router.get('/', follow_up_controller.get_FollowUp)
 
 

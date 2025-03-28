@@ -1,6 +1,6 @@
 const db = require('../util/database')
 
-module.exports = class Answers {
+module.exports = class Indicators_metrics {
     constructor (id_evaluacion, id_indicador, valor_metrica ) {
         this.eval = id_evaluacion;
         this.indi = id_indicador;
@@ -18,11 +18,13 @@ module.exports = class Answers {
                 [this.eval, this.indi[i], this.val[i]]
             );
         };
-
-                
-
     }
     
-
-
+    static fetchAll(id_evaluacion){
+        const placeholders = id_evaluacion.map(() => '?').join(', ');
+        
+        return db.execute(
+            `SELECT id_evaluacion, id_indicador, valor_metrica FROM metrica_indicadores 
+            WHERE id_evaluacion IN (${placeholders})`, id_evaluacion);
+    }
 }
