@@ -1,0 +1,86 @@
+@startuml Prueba
+autonumber
+actor Collaborator
+boundary general.route.js as gRoutes
+boundary collabs.ejs as collabView
+control collabs.controller.js as collabController
+entity collab.model as collabModel
+database nebula as neb
+
+activate Collaborator
+Collaborator -> gRoutes : GET/view_collabs
+deactivate Collaborator
+
+activate gRoutes
+gRoutes -> collabController: get_view_collabs()
+deactivate gRoutes
+
+activate collabController
+collabController ->> collabModel: get_update_collabs()
+
+activate collabModel
+collabModel ->> neb: (SELECT * FROM colaborador)
+
+activate neb
+neb-->> collabModel: []
+deactivate neb
+
+collabModel -->> collabController: []
+deactivate collabModel
+
+collabController -->> collabView: [{}]
+deactivate collabController
+
+activate collabView
+collabView -> Collaborator: html
+deactivate collabView
+ 
+activate Collaborator
+Collaborator -> collabView : update_pop_up()
+deactivate Collaborator
+
+activate collabView
+deactivate collabController
+
+collabView -> Collaborator : Opens pop up for registration
+deactivate collabView
+
+activate Collaborator
+Collaborator -> gRoutes :POST/view_collabs
+deactivate Collaborator
+
+
+activate gRoutes
+gRoutes -> collabController : post_view_collab()
+deactivate gRoutes
+
+' Pre-procesa información antes de guardarla en db
+' De rango a dias específicos que se guardan en db
+
+activate collabController
+collabController -> collabController: process_data()
+
+' ES LO SUFICIENTEMENTE IMPORTANTE COMO PARA PONERLA?
+' collabView -> collabView : verify_data()
+
+collabController ->> collabModel: save()
+
+activate collabModel
+collabModel ->> neb : INSERT INTO colaborador, equipo, departamento, empresa, rol
+activate neb
+neb -->> collabModel : response
+deactivate neb
+collabModel -->> collabController : reponse
+deactivate collabModel
+collabController -> collabView : response
+deactivate collabController
+activate collabView 
+collabView -> Collaborator : Confirmation
+deactivate collabView
+activate Collaborator
+
+
+
+
+
+@enduml

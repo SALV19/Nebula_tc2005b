@@ -1,93 +1,35 @@
-<%- include('../views/includes/_header.ejs') %>
-<body>
-  <div id="app">
-    
-<nav class="nav has-shadow">
-  <div class="container">
-    
-    <label for="menu-toggle" class="nav-toggle">
-      <span></span>
-      <span></span>
-      <span></span>
-    </label>
-    <input type="checkbox" id="menu-toggle" class="is-hidden"/>
-    <div class="nav-right nav-menu">
-      <a class="nav-item is-tab is-hidden-tablet">
-        <span class="icon"><i class="fa fa-home"></i></span> Calendar
-      </a>
-      <a class="nav-item is-tab is-hidden-tablet">
-        <span class="icon"><i class="fa fa-table"></i></span> Request
-      </a>
-      <a class="nav-item is-tab is-hidden-tablet">
-        <span class="icon"><i class="fa fa-info"></i></span> Goals
-      </a>
-      
-      <a class="nav-item is-tab is-active">
-        <span class="icon"><i class="fa fa-user"></i></span>
-      </a>
-      <a class="nav-item is-tab">
-        <span class="icon"><i class="fa fa-sign-out"></i></span>
-      </a>
-    </div>
+<%- include('../views/includes/_header.ejs')%>
+<link rel="stylesheet" href="/css/nav.css">
+<nav class="sidenav">
+  <a href="/">
+    <img src="/icons/nuclea.png" alt="" style="width: 30px; height: 30px;">
+    <span><img src="/icons/nuclea_nombre.png" alt="" style="height: 15px;"></span>
+  </a>
+  <div class="is-flex is-flex-direction-column is-justify-content-center	is-align-content-center">
+    <a href="/" >
+      <i class="bi bi-calendar"></i>
+      <span>Calendar</span>
+    </a>
+    <a href="/requests" >
+      <i class="bi bi-question-square"></i> 
+      <span>Request</span>
+    </a>
+    <a href="/follow_ups">
+      <i class="bi bi-graph-up"></i> 
+      <span>Follow-ups</span>
+    </a>
+    <a href="/view_collabs">
+      <i class="bi bi-people-fill"></i> 
+      <span>Collabs</span>
+    </a>
+    <a href="/reports" class="">
+      <i class="bi bi-pie-chart"></i> 
+      <span>Reports</span>
+    </a>
   </div>
+  <a href="/personal_info" class="">
+    <i class="bi bi-person-fill"></i> 
+    <span>Personal Info</span>
+  </a>
+  
 </nav>
-
-<section class="main-content columns is-fullheight">
-  
-  <aside class="column is-2 is-narrow-mobile is-fullheight section is-hidden-mobile">
-    <p class="menu-label is-hidden-touch">Nebula</p>
-    <ul class="menu-list">
-      <li>
-        <a href="/" class="">
-          <span class="icon"><i class="fa fa-home"></i></span> Calendar
-        </a>
-      </li>
-      <li>
-        <a href="/requests" class="">
-          <span class="icon"><i class="fa fa-home"></i></span> Request
-        </a>
-      </li>
-      <li>
-        <a href="/goals" class="is-active">
-          <span class="icon"><i class="fa fa-table"></i></span> Goals
-        </a>
-
-        <ul>
-          <li>
-            <a href="/follow_ups">
-              <span class="icon is-small"><i class="fa fa-link"></i></span> Follow-ups
-            </a>
-          </li>
-          <li>
-            <a href="/view_collabs">
-              <span class="icon is-small"><i class="fa fa-link"></i></span> Collabs
-            </a>
-          </li>
-        </ul>
-      </li>
-      <li>
-        <a href="/reports" class="">
-          <span class="icon"><i class="fa fa-info"></i></span> Reports
-        </a>
-      </li>
-      <li>
-        <a href="/personal_info" class="">
-          <span class="icon"><i class="fa fa-info"></i></span> Personal Info
-        </a>
-      </li>
-    </ul>
-  </aside>
-  
-</section>
-
-<footer class="footer is-hidden">
-  <div class="container">
-    <div class="content has-text-centered">
-      <p>Hello</p>
-    </div>
-  </div>
-</footer>
-    
-  </div>
-</body>
-</html>

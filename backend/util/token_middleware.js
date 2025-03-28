@@ -1,5 +1,5 @@
 exports.token_middleware= (request,response,next)=>{
-    if (request.session.token) {
+    if (request.session.userToken) {
         next()
     }
     else{

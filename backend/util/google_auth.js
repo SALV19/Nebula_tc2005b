@@ -11,7 +11,7 @@ passport.use(
     },
     function (accessToken, refreshToken, profile, cb) {
       User.fetchByEmail(profile.emails[0].value, function (err, user) {
-        return cb(err, profile);
+        return cb(err, profile);66
       });
     }
   )

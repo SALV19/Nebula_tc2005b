@@ -13,10 +13,12 @@ require("./util/mailer")
 const app = express();
 
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "../frontend/views"));
+app.set("views", [
+  path.join(__dirname, "../frontend/views"),
+  path.join(__dirname, "../frontend/views/error"),
+]);
 app.use(express.static(path.join(__dirname, "./public")));
-
-app.use(bodyParser.urlencoded({ extended: false }));
+app.use(express.json());
 
 app.use(
   session({
@@ -27,20 +29,27 @@ app.use(
   })
 );
 
-const csrf = require('csurf');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+const csrf = require("csurf");
 const csrfProtection = csrf();
-app.use(csrfProtection);  
+app.use(csrfProtection);
 
 app.use(passport.authenticate("session"));
 
 //  Routes and middlewares
-const auth_middleware = require("./routes/auth_middleware.routes");
+const auth_middleware = require("./util/auth_middleware");
 
 const login_routes = require("./routes/login.routes");
 const general_routes = require("./routes/general.routes");
 
+const other_controllers = require("./controller/other.controller");
+
 app.use("/log_in", login_routes);
 app.use("/", auth_middleware, general_routes);
+
+app.use(other_controllers.get_404);
 
 // Start server
 app.listen(3000, () => {

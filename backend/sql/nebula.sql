@@ -1,3 +1,21 @@
+DROP TABLE dias_solicitados;
+DROP TABLE dias_feriados;
+DROP TABLE equipo;
+DROP TABLE empresa;
+DROP TABLE departamento;
+DROP TABLE preguntas_evaluacion;
+DROP TABLE respuestas_pregunta;
+DROP TABLE permisos;
+DROP TABLE rol_permisos;
+DROP TABLE rol;
+DROP TABLE indicador;
+DROP TABLE metrica_indicadores;
+DROP TABLE evaluaciones_de_seguimiento;
+DROP TABLE fa;
+DROP TABLE evento;
+DROP TABLE solicitudes_falta;
+DROP TABLE colaborador;
+
 -- phpMyAdmin SQL Dump
 -- version 5.2.1
 -- https://www.phpmyadmin.net/
@@ -28,22 +46,22 @@ SET time_zone = "+00:00";
 --
 
 CREATE TABLE `colaborador` (
-  `id_colaborador` varchar(8) NOT NULL,
+  `id_colaborador` varchar(36) PRIMARY KEY,
   `nombre` varchar(250) NOT NULL,
   `apellidos` varchar(250) NOT NULL,
   `fechaNacimiento` date NOT NULL,
-  `telefono` int(13) NOT NULL,
+  `telefono` BIGINT UNIQUE,
   `puesto` varchar(250) NOT NULL,
-  `email` varchar(250) NOT NULL,
+  `email` varchar(250) NOT NULL UNIQUE,
   `contrasena` varchar(250) NOT NULL,
   `fechaIngreso` date NOT NULL,
   `fechaSalida` date,
   `ubicacion` varchar(250) NOT NULL,
   `modalidad` tinyint(4) NOT NULL,
   `estado` tinyint(1) NOT NULL,
-  `foto` varchar(250) NOT NULL,
-  `curp` varchar(250) NOT NULL,
-  `rfc` varchar(250) NOT NULL
+  `foto` varchar(250),
+  `curp` varchar(250) NOT NULL UNIQUE,
+  `rfc` varchar(250) NOT NULL UNIQUE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -53,9 +71,9 @@ CREATE TABLE `colaborador` (
 --
 
 CREATE TABLE `departamento` (
-  `id_departamento` int(8) NOT NULL,
-  `nombre_departamento` varchar(250) DEFAULT NULL,
-  `id_empresa` varchar(8) DEFAULT NULL
+  `id_departamento` int(8) PRIMARY KEY AUTO_INCREMENT,
+  `nombre_departamento` varchar(250) NOT NULL,
+  `id_empresa` varchar(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -64,12 +82,14 @@ CREATE TABLE `departamento` (
 -- Estructura de tabla para la tabla `dias_feriados`
 --
 
-CREATE TABLE `dias_feriados` (
-  `id_diaFeriado` int(8) NOT NULL,
+CREATE TABLE `evento` (
+  `id_evento` int(8) PRIMARY KEY AUTO_INCREMENT,
   `fecha_inicio` date NOT NULL,
-  `fecha_fin` date NOT NULL,
-  `motivo` varchar(250) DEFAULT NULL,
-  `tipo` varchar(250) DEFAULT NULL
+  `fecha_fin` date,
+  `hora_inicio` time,
+  `hora_fin` time,
+  `motivo` varchar(250),
+  `tipo` varchar(250)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -79,7 +99,7 @@ CREATE TABLE `dias_feriados` (
 --
 
 CREATE TABLE `empresa` (
-  `id_empresa` int(8) NOT NULL,
+  `id_empresa` int(8) PRIMARY KEY AUTO_INCREMENT,
   `nombre_empresa` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -90,7 +110,7 @@ CREATE TABLE `empresa` (
 --
 
 CREATE TABLE `equipo` (
-  `id_colaborador` varchar(8) NOT NULL,
+  `id_colaborador` varchar(36) NOT NULL,
   `id_rol` int(8) NOT NULL,
   `id_departamento` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -102,10 +122,10 @@ CREATE TABLE `equipo` (
 --
 
 CREATE TABLE `evaluaciones_de_seguimiento` (
-  `id_evaluacion` int(8) NOT NULL,
-  `id_colaborador` varchar(8) NOT NULL,
+  `id_evaluacion` int(8) PRIMARY KEY AUTO_INCREMENT,
+  `id_colaborador` varchar(36) NOT NULL,
   `fechaAgendada` date NOT NULL,
-  `notas` varchar(250) NOT NULL
+  `notas` varchar(250)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -114,9 +134,9 @@ CREATE TABLE `evaluaciones_de_seguimiento` (
 -- Estructura de tabla para la tabla `evento`
 --
 
-CREATE TABLE `evento` (
-  `id_colaborador` varchar(8) NOT NULL,
-  `id_diaFeriado` int(8) NOT NULL
+CREATE TABLE `tiene_evento` (
+  `id_colaborador` varchar(36) NOT NULL,
+  `id_evento` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -126,8 +146,8 @@ CREATE TABLE `evento` (
 --
 
 CREATE TABLE `fa` (
-  `id_fa` int(8) NOT NULL,
-  `id_colaborador` varchar(8) NOT NULL,
+  `id_fa` int(8) PRIMARY KEY AUTO_INCREMENT,
+  `id_colaborador` varchar(36) NOT NULL,
   `motivo` varchar(250) NOT NULL,
   `fecha` date NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
@@ -139,7 +159,7 @@ CREATE TABLE `fa` (
 --
 
 CREATE TABLE `indicador` (
-  `id_indicador` int(8) NOT NULL,
+  `id_indicador` int PRIMARY KEY,
   `indicador` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -152,7 +172,7 @@ CREATE TABLE `indicador` (
 CREATE TABLE `metrica_indicadores` (
   `id_evaluacion` int(8) NOT NULL,
   `id_indicador` int(8) NOT NULL,
-  `valor_metrica` int(11) NOT NULL
+  `valor_metrica` int(1) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
 -- --------------------------------------------------------
@@ -162,7 +182,7 @@ CREATE TABLE `metrica_indicadores` (
 --
 
 CREATE TABLE `permisos` (
-  `nombre_permiso` varchar(250) NOT NULL,
+  `nombre_permiso` varchar(50) PRIMARY KEY,
   `descripcion` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -173,7 +193,7 @@ CREATE TABLE `permisos` (
 --
 
 CREATE TABLE `preguntas_evaluacion` (
-  `id_pregunta` int(8) NOT NULL,
+  `id_pregunta` int(8) PRIMARY KEY AUTO_INCREMENT,
   `pregunta` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -196,7 +216,7 @@ CREATE TABLE `respuestas_pregunta` (
 --
 
 CREATE TABLE `rol` (
-  `id_rol` int(8) NOT NULL,
+  `id_rol` int(8) PRIMARY KEY AUTO_INCREMENT,
   `tipo_rol` varchar(250) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -207,7 +227,7 @@ CREATE TABLE `rol` (
 --
 
 CREATE TABLE `rol_permisos` (
-  `nombre_permiso` varchar(250) NOT NULL,
+  `nombre_permiso` varchar(50) NOT NULL,
   `id_rol` int(8) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
@@ -218,47 +238,23 @@ CREATE TABLE `rol_permisos` (
 --
 
 CREATE TABLE `solicitudes_falta` (
-  `id_solicitud_falta` int(8) NOT NULL,
-  `id_colaborador` varchar(8) NOT NULL,
-  `fecha_inicio` date NOT NULL,
-  `fecha_finalizacion` date NOT NULL,
+  `id_solicitud_falta` int(8) PRIMARY KEY AUTO_INCREMENT,
+  `id_colaborador` varchar(36) NOT NULL,
   `estado` tinyint(1) NOT NULL,
   `tipo_falta` varchar(250) NOT NULL,
-  `descripcion` varchar(250) NOT NULL,
+  `descripcion` varchar(250),
   `ubicacion` varchar(250) NOT NULL,
-  `evidencia` varchar(250) NOT NULL
+  `evidencia` varchar(250) 
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
---
--- Índices para tablas volcadas
---
+CREATE TABLE `dias_solicitados` (
+  `id_solicitud_falta` int(8) NOT NULL,
+  `fecha` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
 
---
--- Indices de la tabla `colaborador`
---
-ALTER TABLE `colaborador`
-  ADD PRIMARY KEY (`id_colaborador`),
-  ADD UNIQUE KEY `email` (`email`);
-
---
--- Indices de la tabla `departamento`
---
-ALTER TABLE `departamento`
-  ADD PRIMARY KEY (`id_departamento`),
-  ADD KEY `id_empresa` (`id_empresa`);
-
---
--- Indices de la tabla `dias_feriados`
---
-ALTER TABLE `dias_feriados`
-  ADD PRIMARY KEY (`id_diaFeriado`);
-
---
--- Indices de la tabla `empresa`
---
-ALTER TABLE `empresa`
-  ADD PRIMARY KEY (`id_empresa`);
-
+ALTER TABLE `dias_solicitados` 
+  ADD CONSTRAINT `fk_id_solicitud_falta` FOREIGN KEY (`id_solicitud_falta`) REFERENCES `solicitudes_falta` (`id_solicitud_falta`);
+  
 --
 -- Indices de la tabla `equipo`
 --
@@ -271,28 +267,21 @@ ALTER TABLE `equipo`
 -- Indices de la tabla `evaluaciones_de_seguimiento`
 --
 ALTER TABLE `evaluaciones_de_seguimiento`
-  ADD PRIMARY KEY (`id_evaluacion`),
   ADD KEY `id_colaborador` (`id_colaborador`);
 
 --
 -- Indices de la tabla `evento`
 --
-ALTER TABLE `evento`
-  ADD PRIMARY KEY (`id_colaborador`,`id_diaFeriado`),
-  ADD KEY `fk_evento_diaFeriado` (`id_diaFeriado`);
+
+ALTER TABLE `tiene_evento`
+  ADD PRIMARY KEY (`id_colaborador`,`id_evento`),
+  ADD KEY `fk_tieneEvento_evento` (`id_evento`);
 
 --
 -- Indices de la tabla `fa`
 --
 ALTER TABLE `fa`
-  ADD PRIMARY KEY (`id_fa`),
   ADD KEY `fk_colaborador` (`id_colaborador`);
-
---
--- Indices de la tabla `indicador`
---
-ALTER TABLE `indicador`
-  ADD PRIMARY KEY (`id_indicador`);
 
 --
 -- Indices de la tabla `metrica_indicadores`
@@ -302,29 +291,11 @@ ALTER TABLE `metrica_indicadores`
   ADD KEY `fk_indicador` (`id_indicador`);
 
 --
--- Indices de la tabla `permisos`
---
-ALTER TABLE `permisos`
-  ADD PRIMARY KEY (`nombre_permiso`);
-
---
--- Indices de la tabla `preguntas_evaluacion`
---
-ALTER TABLE `preguntas_evaluacion`
-  ADD PRIMARY KEY (`id_pregunta`);
-
---
 -- Indices de la tabla `respuestas_pregunta`
 --
 ALTER TABLE `respuestas_pregunta`
   ADD PRIMARY KEY (`id_pregunta`,`id_evaluacion`),
   ADD KEY `fk_evaluacionR` (`id_evaluacion`);
-
---
--- Indices de la tabla `rol`
---
-ALTER TABLE `rol`
-  ADD PRIMARY KEY (`id_rol`);
 
 --
 -- Indices de la tabla `rol_permisos`
@@ -337,74 +308,8 @@ ALTER TABLE `rol_permisos`
 -- Indices de la tabla `solicitudes_falta`
 --
 ALTER TABLE `solicitudes_falta`
-  ADD PRIMARY KEY (`id_solicitud_falta`),
   ADD KEY `fk_colaboradorf` (`id_colaborador`);
 
---
--- AUTO_INCREMENT de las tablas volcadas
---
-
---
--- AUTO_INCREMENT de la tabla `departamento`
---
-ALTER TABLE `departamento`
-  MODIFY `id_departamento` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `dias_feriados`
---
-ALTER TABLE `dias_feriados`
-  MODIFY `id_diaFeriado` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `empresa`
---
-ALTER TABLE `empresa`
-  MODIFY `id_empresa` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `evaluaciones_de_seguimiento`
---
-ALTER TABLE `evaluaciones_de_seguimiento`
-  MODIFY `id_evaluacion` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `fa`
---
-ALTER TABLE `fa`
-  MODIFY `id_fa` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `indicador`
---
-ALTER TABLE `indicador`
-  MODIFY `id_indicador` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `preguntas_evaluacion`
---
-ALTER TABLE `preguntas_evaluacion`
-  MODIFY `id_pregunta` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `rol`
---
-ALTER TABLE `rol`
-  MODIFY `id_rol` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT de la tabla `solicitudes_falta`
---
-ALTER TABLE `solicitudes_falta`
-  MODIFY `id_solicitud_falta` int(8) NOT NULL AUTO_INCREMENT;
-
---
--- Restricciones para tablas volcadas
---
-
---
--- Filtros para la tabla `equipo`
---
 ALTER TABLE `equipo`
   ADD CONSTRAINT `fk_equipo_colaborador` FOREIGN KEY (`id_colaborador`) REFERENCES `colaborador` (`id_colaborador`),
   ADD CONSTRAINT `fk_equipo_departamento` FOREIGN KEY (`id_departamento`) REFERENCES `departamento` (`id_departamento`),

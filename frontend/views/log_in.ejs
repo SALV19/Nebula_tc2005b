@@ -10,6 +10,7 @@
         >
           <img class="image column" src="/img/nebula.png" />
           <form action="/log_in" method="POST" class="">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
             <div class="field">
               <label for="" class="label">Email</label>
               <div class="control has-icons-left">

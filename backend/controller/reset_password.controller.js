@@ -148,6 +148,7 @@ exports.post_reset_password = async (request, response, next) => {
     console.log("Result of resetPassword:", result);
 
     delete request.session.resetToken;
+    delete request.session.userToken;
     delete request.session.resetEmail;
     
     return response.redirect('/log_in?message=password_updated');

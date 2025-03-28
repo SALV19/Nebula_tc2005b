@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require("passport");
 
 const log_in_routes = require("../controller/log_in.controller");
+const other_controllers = require("../controller/other.controller");
 
 router.get("/", log_in_routes.get_log_in);
 router.post("/", log_in_routes.post_log_in);
@@ -14,11 +15,13 @@ router.get(
 router.get(
   "/google/callback",
   passport.authenticate("google", {
-    successRedirect: "/",
+    successRedirect: "/log_in/success",
     failureRedirect: "/log_in/auth/failure",
   })
 );
 router.get("/auth/failure", log_in_routes.auth_fail);
+router.get('/success', other_controllers.get_permissions)
+
 
 const reset_password_routes = require("../controller/reset_password.controller");
 const token_middleware=require("../util/token_middleware")

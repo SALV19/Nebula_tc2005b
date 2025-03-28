@@ -1,0 +1,106 @@
+hr {
+  border-top: white solid 2px;
+  margin-top:7px;
+  width: 100%;
+}
+.offset {
+  margin-left: 0;
+}
+
+.option {
+  transition: background-color 0.35s ease-in-out; 
+  border-radius: 10px 10px 0 0 ;
+  cursor: pointer;
+  margin: 0 0.2rem;
+  padding:.5rem 1rem;
+  vertical-align: bottom;
+}
+.selected {
+  background-color: #EEEEEE;
+  color: #485FC7;
+}
+
+.option:hover {
+  transition: background-color 0.35s ease-in-out;
+  background-color: #EEEEEE;
+  border-radius: 10px 10px 0 0 ;
+  color: #485FC7;
+}
+
+.status {
+  border-radius: 10px;
+  text-align: center;
+}
+
+
+input::-webkit-outer-spin-button,
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+/* Firefox */
+input[type=number] {
+  -moz-appearance: textfield;
+}
+
+.pagination {
+  background: transparent;
+  border: transparent;
+  color: white;
+  border-bottom: 1px solid white;
+  width: 2rem;
+  margin: 0.2rem 0;
+}
+
+.hidden {
+  display: none; 
+}
+
+.show {
+  display: table-row;
+}
+
+.dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.dropdown-content {
+  display: none;
+  position: absolute;
+  background-color: #242424;
+  min-width: 160px;
+  box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+  padding: 12px 16px;
+  z-index: 1;
+  right: 0;
+}
+
+.dropdown:hover .dropdown-content {
+  display: block;
+}
+
+.checkbox {
+  width: 15px;
+  height: 15px;
+  border-radius: 3px;
+  background: #eeeeee;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+  border: none;
+  outline: none;
+  position: relative;
+  cursor: pointer;
+}
+
+.selected_box {
+  background: #59A250;
+}
+
+.filter_options {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+}

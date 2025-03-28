@@ -1,0 +1,39 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/table.css">
+<link rel="stylesheet" href="/css/collabs.css">
+<main class="hero column">
+    <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+    <section class="hero-body ml-6">
+        <div class="container is-widescreen">
+        <div class="columns has-text-centered overhead is-vcentered offset">
+            <p class="option <%= selectedOption === 'active' ? 'selected' : ''%>">Active</p>
+            <p class="option <%= selectedOption === 'inactive' ? 'selected' : ''%>">Inactive</p>
+            <% if (permissions?.includes('view_faults')) {%>
+                <p class="option = selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
+                <div class="column is-narrow is-offset-9">
+            <% } else {%>
+            <div class="column is-narrow is-offset-8">
+            <% } %>
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="addCollab()"></i>
+            <%- include('includes/_addCollabs_form.ejs') %>
+            </div>
+        </div>
+        </div>
+        <hr/>
+        <%- include ('../components/collabs/consult_collabs_table.ejs')%>
+        <div class="is-flex is-justify-content-flex-end	my_buttons">
+            <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
+            <input type="number" value="1" class="pagination" id="pagination"/>
+            <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
+        </div>
+        <%- include ('../components/collabs/add_collabs_logic.ejs') %>
+        <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
+        <%- include ('../components/collabs/view_collabs_logic.ejs') %>
+        <%- include('../components/collabs/update_collab.ejs') %>
+        <%- include('./includes/_modifyCollabs_form.ejs') %>
+        <%- include('../components/collabs/modify_collabs_logic') %>
+        <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
+    </section>
+</main>
+
+<%- include('includes/_footer.ejs') %>
