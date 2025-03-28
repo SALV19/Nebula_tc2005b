@@ -343,3 +343,28 @@
 .container-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+.container-scrollF{
+    width: 84vw;
+    height:75vh;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    border: none;
+}
+
+.container-scrollF::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.container-scrollF::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.container-scrollF::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.container-scrollF::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
