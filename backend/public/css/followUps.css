@@ -117,6 +117,8 @@
     justify-content: center;  
     align-items: center;     
     width: 100%;
+    margin-top: -6rem;
+    margin-bottom: -7rem;
 }
   
 .numbers-container{
@@ -151,10 +153,9 @@
 }
 
 canvas {
-    max-width: 100%;
-    max-height: 100%;
+
     width: 100%; 
-    height: auto;
+    height: 100%;
 }
 
 .hidden-content {
@@ -244,11 +245,10 @@ canvas {
 }
 .container-scroll{
     width: 84vw;
-    height: 42vw;
+    height:75vh;
     overflow-y: scroll; 
     overflow-x: hidden;
     border: none;
-
 }
 
 .container-scroll::-webkit-scrollbar {
@@ -267,8 +267,4 @@ canvas {
 
 .container-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
-}
-
-.showfirst{
-    display:block;
 }
