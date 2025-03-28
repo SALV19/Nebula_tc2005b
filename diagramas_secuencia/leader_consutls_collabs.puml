@@ -30,11 +30,11 @@ deactivate db
 vcm -> vcc : [collab_info]
 deactivate vcm
 vcc -> vcc : getAbscences()
-vcc -> vcr : collaborators_info
+vcc -> vce : collaborators_info
 deactivate vcc
-activate vcr
-vcr -> u : HTML view_collaborators.ejs
-deactivate vcr
+activate vce
+vce -> u : HTML view_collaborators.ejs
+deactivate vce
 activate u
 
 

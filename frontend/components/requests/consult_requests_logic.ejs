@@ -1,5 +1,8 @@
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
+<link rel="stylesheet" href="/css/calendario">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
   
   function formatDate(date) {
     const d = new Date(date);
@@ -8,6 +11,16 @@
     const year = d.getFullYear();
     
     return `${day}/${month}/${year}`;
+  }
+
+  function accept_deny(element) {
+    // is checkmark
+    if (element.classList.contains('bi-check-circle')) {
+      console.log('Accept request')
+    }
+    else {
+      console.log('Deny request')
+    }
   }
 
   // Crea el contenido de la tabla para solicitudes
@@ -28,7 +41,7 @@
     data.requests[0].forEach((d, idx) => {
 
       table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td>${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td><i class="bi bi-caret-right-fill" id='caret'></i> ${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
@@ -58,9 +71,8 @@
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
-                              <div class="column">
+                              <div class="column is-half">
                                 <p><strong>Type: </strong>${d.tipo_falta}</p>
-                                <p>Calendario...</p>
                               </div>
                               <div class="column">
                                 <p><strong>Reason: </strong></p>
@@ -74,6 +86,7 @@
                             </div>
                           </td>
                         </tr>`;
+      table.innerHTML = table_content
     })
     table_content += '</tbody>'
     table.innerHTML = table_content
@@ -82,7 +95,13 @@
     const entries = document.querySelectorAll('#request')
     entries.forEach((node, idx) => {
       node.addEventListener('click', (v) => {
+        if (v.target.classList.contains('bi-check-circle') || v.target.classList.contains('bi-x-circle')) {
+          accept_deny(v.target)
+          return 
+        }
+        
         const additionalRow = document.getElementById(`additional-row-${idx}`)
+        const caret = document.querySelector('#caret')
         
         // hacer que en los botones de aceptar o rechazar no se expanda la vista
         // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
@@ -92,8 +111,28 @@
 
         if (additionalRow.style.display === "none") {
           additionalRow.style.display = "table-row";
+          caret.classList.add('bi-caret-down-fill')
+          caret.classList.remove('bi-caret-right-fill')
+
+          // const calendarEl = document.getElementById(`calendar_${idx}`)
+          // const calendar = new FullCalendar.Calendar(calendarEl, {
+          //   initialView: 'dayGridMonth',
+          //   initialDate: data.requests[0][idx].start.split('T')[0],
+          //   events: [
+          //     {
+          //       start: data.requests[0][idx].start.split('T')[0],
+          //       end: data.requests[0][idx].end.split('T')[0],
+          //       display: 'background',
+          //       backgroundColor: '#635d991' 
+          //     }
+          //   ],
+          // })
+          // calendar.render()
         } else {
           additionalRow.style.display = "none";
+
+          caret.classList.remove('bi-caret-down-fill')
+          caret.classList.add('bi-caret-right-fill')
         }
       })
     })
@@ -186,7 +225,7 @@
         element.classList.remove('selected')
       })
       options[i].classList.add('selected')
-
+      pagination_value.value = 1
       get_info()
     })
   }
@@ -209,6 +248,6 @@
     pagination_value.dispatchEvent(new Event('change'));
   })
   pagination_value.addEventListener('change', (v) => {
-    get_info(pagination_value.value-1)
+    get_info(pagination_value.value-1, filter_options ?? null)
   })
 </script>

@@ -55,12 +55,12 @@
   }
 
   function validateRFCModify() {
-        const rfcInput = document.getElementById("rfc-input_modify");
-        const rfcpError = document.getElementById("rfc-error_modify");
-        if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
-            rfcpError.style.display = "block"; 
+        const rfcInputM = document.getElementById("rfc-input_modify");
+        const rfcpErrorM = document.getElementById("rfc-error_modify");
+        if (rfcInputM.value.length < 12 || rfcInputM.value.length > 13){
+            rfcpErrorM.style.display = "block"; 
         } else {
-            rfcpError.style.display = "none";
+            rfcpErrorM.style.display = "none";
         }
     }
     
@@ -75,14 +75,7 @@
         }
     }
 
-    const rfcInput = document.querySelector('input[placeholder="Insert RFC"]');
-    rfcInput.addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
-    const curpInput = document.querySelector('input[placeholder="Insert CURP"]');
-    curpInput.addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
+    
         
     function validateMailModify() {    
         const mailInput = document.getElementById("mail-input_modify");

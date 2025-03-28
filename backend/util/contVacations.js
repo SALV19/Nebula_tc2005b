@@ -16,8 +16,8 @@ function calcularDiasVacaciones(antiguedad) {
     return 12;
 }
 
-exports.contVac = (request, responsem, next) => {
-    const idColaborador = request.session.id_colaborador;
+exports.contVac = (request, response, colab_id=null) => {
+    const idColaborador = request?.session.id_colaborador ?? colab_id;
     let diasTotales; 
     let cantDiasSol; 
     let diasDisponibles; 

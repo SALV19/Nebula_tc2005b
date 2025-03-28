@@ -12,7 +12,7 @@
                         </thead>
   <tbody >`
     // Información por cada rengrlón de la tabla
-    data.collabs[0].forEach((d, idx) => {
+    data.collabs.forEach((d, idx) => {
       table_content += `<tr id='collab' key='${idx}'>`;
       table_content += `<td>${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${d.puesto}</td>`
@@ -44,11 +44,11 @@
                                     <p class='has-text-centered'>Faults<br>commited</p>
                                   </div>
                                   <div class='flex-centered'>
-                                    <p class='is-size-1'>01/0${d.FaltasAdministrativas}</p>
+                                    <p class='is-size-1'>${data.diasDisponibles_Totales[idx].diasDisponibles}/${data.diasDisponibles_Totales[idx].diasTotales}</p>
                                     <p class='has-text-centered'>Days of<br>vacations Left</p>
                                   </div>
                                   <div class='flex-centered'>
-                                    <p class='is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='is-size-1'>${data.diasDisponibles_Totales[idx].diasTotales - data.diasDisponibles_Totales[idx].diasDisponibles}</p>
                                     <p class='has-text-centered'>Current<br>abscences</p>
                                   </div>
                                 </div>
@@ -94,9 +94,7 @@
         filter: filter,
       }),
     })
-    .then(response => {
-      return response.json()
-    })
+    .then(response => response.json())
     .then(data => {
       createTableCollabs(data)
     })

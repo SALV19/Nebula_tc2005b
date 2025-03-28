@@ -1,8 +1,10 @@
-const Colaborador = require('../models/collabs.model');
-const Departamento = require('../models/departamento.model');
-const Empresa = require('../models/empresa.model');
-const Equipo = require('../models/equipo.model');
-const Rol = require('../models/rol.model');
+const Colaborador = require("../models/collabs.model");
+const Departamento = require("../models/departamento.model");
+const Empresa = require("../models/empresa.model");
+const Equipo = require("../models/equipo.model");
+const Rol = require("../models/rol.model");
+
+const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
 
@@ -100,21 +102,39 @@ exports.get_collabs_info = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
   let collabs;
+  let diasDisponibles_Totales;
+
   if (request.session.permissions.includes('consult_all_collabs')) {
-    collabs = await Colaborador.fetchCollabs(null, offset, filter)
+    [collabs] = await Colaborador.fetchCollabs(null, offset, filter)
       .then((data) => data)
       .catch((e) => console.error(e));
+
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+                        const aaaa = await contVac(null, null, colab_id=c.id_colaborador)
+                          .then((e) => {
+                            return e
+                          })
+                        return aaaa
+                      }))
+                    
   }
   else {
-    collabs = await Colaborador.fetchCollabs(request.session.email, offset, filter)
+    [collabs] = await Colaborador.fetchCollabs(request.session.email, offset, filter)
       .then((data) => data)
       .catch((e) => console.error(e));
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+      const aaaa = await contVac(null, null, colab_id=c.id_colaborador)
+        .then((e) => {
+          return e
+        })
+      return aaaa
+    }))
   }
   response.json({
     selectedOption: "Active",
     collabs: collabs,
+    diasDisponibles_Totales: diasDisponibles_Totales,
   });
-  
 };
 
 exports.get_collab_data = async (req, res) => {
@@ -138,7 +158,7 @@ exports.get_collab_data = async (req, res) => {
 exports.update_collab = async (request, response) => {
   try {
     const id = request.body.id_colaborador;
-
+    console.log(request.body)
     const edit_Colab = new Colaborador(
       request.body.nombre,
       request.body.apellidos,

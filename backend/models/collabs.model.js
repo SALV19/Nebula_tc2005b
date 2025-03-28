@@ -11,7 +11,7 @@ module.exports = class Colaborador {
     colab_ubicacion,
     colab_modalidad,
     colab_curp,
-    colab_rfc,
+    colab_rfc
   ) {
     this.nombre = colab_nombre;
     this.apellidos = colab_apellidos;

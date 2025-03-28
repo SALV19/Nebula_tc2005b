@@ -2,16 +2,18 @@ const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
 
 exports.update_estado = async (req, res) => {
-  
-  Requests.save_State(req.body.estado, req.body.id_solicitud_falta)
+  Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
   res.redirect("/requests");
-}
+};
 
 exports.get_requests = async (request, response) => {
+  const all_requests = await Requests.fetchDaysApproved(request.session.email)
+    .then((data) => data[0])
+    .catch((e) => e);
+  const holidays = await Events.fetchEvents()
+    .then((data) => data[0])
+    .catch((error) => error);
 
-  const all_requests = await Requests.fetchDaysApproved(request.session.email).then(data => data[0]).catch(e => e);
-  const holidays = await Events.fetchEvents().then(data => data[0]).catch(error => error)
-  
   const successRequest = request.session.successRequest;
   delete request.session.successRequest;
 
@@ -21,7 +23,7 @@ exports.get_requests = async (request, response) => {
     all_requests: all_requests,
     holidays: holidays,
     csrfToken: request.csrfToken(),
-    successRequest //Para el ejs
+    successRequest, //Para el ejs
   });
 };
 
@@ -57,7 +59,7 @@ exports.get_abscences = (request, response) => {
 
 exports.post_abscence_requests = async (request, response, next) => {
   // ahora son los realsDaysOff
-  const daysOff = JSON.parse(request.body.validDays); 
+  const daysOff = JSON.parse(request.body.validDays);
 
   //Hacer validaciones en el servidor DESPUES
   // // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
@@ -69,7 +71,7 @@ exports.post_abscence_requests = async (request, response, next) => {
   //   // Aquí puedes redirigir o mostrar un error
   //   return response.status(400).send("Se requiere evidencia para ausencias mayores a 3 días hábiles.");
   // }
-  
+
   const [type, subtype] = request.body.requestType.split("|");
 
   const request_register = new Requests(
@@ -87,16 +89,15 @@ exports.post_abscence_requests = async (request, response, next) => {
       .then(async (e) => {
         for (i in daysOff) {
           await request_register
-          .saveDates(e[0].insertId, i)
-          .then((e) => e)
-          .catch((e) => {
-            console.error(e);
-            return e;
-          });
+            .saveDates(e[0].insertId, i)
+            .then((e) => e)
+            .catch((e) => {
+              console.error(e);
+              return e;
+            });
         }
       })
       .catch((e) => console.log(e));
-
   }
 
   request.session.successRequest = {
@@ -105,7 +106,7 @@ exports.post_abscence_requests = async (request, response, next) => {
     location: request.body.location,
     description: request.body.description,
     evidence: request.body.evidence,
-    totalDays: daysOff.length 
-  };  
+    totalDays: daysOff.length,
+  };
   response.redirect("/requests");
 };
