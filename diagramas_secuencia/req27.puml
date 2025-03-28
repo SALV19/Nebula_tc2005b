@@ -1,0 +1,42 @@
+@startuml REQ_27
+autonumber
+actor SuperAdmin as S
+boundary general.routes.js as SRoute
+boundary approve_requests.ejs as Requests
+control requests.controller.js as SController
+entity SolicitudesFalta.model as SModel
+entity SolicitudFalta.model as Model
+database Nebula as db
+
+' ---- APROBAR SOLICITUD ----
+activate S
+S -> SRoute : POST /requests
+deactivate S
+
+activate SRoute
+SRoute -> SController : post_approve_requests(requests_id, estado)
+deactivate SRoute
+
+activate SController 
+create SModel
+SController -> SModel : new SolicitudesFalta(request_id, estado)
+SController ->> SModel : save()
+
+activate SModel
+SModel ->> db : UPDATE Solicitudes_Falta SET estado = ? WHERE id = request_id , (estado)
+activate db
+db -->> SModel : Query OK (Rows Affected)
+deactivate db
+
+SModel -->> SController : resolve('Success') / reject('Error')
+deactivate SModel
+
+SController -> Requests : response.render('approve_requests.ejs', { requestsList })
+deactivate SController
+
+activate Requests
+Requests -> S : HTML approve_requests.ejs
+deactivate Requests
+
+activate S
+@enduml

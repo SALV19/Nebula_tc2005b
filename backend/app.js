@@ -4,12 +4,15 @@ const path = require("path");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
+const MobiscrollCalendar = require('../frontend/components/calendar/calendar.js');
+
 
 require("dotenv").config();
 require("./util/google_auth");
+require("./util/mailer")
 
 // Server set-up
-const app = express(); 
+const app = express();
 
 app.set("view engine", "ejs");
 app.set("views", [
@@ -22,17 +25,18 @@ app.use(express.json());
 app.use(
   session({
     secret:
-    "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
+      "mi string secreto que debe ser un string aleatorio muy largo, no como este lolxd",
     resave: false,
     saveUninitialized: false,
   })
 );
 
 app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
-const csrf = require('csurf');
+const csrf = require("csurf");
 const csrfProtection = csrf();
-app.use(csrfProtection); 
+app.use(csrfProtection);
 
 app.use(passport.authenticate("session"));
 

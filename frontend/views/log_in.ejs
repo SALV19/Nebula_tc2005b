@@ -1,4 +1,5 @@
 <%- include('../views/includes/_header.ejs') %>
+<%- include('../components/log_in.ejs') %>
 <link rel="stylesheet" href="/css/login.css" />
 <section class="hero is-fullheight">
   <div class="hero-body">
@@ -90,6 +91,11 @@
               </button>
             </div>
           </form>
+
+          <div class="field is-flex is-justify-content-center" style="margin-top: 20px;">
+            <a href="/log_in/forgot_password" class="is-size-7 has-text-white is-underlined">Forgot your password?</a>
+          </div>
+
         </div>
       </div>
     </div>

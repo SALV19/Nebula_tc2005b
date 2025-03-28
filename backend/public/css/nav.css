@@ -7,8 +7,10 @@
   top: 0;
   left: 0;
   overflow-x: hidden;
+  background-color: #242424;
   padding: 1rem 0;
   transition: 0.5s;
+  background-color: #242424;
   border-right: #eeeeee solid 2px;
   display: flex;
   flex-flow: column;

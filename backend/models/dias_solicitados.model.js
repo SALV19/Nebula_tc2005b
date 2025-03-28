@@ -6,7 +6,6 @@ module.exports = class DiasSolicitados {
         }
 
     static fetchAll(id_solicitud_falta){
-        console.log(id_solicitud_falta)
         return db.execute(`SELECT COUNT(fecha) AS totalDias FROM dias_solicitados WHERE id_solicitud_falta = ?`, [id_solicitud_falta]);
     }
 };

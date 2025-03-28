@@ -1,0 +1,52 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/table.css">
+<link rel="stylesheet" href="/css/followUps.css">
+<main class="hero column">
+  <input type="hidden" id="_csrf" value="<%= csrfToken %>">
+
+  <section class="hero-body">
+    <div class="container is-widescreen">
+      <div class="columns has-text-centered overhead is-vcentered offset">
+        <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
+        <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
+        <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
+        <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="showAddForm()"></i>
+        </div>
+      </div>   
+    </div> 
+    <hr/>
+    <div id="content-section">
+      <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
+    </div>
+</main>
+
+<%- include('includes/_footer.ejs') %>
+
+<script>
+  function showAddForm() {
+    // Determinar qué formulario mostrar según la pestaña actual
+    const selectedOption = '<%= selectedOption %>';
+    
+    if (selectedOption === 'meetings') {
+      // Mostrar formulario para agregar reuniones
+      const meetingPopup = document.getElementById('meeting-popup');
+      if (meetingPopup) {
+        meetingPopup.style.display = 'flex';
+      }
+    } else if (selectedOption === 'collab') {
+      // Mostrar formulario para agregar colaboradores
+      const collabPopup = document.getElementById('collab-popup');
+      if (collabPopup) {
+        collabPopup.style.display = 'flex';
+      }
+    } else {
+      // Mostrar formulario para registro
+      const registerPopup = document.getElementById('register-popup');
+      if (registerPopup) {
+        registerPopup.style.display = 'flex';
+      }
+    }
+  }
+</script>
+
