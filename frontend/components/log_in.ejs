@@ -1,0 +1,32 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+    const Toast = Swal.mixin({ 
+        toast: true, 
+        position: "top-end", 
+        showConfirmButton: false, 
+        timer: 3000, 
+        timerProgressBar: true, 
+        didOpen: (toast) => { 
+        toast.onmouseenter = Swal.stopTimer; 
+        toast.onmouseleave = Swal.resumeTimer; 
+        } 
+    });
+    
+    function getUrlParameter(name) {
+        name = name.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        var regex = new RegExp('[\\?&]' + name + '=([^&#]*)');
+        var results = regex.exec(location.search);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    
+    const message = getUrlParameter('message');
+    
+    if (message === 'password_updated') {
+        Toast.fire({
+        icon: "success",
+        title: "Password updated successfully"
+        });
+    }
+    });
+</script>

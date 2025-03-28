@@ -7,6 +7,7 @@ const passport = require("passport");
 
 require("dotenv").config();
 require("./util/google_auth");
+require("./util/mailer")
 
 // Server set-up
 const app = express();
