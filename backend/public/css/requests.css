@@ -24,11 +24,30 @@
     padding-top: 5vh;
     border-radius: 5px;
     width: 30vw;
-    max-height: 90vh; /* Optional to limit total height */
-    overflow-y: auto; /*To be able to scroll if the content is too large */
+    height: auto; /* Optional to limit total height */
+    overflow-y: auto; /*To be able to scroll if the content is too large*/
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
+
+.pop-up-content::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.pop-up-content::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.pop-up-content::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.pop-up-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
 
 #errorPopup .pop-up-content {
     max-width: 30vw;      /* We increased from 30vw to 40vw */
@@ -54,6 +73,7 @@
     padding-bottom: 0.4vh; /* Changed from  px a vh */
     align-items: center;
     gap: 0.8vw; /* Changed from px a vw */
+    width: 100%;
 }
 
 .line-input {
@@ -121,4 +141,8 @@
 
 .swal2-confirm.btn-ok:hover {
     background-color: #6f916b; 
+}
+
+textarea{
+    resize:none;
 }

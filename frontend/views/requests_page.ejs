@@ -5,7 +5,6 @@
 <main class="hero column">
   <input type="hidden" id="_csrf" value=<%= csrfToken %>>
   <section class="hero-body">
-
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'vacations' ? 'selected' : ''%>">Vacations</p>
@@ -81,7 +80,7 @@
 
                       <!-- Evidence (only if absence > 3 days) -->
                       <div id="evidenceContainer" style="display: none;">
-                        <div><label class="subtitleForm">Attach Evidence</label></div>
+                        <label class="subtitleForm">Attach Evidence</label>
                         <section class="input-container">
                           <textarea id="evidence" name="evidence" class="line-input" placeholder="Paste links to Google Drive, Dropbox, etc."></textarea>
 

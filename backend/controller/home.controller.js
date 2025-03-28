@@ -18,6 +18,6 @@ exports.get_home = async (request, response, next) => {
           csrfToken: request.csrfToken(),
         })
     })
-    .catch(error => {console.log(error)})
+    .catch(error => {console.error(error)})
 
 };

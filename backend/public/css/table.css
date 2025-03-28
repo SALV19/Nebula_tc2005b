@@ -3,6 +3,11 @@ hr {
   margin-top:7px;
   width: 100%;
 }
+
+main {
+  height: 100vh;
+}
+
 .offset {
   margin-left: 0;
 }
@@ -103,4 +108,9 @@ input[type=number] {
   display: flex;
   flex-direction: column;
   align-items: start;
+}
+
+.back {
+  background-color: #242424;
+  border-bottom: 1px rgb(53, 58, 70) solid;
 }

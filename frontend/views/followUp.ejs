@@ -8,7 +8,7 @@
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
-        <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>" onclick="switchTab('meetings')">Meetings</p>
+        <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
         <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
         <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
           <div class="column is-narrow is-offset-8 is-offset-desktop-9 is-offset-tablet-7 is-offset-mobile-1">
@@ -19,40 +19,13 @@
     </div> 
     <hr/>
     <div id="content-section">
-      <% if (selectedOption === 'meetings') { %>
-        <%- include ('../components/follow_up/meetings_follow_up.ejs') %>
-      <% } else { %>
-        <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
-      <% } %>
+      <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
     </div>
 </main>
 
 <%- include('includes/_footer.ejs') %>
 
 <script>
-  function switchTab(option) {
-    // Enviar al servidor la opción seleccionada para actualizar la vista
-    const csrf = document.getElementById('_csrf').value;
-    
-    fetch('/follow_ups/switch-tab', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'CSRF-Token': csrf
-      },
-      body: JSON.stringify({ option: option })
-    })
-    .then(response => {
-      if (response.ok) {
-        // Recargar la página para mostrar la nueva pestaña
-        window.location.reload();
-      }
-    })
-    .catch(error => {
-      console.error('Error switching tab:', error);
-    });
-  }
-
   function showAddForm() {
     // Determinar qué formulario mostrar según la pestaña actual
     const selectedOption = '<%= selectedOption %>';

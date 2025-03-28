@@ -1,5 +1,11 @@
 const Requests = require("../models/requests.model");
-const Events = require("../models/events.model")
+const Events = require("../models/events.model");
+
+exports.update_estado = async (req, res) => {
+  
+  Requests.save_State(req.body.estado, req.body.id_solicitud_falta)
+  res.redirect("/requests");
+}
 
 exports.get_requests = async (request, response) => {
 
@@ -28,7 +34,7 @@ exports.get_collabs_requests = async (request, response) => {
     filter
   )
     .then((data) => data)
-    .catch((e) => console.log(e));
+    .catch((e) => console.error(e));
   response.json({
     selectedOption: "requests",
     requests: requests,
@@ -84,7 +90,7 @@ exports.post_abscence_requests = async (request, response, next) => {
           .saveDates(e[0].insertId, i)
           .then((e) => e)
           .catch((e) => {
-            console.log(e);
+            console.error(e);
             return e;
           });
         }

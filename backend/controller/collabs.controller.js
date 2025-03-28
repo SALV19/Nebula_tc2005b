@@ -138,7 +138,6 @@ exports.get_collab_data = async (req, res) => {
 exports.update_collab = async (request, response) => {
   try {
     const id = request.body.id_colaborador;
-    console.log("Actualizando colaborador:", id);
 
     const edit_Colab = new Colaborador(
       request.body.nombre,
@@ -151,7 +150,7 @@ exports.update_collab = async (request, response) => {
       request.body.ubicacion,
       request.body.modalidad,
       request.body.curp,
-      request.body.rfc
+      request.body.rfc,
     );
 
     const edit_equipo = new Equipo(
@@ -160,8 +159,6 @@ exports.update_collab = async (request, response) => {
     );
 
     // Agrega esto para inspeccionar lo recibido
-    console.log("Datos recibidos del formulario:");
-    console.log(request.body);
 
     await edit_Colab.updateById(id);
     await edit_equipo.updateById(id);
@@ -206,13 +203,11 @@ exports.update_collab = async (request, response) => {
 
 
 exports.post_collab = (request, response) => {
-  console.log(request.body);
   const new_Colab = new Colaborador(request.body.nombre, request.body.apellidos, 
       request.body.fechaNacimiento, request.body.telefono, request.body.puesto, 
       request.body.email, request.body.fechaIngreso, request.body.ubicacion, 
       request.body.modalidad, request.body.curp, request.body.rfc);
   
-  console.log(new_Colab);
   const password = generator.generate({
     length: 10,
     numbers: true
@@ -226,7 +221,6 @@ exports.post_collab = (request, response) => {
       const new_equipo = new Equipo(request.body.id_departamento, request.body.id_rol);
       return new_equipo.save(idcolab);
     }).then(() => {
-      console.log("Equipo guardado");
 
       request.session.successData = {
         email: request.body.email,
@@ -236,7 +230,7 @@ exports.post_collab = (request, response) => {
       response.redirect("/view_collabs");
     })
     .catch((error) => {
-      console.log(error);
+      console.error(error);
       response.redirect("/view_collabs?error=true");
   }); 
 };
