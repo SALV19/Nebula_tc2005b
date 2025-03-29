@@ -1,0 +1,39 @@
+@startuml REQ-19
+autonumber
+actor collab
+boundary general.route.js as homeRoute
+boundary home.ejs as homeView
+control home.controller.js as homeController
+entity home.model as homeModel
+database Nebula as nebula
+
+activate collab
+collab -> homeRoute : GET /
+deactivate collab
+activate homeRoute
+
+homeRoute -> homeController: get_vacationDays(request, response)
+deactivate homeRoute
+activate homeController
+
+homeController -> homeModel: fetchAll()
+activate homeModel
+
+homeModel -> nebula: execute("SELECT FROM Modelo")
+activate nebula
+
+nebula -->> homeModel: rows
+deactivate nebula
+
+homeModel -->> homeController: promesa
+deactivate homeModel
+
+homeController -> homeView: response.render
+deactivate homeController
+activate homeView
+
+homeView -> collab: HTML
+deactivate homeView
+activate collab
+
+@enduml
