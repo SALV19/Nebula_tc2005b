@@ -34,4 +34,6 @@ router.post("/token", reset_password_routes.post_token);
 router.get("/reset_password",token_middleware.token_middleware, reset_password_routes.get_reset_password);
 router.post("/reset_password", reset_password_routes.post_reset_password);
 
+router.get("/initial_password", reset_password_routes.get_initial_password);
+
 module.exports = router;
