@@ -8,12 +8,13 @@ exports.get_home = async (request, response, next) => {
     console.error("Error fetching approved absences:", e);
     return [];
   });
-
     contVac(request)
-    .then(({diasDisponibles,diasTotales}) => {
+    .then(({diasDisponibles,diasTotales, error}) => {
         response.render("home_page", {
           diasDisponibles,
           diasTotales,
+          error,
+          permissions: request.session.permissions,
           total_absences: absences.length,
           csrfToken: request.csrfToken(),
         })
