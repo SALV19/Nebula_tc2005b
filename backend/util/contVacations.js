@@ -16,43 +16,51 @@ function calcularDiasVacaciones(antiguedad) {
     return 12;
 }
 
-exports.contVac = (request, response, colab_id=null) => {
+exports.contVac = (request, responsem, colab_id=null) => {
+    
     const idColaborador = request?.session.id_colaborador ?? colab_id;
     let diasTotales; 
-    let cantDiasSol; 
+    let cantDiasSol = 0;
     let diasDisponibles; 
     
-    const espera =
-    Colaborador.fetchColabVac(idColaborador).then(([colabVac]) => {
-        const fechaIngresoFormato = new Date(colabVac[0].fechaIngreso).toISOString().slice(0, 10);
-        const fechaActualFormato = new Date().toISOString().slice(0, 10);
-    
-        const fechaIngresoDate = new Date(fechaIngresoFormato); 
-        const fechaActualDate = new Date(fechaActualFormato);   
-    
-        const antiguedad = fechaActualDate.getFullYear() - fechaIngresoDate.getFullYear();
-        diasTotales = calcularDiasVacaciones(antiguedad); 
+    return Colaborador.fetchColabVac(idColaborador)
+        .then(([colabVac]) => {
+            const fechaIngreso = new Date(colabVac[0].fechaIngreso);
+            const fechaActual = new Date();
 
-    }).then(() => {
-        return SolicitudFalta.fetchAll(idColaborador).then((solFalt) => {
-            const idSolFalt = solFalt[0].map(solicitud => solicitud.id_solicitud_falta);
-            if (idSolFalt.length <= 0){
-                return({diasDisponibles: diasTotales, diasTotales});
+            let antiguedad = fechaActual.getFullYear() - fechaIngreso.getFullYear();
+
+            const mesActual = fechaActual.getMonth();
+            const mesIngreso = fechaIngreso.getMonth();
+            const diaActual = fechaActual.getDate();
+            const diaIngreso = fechaIngreso.getDate();
+
+            if (mesActual < mesIngreso || (mesActual === mesIngreso && diaActual < diaIngreso)) {
+                antiguedad--; 
             }
 
-            return DiasSolicitados.fetchAll(idSolFalt[0]).then((diasSol) => {
-                cantDiasSol = diasSol[0][0].totalDias;
-                diasDisponibles = diasTotales - cantDiasSol;
-                return({diasDisponibles,diasTotales});
+            diasTotales = calcularDiasVacaciones(antiguedad); 
 
-            }).catch((error) => {
-                console.error(error);
+            return SolicitudFalta.fetchAll(idColaborador);
+        })
+        .then((solFalt) => {
+            if (solFalt[0].length <= 0) {
+                return { diasDisponibles: diasTotales, diasTotales };
+            }
+            const solicitudes = solFalt[0];
+            const promises = solicitudes.map(solicitud => {
+                return DiasSolicitados.fetchAll(solicitud.id_solicitud_falta)
+                    .then((diasSol) => {
+                        cantDiasSol += diasSol[0][0].totalDias; 
+                    });
             });
-        }).catch((error) => {
-            console.error(error);
+            return Promise.all(promises).then(() => {
+                diasDisponibles = diasTotales - cantDiasSol;
+                console.log("DD: ", { diasDisponibles, diasTotales });
+                return { diasDisponibles, diasTotales };
+            });
+        })
+        .catch((error) => {
+            console.log(error);
         });
-    }).catch((error) => {
-        console.error(error);
-    });
-    return espera
-}
+};

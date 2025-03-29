@@ -1,0 +1,104 @@
+
+<form action="/follow_ups" method="POST">
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+    <div class="column-container">
+      <section class='column'>
+        <div name="nombre">
+          <label class="is-size-6 styling" for="collaborators">Employee</label>
+          <select id="collaborators" class="line-input text-style" name="id_colaborador">
+            <option value="default" disabled selected>Select Collaborator</option>
+            <% if (colaboradores.length > 0) { %>
+
+              <% for (let i = 0; i < colaboradores.length; i++) { %>
+                <option value="<%= colaboradores[i].id_colaborador %>">
+                  <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
+                </option>
+              <% } %>
+            <% } else { %>
+              <option disabled> No hay colaboradores disponibles </option>
+            <% } %>
+
+          </select>
+          <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
+        </div>  
+
+        <div>
+          <label class="is-size-6 styling">Date</label>
+          <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" <%= new Date().toISOString().split('T')[0] %>/>
+          <p id="dateError" class="text-hidden"> Select a valid date </p>
+
+        </div>
+        
+        <div id="questions-container">
+          <% for(let i = 0; i < questions.length; i++) { %>
+            <div class="question-container">
+              <p class="line-questions">
+                <span>
+                  <%= questions[i].pregunta %>
+                </span>
+                <i class="bi bi-caret-down-fill toggle-icon"></i>
+              </p>
+
+              <!-- Campo oculto para enviar el ID de la pregunta -->
+              <input type="hidden" name="id_pregunta" value="<%= questions[i].id_pregunta %>">
+
+              <!-- Campo de entrada para la respuesta -->
+              <input class="hidden-content" name="respuesta" placeholder="Escribe tu respuesta aquí">
+            </div>
+          <% } %>
+        </div>
+
+        <div class="button-container">
+          <button id="submitButton" class="approve-button" type="submit">Submit</button>
+        </div>
+      </section>
+
+      </section>
+
+      <section class='column'>
+        <div class="radar-container">
+          <canvas id="myRadarChart"></canvas>
+        </div>
+
+        <div>
+          <% for(let i = 0; i < indicator.length; i++) { %>
+            <div class="container">
+              <div class="progress-container">
+                  <p class="progress-text"> <%= indicator[i].indicador %> </p>
+                  <i class="bi bi-info-circle elementBar"></i>
+                </div>
+
+                <p class="hidden-message showElement dropdown-content" style="display: none;"> 
+                  How does the employee feel about their <%= indicator[i].indicador %>?<br>
+                  0 = unsatisfied | 5 = satisfied
+                </p>
+
+                <input type="hidden" name="id_indicador" value="<%= indicator[i].id_indicador %>">
+                <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+              </div>
+
+
+            <div class="numbers-container">
+              <p class="numbers">
+                0
+              </p>
+              <p class="numbers">
+                1
+              </p>
+              <p class="numbers">
+                2
+              </p>
+              <p class="numbers">
+                3
+              </p>
+              <p class="numbers">
+                4
+              </p>
+              <p class="numbers">
+                5
+              </p>
+            </div>
+          <% } %> 
+        </div>
+    </div>
+  </form>

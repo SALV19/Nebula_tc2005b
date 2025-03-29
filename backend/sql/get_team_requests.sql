@@ -21,37 +21,37 @@ WHERE d.nombre_departamento = (
 GROUP BY sf.id_solicitud_falta
 
 INSERT INTO solicitudes_falta(id_solicitud_falta, id_colaborador, estado, tipo_falta, descripcion, ubicacion) VALUES
-	(18, 4, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(19, 6, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(20, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(21, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(22, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(23, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(24, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico');
+	(31, 4, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 6, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(33, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(34, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(35, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(36, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(37, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico');
 
 INSERT INTO dias_solicitados(id_solicitud_falta, fecha) VALUES
-	(18, '2025-04-17'),
-	(18, '2025-04-18'),
-	(19, '2025-03-17'),
-	(19, '2025-03-18'),
-	(19, '2025-03-19'),
-	(19, '2025-03-20'),
-	(20, '2025-03-20'),
-	(20, '2025-03-21'),
-	(21, '2025-03-20'),
-	(21, '2025-04-20'),
-	(21, '2025-04-21'),
-	(22, '2025-03-22'),
-	(22, '2025-03-23'),
-	(22, '2025-03-24'),
-	(22, '2025-03-25'),
-	(23, '2025-03-25'),
-	(23, '2025-03-26'),
-	(23, '2025-03-27'),
-	(24, '2025-03-29'),
-	(24, '2025-03-30'),
-	(24, '2025-03-31'),
-	(24, '2025-03-01');
+	(31, '2025-04-17'),
+	(31, '2025-04-18'),
+	(31, '2025-03-17'),
+	(31, '2025-03-18'),
+	(31, '2025-03-19'),
+	(32, '2025-03-20'),
+	(32, '2025-03-20'),
+	(32, '2025-03-21'),
+	(33, '2025-03-20'),
+	(33, '2025-04-20'),
+	(33, '2025-04-21'),
+	(34, '2025-03-22'),
+	(34, '2025-03-23'),
+	(35, '2025-03-24'),
+	(35, '2025-03-25'),
+	(36, '2025-03-25'),
+	(36, '2025-03-26'),
+	(36, '2025-03-27'),
+	(37, '2025-03-29'),
+	(37, '2025-03-30'),
+	(37, '2025-03-31'),
+	(37, '2025-03-01');
 
 
 SELECT MIN(ds.fecha) AS start, MAX(ds.fecha) AS end

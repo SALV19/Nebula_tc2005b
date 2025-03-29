@@ -12,7 +12,7 @@ module.exports = class SolicitudFalta {
     static fetchAll(idColaborador){
         return db.execute(`SELECT id_solicitud_falta, tipo_falta, estado FROM solicitudes_falta 
         WHERE id_colaborador = ?
-        AND tipo_falta = "vacacion"
+        AND tipo_falta = "Vacation"
         AND estado = 1`, 
         [idColaborador]);
     }
