@@ -10,4 +10,5 @@ module.exports = class Departamento {
         return db.execute(`SELECT DISTINCT id_departamento, nombre_departamento FROM departamento
                             ORDER BY nombre_departamento ASC`);
     }
+    
 };

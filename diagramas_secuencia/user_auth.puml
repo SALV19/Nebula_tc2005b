@@ -5,6 +5,7 @@ boundary log_in.routes as lgr
 boundary log_in.ejs as lge
 boundary home_page.ejs as h
 control log_in.controller as lgc
+entity argon2 as argon
 entity log_in.model as lgm
 database Nebula as db
 
@@ -39,7 +40,10 @@ db -->> lgm : [email, password]
 deactivate db
 lgm -->> lgc : [email, password]
 deactivate lgm
-lgc ->> lgc : user_email == email && \nargon2.verify(user_password, password)
+lgc ->> argon : user_email == email && \nargon2.verify(user_password, password)
+activate argon
+argon -->> lgc : [user_email == email]: bool
+deactivate argon
 lgc -> lgr : request.redirect("/")
 deactivate lgc
 

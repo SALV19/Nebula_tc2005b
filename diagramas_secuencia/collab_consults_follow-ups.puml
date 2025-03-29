@@ -1,0 +1,70 @@
+@startuml REQ-12
+autonumber
+actor collab
+boundary general.route.js as followUpsRoutes
+boundary followUps.ejs as followUpsViews
+control follow_ups.controller.js as followUpsController
+entity FollowUps.model as followUpsModel
+
+database Nebula as nebula
+
+collab -> followUpsRoutes : GET/follow_ups
+activate followUpsRoutes
+
+followUpsRoutes -> followUpsController: get_collabFollowUps(request, response)
+deactivate followUpsRoutes
+activate followUpsController
+
+followUpsController -> followUpsModel: fetchAll()
+activate followUpsModel
+
+followUpsModel -> nebula: execute("SELECT FROM Model")
+activate nebula
+
+nebula -->> followUpsModel: rows
+deactivate nebula
+
+followUpsModel -->> followUpsController: promesa
+deactivate followUpsModel
+
+followUpsController -> followUpsViews: response.render('follow_ups.ejs')
+deactivate followUpsController
+activate followUpsViews
+
+followUpsViews -> collab: HTML
+deactivate followUpsViews
+activate collab
+
+collab -> followUpsRoutes: POST/addNotes
+deactivate collab
+activate followUpsRoutes
+
+followUpsRoutes -> followUpsController: post_addNotes(request, response)
+deactivate followUpsRoutes
+activate followUpsController
+
+create entity model
+followUpsController -> model: new Model
+activate model
+
+followUpsController ->> model: save()
+
+model ->> nebula: execute("INSERT INTO Model(?), this.valor)
+activate nebula
+
+nebula -->> model: Query ok
+deactivate nebula
+
+model -->> followUpsController: promesa
+deactivate model
+
+followUpsController -> followUpsViews: response.render
+deactivate followUpsController
+activate followUpsViews
+
+followUpsViews -> collab: HTML
+deactivate followUpsViews
+activate collab
+deactivate collab
+
+@enduml

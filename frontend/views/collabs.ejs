@@ -26,9 +26,12 @@
             <input type="number" value="1" class="pagination" id="pagination"/>
             <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
         </div>
+        <%- include('../components/collabs/update_collab.ejs') %>
+        <%- include ('../components/collabs/view_collabs_logic.ejs') %>
         <%- include ('../components/collabs/add_collabs_logic.ejs') %>
         <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
-        <%- include ('../components/collabs/view_collabs_logic.ejs') %>
+        <%- include('./includes/_modifyCollabs_form.ejs') %>
+        <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
     </section>
 </main>
 
