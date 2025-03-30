@@ -49,6 +49,7 @@
 
 .styling {
     margin-right: 2vw;
+    font-size: 0.8rem;
 }
 
 .line-questions {
@@ -119,7 +120,7 @@
 .progress-text{
     text-align: justify;
     color: #ABB1BF;
-    font-size: medium;
+    font-size: 0.8rem;
 }
 
 .progress-bar{
@@ -174,8 +175,8 @@
 }
 
 .canvas {
-    width: 100%; 
-    height: 100%;
+    width: 3vw ; 
+    height: 3vh;
 }
 
 .canvas-viewF {
