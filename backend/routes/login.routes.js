@@ -4,6 +4,7 @@ const passport = require("passport");
 
 const log_in_routes = require("../controller/log_in.controller");
 const other_controllers = require("../controller/other.controller");
+const initial_password_middleware = require("../util/initial_password_middleware")
 
 router.get("/", log_in_routes.get_log_in);
 router.post("/", log_in_routes.post_log_in);
@@ -34,6 +35,6 @@ router.post("/token", reset_password_routes.post_token);
 router.get("/reset_password",token_middleware.token_middleware, reset_password_routes.get_reset_password);
 router.post("/reset_password", reset_password_routes.post_reset_password);
 
-router.get("/initial_password", reset_password_routes.get_initial_password);
+router.get("/initial_password", initial_password_middleware.initial_middleware, reset_password_routes.get_initial_password);
 
 module.exports = router;

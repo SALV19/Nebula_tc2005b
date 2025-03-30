@@ -162,6 +162,7 @@ exports.post_reset_password = async (request, response, next) => {
     }
 
     delete request.session;
+    delete request.user;
     
     return response.redirect('/log_in?message=password_updated');
     

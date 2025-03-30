@@ -20,7 +20,8 @@ exports.post_log_in = async (request, response) => {
 
   if (user_info[0].length) {
     if(await first_login(password, user_info[0][0].contrasena)) {
-      console.log("first_login");
+      console.log("viene de usuario y contraseña");
+      console.log(" ");
       request.session.email = request.body.email;
       request.session.firstLogin = true;
       request.session.sourceRoute = "initial";
