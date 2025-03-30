@@ -108,6 +108,7 @@ module.exports = class Colaborador {
         LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
         LEFT JOIN empresa em ON em.id_empresa = d.id_empresa
         LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
         GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
                 c.fechaNacimiento, c.telefono, c.puesto, c.email, 
                 c.fechaIngreso, c.fechaSalida, c.ubicacion, 

@@ -40,7 +40,6 @@ exports.contVac = (request, responsem, colab_id=null) => {
             }
 
             diasTotales = calcularDiasVacaciones(antiguedad); 
-            console.log("colabVac:", colabVac);
 
             return SolicitudFalta.fetchAll(idColaborador);
         })
@@ -57,7 +56,6 @@ exports.contVac = (request, responsem, colab_id=null) => {
             });
             return Promise.all(promises).then(() => {
                 diasDisponibles = diasTotales - cantDiasSol;
-                console.log("DD: ", { diasDisponibles, diasTotales });
                 return { diasDisponibles, diasTotales };
             });
         })

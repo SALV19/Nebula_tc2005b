@@ -111,7 +111,6 @@ exports.get_followUps_info = (request, response, next) => {
       });
     })
     .catch(error => {
-      console.log(error);
       response.status(500).send("Error al obtener información");
     });
 };
