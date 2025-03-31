@@ -1,12 +1,23 @@
-exports.get_requests = (request, response, next) => {
-  // if (request.session.permissions) {
-  //   if (request.session.permissions.includes("accept_requests") 
-  //       || request.session.permissions.includes("accept_requests_team")) {
-  //     next();
-  //   } else {
-  //     response.render("error_401");
-  //   }
-  // } else {
-  //   response.redirect("/log_in");
-  // }
+exports.general_permissions = (request, response, next) => {
+  if (request.session.permissions.length > 0) {
+    next()
+  } else {
+    response.render("error_401");
+  }
 };
+
+exports.view_collabs = (request, response, next) => {
+  if (request.session.permissions.includes('consult_collabs')) {
+    next()
+  } else {
+    response.render("error_401");
+  }
+}
+
+exports.view_reports = (request, response, next) => {
+  if (request.session.permissions.includes('create_reports')) {
+    next()
+  } else {
+    response.render("error_401");
+  }
+}
