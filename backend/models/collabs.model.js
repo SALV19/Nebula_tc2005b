@@ -9,7 +9,8 @@ module.exports = class Collab {
         return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador ORDER BY nombre ASC')
     }
 
-    static fetchEmail (id_colaborador) {
-        return db.execute('SELECT email FROM colaborador WHERE id_colaborador = (?) ', [id_colaborador]);
+    static async fetchEmail(id_colaborador) {
+        const [rows] = await db.execute('SELECT email FROM colaborador WHERE id_colaborador = (?) ', [id_colaborador]);
+        return rows.length > 0 ? rows[0].email : null;
     }
 }

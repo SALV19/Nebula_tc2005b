@@ -91,6 +91,8 @@ exports.post_meeting = (request, response, next) => {
 
   Collab.fetchEmail(id_colaborador)
     .then(emailCollab => {
+      console.log("Imprimiendo emailCollab")
+      console.log(emailCollab);
       const fechaHora = new Date(`${fecha}T${hora}:00`);
       const startTimeRFC = fechaHora.toISOString();
       const endTimeRFC = new Date(fechaHora.getTime() + 30 * 60 * 1000).toISOString();
