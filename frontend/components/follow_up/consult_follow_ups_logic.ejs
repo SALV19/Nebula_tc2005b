@@ -1,6 +1,43 @@
 <script>
+
+function get_progress_color(data, fecha) {
+    const indicatorSum = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica)
+    .reduce((a, b) => {
+        return a + b
+    });
+    
+    const indicatorAvg = indicatorSum * 100 / 25;
+    
+    if (indicatorAvg >= 75) {
+        return 'success';
+    }
+    else if (indicatorAvg >= 30) {
+        return 'warning';
+    }
+    else {
+        return 'danger';
+    }
+
+    
+}
+function get_average_progress(data, fecha) {
+    const indicatorSum = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica)
+    .reduce((a, b) => {
+        return a + b
+    });
+    
+    const indicatorAvg = indicatorSum * 100 / 25;
+    console.log(indicatorAvg)
+
+    return indicatorAvg;
+}
+    
 function TableFollowUps(data) {
-    console.log("data de tabla: ", data);
+    // console.log("data de tabla: ", data);
 
     const table = document.querySelector('#content-section');
     let table_content = `<div class="container-scroll">
@@ -9,12 +46,12 @@ function TableFollowUps(data) {
     
 <tbody>`;
 
-    data.fechasAgendadas.forEach((fecha, idx) => {
-        console.log(idx);
-        
+    data.fechasAgendadas.forEach((fecha, idx) => { 
+        const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
-        table_content += `<td> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
-        table_content += `<td style="text-align: right;">
+        table_content += `<td class="fixed-width"> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
+        table_content += `<td><p>${indicadorAverage}%</p><div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%"></div></td>`
+        table_content += `<td style="text-align: right; width: 10px;">
                         <i class="bi bi-caret-down-fill toggle-icon"></i>
                         </td>`;
         table_content += `</tr>`;
@@ -157,7 +194,6 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = (pagination=0, filter=null) => {
-    console.log("test")
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
@@ -175,7 +211,6 @@ const get_info_FU = (pagination=0, filter=null) => {
     .then(response => {
         return response.json()})
     .then(data => {
-        console.log("data del get: ", data)
         TableFollowUps(data)
 
     })
