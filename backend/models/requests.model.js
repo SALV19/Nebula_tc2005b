@@ -158,10 +158,18 @@ module.exports = class Requests {
     }
   }
 
-  static save_State(estado, id_solicitud_falta) {
-    return db.execute(
-      "UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?",
-      [estado, id_solicitud_falta]
-    );
+  static async save_State(estado, id_solicitud_falta, colabAprobador) {
+    try {
+      return await db.execute(
+        `UPDATE solicitudes_falta 
+         SET estado = ?, colabAprobador = ? 
+         WHERE id_solicitud_falta = ?`,
+        [estado, colabAprobador, id_solicitud_falta]
+      );
+    } catch (error) {
+      console.error("Error al actualizar estado:", error);
+      throw error;
+    }
   }
+  
 };

@@ -41,6 +41,14 @@ exports.get_register = async (request, response) => {
 
 exports.post_follow_ups = async (req, res) => {
   try {
+    console.log('Body colab: ', req.body.id_colaborador);
+    console.log('Body date: ', req.body.fechaAgendada);
+    console.log('Body pregunta: ', req.body.id_pregunta);
+    console.log('Body respuesta: ', req.body.respuesta);    
+    console.log('Body pregunta: ', req.body.id_indicador);
+    console.log('Body pregunta: ', req.body.valor_metrica);
+
+
     // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
@@ -48,6 +56,7 @@ exports.post_follow_ups = async (req, res) => {
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
 
     // Crear y guardar respuestas
+
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
     await answer_questions.save(); 
 

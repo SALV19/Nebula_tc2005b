@@ -26,9 +26,15 @@ module.exports = class Colaborador {
     this.rfc = colab_rfc;
   }
 
-  static fetchAllCompleteName(){
-    return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador')
+  //
+  static fetchAllCollabsName(id_colaborador){
+    return db.execute(`Select nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
   }
+
+  static fetchAllCompleteName(){
+    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
+  }
+
 
   save(password) {
     return db

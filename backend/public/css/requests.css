@@ -146,3 +146,23 @@
 textarea{
     resize:none;
 }
+
+.status {
+    display: inline-block; /* Para que no ocupe todo el ancho */
+    padding: 0.3rem;
+    font-size: 0.9rem;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+  }
+  
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+}
+.mesaage-approved{
+    font-size: bold;
+}
+  
