@@ -25,7 +25,6 @@ exports.post_log_in = async (request, response) => {
       request.session.email = request.body.email;
       
       request.session.id_colaborador = user_info[0][0].id_colaborador;
-      console.log("TRY: ", request.session.id_colaborador)
       response.redirect("/log_in/success");
     } else {
       status.error = 'wrong_password'

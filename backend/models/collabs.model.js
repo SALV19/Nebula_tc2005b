@@ -113,7 +113,7 @@ module.exports = class Colaborador {
                 c.fechaNacimiento, c.telefono, c.puesto, c.email, 
                 c.fechaIngreso, c.fechaSalida, c.ubicacion, 
                 c.modalidad, c.foto, c.curp, c.rfc, c.estado,
-                d.nombre_departamento, em.nombre_empresa
+                d.nombre_departamento
         ORDER BY c.nombre ASC
             LIMIT 10 OFFSET ?`, [offset])
     }
