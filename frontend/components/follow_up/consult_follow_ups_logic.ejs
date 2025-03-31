@@ -50,7 +50,12 @@ function TableFollowUps(data) {
         const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
         table_content += `<td class="fixed-width"> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
-        table_content += `<td><p>${indicadorAverage}%</p><div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%"></div></td>`
+        table_content += `<td class='is-flex is-align-items-center'>
+                            <p style="width: 4rem">${indicadorAverage}%</p>
+                            <div style="width: 20rem;">
+                                <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
+                            </div>
+                        </td>`
         table_content += `<td style="text-align: right; width: 10px;">
                         <i class="bi bi-caret-down-fill toggle-icon"></i>
                         </td>`;
