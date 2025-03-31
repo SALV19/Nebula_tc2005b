@@ -68,6 +68,11 @@ exports.post_follow_ups = async (req, res) => {
     res.redirect('/follow_ups');
   } catch (error) {
     console.error(error);
+    return res.status(400).render("register_follow_up_logic.ejs", {
+      error: "There was a problem saving the evaluation",
+      // validation : true,
+      csrfToken : req.csrfToken,
+    });
   };
 }
 

@@ -39,10 +39,10 @@
       content += `
       <div>
         <label class="is-size-6 styling">Date</label>
-        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value=${new Date().toISOString().split('T')[0]} >
+        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value="${new Date().toISOString().split('T')[0]}">
         <p id="dateError" class="text-hidden"> Select a valid date </p>
-
       </div>
+
       <div id="questions-container"> 
       ` 
       for(let i = 0; i < data.questions.length; i++) {
@@ -140,6 +140,7 @@
       content += `
             </div>
           </div>
+
           <div class="button-container">
               <button id="submitButton" class="approve-button" type="submit">Submit</button>
           </div>
@@ -259,13 +260,13 @@
         let lengthV = document.getElementById("lenghtVal");
 
         let today = new Date(); 
-        today.setDate(today.getDate() - 1);  
+        today.setDate(today.getDate());  
 
         let currentDate = today.toISOString().split('T')[0]; 
 
          // VALIDATE DATE
         selectDate.addEventListener("change", function(){
-          if(selectDate.value >= currentDate){
+          if(selectDate.value <= currentDate){
             dateError.classList.remove("show");
           } else {
             dateError.classList.add("show");
@@ -281,49 +282,80 @@
           };
         });
         
-        // VALIDATE FORM
         submitButton.addEventListener("click", function (event) {
-          // Validate dates
-          if (selectDate.value < currentDate){
-            event.preventDefault();
-            dateError.classList.add("show");
-          } else {
-            dateError.classList.remove("show");
-            if (collaboratorSelect.value === "default"){
-              event.preventDefault();
-              errorMessage.classList.add("show");
-            } else {
-              errorMessage.classList.remove("show");
-              Swal.fire({
-                title: "Problem",
-                text: `There was a problem saving the evaluation?`,
-                icon: "cross",
-                showCancelButton: true,
-                confirmButtonColor: `#59A250`,
-                cancelButtonColor: "#7066E0",
-                confirmButtonText: "Yes, update it!"
-              })
-            };
-          };
-        });
+          event.preventDefault(); // Prevent default form submission
 
-        function registerFollowUp() {
-          const csrf = document.getElementById('_csrf').value
-          fetch(`/requests/Requests/update`, {
-            method: "POST", 
-            headers: {
-              "Content-Type": "application/json",
-              'csrf-token': csrf,
-            } 
-          }) .catch((error) => {
-              Swal.fire({
-                title: "Error!",
-                text: "There was a problem updating the field.",
-                icon: "error",
-              });
-              console.error("Update error:", error);
-            });
-        }
+          let isValid = true; // Flag for validation
+
+          // Validate date
+          if (selectDate.value > currentDate) {
+              dateError.classList.add("show");
+              isValid = false;
+          } else {
+              dateError.classList.remove("show");
+          }
+
+          // Validate collaborator selection
+          if (collaboratorSelect.value === "default") {
+              errorMessage.classList.add("show");
+              isValid = false;
+          } else {
+              errorMessage.classList.remove("show");
+          }
+
+        if (isValid) { 
+          Swal.fire({
+              title: "Confirm Submission",
+              text: "Are you sure you want to submit this evaluation?",
+              icon: "question",
+              showCancelButton: true,
+              confirmButtonColor: "#28a745",
+              cancelButtonColor: "#d33",
+              confirmButtonText: "Yes, submit it!",
+              cancelButtonText: "Cancel"
+          }).then((result) => {
+              if (result.isConfirmed) {
+                  fetch("/ruta-del-endpoint", { // Ajusta la ruta
+                      method: "POST",
+                      body: new FormData(document.querySelector("form"))
+                  })
+                  .then(response => {
+                      if (!response.ok) {
+                          throw new Error("There was a problem saving the evaluation.");
+                      }
+                      return response.json();
+                  })
+                  .then(data => {
+                      Swal.fire({
+                          title: "Success!",
+                          text: "Evaluation submitted successfully.",
+                          icon: "success",
+                          confirmButtonColor: "#28a745"
+                      }).then(() => {
+                          window.location.href = "/follow_ups"; // Redirige si fue exitoso
+                      });
+                  })
+                  .catch(error => {
+                      Swal.fire({
+                          title: "Error!",
+                          text: error.message,
+                          icon: "error",
+                          confirmButtonColor: "#d33"
+                      });
+                  });
+              }
+          });
+      } else {
+          Swal.fire({
+              title: "Incomplete Form",
+              text: "Please fill out all required fields before submitting.",
+              icon: "error",
+              confirmButtonColor: "#d33",
+              confirmButtonText: "OK"
+          });
+      }
+
+      });
     }
 
     
