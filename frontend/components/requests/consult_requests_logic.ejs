@@ -9,7 +9,12 @@
     
     return `${day}/${month}/${year}`;
   }
-
+  function createEmpty() {
+    const table = document.querySelector('#requests_table')
+    table.innerHTML = `<tr>
+                        <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
+                      </tr>`
+  }
   function accept_deny(element) {
     // is checkmark
     if (element.classList.contains('bi-check-circle')) {
@@ -197,7 +202,7 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
-    fetch(`/requests/${route}`, {
+    return fetch(`/requests/${route}`, {
       method: 'POST',
       headers: {
             'Content-Type': 'application/json',
@@ -210,7 +215,12 @@
     })
     .then(response => response.json())
     .then(data => {
+      if (data.requests[0].length <= 0) {
+        createEmpty()
+        return 0
+      }
       createTableRequests(data)
+      return data.requests[0].length
     })
     .catch(e => console.error(e))
   }
@@ -245,8 +255,11 @@
     
     pagination_value.dispatchEvent(new Event('change'));
   })
-  pagination_value.addEventListener('change', (v) => {
-    get_info(pagination_value.value-1, filter_options ?? null)
+  pagination_value.addEventListener('change', async (v) => {
+    const content = await get_info(pagination_value.value-1, filter_options ?? null)
+    if (content <= 0) {
+      pagination_value.value = pagination_value.value -1;
+    }
   })
 </script>
 
@@ -268,16 +281,6 @@
       disableMobile: "true",
       defaultDate: dates[0],
       onChange: function(date, str, inst) {
-        // let contents = '';
-        // if (date.length && eventDates[str]) {
-        //   for (let i = 0; i < eventDates[str].length; i++) {
-        //     contents += `<div class="event">
-        //       <div class="date">${inst.formatDate(date[0], 'l J F')}</div>
-        //       <div class="location">${eventDates[str][i]}</div>
-        //     </div>`;
-        //   }
-        // }
-        // $(`#calendar-${id} .calendar-events`).html(contents);
       },
       locale: {
         weekdays: {
