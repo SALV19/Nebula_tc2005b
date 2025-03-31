@@ -343,3 +343,26 @@
 .container-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+.fixed-width {
+    width: 50rem;
+}
+
+.progress-bar-container {
+    width: 20rem;
+}
+
+.progress-bar-consult {
+    height: 1rem; 
+    width: var(--completion); 
+    border-radius: 5px;
+}
+.danger {
+    background-color: #FF3462;
+}
+.warning {
+    background-color: #FFB70F;
+}
+.success {
+    background-color: #48C78E;
+}
