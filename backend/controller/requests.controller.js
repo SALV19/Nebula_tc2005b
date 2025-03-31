@@ -65,7 +65,7 @@ exports.get_vacations = (request, response) => {
   settings.selectedOption = "vacations";
   response.json({
     selectedOption: settings.selectedOption,
-  });
+  }); 
 };
 exports.get_abscences = (request, response) => {
   settings.selectedOption = "vacations";
