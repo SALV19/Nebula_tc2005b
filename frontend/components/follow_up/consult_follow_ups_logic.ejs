@@ -1,15 +1,15 @@
 <script>
 
 function get_progress_color(data, fecha) {
-    const indicatorSum = data.metricas[0]
+    const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
-    .map(metricaObj => metricaObj.valor_metrica)
-    .reduce((a, b) => {
-        return a + b
-    });
+    .map(metricaObj => metricaObj.valor_metrica);
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
     
-    const indicatorAvg = indicatorSum * 100 / 25;
-    
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
     if (indicatorAvg >= 75) {
         return 'success';
     }
@@ -23,15 +23,17 @@ function get_progress_color(data, fecha) {
     
 }
 function get_average_progress(data, fecha) {
-    const indicatorSum = data.metricas[0]
+    const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
-    .map(metricaObj => metricaObj.valor_metrica)
-    .reduce((a, b) => {
-        return a + b
-    });
+    .map(metricaObj => metricaObj.valor_metrica);
     
-    const indicatorAvg = indicatorSum * 100 / 25;
-    console.log(indicatorAvg)
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
+
+        
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
 
     return indicatorAvg;
 }
