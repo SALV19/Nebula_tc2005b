@@ -11,19 +11,21 @@
         <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
         <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
         <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
-            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick="showAddForm()"></i>
+            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick=""></i>
         </div>
       </div>   
     </div> 
     <hr/>
     <div id="content-section">
-      <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
+      <%- include ('../components/follow_up/consult_follow_ups_logic.ejs') %>
     </div>
+    <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
 </main>
 
 <%- include('includes/_footer.ejs') %>
 
 <script>
+  
   function showAddForm() {
     // Determinar qué formulario mostrar según la pestaña actual
     const selectedOption = '<%= selectedOption %>';
@@ -34,13 +36,13 @@
       if (meetingPopup) {
         meetingPopup.style.display = 'flex';
       }
-    } else if (selectedOption === 'collab') {
+    } else if (selectedOption === 'collaborator') {
       // Mostrar formulario para agregar colaboradores
       const collabPopup = document.getElementById('collab-popup');
       if (collabPopup) {
         collabPopup.style.display = 'flex';
       }
-    } else {
+    } else if (selectedOption === 'register'){
       // Mostrar formulario para registro
       const registerPopup = document.getElementById('register-popup');
       if (registerPopup) {

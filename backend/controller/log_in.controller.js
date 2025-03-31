@@ -28,7 +28,6 @@ exports.post_log_in = async (request, response) => {
       console.log("TRY: ", request.session.id_colaborador)
       response.redirect("/log_in/success");
     } else {
-      status.error = 'wrong_password'
       response.render("log_in", {
         ...status, 
         csrfToken: request.csrfToken(),
