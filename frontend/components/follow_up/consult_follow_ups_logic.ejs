@@ -1,6 +1,5 @@
 <script>
 function TableFollowUps(data) {
-    console.log("data de tabla: ", data);
 
     const table = document.querySelector('#content-section');
     let table_content = `<div class="container-scroll">
@@ -10,7 +9,6 @@ function TableFollowUps(data) {
 <tbody>`;
 
     data.fechasAgendadas.forEach((fecha, idx) => {
-        console.log(idx);
         
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
         table_content += `<td> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
@@ -157,7 +155,6 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = (pagination=0, filter=null) => {
-    console.log("test")
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
@@ -175,7 +172,6 @@ const get_info_FU = (pagination=0, filter=null) => {
     .then(response => {
         return response.json()})
     .then(data => {
-        console.log("data del get: ", data)
         TableFollowUps(data)
 
     })
