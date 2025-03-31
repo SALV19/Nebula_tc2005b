@@ -60,6 +60,6 @@ exports.contVac = (request, responsem, colab_id=null) => {
             });
         })
         .catch((error) => {
-            console.log(error);
+            return {diasDisponibles: 0, diasTotales: 0, error: error}
         });
 };
