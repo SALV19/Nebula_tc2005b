@@ -121,11 +121,10 @@ module.exports = class Requests {
           query += `AND MAX(ds.fecha) <= '${filter.end_date}' `;
         }
       } else if (filter.end_date) {
-        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `;
+        query += `HAVING MAX(ds.fecha) <= '${filter.end_date}' `;
       }
-      query += `ORDER BY sf.estado ASC, ds.fecha ASC
+      query += `ORDER BY sf.estado ASC, MIN(ds.fecha) ASC
                 LIMIT 10 OFFSET ?`;
-
       return db.execute(query, [email, offset]);
     }
   }

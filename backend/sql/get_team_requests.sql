@@ -21,16 +21,16 @@ WHERE d.nombre_departamento = (
 GROUP BY sf.id_solicitud_falta
 
 INSERT INTO solicitudes_falta(id_solicitud_falta, id_colaborador, estado, tipo_falta, descripcion, ubicacion) VALUES
-	(31, 4, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 6, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(33, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(34, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(35, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(36, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(37, 9, 1, 'ausencia medica', 'Me siento mal', 'Mexico');
+	(54, 4, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 6, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico');
 
 INSERT INTO dias_solicitados(id_solicitud_falta, fecha) VALUES
-	(31, '2025-04-17'),
+	(54, '2025-04-17'),
 	(31, '2025-04-18'),
 	(31, '2025-03-17'),
 	(31, '2025-03-18'),
