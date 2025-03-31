@@ -7,12 +7,12 @@ const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
 
 let settings = {
-  selectedOption: 'Collaborators',
+  selectedOption: 'collab',
 };
 
 exports.get_FollowUp = (request, response) => {
   response.render("followUp", {
-    ...settings,
+    selectedOption: 'collab',
     permissions: request.session.permissions,
     csrfToken : request.csrfToken(),
   })

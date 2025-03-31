@@ -7,6 +7,21 @@
     }
 
     function closePopup() {
+        document.getElementById("name").value = null;
+        document.getElementById("position").value = ""
+        document.getElementById("empresa").value = "";
+        document.getElementById("mail-input").value = null;
+        document.getElementById("location").value = null;
+        document.getElementById("modality").value = "";
+        document.getElementById("phone-input").value = null;
+        document.getElementById("last-name").value = null;
+        document.getElementById("department").value = "";
+        document.getElementById("role").value = "";
+        document.getElementById("birthday").value = null;
+        document.getElementById("entry-date").value = null;
+        document.getElementById("rfc-input").value = null;
+        document.getElementById("curp-input").value = null;
+
         const popup = document.getElementById("pop-up");
         if (popup) {
             popup.style.display = "none";
