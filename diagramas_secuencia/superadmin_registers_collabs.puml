@@ -7,8 +7,6 @@ boundary collabs.routes.js as collabsRoute
 boundary collabs.ejs as CollabsView
 boundary saveSucces.ejs as saveSucces
 control collabs.controller.js as collabsController
-entity collab.model as collabModel
-database Nebula as nebula
 
 activate superAdmin
 superAdmin -> generalRoute : GET/view_collabs
@@ -23,20 +21,59 @@ collabsRoute -> collabsController: get_collabs(request, response)
 deactivate collabsRoute
 activate collabsController
 
-collabsController -> nebula: fetchAll()
-deactivate collabsController
+database Nebula as nebula
+entity Collaborator as collabModel
+entity Department as depModel
+entity Company as companyModel
+entity Role as roleModel
+
+collabsController ->> depModel: fetchAllDep()
+activate depModel
+depModel ->> nebula: execute(SELECT DISTINCT id_departamento, nombre_departamento FROM departamento ORDER BY nombre_departamento ASC)
+activate nebula
+nebula -->> depModel: rowsDep
+deactivate nebula
+depModel -->> collabsController: rowsDep
+deactivate depModel
+
+collabsController ->> companyModel: fetchAllEmp()
+activate companyModel
+companyModel ->> nebula: execute(SELECT DISTINCT nombre_empresa FROM empresa ORDER BY nombre_empresa ASC)
+activate nebula
+nebula -->> companyModel: rowsEmp
+deactivate nebula
+companyModel -->> collabsController: rowsEmp
+deactivate companyModel
+
+collabsController ->> roleModel: fetchAllRol()
+activate roleModel
+roleModel ->> nebula: execute(SELECT DISTINCT id_rol FROM rol ORDER BY id_rol ASC)
+activate nebula
+nebula -->> roleModel: rowsRol
+deactivate nebula
+roleModel -->> collabsController: rowsRol
+deactivate roleModel
+
+collabsController ->> collabModel: fetchAllColabPues(), fetchAllColabMod()
+activate collabModel
+collabModel ->> nebula: execute(SELECT DISTINCT puesto FROM colaborador ORDER BY puesto ASC); \n execute(SELECT DISTINCT modalidad FROM colaborador ORDER BY modalidad ASC); 
 activate nebula
 
-nebula --> collabsController: response.render('collabs.ejs')
+nebula -->> collabModel: rowsColP,rowsColM
 deactivate nebula
 
-collabsController -> CollabsView: response.render
+collabModel -->> collabsController: rowsColP,rowsColM
+deactivate collabModel
+
+collabsController -> CollabsView: response.render('collabs.ejs', rowsColP, rowsColM, \n rowsDep, rowsEmp, rowsRol)
+deactivate collabsController
+activate CollabsView
 
 CollabsView -> superAdmin: HTML
+deactivate CollabsView
+activate superAdmin
 
 superAdmin -> generalRoute : POST/view_collabs
-
-superAdmin -> collabsRoute: POST/addCollabs
 deactivate superAdmin
 activate generalRoute
 
@@ -44,27 +81,35 @@ generalRoute -> collabsRoute: collabs_routes
 deactivate generalRoute
 activate collabsRoute
 
-collabsRoute -> collabsController: post_collabs
+collabsRoute -> collabsController: post_collabs(request, response)
+deactivate collabsRoute
+activate collabsController
 
-collabsController -> collabModel: new Model(request.body.valor)
-' activate collabModel
+create entity new_Colab as collabM
+entity Collaborator as collabModel
 
-collabModel -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
-' activate nebula
+collabsController -> collabM: new Collaborator(request.body.nombre, request.body.apellidos, request.body.fechaNacimiento,  \n request.body.telefono, request.body.puesto, request.body.email, request.body.fechaIngreso, request.body.ubicacion,  \n request.body.modalidad, request.body.curp, request.body.rfc)
+activate collabM
 
-nebula -->> collabModel: Query ok
-' deactivate nebula
+collabsController ->> collabM: save(password)
+database Nebula as nebula
 
-collabModel -->> collabsController: promesa
-' deactivate collabModel
+collabM -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
+activate nebula
 
-collabsController -> saveSucces: response.render
-' deactivate collabsController
-' activate saveSucces
+nebula -->> collabM: Query ok
+deactivate nebula
+
+collabM -->> collabsController: promesa
+deactivate collabM
+
+collabsController -> saveSucces: response.render('saveSucces.ejs')
+deactivate collabsController
+activate saveSucces
+
 
 saveSucces -> superAdmin: HTML
-' deactivate saveSucces
-' activate superAdmin
-' deactivate superAdmin
+deactivate saveSucces
+activate superAdmin
 
 @enduml
