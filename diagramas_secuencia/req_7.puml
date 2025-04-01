@@ -1,0 +1,39 @@
+@startuml REQ_7
+autonumber
+actor Collaborator as C 
+boundary general.routes.json as Route
+boundary home.ejs as home
+control home.controller.js as HController
+entity holiday_info.model as HModel
+database Nebula as db
+actor GoogleCalendarAPI as GoogleAPI
+
+' --- Consultar días feriados desde la BD ---
+activate C
+C -> Route : GET /
+deactivate C 
+
+activate Route
+Route -> HController : get_holiday_info()
+deactivate Route
+
+activate HController
+HController -> HModel : fetchAll()
+deactivate HController
+
+activate HModel 
+HModel -> db : SELECT fecha_inicio, fecha_fin FROM evento
+db -->> HModel : holiday_dates
+HModel -->> HController : holiday_dates
+deactivate HModel
+
+activate HController
+HController -> home : response.render
+deactivate HController
+
+' --- Mostrar datos en Google Calendar (Frontend) ---
+activate home
+home -> C : Show updated calendar
+deactivate home
+
+@enduml

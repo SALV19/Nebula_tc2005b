@@ -1,0 +1,19 @@
+body{
+    background-color: #242424;
+}
+.column-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    gap: 1vw;
+    font-size: small;
+}
+
+.column {
+    display: flex;
+    flex-direction: column;
+    flex: 1; /* Hace que las columnas tengan tamaños flexibles */
+    margin-top: 5rem;
+    margin-left: 7rem;
+}
+

@@ -1,0 +1,104 @@
+.calendar {
+    width: 50rem;
+    height: 45rem;
+    /* border: 2px solid white; Make the border visible */
+    /* background-color: #2c3e50; Dark background */
+    color: white; /* Text color */
+    border-radius: 10px; /* Rounded corners */
+    padding: 10px;
+}
+
+.fc-toolbar-title{
+    font-weight: bold;
+    font-size: 3rem; /* Large size */
+    text-transform: uppercase; /* Optional: Make text uppercase */
+    letter-spacing: 1px; /* Slight spacing for a cleaner look */
+    color: #FFFF; /* Change title color */
+    text-align: center; /* Ensure it's centered */
+}
+
+/* Make event text and background colors more readable */
+.fc-event {
+    background-color: #485FC7 !important;
+    /* border-color: #2980b9 !important; */
+    color: white !important;
+    font-size: 0.7rem;
+    padding: 0.2rem;
+    border-radius: 5px;
+
+}
+
+/* Change the current day highlight */
+.fc-day-today {
+    background-color: #484848 !important;
+}
+
+/* Change the day numbers color */
+.fc-daygrid-day-number {
+    color: white;
+}
+
+.fc-col-header-cell{
+    background-color: #DBDBDB;
+}
+
+.fc-col-header-cell-cushion {
+    color: #252525 !important; 
+    font-weight: bold;
+}
+
+/* Improve event hover effect */
+.fc-event:hover {
+    opacity: 0.8;
+    transform: scale(1.05);
+    transition: all 0.2s ease-in-out;
+}
+
+/* Style the header (where month/week/day buttons are) */
+.fc-toolbar {
+    background-color: none;
+    color: white;
+}
+
+.fc-scrollgrid-sync-inner{
+    text-align: center;
+}
+
+/* General button container */
+.fc-button-group {
+    background-color: #DBDBDB !important;
+    border-radius: 5px;
+    padding: 5px;
+}
+
+/* General button styling */
+.fc-button, 
+.fc-button-primary, 
+.fc-prev-button, 
+.fc-next-button, 
+.fc-today-button, 
+.fc-timeGridWeek-button {
+    background-color: #DBDBDB !important;
+    color: black !important;
+    border: none !important;
+    border-radius: 2px;
+    font-weight: bold;
+    transition: background-color 0.2s ease-in-out;
+}
+
+/* Active button (currently selected view) */
+.fc-button-active {
+    background-color: #A9A9A9 !important;
+    color: white !important;
+}
+
+/* Hover effect */
+.fc-button:hover {
+    background-color: #BFBFBF !important;
+}
+
+/* Disabled button effect */
+.fc-button:disabled {
+    background-color: #F0F0F0 !important;
+    color: gray !important;
+}

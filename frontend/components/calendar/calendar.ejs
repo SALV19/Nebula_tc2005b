@@ -1,0 +1,40 @@
+<link rel="stylesheet" href="/css/calendar.css" />
+<body>
+  <div id='calendar' class="calendar"></div>
+</body>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      themeSystem: 'bootstrap5', 
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: [
+        {
+          title: 'Meeting',
+          start: '2025-04-01T10:00:00',
+          end: '2025-04-01T12:00:00',
+          backgroundColor: '#e74c3c', // Red
+          borderColor: '#c0392b'
+        },
+        {
+          title: 'Project Deadline',
+          start: '2025-04-10',
+          backgroundColor: '#2ecc71', // Green
+          borderColor: '#27ae60'
+        }
+      ],
+      eventClick: function(info) {
+        alert('Event: ' + info.event.title);
+      }
+    });
+
+    calendar.render();
+  });
+</script>
