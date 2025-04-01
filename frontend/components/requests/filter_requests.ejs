@@ -1,4 +1,9 @@
 <script>
+  const filter = document.querySelector('#filter')
+  // filter.addEventListener('mouseover', () => {
+  //   document.querySelector(".dropdown-content").style.display = 'block'
+  // })
+  
   const checkboxes = document.querySelectorAll('input[type="checkbox"]');
   checkboxes.forEach((checkbox) => {
     checkbox.addEventListener("click", () => {
@@ -20,6 +25,11 @@
       checkbox.checked = false;
       checkbox.classList.remove("selected_box");
     });
+    document.querySelector(".dropdown-content").style.display = 'none'
+    setTimeout(() => {
+      console.log("Time out")
+      document.querySelector(".dropdown-content").removeAttribute('style')
+    }, 100)
   });
 
   let filter_options = {};
