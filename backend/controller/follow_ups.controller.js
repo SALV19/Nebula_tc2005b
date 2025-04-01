@@ -88,6 +88,11 @@ exports.post_meeting = (request, response, next) => {
   const fecha = request.body.fechaAgendada;
   const hora = request.body.horaAgendada;
   const emailCollab =  Collab.fetchEmail(id_colaborador);
+  const repeating = request.body.repeating;
+  const occurrences = request.body.occurrences;
+
+  console.log("occurrences");
+  console.log(occurrences);
 
   Collab.fetchEmail(id_colaborador)
     .then(emailCollab => {
@@ -120,7 +125,9 @@ exports.post_meeting = (request, response, next) => {
             fecha,
             startTimeRFC,
             endTimeRFC,
-            emailCollab
+            emailCollab, 
+            repeating,
+            occurrences,
           );
         });
   })
