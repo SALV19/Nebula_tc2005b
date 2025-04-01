@@ -49,6 +49,29 @@ module.exports = class Requests {
       [email]
     );
   }
+
+  // Obtener cantidad de días aprobados de vacaciones
+  static async fetchApprovedVacationDays(email) {
+    return db.execute(`
+      SELECT ds.fecha
+      FROM solicitudes_falta sf
+      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
+      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+      WHERE c.email = ? AND sf.estado = 1 AND sf.tipo_falta = 'Vacation'
+    `, [email]);
+  }
+
+  // Obtener cantidad de días pendientes de vacaciones
+  static async fetchPendingVacationDays(email) {
+    return db.execute(`
+      SELECT ds.fecha
+      FROM solicitudes_falta sf
+      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
+      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+      WHERE c.email = ? AND sf.estado = 0 AND sf.tipo_falta = 'Vacation'
+    `, [email]);
+  }
+
   static async fetchTeamRequests(email, offset, filter = null) {
     if (!filter) {
       return db.execute(
