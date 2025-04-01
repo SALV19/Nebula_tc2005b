@@ -17,6 +17,7 @@
   const cancel = document.querySelector("#cancel_filter_btn");
   const apply = document.querySelector("#apply_filter_btn");
 
+  let filter_options = {};
   cancel.addEventListener("click", () => {
     end.value = undefined;
     start.value = undefined;
@@ -25,15 +26,14 @@
       checkbox.checked = false;
       checkbox.classList.remove("selected_box");
     });
+    filter_options = {}
     document.querySelector(".dropdown-content").style.display = 'none'
     setTimeout(() => {
-      console.log("Time out")
       document.querySelector(".dropdown-content").removeAttribute('style')
     }, 100)
     get_info(0, null)
   });
 
-  let filter_options = {};
   apply.addEventListener("click", () => {
     filter_options = {
       start_date: start.value,
@@ -45,7 +45,6 @@
 
     document.querySelector(".dropdown-content").style.display = 'none'
     setTimeout(() => {
-      console.log("Time out")
       document.querySelector(".dropdown-content").removeAttribute('style')
     }, 100)
     get_info(0, filter_options)
