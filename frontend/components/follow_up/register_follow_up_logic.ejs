@@ -10,7 +10,7 @@
       let content = " ";
       content += ` 
       <div class="container-scroll">
-        <form action="/follow_ups/Register/save" method="POST">
+        <form action="/follow_ups/Register/save" method="POST" id="form_method">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="column-container">
               <section class='column'>
@@ -142,7 +142,7 @@
           </div>
 
           <div class="button-container">
-              <button id="submitButton" class="approve-button" type="submit">Submit</button>
+              <button id="submitButton" class="approve-button">Submit</button>
           </div>
         </form>
       </div>
@@ -281,7 +281,7 @@
             errorMessage.classList.add("show");
           };
         });
-        
+
         submitButton.addEventListener("click", function (event) {
           event.preventDefault(); 
 
@@ -298,9 +298,44 @@
                  confirmButtonColor: `#59A250`,
                  cancelButtonColor: "#7066E0",
                  confirmButtonText: "Yes, update it!"
-               }).then()
-          }
+               }).then((result) => {
+                  if (result.isConfirmed) { 
+                    try {
+                        document.getElementById("form_method").submit();
+                    } catch (error) {  // ✅ Ahora capturamos correctamente el error
+                        console.log(error);
+                        Swal.fire({
+                            title: "Problem",
+                            text: `There was an error saving the evaluation`,
+                            icon: "error",
+                            confirmButtonColor: `#59A250`,
+                            cancelButtonColor: "#7066E0",
+                            confirmButtonText: "OK",  // ✅ Botón corregido
+                        });
+                    }
+                  }
+                })
+            }
+          });
+              
+      document.querySelectorAll(".submitButton").forEach((button) => {
+        button.addEventListener("click", function () {
+          const collabID = document.getElementById("collaborators"); 
+          const dateSelected = document.getElementById("filter_end"); 
+
+          Swal.fire({
+            title: "Are you sure?",
+            text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
+            cancelButtonColor: "#7066E0",
+            confirmButtonText: "Yes, update it!"
+          })
+        });
       });
+
+
     }
 
     

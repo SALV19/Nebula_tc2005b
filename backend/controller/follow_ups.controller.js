@@ -77,6 +77,7 @@ exports.post_follow_ups = async (req, res) => {
 }
 
 exports.get_followUps_info = (request, response, next) => {
+  
   settings.selectedOption = 'Collaborators';
 
   const idColaborador = request.session.id_colaborador;
@@ -113,7 +114,6 @@ exports.get_followUps_info = (request, response, next) => {
         const indicator = indicators[0].map(label => label.indicador);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
-
         response.json({
           selectedOption: 'Collaborators',
           fechasAgendadas,
@@ -122,7 +122,16 @@ exports.get_followUps_info = (request, response, next) => {
           indicadores,
           metricas
         });
-      });
+      })
+      .catch(
+        response.status(501).json({
+          selectedOption: 'Collaborators',
+          fechasAgendadas: null,
+          pregunta: null,
+          respuestas: null,  
+          indicadores: null,
+          metricas: null,
+        }));
     })
     .catch(error => {
       console.log(error);

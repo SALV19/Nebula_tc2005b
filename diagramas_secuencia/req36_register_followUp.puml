@@ -58,9 +58,10 @@ deactivate IModel
 
 SController -> S : JSON response (colaboradores, questions, indicator)
 deactivate SController
+deactivate S
 
 ' ---- REGISTER FOLLOW UP ----
-S -> Route : fetch('/post_follow_ups', { method: 'POST' })
+S -> Route : POST /follow_ups
 
 activate Route
 Route -> SController : post_follow_ups()
@@ -72,7 +73,7 @@ SController -> QFollow: new QuestionsFollow(id_colaborador, fechaAgendada)
 SController -> QFollow: save()
 
 activate QFollow
-QFollow -> db: INSERT INTO evaluaciones_de_seguimiento
+QFollow -> db: `SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento WHERE id_colaborador = ? ORDER BY fechaAgendada DESC`,idColaborador)
 activate db
 db -->> QFollow: id_evaluacion
 deactivate db
@@ -85,7 +86,7 @@ SController -> Questions: new Questions(id_pregunta, id_evaluation, respuesta)
 SController -> Questions : save()
 
 activate Questions
-Questions -> db: INSERT INTO respuestas_evaluacion
+Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta) VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
 activate db
 db -->> Questions : Query OK
 deactivate db 
@@ -97,17 +98,16 @@ SController -> IMetrics : new Indicators_metrics(id_evaluation, id_indicador, va
 SController -> IMetrics : save()
 
 activate IMetrics
-IMetrics -> db : INSERT INTO indicadores_metricas
+IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length){throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( 'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
+
 activate db
 db -->> IMetrics : Query OK
 deactivate db 
 IMetrics -->> SController: Promesa
 deactivate IMetrics 
 
-SController -> S : JSON response ("Evaluación guardada correctamente", id_evaluation)
+SController -> S : res.redirect('/follow_ups');
 deactivate SController
 
-S -> S : window.location.href = "/follow_ups"
-deactivate S
 
 @enduml
