@@ -70,7 +70,6 @@ exports.get_followUps_info = (request, response, next) => {
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
-
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -93,10 +92,6 @@ exports.get_followUps_info = (request, response, next) => {
         const indicadores = indicators;
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
-        const value_metric = metrics[0].map(value => value.valor_metrica);
-        const id_indicador = metrics[0].map(value => value.id_indicador);
-
-        const indicator = indicators[0].map(label => label.indicador);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
 
