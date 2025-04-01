@@ -1,8 +1,6 @@
 .calendar {
     width: 50rem;
     height: 45rem;
-    /* border: 2px solid white; Make the border visible */
-    /* background-color: #2c3e50; Dark background */
     color: white; /* Text color */
     border-radius: 10px; /* Rounded corners */
     padding: 10px;
@@ -20,12 +18,10 @@
 /* Make event text and background colors more readable */
 .fc-event {
     background-color: #485FC7 !important;
-    /* border-color: #2980b9 !important; */
     color: white !important;
     font-size: 0.7rem;
     padding: 0.2rem;
-    border-radius: 5px;
-
+    border-radius: 0.4rem;
 }
 
 /* Change the current day highlight */
@@ -35,7 +31,11 @@
 
 /* Change the day numbers color */
 .fc-daygrid-day-number {
-    color: white;
+    color: #FFFF;
+    text-align: center !important;
+    display: block; /* Asegura que ocupe todo el ancho */
+    width: 100%; /* Se ajusta al contenedor */
+    font-size: 1rem; /* Ajusta el tamaño si es necesario */
 }
 
 .fc-col-header-cell{
@@ -101,4 +101,35 @@
 .fc-button:disabled {
     background-color: #F0F0F0 !important;
     color: gray !important;
+}
+
+/* Quita bordes de la tabla y las celdas */
+.fc-daygrid,
+.fc-daygrid-day,
+.fc-daygrid-day-frame,
+.fc-scrollgrid,
+.fc-scrollgrid-sync-table,
+.fc-scrollgrid-section,
+.fc-daygrid-body tr,
+.fc-daygrid-body td,
+.fc-col-header-cell,
+.fc-daygrid-body td.fc-day {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+    border-collapse: collapse !important;
+}
+
+/* Elimina los bordes de los días en la vista mensual */
+.fc-daygrid-day-frame {
+    background-clip: content-box !important; 
+}
+
+/* Elimina posibles líneas en los encabezados */
+.fc-scrollgrid-section > *,
+.fc-scrollgrid-sync-inner,
+.fc-daygrid-day-number,
+.fc-day-today,
+.fc-col-header-cell {
+    border: none !important;
 }
