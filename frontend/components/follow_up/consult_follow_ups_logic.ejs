@@ -42,11 +42,10 @@ function get_average_progress(data, fecha) {
     
 function TableFollowUps(data) {
     const table = document.querySelector('#content-section');
-    let table_content = `<div class="container-scroll">
-    <table class="table is-fullwidth"">
-
-    
-<tbody>`;
+    let table_content = `
+    <div class="container-scroll">
+        <table class="table is-fullwidth"">
+            <tbody>`;
 
 
     data.fechasAgendadas.forEach((fecha, idx) => { 

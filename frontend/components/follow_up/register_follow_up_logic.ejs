@@ -1,4 +1,5 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
       get_info_FU()
@@ -9,12 +10,12 @@
       let content = " ";
       content += ` 
       <div class="container-scroll">
-        <form action="/follow_ups/Register/save" method="POST">
+        <form action="/follow_ups/Register/save" method="POST" id="form_method">
           <input type="hidden" name="_csrf" value="<%= csrfToken %>">
           <div class="column-container">
               <section class='column'>
               <div name="nombre">
-                  <label class="is-size-6 styling" for="collaborators">Employee</label>
+                  <label class="styling" for="collaborators">Employee</label>
                   <select id="collaborators" class="line-input text-style" name="id_colaborador">
                   <option value="default" disabled selected>Select Collaborator</option>
       `
@@ -38,10 +39,10 @@
       content += `
       <div>
         <label class="is-size-6 styling">Date</label>
-        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value=${new Date().toISOString().split('T')[0]}/ >
+        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value="${new Date().toISOString().split('T')[0]}">
         <p id="dateError" class="text-hidden"> Select a valid date </p>
-
       </div>
+
       <div id="questions-container"> 
       ` 
       for(let i = 0; i < data.questions.length; i++) {
@@ -139,8 +140,9 @@
       content += `
             </div>
           </div>
+
           <div class="button-container">
-              <button id="submitButton" class="approve-button" type="submit">Submit</button>
+              <button id="submitButton" class="approve-button">Submit</button>
           </div>
         </form>
       </div>
@@ -151,7 +153,22 @@
 
     }
 
+
     function logicRegister () {
+      
+      const progressBars = document.querySelectorAll(".progress-bar");
+      const progressTexts = document.querySelectorAll(".progress-text");
+      const questions = document.querySelectorAll("line-questions");
+      const questionsAnswer = document.querySelectorAll("show-question-container");
+
+      const indicatorLabels = [];
+      for (let i = 0; i < progressTexts.length; i++){
+        indicatorLabels.push(progressTexts[i].textContent.trim());
+      }
+
+      let indicatorValues = new Array(indicatorLabels.length).fill(0);
+
+
           document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
               toggleIcon.addEventListener("click", (event) => {
                   const questionContainer = event.target.closest(".question-container");
@@ -163,18 +180,6 @@
                   }
               });
           });
-
-
-
-          const progressBars = document.querySelectorAll(".progress-bar");
-          const progressTexts = document.querySelectorAll(".progress-text");
-
-          const indicatorLabels = [];
-          for (let i = 0; i < progressTexts.length; i++){
-            indicatorLabels.push(progressTexts[i].textContent.trim());
-          }
-
-          let indicatorValues = new Array(indicatorLabels.length).fill(0);
 
           const ctx = document.getElementById("myRadarChart")
           ctx.getContext("2d");
@@ -210,7 +215,7 @@
                     color: "#FFFF",  // Changes the label color
                     font: {
                       size: 15,
-                      weight: "italic bold"
+                      weight: "italic"
                     }
                   }
                 }
@@ -232,7 +237,6 @@
 
           for(let i = 0; i < progressBars.length ; i++){
             progressBars[i].addEventListener('input',updateValues);
-
           };
 
           //Show info message for progress bars
@@ -256,18 +260,9 @@
         let lengthV = document.getElementById("lenghtVal");
 
         let today = new Date(); 
-        today.setDate(today.getDate() - 1);  
+        today.setDate(today.getDate());  
 
         let currentDate = today.toISOString().split('T')[0]; 
-
-         // VALIDATE DATE
-        selectDate.addEventListener("change", function(){
-          if(selectDate.value >= currentDate){
-            dateError.classList.remove("show");
-          } else {
-            dateError.classList.add("show");
-          };
-        });
 
          // VALIDATE COLLAB
         collaboratorSelect.addEventListener("change", function(){
@@ -277,27 +272,62 @@
             errorMessage.classList.add("show");
           };
         });
-        
-        // VALIDATE FORM
+
         submitButton.addEventListener("click", function (event) {
-          // Validate dates
-          if (selectDate.value < currentDate){
-            event.preventDefault();
-            dateError.classList.add("show");
-          } else {
-            dateError.classList.remove("show");
-          };
+          event.preventDefault(); 
 
           if (collaboratorSelect.value === "default"){
-            event.preventDefault();
-            errorMessage.classList.add("show");
-          } else {
-            errorMessage.classList.remove("show");
-          };
-        });
-      }
+               event.preventDefault();
+               errorMessage.classList.add("show");
+             } else {
+               errorMessage.classList.remove("show");
+               Swal.fire({
+                 title: "Are you sure?",
+                 text: `Do you want to register this evaluation?`,
+                 icon: "question",
+                 showCancelButton: true,
+                 confirmButtonColor: `#59A250`,
+                 cancelButtonColor: "#7066E0",
+                 confirmButtonText: "Yes, update it!"
+               }).then((result) => {
+                  if (result.isConfirmed) { 
+                    try {
+                        document.getElementById("form_method").submit();
+                    } catch (error) { 
+                        console.log(error);
+                        Swal.fire({
+                            title: "Problem",
+                            text: `There was an error saving the evaluation`,
+                            icon: "error",
+                            confirmButtonColor: `#59A250`,
+                            confirmButtonText: "OK",  
+                        });
+                    }
+                  }
+                })
+            }
+          });
+              
+      document.querySelectorAll(".submitButton").forEach((button) => {
+        button.addEventListener("click", function () {
+          const collabID = document.getElementById("collaborators"); 
+          // const dateSelected = document.getElementById("filter_end"); 
 
-    
+          Swal.fire({
+            title: "Are you sure?",
+            text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
+            icon: "question",
+            showCancelButton: true,
+            confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
+            cancelButtonColor: "#7066E0",
+            confirmButtonText: "Yes, update it!"
+          })
+        });
+      });
+
+
+    }
+
     
     const get_info_register = () => {
       const csrf = document.getElementById('_csrf').value
