@@ -1,0 +1,6 @@
+.container-reports{
+    display: flex;
+    margin-left: 7rem;
+    flex-wrap: wrap;
+}
+

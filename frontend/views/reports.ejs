@@ -1,0 +1,27 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/reports.css">
+
+<div class="container-reports">
+    <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+
+    <div class="column">
+        <select name="collab" id="collab_reports"></select>
+    </div>
+    <div class="column">
+        Departmet
+    </div>
+    <div class="column">
+        Company
+    </div>
+    <div class="column">
+        period
+    </div>
+    <div class="column">
+        Save
+    </div>
+        
+
+
+
+</div>
+<%- include('includes/_footer.ejs') %>
