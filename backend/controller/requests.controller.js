@@ -6,7 +6,6 @@ exports.update_estado = (req, res) => {
   // console.log('Sesion', req.session);
   // console.log('Estado', req.body.estado);
   // console.log('ID: ', req.body.id_solicitud_falta);
-  
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador);
   res.redirect("/requests");
 };
