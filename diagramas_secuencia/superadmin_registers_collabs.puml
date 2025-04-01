@@ -1,11 +1,12 @@
 @startuml REQ-29
 autonumber
 actor superAdmin
+boundary saveSucces.ejs as saveSucces
+
 boundary general.routes.js as generalRoute
 boundary collabs.routes.js as collabsRoute
 
 boundary collabs.ejs as CollabsView
-boundary saveSucces.ejs as saveSucces
 control collabs.controller.js as collabsController
 
 activate superAdmin
@@ -60,12 +61,11 @@ collabModel ->> nebula: execute(SELECT DISTINCT puesto FROM colaborador ORDER BY
 activate nebula
 
 nebula -->> collabModel: rowsColP,rowsColM
-deactivate nebula
 
 collabModel -->> collabsController: rowsColP,rowsColM
 deactivate collabModel
 
-collabsController -> CollabsView: response.render('collabs.ejs', rowsColP, rowsColM, \n rowsDep, rowsEmp, rowsRol)
+collabsController -> CollabsView: response.render('collabs.ejs', {...settings, permissions: request.session.permissions,\n csrfToken: request.csrfToken(),puesto: rowsColP, modalidad: rowsColM,\n empresa: rowsEmp,departamento: rowsDep,rol: rowsRol,successData});)
 deactivate collabsController
 activate CollabsView
 
@@ -73,9 +73,15 @@ CollabsView -> superAdmin: HTML
 deactivate CollabsView
 activate superAdmin
 
-superAdmin -> generalRoute : POST/view_collabs
+superAdmin -> saveSucces: response.render('saveSucces.ejs')
+deactivate collabsController
+activate saveSucces
+deactivate superAdmin
+
+saveSucces -> generalRoute : POST/view_collabs
 deactivate superAdmin
 activate generalRoute
+deactivate saveSucces
 
 generalRoute -> collabsRoute: collabs_routes
 deactivate generalRoute
@@ -85,16 +91,30 @@ collabsRoute -> collabsController: post_collabs(request, response)
 deactivate collabsRoute
 activate collabsController
 
+create entity new_Equipo as equipobM
+collabsController -> equipobM: new Equipo(idcolab, request.body.id_departamento, request.body.id_rol)
+activate equipobM
+collabsController ->> equipobM: save( )
+equipobM -> nebula: execute('INSERT INTO equipo (id_colaborador, id_rol, id_departamento) VALUES(?,?,?)', \n [id_colaborador, this.id_r, this.id_dep])
+activate nebula
+
+nebula -->> equipobM: Query ok
+deactivate nebula
+
+equipobM -->> collabsController: promesa
+deactivate equipobM
+
+
 create entity new_Colab as collabM
 entity Collaborator as collabModel
 
-collabsController -> collabM: new Collaborator(request.body.nombre, request.body.apellidos, request.body.fechaNacimiento,  \n request.body.telefono, request.body.puesto, request.body.email, request.body.fechaIngreso, request.body.ubicacion,  \n request.body.modalidad, request.body.curp, request.body.rfc)
+collabsController -> collabM: new Collaborator(password, request.body.nombre, request.body.apellidos, request.body.fechaNacimiento,  \n request.body.telefono, request.body.puesto, request.body.email, request.body.fechaIngreso, \n request.body.ubicacion, request.body.modalidad, request.body.curp, request.body.rfc)
 activate collabM
 
-collabsController ->> collabM: save(password)
+collabsController ->> collabM: save( )
 database Nebula as nebula
 
-collabM -> nebula: execute("INSERT INTO Modelo(?)", this.valor)
+collabM -> nebula: execute(`INSERT INTO collaborator (id_colaborador, nombre, apellidos, fechaNacimiento, \n telefono, puesto, email, contrasena, fechaIngreso, ubicacion, modalidad, curp, rfc) \n VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`, \n [this.nombre, this.apellidos, this.fechaNacimiento, this.telefono,\n this.puesto, this.email, password, this.fechaIngreso, this.ubicacion,\n this.modalidad, this.curp, this.rfc])
 activate nebula
 
 nebula -->> collabM: Query ok
@@ -103,13 +123,13 @@ deactivate nebula
 collabM -->> collabsController: promesa
 deactivate collabM
 
-collabsController -> saveSucces: response.render('saveSucces.ejs')
+collabsController -> CollabsView: response.redirect("/view_collabs")
 deactivate collabsController
-activate saveSucces
+activate CollabsView
 
-
-saveSucces -> superAdmin: HTML
+CollabsView -> superAdmin: HTML
 deactivate saveSucces
 activate superAdmin
+deactivate CollabsView
 
 @enduml
