@@ -2,7 +2,9 @@
 <link rel="stylesheet" href="/css/calendario">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
-
+  document.addEventListener("DOMContentLoaded", () => {
+    get_info(0, null)
+  })
   
   function formatDate(date) {
     const d = new Date(date);
@@ -113,21 +115,6 @@
           additionalRow.style.display = "table-row";
           caret.classList.add('bi-caret-down-fill')
           caret.classList.remove('bi-caret-right-fill')
-
-          // const calendarEl = document.getElementById(`calendar_${idx}`)
-          // const calendar = new FullCalendar.Calendar(calendarEl, {
-          //   initialView: 'dayGridMonth',
-          //   initialDate: data.requests[0][idx].start.split('T')[0],
-          //   events: [
-          //     {
-          //       start: data.requests[0][idx].start.split('T')[0],
-          //       end: data.requests[0][idx].end.split('T')[0],
-          //       display: 'background',
-          //       backgroundColor: '#635d991' 
-          //     }
-          //   ],
-          // })
-          // calendar.render()
         } else {
           additionalRow.style.display = "none";
 

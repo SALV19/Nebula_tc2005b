@@ -43,17 +43,36 @@ exports.get_collabs_requests = async (request, response) => {
   });
 };
 
-exports.get_vacations = (request, response) => {
-  settings.selectedOption = "vacations";
-  response.json({
-    selectedOption: settings.selectedOption,
-  });
-};
-exports.get_abscences = (request, response) => {
-  settings.selectedOption = "vacations";
+exports.get_vacations = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const vacations = await Requests.fetchVacations(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
 
   response.json({
-    selectedOption: settings.selectedOption,
+    selectedOption: "vacations",
+    vacations,
+  });
+};
+exports.get_abscences = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const abscences = await Requests.fetchAbscences(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
+
+  response.json({
+    selectedOption: "abscences",
+    abscences,
   });
 };
 

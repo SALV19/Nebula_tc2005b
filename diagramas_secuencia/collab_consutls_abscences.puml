@@ -38,7 +38,7 @@ deactivate rm
 rc -->> crle : [vacations]
 deactivate rc
 crle -> crle : createTableVacAbsc(vacations)
-crle -> rpe : table.innerHTML = content
+crle ->> rpe : table.innerHTML = content
 deactivate crle
 rpe -> u : XML HTML
 deactivate rpe

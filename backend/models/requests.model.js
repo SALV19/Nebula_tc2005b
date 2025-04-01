@@ -158,6 +158,29 @@ module.exports = class Requests {
     }
   }
 
+  static fetchVacations(collab_id, offset, filter = null) {
+    return db.execute(`SELECT sf.*, MIN(ds.fecha), MAX(ds.fecha)
+                      FROM solicitudes_falta sf
+                      INNER JOIN colaborador c
+                        ON c.id_colaborador = sf.id_colaborador
+                      INNER JOIN dias_solicitados ds
+                        ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                      WHERE sf.tipo_falta = 'Vacation'
+                      AND sf.id_colaborador = ?
+                      GROUP BY sf.id_solicitud_falta;`, [collab_id]);
+  }
+  static fetchAbscences(collab_id, offset, filter = null) {
+    return db.execute(`SELECT sf.*, MIN(ds.fecha), MAX(ds.fecha)
+                      FROM solicitudes_falta sf
+                      INNER JOIN colaborador c
+                        ON c.id_colaborador = sf.id_colaborador
+                      INNER JOIN dias_solicitados ds
+                        ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                      WHERE sf.tipo_falta <> 'Vacation'
+                      AND sf.id_colaborador = ?
+                      GROUP BY sf.id_solicitud_falta;`, [collab_id]);
+  }
+
   static save_State(estado, id_solicitud_falta) {
     return db.execute(
       "UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?",
