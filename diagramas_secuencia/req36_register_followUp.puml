@@ -7,6 +7,7 @@ control register.controller.js as SController
 entity register_followUp.model as SModel
 entity indicators.model as IModel
 entity periodic_eval.model as QFollow
+entity periodic_eval.model as PEval
 entity collabs.model as cm
 entity questions_answers.model as Questions
 entity indicators_metrics.model as IMetrics
@@ -14,55 +15,52 @@ database Nebula as db
 
 ' --- GET COLLABS ---
 activate S
-S -> Route : GET /view_collabs
-deactivate S
+S -> Route : fetch (`/follow_ups/Register`)
 
 activate Route
-Route -> SController : get_register
+Route -> SController : get_register()
 deactivate Route
 
 activate SController
 SController ->> cm : fetchAllCompleteName()
 
 activate cm
-cm ->> db : SELECT id_colaborador, nombre, apellidos FROM colaborador
+cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
 
 activate db
-db ->> cm : info colaborador
+db ->> cm : colaboradores
 deactivate db
 
-cm -->> SController : promesa
+cm -->> SController : colaboradores
 deactivate cm 
 
-SController ->> QFollow : fetchAllQuestions()
+SController ->> PEval : fetchAllQuestions()
 
-activate QFollow 
-QFollow ->> db : SELECT * FROM preguntas_evaluacion
+activate PEval
+PEval ->> db : SELECT * FROM preguntas_evaluacion
 activate db
-db ->> QFollow : info preguntas_evaluacion
+db ->> PEval : questions
 deactivate db
 
-QFollow -->> SController : promesa
-deactivate QFollow 
+PEval -->> SController : questions
+deactivate PEval 
 
 
 ' --- GET INFO INDICADORES ---
 SController ->> IModel : fetchAllindicators()
 activate IModel 
-IModel ->> db : SELECT * FROM indicadores
+IModel ->> db : indicador
 activate db
-db -->> IModel : info indicadores
+db -->> IModel : indicador
 deactivate db
-IModel -->> SController : info indicadores
+IModel -->> SController : indicador
 deactivate IModel 
 
 SController -> S : JSON response (colaboradores, questions, indicator)
 deactivate SController
 
 ' ---- REGISTER FOLLOW UP ----
-activate S
 S -> Route : fetch('/post_follow_ups', { method: 'POST' })
-deactivate S
 
 activate Route
 Route -> SController : post_follow_ups()
@@ -109,7 +107,6 @@ deactivate IMetrics
 SController -> S : JSON response ("Evaluación guardada correctamente", id_evaluation)
 deactivate SController
 
-activate S
 S -> S : window.location.href = "/follow_ups"
 deactivate S
 

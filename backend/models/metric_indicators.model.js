@@ -24,7 +24,6 @@ module.exports = class Indicators_metrics {
         const placeholders = id_evaluacion.map(() => '?').join(', ');
         
         return db.execute(
-            `SELECT id_evaluacion, id_indicador, valor_metrica FROM metrica_indicadores 
-            WHERE id_evaluacion IN (${placeholders})`, id_evaluacion);
+            `SELECT id_evaluacion, id_indicador, valor_metrica FROM metrica_indicadores WHERE id_evaluacion IN (${placeholders})`, id_evaluacion);
     }
 }
