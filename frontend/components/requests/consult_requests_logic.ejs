@@ -1,11 +1,7 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
 <link rel="stylesheet" href="/css/calendario">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<script>
-  document.addEventListener("DOMContentLoaded", () => {
-    get_info(0, null)
-  })
-  
+<script>  
   function formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
@@ -25,6 +21,115 @@
     }
   }
 
+  function createTableAbscences(route, data) {
+    const table = document.querySelector('#requests_table')
+    let table_content = `<thead>
+    <tr>
+      <th >Start-date</th>
+      <th >End-date</th>
+      <th >Request Type</th>
+      <th >Status</th>      
+    </tr>
+  </thead>
+  <tbody >`
+    // Información por cada renglón de la tabla
+    data.abscences.forEach((d, idx) => {
+      console.log(data)
+      table_content += `<tr id='request' key='${idx}'>`;
+      table_content += `<td><i class="bi bi-caret-right-fill mr-4" id='caret'></i>${formatDate(d.start)}</td>`
+      table_content += `<td>${formatDate(d.end)}</td>`
+      table_content += `<td>${d.tipo_falta}</td>`
+      if (d.estado == 0) {
+        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+      }
+      else if (d.estado == 1) {
+        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+      }
+      else if (d.estado == 2) {
+        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+      }
+      // Contenido desplegable
+      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+                          <td colspan='6'>
+                            <div class='columns'>
+                              <div class="column is-half">
+                                <p><strong>Type: </strong>${d.tipo_falta}</p>
+                              </div>
+                              <div class="column">
+                                <p><strong>Reason: </strong></p>
+                                <p class='has-background-black p-3 box'>${d.descripcion}</p>
+                              </div>
+                              <div class="column">
+                                <div class="is-flex">
+                                  <p><strong>Location:</strong></p>
+                                  <p >${d.ubicacion}</p>
+                                </div>
+                                <div>
+                                  <button class="button is-link is-rounded small_btn" onclick="updateRequest(${d.id_solicitud_falta})">Update</button>
+                                </div>
+                              </div>
+                            </div>
+                          </td>
+                        </tr>`;
+      table.innerHTML = table_content
+    })
+    table_content += '</tbody>'
+    table.innerHTML = table_content
+
+    // Añade función para expandir el contenido extra
+    const entries = document.querySelectorAll('#request')
+    entries.forEach((node, idx) => {
+      node.addEventListener('click', (v) => {
+        if (v.target.classList.contains('bi-check-circle') || v.target.classList.contains('bi-x-circle')) {
+          accept_deny(v.target)
+          return 
+        }
+        
+        const additionalRow = document.getElementById(`additional-row-${idx}`)
+        const caret = document.querySelector('#caret')
+        
+        // hacer que en los botones de aceptar o rechazar no se expanda la vista
+        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
+        if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
+          return;
+        }
+
+        if (additionalRow.style.display === "none") {
+          additionalRow.style.display = "table-row";
+          caret.classList.add('bi-caret-down-fill')
+          caret.classList.remove('bi-caret-right-fill')
+        } else {
+          additionalRow.style.display = "none";
+
+          caret.classList.remove('bi-caret-down-fill')
+          caret.classList.add('bi-caret-right-fill')
+        }
+      })
+    })
+
+    document.querySelectorAll(".approve").forEach((button) => {
+      button.addEventListener("click", function () {
+        const postId = this.getAttribute("data-id"); // Get the ID from the button
+        const newValue = this.getAttribute("value"); // Get the value to update
+
+        Swal.fire({
+          title: "Are you sure?",
+          text: `Do you want to set this to ${Number(newValue) === 1 ? "Accept" : "Deny"}?`,
+          icon: "question",
+          showCancelButton: true,
+          confirmButtonColor: "#3085d6",
+          cancelButtonColor: "#d33",
+          confirmButtonText: "Yes, update it!"
+        }).then((result) => {
+          if (result.isConfirmed) {
+            updateField(postId, newValue);
+            get_info();
+          }
+        });
+      });
+    });
+  }
+
   // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
     const table = document.querySelector('#requests_table')
@@ -35,7 +140,6 @@
       <th >End-date</th>
       <th >Request-type</th>
       <th >Status</th>
-      <th >Action</th>
     </tr>
   </thead>
   <tbody >`
@@ -61,7 +165,6 @@
       }
       else if (d.estado == 1) {
         table_content += `<td> <p class='status has-background-success'>Accepted</p></td>
-        <td class="back"></td>
         </tr>
 `
       }
@@ -82,8 +185,10 @@
                                 ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
                               </div>
                               <div class="column">
-                                <p><strong>Location:</strong></p>
-                                <p class='is-underlined	'>${d.ubicacion}</p>
+                                <div class="is-flex">
+                                  <p><strong>Location:</strong></p>
+                                  <p >${d.ubicacion}</p>
+                                </div>                                
                               </div>
                             </div>
                           </td>
@@ -176,8 +281,15 @@
           console.error("Update error:", error);
         });
     }
-
-
+  }
+  function updateRequest(id) {
+    const csrf = document.getElementById('_csrf').value
+    const requestPopup = document.getElementById("requestPopup");
+    requestPopup.style.display = "flex";
+    
+    const updateForm = document.getElementById("requests_form");
+    console.log(updateForm)
+    updateForm.action = "/requests/update_request";
   }
 
   // Consulta a db para la información de solicitudes
@@ -196,9 +308,15 @@
         filter: filter,
       }),
     })
-    .then(response => response.json())
+    .then(response => {
+      return response.json()
+    })
     .then(data => {
-      createTableRequests(data)
+      if (route == 'Requests') {
+        createTableRequests(data)
+      } else {
+        createTableAbscences(route, data)
+      }
     })
     .catch(e => console.error(e))
   }
@@ -235,5 +353,9 @@
   })
   pagination_value.addEventListener('change', (v) => {
     get_info(pagination_value.value-1, filter_options ?? null)
+  })
+
+  document.addEventListener("DOMContentLoaded", () => {
+    get_info(0, null)
   })
 </script>

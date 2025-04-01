@@ -46,23 +46,22 @@ exports.get_collabs_requests = async (request, response) => {
 exports.get_vacations = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
-  const vacations = await Requests.fetchVacations(
+  const [abscences] = await Requests.fetchVacations(
     request.session.id_colaborador,
     offset,
     filter
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-
   response.json({
     selectedOption: "vacations",
-    vacations,
+    abscences,
   });
 };
 exports.get_abscences = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
-  const abscences = await Requests.fetchAbscences(
+  const [abscences] = await Requests.fetchAbscences(
     request.session.id_colaborador,
     offset,
     filter

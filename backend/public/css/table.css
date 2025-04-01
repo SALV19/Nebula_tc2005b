@@ -127,3 +127,13 @@ input[type=number] {
   background-color: #242424;
   border-bottom: 1px rgb(53, 58, 70) solid;
 }
+
+.non-overflow-string {
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.small_btn {
+  padding: 0.2rem 0.4rem;
+}

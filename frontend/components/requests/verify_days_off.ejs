@@ -109,6 +109,10 @@
     // Open the form
     openBtn.addEventListener("click", () => {
         requestPopup.style.display = "flex";
+        const updateForm = document.getElementById("requests_form");
+        
+        console.log(updateForm)
+        updateForm.action = "/requests/update_request";
     });
 
     requestType.addEventListener("change", () => {

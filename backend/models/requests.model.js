@@ -159,7 +159,7 @@ module.exports = class Requests {
   }
 
   static fetchVacations(collab_id, offset, filter = null) {
-    return db.execute(`SELECT sf.*, MIN(ds.fecha), MAX(ds.fecha)
+    return db.execute(`SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                       FROM solicitudes_falta sf
                       INNER JOIN colaborador c
                         ON c.id_colaborador = sf.id_colaborador
@@ -170,7 +170,7 @@ module.exports = class Requests {
                       GROUP BY sf.id_solicitud_falta;`, [collab_id]);
   }
   static fetchAbscences(collab_id, offset, filter = null) {
-    return db.execute(`SELECT sf.*, MIN(ds.fecha), MAX(ds.fecha)
+    return db.execute(`SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                       FROM solicitudes_falta sf
                       INNER JOIN colaborador c
                         ON c.id_colaborador = sf.id_colaborador
