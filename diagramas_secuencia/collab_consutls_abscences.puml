@@ -1,0 +1,46 @@
+@startuml
+actor User as u
+boundary general.routes.js as gr
+boundary requests.routes.js as rr
+boundary requests_page.ejs as rpe
+control consult_requests_logic.ejs as crle
+control requests.controller.js as rc
+entity requests.model as rm
+database Nebula as db
+
+activate u
+u -> gr : GET /requests
+deactivate u
+activate gr
+gr -> rc : get_requests()
+deactivate gr
+activate rc
+rc -> rpe : response.render('requests_page')
+deactivate rc
+activate rpe
+rpe -> u : HTML
+activate u
+rpe -> crle : get_info(offset=0, filter=0) {router = "Vacations"}
+activate crle 
+crle ->> rr : fetch(/requests/Vacations {offset, filter})
+activate rr
+rr -> rc : get_vacations()
+deactivate rr
+activate rc
+rc ->> rm : User.getVacations(collabId)
+activate rm
+rm ->> db : Get vacations for collaborator
+activate db
+db -->> rm : [vacations]
+deactivate db
+rm -->> rc : [vacations]
+deactivate rm
+rc -->> crle : [vacations]
+deactivate rc
+crle -> crle : createTableVacAbsc(vacations)
+crle -> rpe : table.innerHTML = content
+deactivate crle
+rpe -> u : XML HTML
+deactivate rpe
+
+@enduml 
