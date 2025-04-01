@@ -65,6 +65,7 @@ exports.post_follow_ups = async (req, res) => {
 
 exports.get_meeting = (request, response, next) => {
   console.log("entro a get_meeting");
+  const googleLogin = request.user ? 1 : 0;
   Collab.fetchAllCompleteName()
     .then(collabs => {
       const [rows, fieldData] = collabs;
@@ -72,6 +73,7 @@ exports.get_meeting = (request, response, next) => {
         permissions: request.session.permissions,
         selectedOption: 'meetings',
         colaboradores: rows, 
+        googleLogin: googleLogin,
         csrfToken: request.csrfToken()
       });
     })

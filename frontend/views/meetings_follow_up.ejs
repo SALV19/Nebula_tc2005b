@@ -50,7 +50,7 @@
                 <option value="month">Month</option>
                 <option value="year">Year</option>
               </select>
-              <p id="dateError" class="text-hidden"> Select a valid date </p>
+              <p id="dateError" class="text-hidden"> Select a valid option </p>
             </div>
 
             <br>
@@ -59,8 +59,20 @@
               <label class="is-size-6 styling">After</label>
               <input type="number" id="occurrences" name="occurrences" min="1" 
               max="12" placeholder="occurrences" class="line-input text-style">
-              <p id="dateError" class="text-hidden"> Select a valid date </p>
+              <p id="dateError" class="text-hidden"> Select a valid number (0-12) </p>
             </div> 
+
+            <% if (googleLogin == 0) { %>
+            <br>
+            <div class="control has-icons-left">
+              <a class="button is-white is-fullwidth" href="/log_in/auth/google"
+                >Log in with Google</a
+              >
+              <span class="icon is-small is-left">
+                <img src="/icons/google.webp" class="image is-24x24" />
+              </span>
+            </div>
+            <% } %>
 
             <div class="button-container">
                 <button id="submitButton" class="approve-button" type="submit">Submit</button>
