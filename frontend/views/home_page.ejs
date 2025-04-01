@@ -1,12 +1,17 @@
 <%- include('../components/nav_bar.ejs') %>
 <input type="hidden" id="_csrf" value=<%= csrfToken %>>
-
-<%- include ('../components/vacations_left.ejs')%>
-
-<%- include ('../components/current_absences.ejs', {
-  total_days: total_absences
-}) %>
-
-<%- include('includes/_footer.ejs') %>
+<div class="hero is-fullheight">
+  <% if (error) {%>
+    <%- include('../components/user_not_in_system.ejs') %>
+  <% } %>
+  
+  <%- include ('../components/vacations_left.ejs')%>
+  
+  <%- include ('../components/current_absences.ejs', {
+    total_days: total_absences
+  }) %>
+  
+  <%- include('includes/_footer.ejs') %>
+</div>
 
 

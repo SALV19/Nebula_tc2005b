@@ -1,12 +1,15 @@
 @startuml REQ_36
 autonumber
 actor SuperAdmin as S
-boundary general.routes.js as Route
+boundary followUp.routes.js as Route
 boundary register_followUp.ejs as Register
 control register.controller.js as SController
 entity register_followUp.model as SModel
-entity register_followUp.model as Model
+entity indicators.model as IModel
+entity periodic_eval.model as QFollow
 entity collabs.model as cm
+entity questions_answers.model as Questions
+entity indicators_metrics.model as IMetrics
 database Nebula as db
 
 ' --- GET COLLABS ---
@@ -15,14 +18,14 @@ S -> Route : GET /view_collabs
 deactivate S
 
 activate Route
-Route -> SController : get_collabs()
+Route -> SController : get_register
 deactivate Route
 
 activate SController
-SController ->> cm : fetchAll()
+SController ->> cm : fetchAllCompleteName()
 
 activate cm
-cm ->> db : execute(SELECT * FROM colaborador)
+cm ->> db : SELECT id_colaborador, nombre, apellidos FROM colaborador
 
 activate db
 db ->> cm : info colaborador
@@ -31,37 +34,34 @@ deactivate db
 cm -->> SController : promesa
 deactivate cm 
 
-SController ->> Model : fetchAll()
+SController ->> QFollow : fetchAllQuestions()
 
-activate Model 
-Model ->> db : execute(SELECT * FROM preguntas_evaluacion)
+activate QFollow 
+QFollow ->> db : SELECT * FROM preguntas_evaluacion
 activate db
-db ->> Model : info preguntas_evaluacion
+db ->> QFollow : info preguntas_evaluacion
 deactivate db
 
-Model -->> SController : promesa
-deactivate Model 
+QFollow -->> SController : promesa
+deactivate QFollow 
+
 
 ' --- GET INFO INDICADORES ---
-SController ->> Model : fetchAll()
-activate Model 
-Model ->> db : execute(SELECT * FROM indicadores)
+SController ->> IModel : fetchAllindicators()
+activate IModel 
+IModel ->> db : SELECT * FROM indicadores
 activate db
-db -->> Model : info indicadores
+db -->> IModel : info indicadores
 deactivate db
-Model -->> SController : info indicadores
-deactivate Model 
+IModel -->> SController : info indicadores
+deactivate IModel 
 
-SController -> Register : response.render
+SController -> S : JSON response (colaboradores, questions, indicator)
 deactivate SController
-
-activate Register
-Register -> S : HTML
-deactivate Register
 
 ' ---- REGISTER FOLLOW UP ----
 activate S
-S -> Route : POST /follow_ups
+S -> Route : fetch('/post_follow_ups', { method: 'POST' })
 deactivate S
 
 activate Route
@@ -69,24 +69,48 @@ Route -> SController : post_follow_ups()
 deactivate Route
 
 activate SController
-create SModel 
-SController -> SModel: new FollowUp()
-SController -> SModel : save()
+create QFollow
+SController -> QFollow: new QuestionsFollow(id_colaborador, fechaAgendada)
+SController -> QFollow: save()
 
-activate SModel
-SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento")
+activate QFollow
+QFollow -> db: INSERT INTO evaluaciones_de_seguimiento
 activate db
-db -->> SModel : Query OK
+db -->> QFollow: id_evaluacion
 deactivate db
 
-SModel -->> SController : promise
-deactivate SModel
+QFollow -->> SController: id_evaluacion
+deactivate QFollow
 
-SController -> Register : response.render('register_followUp.ejs')
+create Questions
+SController -> Questions: new Questions(id_pregunta, id_evaluation, respuesta)
+SController -> Questions : save()
+
+activate Questions
+Questions -> db: INSERT INTO respuestas_evaluacion
+activate db
+db -->> Questions : Query OK
+deactivate db 
+Questions -->> SController : Promesa
+deactivate Questions
+
+create IMetrics
+SController -> IMetrics : new Indicators_metrics(id_evaluation, id_indicador, valor_metrica)
+SController -> IMetrics : save()
+
+activate IMetrics
+IMetrics -> db : INSERT INTO indicadores_metricas
+activate db
+db -->> IMetrics : Query OK
+deactivate db 
+IMetrics -->> SController: Promesa
+deactivate IMetrics 
+
+SController -> S : JSON response ("Evaluación guardada correctamente", id_evaluation)
 deactivate SController
 
-activate Register
-Register -> S : HTML register_followUp.ejs
-deactivate Register
+activate S
+S -> S : window.location.href = "/follow_ups"
+deactivate S
 
 @enduml

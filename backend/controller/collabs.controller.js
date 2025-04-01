@@ -130,6 +130,9 @@ exports.get_collabs_info = async (request, response) => {
       return aaaa
     }))
   }
+
+  
+
   response.json({
     selectedOption: "Active",
     collabs: collabs,
@@ -158,7 +161,6 @@ exports.get_collab_data = async (req, res) => {
 exports.update_collab = async (request, response) => {
   try {
     const id = request.body.id_colaborador;
-    console.log(request.body)
     const edit_Colab = new Colaborador(
       request.body.nombre,
       request.body.apellidos,
