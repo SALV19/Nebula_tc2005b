@@ -28,7 +28,7 @@ activate db
 db ->> cm : info colaborador
 deactivate db
 
-cm -->> SController : promesa
+cm -->> SController : info colaborador
 deactivate cm 
 
 SController ->> Model : fetchAll()
@@ -39,7 +39,7 @@ activate db
 db ->> Model : info preguntas_evaluacion
 deactivate db
 
-Model -->> SController : promesa
+Model -->> SController : info preguntas_evaluacion
 deactivate Model 
 
 ' --- GET INFO INDICADORES ---
@@ -52,7 +52,7 @@ deactivate db
 Model -->> SController : info indicadores
 deactivate Model 
 
-SController -> Register : response.render
+SController -> Register : response.render('register_followUp.ejs')
 deactivate SController
 
 activate Register

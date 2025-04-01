@@ -21,3 +21,4 @@ module.exports = class Requests {
                         `, [email])
     }
 }
+
