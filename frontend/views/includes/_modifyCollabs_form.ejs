@@ -1,4 +1,4 @@
-        <form action="/view_collabs/update_collab" method="POST" onsubmit="return validateForm()"> 
+        <form id="updateColabForm" action="/view_collabs/update_collab" method="POST" onsubmit="return validateForm()"> 
             <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
             <input type="hidden" id="colab-id_modify" name="id_colaborador">   
                 <aside id="pop-up_modiify_collab" class="pop-up" style="display: none">
@@ -151,3 +151,29 @@
                     </div>
                 </aside>
         </form>
+
+        <script>
+            document.getElementById("updateColabForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+            
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#59A250",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, save it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Saved!",
+                        text: "It has been saved",
+                        icon: "success"
+                    }).then(() => {
+                        document.getElementById("updateColabForm").submit();
+                    });
+                    }
+                });
+                });
+        </script>
