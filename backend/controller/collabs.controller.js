@@ -31,11 +31,11 @@ exports.get_collabs = async (request, response) => {
     const [rowsRol, fieldDataRol] = rolData;
 
     const successData = request.session.successData;
-
     request.session.successData = null;
 
+    const successDataUpdate = request.session.successDataUpdate;
+    request.session.successDataUpdate = null;
     
-
     response.render("collabs", {
       ...settings,
       permissions: request.session.permissions,
@@ -46,9 +46,12 @@ exports.get_collabs = async (request, response) => {
       departamento: rowsDep,
       rol: rowsRol,
       successData,
+      successDataUpdate,
+      errorMessage: null,
     });
   } catch (error) {
     console.error(error);
+    response.redirect("/view_collabs?error=true");
   }
 };
 
@@ -149,9 +152,7 @@ exports.get_collabs_info = async (request, response) => {
       return aaaa
     })) 
   }
-
-  console.log(abscences)
-
+  
   response.json({
     selectedOption: "Active",
     collabs: collabs,
@@ -220,7 +221,7 @@ exports.update_collab = async (request, response) => {
     };
 
     // Crea un objeto resumen
-    request.session.successData = {
+    request.session.successDataUpdate = {
       nombre: request.body.nombre,
       apellidos: request.body.apellidos,
       puesto: request.body.puesto,
@@ -235,46 +236,9 @@ exports.update_collab = async (request, response) => {
       rol: rolMap[request.body.id_rol],
     };
 
-
     response.redirect("/view_collabs");
   } catch (error) {
     console.error("Error al actualizar colaborador:", error);
     response.redirect("/view_collabs?error=true");
   }
 };
-
-
-exports.post_collab = (request, response) => {
-  const new_Colab = new Colaborador(request.body.nombre, request.body.apellidos, 
-      request.body.fechaNacimiento, request.body.telefono, request.body.puesto, 
-      request.body.email, request.body.fechaIngreso, request.body.ubicacion, 
-      request.body.modalidad, request.body.curp, request.body.rfc);
-  
-  const password = generator.generate({
-    length: 10,
-    numbers: true
-  });
-
-  new_Colab.save(password)
-    .then(([rows]) => {
-      if (rows.length === 0) throw new Error("No se encontró el colaborador insertado.");
-      const idcolab = rows[0].id_colaborador;
-
-      const new_equipo = new Equipo(request.body.id_departamento, request.body.id_rol);
-      return new_equipo.save(idcolab);
-    }).then(() => {
-
-      request.session.successData = {
-        email: request.body.email,
-        password: password
-      };
-
-      response.redirect("/view_collabs");
-    })
-    .catch((error) => {
-      console.error(error);
-      response.redirect("/view_collabs?error=true");
-  }); 
-};
-
-  

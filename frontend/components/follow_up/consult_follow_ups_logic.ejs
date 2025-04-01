@@ -1,4 +1,43 @@
 <script>
+
+function get_progress_color(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
+    
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+    if (indicatorAvg >= 75) {
+        return 'success';
+    }
+    else if (indicatorAvg >= 30) {
+        return 'warning';
+    }
+    else {
+        return 'danger';
+    }
+
+    
+}
+function get_average_progress(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
+
+        
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+
+    return indicatorAvg;
+}
+    
 function TableFollowUps(data) {
     const table = document.querySelector('#content-section');
     let table_content = `<div class="container-scroll">
@@ -7,11 +46,18 @@ function TableFollowUps(data) {
     
 <tbody>`;
 
-    data.fechasAgendadas.forEach((fecha, idx) => {
-        
+
+    data.fechasAgendadas.forEach((fecha, idx) => { 
+        const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
-        table_content += `<td> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
-        table_content += `<td style="text-align: right;">
+        table_content += `<td class="fixed-width"> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
+        table_content += `<td class='is-flex is-align-items-center'>
+                            <p style="width: 4rem">${indicadorAverage}%</p>
+                            <div style="width: 20rem;">
+                                <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
+                            </div>
+                        </td>`
+        table_content += `<td style="text-align: right; width: 10px;">
                         <i class="bi bi-caret-down-fill toggle-icon"></i>
                         </td>`;
         table_content += `</tr>`;
