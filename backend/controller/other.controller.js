@@ -7,6 +7,7 @@ exports.get_404 = (request, response, next) => {
 exports.get_permissions = async (request, response, next) => {
   const email = request.session.email ?? request.user.profile.emails[0].value;
   if (request.user) {
+    request.session.email = request.user.profile.emails[0].value;
     request.session.id_colaborador = request.user.user.id_colaborador
   }
   const permissions = await User.getPermissions(email);
