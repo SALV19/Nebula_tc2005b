@@ -49,15 +49,15 @@
                       <!-- Vacation counters - horizontal layout -->
                       <div class="vacation-counters-row mb-4">
                         <div class="vacation-counter-box">
-                          <div class="vacation-count" id="approvedCount">0</div>
+                          <div class="vacation-count" id="approvedCount"><%= approvedDays %></div>
                           <div class="vacation-label">Approved Vacations</div>
                         </div>
                         <div class="vacation-counter-box">
-                          <div class="vacation-count" id="pendingCount">0</div>
+                          <div class="vacation-count" id="pendingCount"><%= pendingDays %></div>
                           <div class="vacation-label">Pending Vacations</div>
                         </div>
                         <div class="vacation-counter-box">
-                          <div class="vacation-count" id="remainingCount">0 / 14</div>
+                          <div class="vacation-count" id="remainingCount"><%= remainingDays %> / <%= diasTotales %></div>
                           <div class="vacation-label">Remaining Vacations</div>
                         </div>
                       </div>

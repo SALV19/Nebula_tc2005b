@@ -1,5 +1,6 @@
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
+const {contVac} = require("../util/contVacations")
 
 exports.update_estado = async (req, res) => {
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
@@ -7,12 +8,39 @@ exports.update_estado = async (req, res) => {
 };
 
 exports.get_requests = async (request, response) => {
-  const all_requests = await Requests.fetchDaysApproved(request.session.email)
-    .then((data) => data[0])
-    .catch((e) => e);
+
+  const email = request.session.email;
+  
+  const all_requests = await Requests.fetchDaysApproved(email)
+    .then(data => data[0])
+    .catch(e => {
+      console.error("Error al obtener días aprobados:", e);
+      return [];
+    });
+
   const holidays = await Events.fetchEvents()
-    .then((data) => data[0])
-    .catch((error) => error);
+    .then(data => data[0])
+    .catch(e => {
+      console.error("Error al obtener feriados:", e);
+      return [];
+    });
+
+  const approvedDays = await Requests.fetchApprovedVacationDays(email)
+    .then(data => data[0].length)
+    .catch(e => {
+      console.error("Error al obtener vacaciones aprobadas:", e);
+      return 0;
+    });
+
+  const pendingDays = await Requests.fetchPendingVacationDays(email)
+    .then(data => data[0].length)
+    .catch(e => {
+      console.error("Error al obtener vacaciones pendientes:", e);
+      return 0;
+    });
+
+  const {_, diasTotales} = await contVac(request);
+  const remainingDays = diasTotales - approvedDays - pendingDays;
 
   const successRequest = request.session.successRequest;
   delete request.session.successRequest;
@@ -24,6 +52,10 @@ exports.get_requests = async (request, response) => {
     holidays: holidays,
     csrfToken: request.csrfToken(),
     successRequest, //Para el ejs
+    approvedDays,
+    pendingDays,
+    remainingDays,
+    diasTotales
   });
 };
 

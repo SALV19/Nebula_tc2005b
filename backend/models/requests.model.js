@@ -50,7 +50,7 @@ module.exports = class Requests {
     );
   }
 
-  // Obtener cantidad de días aprobados de vacaciones
+  // Get the number of approved vacation days
   static async fetchApprovedVacationDays(email) {
     return db.execute(`
       SELECT ds.fecha
@@ -61,7 +61,7 @@ module.exports = class Requests {
     `, [email]);
   }
 
-  // Obtener cantidad de días pendientes de vacaciones
+  // Get the number of pending vacation days
   static async fetchPendingVacationDays(email) {
     return db.execute(`
       SELECT ds.fecha
