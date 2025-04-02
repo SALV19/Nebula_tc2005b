@@ -11,16 +11,6 @@
     return `${day}/${month}/${year}`;
   }
 
-  function accept_deny(element) {
-    // is checkmark
-    if (element.classList.contains('bi-check-circle')) {
-      console.log('Accept request')
-    }
-    else {
-      console.log('Deny request')
-    }
-  }
-
   function createTableAbscences(route, data) {
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
@@ -34,11 +24,13 @@
   <tbody >`
     // Información por cada renglón de la tabla
     data.abscences.forEach((d, idx) => {
-      console.log(data)
-      table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td><i class="bi bi-caret-right-fill mr-4" id='caret'></i>${formatDate(d.start)}</td>`
-      table_content += `<td>${formatDate(d.end)}</td>`
-      table_content += `<td>${d.tipo_falta}</td>`
+      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}'>`;
+      table_content += `<td class="is-flex">
+                          <i class="bi bi-caret-right-fill mr-4" id='caret'></i>
+                          <p id="start_date-${d.id_solicitud_falta}">${formatDate(d.start)}</p>
+                        </td>`
+      table_content += `<td id="end_date-${d.id_solicitud_falta}">${formatDate(d.end)}</td>`
+      table_content += `<td id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
       if (d.estado == 0) {
         table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
       }
@@ -48,6 +40,10 @@
       else if (d.estado == 2) {
         table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
       }
+      table_content += `<td>
+                          <input type='hidden' value='${d.ubicacion}' id="ubicacion-${d.id_solicitud_falta}"/>
+                          <input type='hidden' value='${d.descripcion}' id="descripcion-${d.id_solicitud_falta}"/>
+                        </td>`
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
@@ -57,12 +53,12 @@
                               </div>
                               <div class="column">
                                 <p><strong>Reason: </strong></p>
-                                <p class='has-background-black p-3 box'>${d.descripcion}</p>
+                                <p class='has-background-black p-3 box' id="descripcion-${d.id_solicitud_falta}">${d.descripcion}</p>
                               </div>
                               <div class="column">
                                 <div class="is-flex">
                                   <p><strong>Location:</strong></p>
-                                  <p >${d.ubicacion}</p>
+                                  <p id="ubicacion-${d.id_solicitud_falta}">${d.ubicacion}</p>
                                 </div>
                                 <div>
                                   <button class="button is-link is-rounded small_btn" onclick="updateRequest(${d.id_solicitud_falta})">Update</button>
@@ -145,8 +141,7 @@
   <tbody >`
     // Información por cada renglón de la tabla
     data.requests[0].forEach((d, idx) => {
-
-      table_content += `<tr id='request' key='${idx}'>`;
+      table_content += `<tr id='request' data-key='${idx}'>`;
       table_content += `<td><i class="bi bi-caret-right-fill" id='caret'></i> ${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
@@ -282,14 +277,51 @@
         });
     }
   }
+
+  function re_format_date(date) {
+    let new_date = date.split('/')
+    new_date = [new_date[2], new_date[1], new_date[0]].join('-')
+    return new_date
+  }
+
   function updateRequest(id) {
     const csrf = document.getElementById('_csrf').value
     const requestPopup = document.getElementById("requestPopup");
     requestPopup.style.display = "flex";
+
+    const selected = document.querySelector(`[id="request"][data-key="${id}"]`);
+
+    const request_type_default = document.getElementById(`tipo_falta-${id}`);
+    const start_date_default   = document.getElementById(`start_date-${id}` );
+    const end_date_default     = document.getElementById(`end_date-${id}`);
+    const ubicacion_default    = document.getElementById(`ubicacion-${id}`);
+    const descripcion_default  = document.getElementById(`descripcion-${id}`);
+
+    const requestType          = document.getElementById("requestType");
+    const startDate            = document.getElementById("startDate");
+    const endDate              = document.getElementById("endDate");
+    const location             = document.getElementById("location");
+    const description          = document.getElementById("description");
+    const evidenceContainer    = document.getElementById("evidenceContainer");
+
+    console.log(request_type_default.innerHTML)
+    console.log(start_date_default.innerHTML)
+    console.log(end_date_default.innerHTML)
+    console.log(ubicacion_default.value)
+    console.log(descripcion_default.value)
+
+    requestType.value = request_type_default.innerHTML
+    startDate.value   = re_format_date(start_date_default.innerHTML)
+    endDate.value     = re_format_date(end_date_default.innerHTML)
+    location.value    = ubicacion_default.value
+    description.value = descripcion_default.value
+    evidenceContainer.value = null
+
     
     const updateForm = document.getElementById("requests_form");
-    console.log(updateForm)
     updateForm.action = "/requests/update_request";
+
+    console.log(id)
   }
 
   // Consulta a db para la información de solicitudes

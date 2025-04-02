@@ -14,7 +14,7 @@
     width: 29vw;
     background: transparent;
     font-size: 2vh; 
-    color: #747474;
+    color: white;
 }
 
 .input-container {
@@ -24,7 +24,7 @@
 }
 
 .dateLine {
-    color: #747474; /* Color del texto */
+    color: #DDD; /* Color del texto */
     background: transparent;
     border: none;
     border-bottom: 0.04vh solid #fff;
