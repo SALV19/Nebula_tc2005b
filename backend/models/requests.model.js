@@ -144,7 +144,7 @@ module.exports = class Requests {
                           ON d.id_departamento = e.id_departamento
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
-                        LIMIT 10 OFFSET 0`,
+                        LIMIT 10 OFFSET ?`,
         [offset || 0]
       );
     }
