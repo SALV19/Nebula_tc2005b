@@ -7,7 +7,12 @@ module.exports = class Empresa {
         }
 
     static fetchAllEmp() {
-        return db.execute(`SELECT DISTINCT nombre_empresa FROM empresa
+        return db.execute(`SELECT DISTINCT id_empresa, nombre_empresa FROM empresa
                             ORDER BY nombre_empresa ASC`);
+    }
+
+    static fetchE(id_empresa){
+        return db.execute(`SELECT DISTINCT id_empresa, nombre_empresa FROM empresa WHERE id_empresa = ?
+                            ORDER BY nombre_empresa ASC`, [id_empresa]);
     }
 };
