@@ -2,9 +2,8 @@
 autonumber
 actor SuperAdmin as S
 boundary followUp.routes.js as Route
-boundary register_followUp.ejs as Register
+boundary register_follow_up_logic as Register
 control register.controller.js as SController
-entity register_followUp.model as SModel
 entity indicators.model as IModel
 entity periodic_eval.model as QFollow
 entity periodic_eval.model as PEval
@@ -15,7 +14,7 @@ database Nebula as db
 
 ' --- GET COLLABS ---
 activate S
-S -> Route : fetch (`/follow_ups/Register`)
+S -->> Route : fetch (`/follow_ups/Register`)
 
 activate Route
 Route -> SController : get_register()
@@ -25,7 +24,7 @@ activate SController
 SController ->> cm : fetchAllCompleteName()
 
 activate cm
-cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
+cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)') 
 
 activate db
 db ->> cm : colaboradores
@@ -56,12 +55,17 @@ deactivate db
 IModel -->> SController : indicador
 deactivate IModel 
 
-SController -> S : JSON response (colaboradores, questions, indicator)
+SController -> Register : JSON response (colaboradores, questions, indicator)
 deactivate SController
-deactivate S
+
+activate Register
+Register -->> S : get_register(data)
+deactivate Register
+
 
 ' ---- REGISTER FOLLOW UP ----
 S -> Route : POST /follow_ups
+deactivate S
 
 activate Route
 Route -> SController : post_follow_ups()
@@ -73,7 +77,8 @@ SController -> QFollow: new QuestionsFollow(id_colaborador, fechaAgendada)
 SController -> QFollow: save()
 
 activate QFollow
-QFollow -> db: `SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento WHERE id_colaborador = ? ORDER BY fechaAgendada DESC`,idColaborador)
+QFollow -> db: const [result] = await db.query( 'INSERT INTO evaluaciones_de_seguimiento (id_colaborador, fechaAgendada) VALUES (?, ?)', [this.collab, this.date]); return result.insertId;
+
 activate db
 db -->> QFollow: id_evaluacion
 deactivate db
@@ -106,8 +111,13 @@ deactivate db
 IMetrics -->> SController: Promesa
 deactivate IMetrics 
 
-SController -> S : res.redirect('/follow_ups');
-deactivate SController
+SController ->  Register : res.redirect('/follow_ups');
+activate Register
+Register -> S : get_FollowUp
+deactivate Register
+
+activate S
+deactivate S
 
 
 @enduml
