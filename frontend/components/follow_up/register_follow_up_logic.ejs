@@ -265,14 +265,39 @@
 
       } else if(selectedOption == 'Meetings' ) {
 
-        fetch('/follow_ups/meeting')
+        fetch('/follow_ups/meeting')  
           .then(response => {
             console.log("Respuesta recibida:", response.status);
             return response.text();
           })
           .then(html => {
             console.log("HTML recibido, actualizando contenido");
-            contentContainer.innerHTML = html;  
+            contentContainer.innerHTML = html;
+            
+            const repeatingDropdown = document.getElementById("repeating");
+            if (repeatingDropdown) {
+              repeatingDropdown.addEventListener("change", function() {
+                let id = this.value;
+                console.log(id);
+                let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
+                
+                blocks.forEach(block => {
+                  let element = document.getElementById(block);
+                  if (element) {
+                    element.style.display = "none";
+                  }
+                });
+
+                if (id !== "no") {
+                  let selectedBlock = document.getElementById(`${id}Block`);
+                  if (selectedBlock) {
+                    selectedBlock.style.display = "block";
+                  } else {
+                    console.error("No se encontró el bloque para:", id);
+                  }
+                }
+              });
+            }
           })
           .catch(error => {
             console.error('Error al cargar la vista de meetings:', error);

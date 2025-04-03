@@ -7,7 +7,7 @@ module.exports = class Meeting {
         this.date = schedule_date;
     }
 
-    static insertEvents(accessToken, date, startTime, endTime, emailCollab, repeating, occurrences) {
+    static insertEvents(accessToken, date, startTime, endTime, emailCollab, repeating, occurrences, summary) {
         const oauth2Client = new google.auth.OAuth2(
             process.env.GOOGLE_CLIENT_ID,
             process.env.GOOGLE_CLIENT_SECRET,
@@ -28,7 +28,7 @@ module.exports = class Meeting {
         console.log(repeatMap[repeating]);
         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
         var event = {
-            summary: "Follow up Nebula",
+            summary: summary,
             start: {
             dateTime: startTime,
             timeZone: 'America/Mexico_City'
@@ -41,8 +41,8 @@ module.exports = class Meeting {
             reminders: {
                 useDefault: false,
                 overrides: [
-                    { method: 'email', minutes: 15},
-                    { method: 'popup', minutes: 10 }
+                    { method: 'email', minutes: 1},
+                    { method: 'popup', minutes: 1}
                 ]
             }
         };

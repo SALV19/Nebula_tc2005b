@@ -12,7 +12,7 @@ exports.get_permissions = async (request, response, next) => {
     request.session.email = request.cookies.email;
     request.session.permissions = request.cookies.permissions;
     request.session.id_colaborador = request.cookies.id_colaborador;
-    response.redirect('/follow_ups/meeting');
+    response.redirect('/follow_ups?selectedOption=Meetings');
     return;
   }
 

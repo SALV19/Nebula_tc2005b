@@ -91,7 +91,23 @@ exports.post_meeting = (request, response, next) => {
   const hora = request.body.horaAgendada;
   const emailCollab =  Collab.fetchEmail(id_colaborador);
   const repeating = request.body.repeating;
-  const occurrences = request.body.occurrences;
+  const summary = "Follow up Nebula";
+  let occurrences = 0;
+  
+
+  if(repeating == 'day') {
+    occurrences = request.body.dayOccurrences;
+  }
+  if(repeating == 'week') {
+    occurrences = request.body.weekOccurrences;
+  }
+  if(repeating == 'month') {
+    occurrences = request.body.monthOccurrences;
+  }
+  if(repeating == 'year') {
+    occurrences = request.body.yearOccurrences;
+  }
+
 
   console.log("occurrences");
   console.log(occurrences);
@@ -130,6 +146,7 @@ exports.post_meeting = (request, response, next) => {
             emailCollab, 
             repeating,
             occurrences,
+            summary,
           );
         });
   })
