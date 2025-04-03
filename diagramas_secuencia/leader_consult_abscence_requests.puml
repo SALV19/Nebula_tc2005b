@@ -20,12 +20,9 @@ rc -> rpe : response.render('requests_page.ejs)
 deactivate rc
 activate rpe 
 rpe -> u : HTML requests_page.ejs
+deactivate rpe
 activate u
-u ->> rpe : Selects requests
-rpe ->> crl : get_info()
-activate crl
-crl ->> rr : POST /requests/Requests
-deactivate crl
+u ->> rr : get_info() / fetch('/requests/Requests', POST)
 activate rr
 rr ->> rc : get_collabs_requests()
 deactivate rr
@@ -39,13 +36,12 @@ deactivate db
 rm -->> rc : [data]
 deactivate rm
 rc -->> crl : [data]
+rc -->> u : XML HTML
 deactivate rc
-activate crl
-crl ->> crl : format_data_to_json
-crl -> crl : createTableRequests(data)
-crl -->> rpe : table.innerHTML = table_content
-deactivate crl
-rpe -> u : XML HTML
+
+u ->> u : format_data_to_json
+u -> u : createTableRequests(data)
+u -> u : table.innerHTML = table_content
 deactivate rpe
 
 @enduml
