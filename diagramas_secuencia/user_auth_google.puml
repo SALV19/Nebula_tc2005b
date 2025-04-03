@@ -36,6 +36,15 @@ activate lgr
 lgr -> passport : passport.authenticate('google', \n{scope: ['email', 'profile']})
 deactivate lgr
 activate passport
+passport -> Google : Google auth
+deactivate passport
+activate Google
+Google -> u : Google auth interface
+deactivate Google
+activate u
+u -> passport : log_in info
+deactivate u
+activate passport
 passport ->> Google : passport.authenticate()
 deactivate passport
 activate Google
@@ -50,6 +59,7 @@ alt "/success"
   oc ->> um : User.getPermissions()
   activate um
   um ->> db : getPermissions()
+  activate db
   db -->> um : [permissions]
   deactivate db
   um ->> oc : [permissions]
