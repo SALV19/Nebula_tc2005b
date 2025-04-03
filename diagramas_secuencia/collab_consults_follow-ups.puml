@@ -1,70 +1,71 @@
 @startuml REQ-12
 autonumber
 actor collab
-boundary general.route.js as followUpsRoutes
-boundary followUps.ejs as followUpsViews
+boundary general.route.js as GeneralRoutes
+boundary followUp.route.js as followUpsRoutes
+boundary follow_ups.ejs as followUpsViews
 control follow_ups.controller.js as followUpsController
-entity FollowUps.model as followUpsModel
-
+entity Evaluation.model as evalModel
+entity Indicators.model as IndiModel
+entity Indicator_metrics.model as IndiMetricModel
+entity Answers.model as AnsModel
 database Nebula as nebula
 
-collab -> followUpsRoutes : GET/follow_ups
+activate collab
+collab -> GeneralRoutes: GET/follow_ups
+deactivate collab
+activate GeneralRoutes
+
+GeneralRoutes -> followUpsRoutes: followUp_routes
+deactivate GeneralRoutes
 activate followUpsRoutes
 
-followUpsRoutes -> followUpsController: get_collabFollowUps(request, response)
+followUpsRoutes -> followUpsController: get_followUps_info(request, response)
 deactivate followUpsRoutes
 activate followUpsController
 
-followUpsController -> followUpsModel: fetchAll()
-activate followUpsModel
-
-followUpsModel -> nebula: execute("SELECT FROM Model")
+followUpsController ->> evalModel: fetchAllInfo([idColaborador]), fetchAllQuestions()
+activate evalModel
+evalModel ->> nebula: execute(SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento \n WHERE id_colaborador = ? ORDER BY fechaAgendada DESC`,idColaborador)
 activate nebula
-
-nebula -->> followUpsModel: rows
+nebula -->> evalModel: id_evaluacion, fechaAgendada, pregunta
 deactivate nebula
+evalModel -->> followUpsController: id_evaluacion, fechaAgendada, pregunta
+deactivate evalModel
 
-followUpsModel -->> followUpsController: promesa
-deactivate followUpsModel
+followUpsController ->> IndiModel: fetchAllindicators()
+activate IndiModel
+IndiModel ->> nebula: execute(SELECT * FROM indicador)
+activate nebula
+nebula -->> IndiModel: indicadores
+deactivate nebula
+IndiModel -->> followUpsController: indicadores
+deactivate IndiModel
 
-followUpsController -> followUpsViews: response.render('follow_ups.ejs')
+followUpsController ->> IndiMetricModel: fetchAll(id_evaluacion)
+activate IndiMetricModel
+IndiMetricModel ->> nebula: execute(SELECT id_evaluacion, id_indicador, valor_metrica \n FROM metrica_indicadores WHERE id_evaluacion \n IN (${placeholders})`, id_evaluacion)
+activate nebula
+nebula -->> IndiMetricModel: metricas
+deactivate nebula
+IndiMetricModel -->> followUpsController: metricas
+deactivate IndiMetricModel
+
+followUpsController ->> AnsModel: fetchAnswers(id_pregunta, id_evaluacion)
+activate AnsModel
+AnsModel ->> nebula: execute(SELECT id_pregunta, id_evaluacion, respuesta \n FROM respuestas_pregunta \n WHERE id_pregunta IN (${placeholdersPreguntas}) \n AND id_evaluacion IN (${placeholdersEvaluaciones}))
+activate nebula
+nebula -->> AnsModel: respuestas
+deactivate nebula
+AnsModel -->> followUpsController: respuestas
+deactivate AnsModel
+
+followUpsController -> followUpsViews: response.render('follow_ups.ejs, \n {selectedOption: 'Collaborators', \n fechasAgendadas, pregunta, \n respuestas, indicadores, metricas}')
 deactivate followUpsController
 activate followUpsViews
 
 followUpsViews -> collab: HTML
 deactivate followUpsViews
 activate collab
-
-collab -> followUpsRoutes: POST/addNotes
-deactivate collab
-activate followUpsRoutes
-
-followUpsRoutes -> followUpsController: post_addNotes(request, response)
-deactivate followUpsRoutes
-activate followUpsController
-
-create entity model
-followUpsController -> model: new Model
-activate model
-
-followUpsController ->> model: save()
-
-model ->> nebula: execute("INSERT INTO Model(?), this.valor)
-activate nebula
-
-nebula -->> model: Query ok
-deactivate nebula
-
-model -->> followUpsController: promesa
-deactivate model
-
-followUpsController -> followUpsViews: response.render
-deactivate followUpsController
-activate followUpsViews
-
-followUpsViews -> collab: HTML
-deactivate followUpsViews
-activate collab
-deactivate collab
 
 @enduml
