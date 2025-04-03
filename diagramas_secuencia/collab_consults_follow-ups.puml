@@ -5,15 +5,34 @@ boundary general.route.js as GeneralRoutes
 boundary followUp.route.js as followUpsRoutes
 boundary follow_ups.ejs as followUpsViews
 control follow_ups.controller.js as followUpsController
-entity Evaluation.model as evalModel
+entity Periodic_eval.model as evalModel
 entity Indicators.model as IndiModel
-entity Indicator_metrics.model as IndiMetricModel
-entity Answers.model as AnsModel
+entity Metric_indicators.model as IndiMetricModel
+entity Questions_answers.model as AnsModel
 database Nebula as nebula
 
 activate collab
 collab -> GeneralRoutes: GET/follow_ups
 deactivate collab
+activate GeneralRoutes
+
+GeneralRoutes -> followUpsRoutes: followUp_routes
+deactivate GeneralRoutes
+activate followUpsRoutes
+
+followUpsRoutes -> followUpsController: get_followUps_info(request, response)
+deactivate followUpsRoutes
+activate followUpsController
+
+followUpsController -> followUpsViews: render(followUps.ejs)
+deactivate followUpsController
+activate followUpsViews
+
+followUpsViews->collab: HTML
+deactivate followUpsViews
+activate collab
+
+collab ->> GeneralRoutes: fetch(/follow_ups/collaborators)
 activate GeneralRoutes
 
 GeneralRoutes -> followUpsRoutes: followUp_routes
@@ -60,12 +79,8 @@ deactivate nebula
 AnsModel -->> followUpsController: respuestas
 deactivate AnsModel
 
-followUpsController -> followUpsViews: response.render('follow_ups.ejs, \n {selectedOption: 'Collaborators', \n fechasAgendadas, pregunta, \n respuestas, indicadores, metricas}')
+followUpsController -->> collab: response.json({selectedOption: 'Collaborators', \n fechasAgendadas, pregunta, \n respuestas, indicadores, metricas}')
+collab -> collab: TableFollowUps(data)
 deactivate followUpsController
-activate followUpsViews
 
-followUpsViews -> collab: HTML
-deactivate followUpsViews
-activate collab
-
-@enduml
+@enduml   
