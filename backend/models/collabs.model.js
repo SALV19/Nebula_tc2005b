@@ -26,9 +26,15 @@ module.exports = class Colaborador {
     this.rfc = colab_rfc;
   }
 
-  static fetchAllCompleteName(){
-    return db.execute('SELECT id_colaborador, nombre, apellidos FROM colaborador')
+  //
+  static fetchAllCollabsName(id_colaborador){
+    return db.execute(`Select nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
   }
+
+  static fetchAllCompleteName(){
+    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
+  }
+
 
   save(password) {
     return db
@@ -106,13 +112,15 @@ module.exports = class Colaborador {
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
         LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
-        LEFT JOIN empresa em ON em.id_empresa = d.id_empresa
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
         LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
         GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
                 c.fechaNacimiento, c.telefono, c.puesto, c.email, 
                 c.fechaIngreso, c.fechaSalida, c.ubicacion, 
                 c.modalidad, c.foto, c.curp, c.rfc, c.estado,
-                d.nombre_departamento, em.nombre_empresa
+                d.nombre_departamento
         ORDER BY c.nombre ASC
             LIMIT 10 OFFSET ?`, [offset])
     }

@@ -23,15 +23,17 @@ function get_progress_color(data, fecha) {
     
 }
 function get_average_progress(data, fecha) {
+    console.log(data)
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
     .map(metricaObj => metricaObj.valor_metrica);
-    
+    if (indicators.length <= 0) {
+        return 0;
+    }
     const indicatorSum = indicators
         .reduce((a, b) => {
             return a + b
         });
-
         
     const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
 
@@ -40,11 +42,10 @@ function get_average_progress(data, fecha) {
     
 function TableFollowUps(data) {
     const table = document.querySelector('#content-section');
-    let table_content = `<div class="container-scroll">
-    <table class="table is-fullwidth"">
-
-    
-<tbody>`;
+    let table_content = `
+    <div class="container-scroll">
+        <table class="table is-fullwidth"">
+            <tbody>`;
 
 
     data.fechasAgendadas.forEach((fecha, idx) => { 
@@ -212,7 +213,7 @@ const get_info_FU = ( ) => {
     })
     .then(response => {
         return response.json()})
-    .then(data => {
+    .then(data => {        
         TableFollowUps(data)
 
     })

@@ -39,16 +39,27 @@
   <tbody >`
     // Información por cada renglón de la tabla
     data.requests[0].forEach((d, idx) => {
-
+      console.log('datos',data.collab);
       table_content += `<tr id='request' key='${idx}'>`;
       table_content += `<td><i class="bi bi-caret-right-fill" id='caret'></i> ${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${formatDate(d.start)}</td>`
       table_content += `<td>${formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
-      if (d.estado == 0) {
+      if (d.estado == 0 ) {
         table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>
          <td>
-            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="1">
+            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
+              <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
+            </button>
+            <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
+              <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+            </button>
+          </td>
+          </tr>`
+      } else if (d.estado == 0.5) {
+        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>
+         <td>
+            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
             <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -82,6 +93,7 @@
                               <div class="column">
                                 <p><strong>Location:</strong></p>
                                 <p class='is-underlined	'>${d.ubicacion}</p>
+                                <p class="message-approved">Approved by: ${data.collab[idx] == 0 ? "Hasn't been approved" : data.collab[idx][0].nombre + " " + data.collab[idx][0].apellidos}  </p>
                               </div>
                             </div>
                           </td>
@@ -139,16 +151,16 @@
 
     document.querySelectorAll(".approve").forEach((button) => {
       button.addEventListener("click", function () {
-        const postId = this.getAttribute("data-id"); // Get the ID from the button
-        const newValue = this.getAttribute("value"); // Get the value to update
+        const postId = this.getAttribute("data-id"); 
+        const newValue = this.getAttribute("value"); 
 
         Swal.fire({
           title: "Are you sure?",
-          text: `Do you want to set this to ${Number(newValue) === 1 ? "Accept" : "Deny"}?`,
+          text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
           icon: "question",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
+          confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
+          cancelButtonColor: "#7066E0",
           confirmButtonText: "Yes, update it!"
         }).then((result) => {
           if (result.isConfirmed) {
@@ -159,9 +171,23 @@
       });
     });
 
+    function showCollabApprove(){
+      const csrf = document.getElementById('_csrf').value;
+      const selected_option = document.querySelector('.selected');
+      const route = selected_option.innerHTML;
+
+      fetch(`/requests/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        return response.json()
+      })
+      .catch(e => console.error("error", e));
+    }
+
     function updateField(postId, newValue) {
       const csrf = document.getElementById('_csrf').value
-      fetch(`/requests`, {
+      fetch(`/requests/Requests/update`, {
         method: "POST", 
         headers: {
           "Content-Type": "application/json",

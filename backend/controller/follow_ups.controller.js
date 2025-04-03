@@ -41,6 +41,14 @@ exports.get_register = async (request, response) => {
 
 exports.post_follow_ups = async (req, res) => {
   try {
+    console.log('Body colab: ', req.body.id_colaborador);
+    console.log('Body date: ', req.body.fechaAgendada);
+    console.log('Body pregunta: ', req.body.id_pregunta);
+    console.log('Body respuesta: ', req.body.respuesta);    
+    console.log('Body pregunta: ', req.body.id_indicador);
+    console.log('Body pregunta: ', req.body.valor_metrica);
+
+
     // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
@@ -48,6 +56,7 @@ exports.post_follow_ups = async (req, res) => {
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
 
     // Crear y guardar respuestas
+
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
     await answer_questions.save(); 
 
@@ -59,10 +68,16 @@ exports.post_follow_ups = async (req, res) => {
     res.redirect('/follow_ups');
   } catch (error) {
     console.error(error);
+    return res.status(400).render("register_follow_up_logic.ejs", {
+      error: "There was a problem saving the evaluation",
+      // validation : true,
+      csrfToken : req.csrfToken,
+    });
   };
 }
 
 exports.get_followUps_info = (request, response, next) => {
+  
   settings.selectedOption = 'Collaborators';
 
   const idColaborador = request.session.id_colaborador;
@@ -70,7 +85,6 @@ exports.get_followUps_info = (request, response, next) => {
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
-
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -93,13 +107,8 @@ exports.get_followUps_info = (request, response, next) => {
         const indicadores = indicators;
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
-        const value_metric = metrics[0].map(value => value.valor_metrica);
-        const id_indicador = metrics[0].map(value => value.id_indicador);
-
-        const indicator = indicators[0].map(label => label.indicador);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
-
         response.json({
           selectedOption: 'Collaborators',
           fechasAgendadas,
@@ -108,10 +117,18 @@ exports.get_followUps_info = (request, response, next) => {
           indicadores,
           metricas
         });
-      });
+      })
+      .catch(
+        response.status(501).json({
+          selectedOption: 'Collaborators',
+          fechasAgendadas: null,
+          pregunta: null,
+          respuestas: null,  
+          indicadores: null,
+          metricas: null,
+        }));
     })
     .catch(error => {
-      console.log(error);
       response.status(500).send("Error al obtener información");
     });
 };
