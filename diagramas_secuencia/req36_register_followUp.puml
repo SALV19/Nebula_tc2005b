@@ -2,7 +2,7 @@
 autonumber
 actor SuperAdmin as S
 boundary followUp.routes.js as Route
-boundary register_follow_up_logic as Register
+boundary register_follow_up_logic.ejs as Register
 control register.controller.js as SController
 entity indicators.model as IModel
 entity periodic_eval.model as QFollow
@@ -48,7 +48,7 @@ deactivate PEval
 ' --- GET INFO INDICADORES ---
 SController ->> IModel : fetchAllindicators()
 activate IModel 
-IModel ->> db : indicador
+IModel ->> db : SELECT * FROM indicador
 activate db
 db -->> IModel : indicador
 deactivate db
@@ -91,7 +91,7 @@ SController -> Questions: new Questions(id_pregunta, id_evaluation, respuesta)
 SController -> Questions : save()
 
 activate Questions
-Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta) VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
+Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta)\n VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
 activate db
 db -->> Questions : Query OK
 deactivate db 
@@ -103,7 +103,7 @@ SController -> IMetrics : new Indicators_metrics(id_evaluation, id_indicador, va
 SController -> IMetrics : save()
 
 activate IMetrics
-IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length){throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( 'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
+IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length)\n{throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( \n'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
 
 activate db
 db -->> IMetrics : Query OK
@@ -111,10 +111,8 @@ deactivate db
 IMetrics -->> SController: Promesa
 deactivate IMetrics 
 
-SController ->  Register : res.redirect('/follow_ups');
-activate Register
-Register -> S : get_FollowUp
-deactivate Register
+SController ->  S : res.redirect('/follow_ups');
+deactivate SController
 
 activate S
 deactivate S
