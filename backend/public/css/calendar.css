@@ -1,9 +1,9 @@
 .calendar {
-    width: 50rem;
+    width: 57rem;
     height: 45rem;
     color: white; /* Text color */
     border-radius: 10px; /* Rounded corners */
-    padding: 10px;
+    padding: 0.7rem;
 }
 
 .fc-toolbar-title{

@@ -35,37 +35,60 @@ exports.get_home = async (request, response) => {
         return
       }
       const calendars = res.data.items;
-      console.log('Calendario: ', calendars);
+      // console.log('Calendario: ', calendars);
       // response.json(calendars)
     })
-    
+
     // Obtener lista de calendarios
     const { data } = await calendar.calendarList.list();
     // console.log('Calendarios:', data.items);
 
-    // Elegir un calendario específico (ejemplo: el principal)
-    const calendarId = 'primary'; 
+    const calendarListResponse = await calendar.calendarList.list();
+    const calendars = calendarListResponse.data.items;
+    const nombre = calendarListResponse.data.items.map(e => ({
+      title : e.summary
+    }))
+    console.log('nombres', nombre);
+  
+    let eventos = [];
 
-    // Obtener detalles de un calendario específico
-    const calendarDetails = await calendar.calendarList.get({ calendarId });
-    console.log('Headers del Calendario:', calendarDetails.headers);
-    console.log('Detalles del Calendario:', calendarDetails.data);
+    // 🔹 Iterar sobre cada calendario y obtener sus eventos
+    for (const cal of calendars) {
+      const calendarId = cal.id;
+      const eventsResponse = await calendar.events.list({
+        calendarId,
+        singleEvents: true,
+        orderBy: 'startTime'
+      });
 
+      const eventosDelCalendario = eventsResponse.data.items.map(event => ({
+        title: event.summary,
+        start: event.start.dateTime || event.start.date,
+        end: event.end?.dateTime || event.end?.date,
+        backgroundColor: "0B8043", 
+        borderColor: '#2980b9'
+      }));
+
+      eventos = [...eventos, ...eventosDelCalendario];
+    }
+
+    // console.log('Eventos obtenidos:', eventos);
+    
+    contVac(request)
+      .then(({diasDisponibles,diasTotales, error}) => {
+          response.render("home_page", {
+            diasDisponibles,
+            diasTotales,
+            error,
+            permissions: request.session.permissions,
+            total_absences: absences.length,
+            csrfToken: request.csrfToken(),
+            eventos: JSON.stringify(eventos),
+          })
+      })
+      .catch(error => {console.error(error)}) 
   }
-  
-  contVac(request)
-    .then(({diasDisponibles,diasTotales, error}) => {
-        response.render("home_page", {
-          diasDisponibles,
-          diasTotales,
-          error,
-          permissions: request.session.permissions,
-          total_absences: absences.length,
-          csrfToken: request.csrfToken(),
-        })
-    })
-    .catch(error => {console.error(error)}) 
-  
+
 };
 
 

@@ -15,21 +15,7 @@
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
-      events: [
-        {
-          title: 'Meeting',
-          start: '2025-04-01T10:00:00',
-          end: '2025-04-01T12:00:00',
-          backgroundColor: '#e74c3c', // Red
-          borderColor: '#c0392b'
-        },
-        {
-          title: 'Project Deadline',
-          start: '2025-04-10',
-          backgroundColor: '#2ecc71', // Green
-          borderColor: '#27ae60'
-        }
-      ],
+      events: eventos,
       eventClick: function(info) {
         alert('Event: ' + info.event.title);
       }
