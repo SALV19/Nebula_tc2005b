@@ -118,15 +118,6 @@ exports.get_followUps_info = (request, response, next) => {
           metricas
         });
       })
-      .catch(
-        response.status(501).json({
-          selectedOption: 'Collaborators',
-          fechasAgendadas: null,
-          pregunta: null,
-          respuestas: null,  
-          indicadores: null,
-          metricas: null,
-        }));
     })
     .catch(error => {
       response.status(500).send("Error al obtener información");
