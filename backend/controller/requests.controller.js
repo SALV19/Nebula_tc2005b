@@ -36,7 +36,7 @@ exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(
-    request.session.email,
+    request.session.permissions.includes('accept_requests') ? null : request.session.email,
     offset,
     filter
   )
