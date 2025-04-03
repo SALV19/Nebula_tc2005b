@@ -1,39 +1,35 @@
 @startuml REQ_27 SuperAdmin registra aprobación de falta
 autonumber
 actor SuperAdmin as S
+boundary approve_requests.ejs as Requests
 boundary requests.routes.js as SRoute
 ' boundary general.routes.js as gr
-boundary approve_requests.ejs as Requests
 control requests.controller.js as SController
-entity SolicitudesFalta.model as SModel
+entity requests.model.js as SModel
 database Nebula as db
 
 ' ---- APROBAR SOLICITUD ----
 activate S
-S -> SRoute : fetch()
+S -> SRoute : fetch('requests/Requests/update)
 
 activate SRoute
 SRoute -> SController : update_estado()
 deactivate SRoute
 
 activate SController 
-SController ->> SModel : save_State()
+SController ->> SModel : save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador)
 
 activate SModel
-SModel ->> db : UPDATE solicitudes_falta SET estado = estado
+SModel ->> db : `UPDATE solicitudes_falta SET estado = ?, colabAprobador = ? \nWHERE id_solicitud_falta = ?`,[estado, colabAprobador, id_solicitud_falta]
 activate db
-db -->> SModel : consulta
+db -->> SModel : estado
 deactivate db
 
-SModel -->> SController : Promesa
+SModel -->> SController : estado
 deactivate SModel
 
-SController -> Requests : res.redirect("/requests")
+SController -> S : res.redirect("/requests")
 deactivate SController
-
-activate Requests
-Requests -> S : HTML approve_requests.ejs
-deactivate Requests
 
 deactivate S
 @enduml
