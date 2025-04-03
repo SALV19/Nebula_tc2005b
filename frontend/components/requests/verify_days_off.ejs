@@ -70,23 +70,60 @@
   }
 
   function updateDaysCounter() {
-    const start = startDate.value;
-    const end = endDate.value;
+  const start = startDate.value;
+  const end = endDate.value;
+  const remainingCount = document.getElementById("remainingCount");
+  const warning = document.getElementById("vacationWarning");
 
-    if (start && end) {
-      const validDays = realsDaysOff(start, end);
+  if (start && end) {
+    const validDays = realsDaysOff(start, end);
+    const daysRequested = validDays.length;
 
-      if (validDays.length > 0) {
-        daysCounter.style.display = "block";
-        daysCounterText.innerHTML = `You are requesting <strong>${validDays.length}</strong> valid days.`;
-      } else {
-        daysCounter.style.display = "block";
-        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
-      }
-    } else {
-      daysCounter.style.display = "none";
+    const approved = parseInt(document.getElementById('approvedCount').innerText);
+    const pending = parseInt(document.getElementById('pendingCount').innerText);
+    const total = <%= diasTotales %>;
+    const remaining = total - approved - pending - daysRequested;
+
+    // Actualiza texto del contador
+    remainingCount.innerText = `${remaining} / ${total}`;
+
+    // Colores y mensajes
+    warning.style.display = "none";
+    warning.classList.remove('has-text-warning', 'has-text-danger');
+    remainingCount.style.color = "";
+
+    if (remaining === 0) {
+      remainingCount.style.color = "gold";
+      warning.innerText = "Has alcanzado el límite de días disponibles.";
+      warning.classList.add("has-text-warning");
+      warning.style.display = "block";
+    } else if (remaining < 0) {
+      remainingCount.style.color = "red";
+      warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
+      warning.classList.add("has-text-danger");
+      warning.style.display = "block";
     }
+
+    // Actualiza contador de días válidos también
+    if (daysRequested > 0) {
+      daysCounter.style.display = "block";
+      daysCounterText.innerHTML = `You are requesting <strong>${daysRequested}</strong> valid days.`;
+    } else {
+      daysCounter.style.display = "block";
+      daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
+    }
+
+    // Guarda los días válidos
+    document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+
+  } else {
+    daysCounter.style.display = "none";
+    remainingCount.innerText = `<%= remainingDays %> / <%= diasTotales %>`;
+    warning.style.display = "none";
+    remainingCount.style.color = "";
   }
+}
+
 
 
   document.addEventListener("DOMContentLoaded", function () { 
