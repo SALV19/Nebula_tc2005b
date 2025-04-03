@@ -93,7 +93,9 @@ footer {
 .dateLine::-webkit-calendar-picker-indicator {
   filter: invert(1);
 }
-
+option {
+  color: #545454;
+}
 .flex-centered {
   display: flex;
   flex-flow: column;

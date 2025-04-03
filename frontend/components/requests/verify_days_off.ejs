@@ -75,6 +75,7 @@
 
     if (start && end) {
       const validDays = realsDaysOff(start, end);
+      console.log(validDays)
 
       if (validDays.length > 0) {
         daysCounter.style.display = "block";
@@ -112,7 +113,7 @@
         const updateForm = document.getElementById("requests_form");
         
         console.log(updateForm)
-        updateForm.action = "/requests/update_request";
+        updateForm.action = "/requests/insert_request";
     });
 
     requestType.addEventListener("change", () => {

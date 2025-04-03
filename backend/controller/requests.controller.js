@@ -79,9 +79,9 @@ exports.post_abscence_requests = async (request, response, next) => {
   // ahora son los realsDaysOff
   const daysOff = JSON.parse(request.body.validDays);
 
-  const [type, subtype] = request.body.requestType.split("|");
+  const subtype = request.body.requestType;
 
-  const request_register = new Requests(
+  const request_register = Requests.postConstructor(
     request.session.email,
     subtype, // <-- Guardamos solo el subtipo
     daysOff,
@@ -90,22 +90,20 @@ exports.post_abscence_requests = async (request, response, next) => {
     request.body.evidence
   );
 
-  if (true) {
-    await request_register
-      .save()
-      .then(async (e) => {
-        for (i in daysOff) {
-          await request_register
-            .saveDates(e[0].insertId, i)
-            .then((e) => e)
-            .catch((e) => {
-              console.error(e);
-              return e;
-            });
-        }
-      })
-      .catch((e) => console.log(e));
-  }
+  await request_register
+    .save()
+    .then(async (e) => {
+      for (i in daysOff) {
+        await request_register
+          .saveDates(e[0].insertId, i)
+          .then((e) => e)
+          .catch((e) => {
+            console.error(e);
+            return e;
+          });
+      }
+    })
+    .catch((e) => console.error(e));
 
   request.session.successRequest = {
     startDate: daysOff[0],
@@ -117,3 +115,32 @@ exports.post_abscence_requests = async (request, response, next) => {
   };
   response.redirect("/requests");
 };
+
+exports.update_request = async (request, response) => {
+  // ahora son los realsDaysOff
+  const daysOff = JSON.parse(request.body.validDays);  
+
+  const subtype = request.body.requestType;
+
+  const request_update = Requests.updateConstructor(
+    request.session.email,
+    subtype, 
+    daysOff,
+    request.body.location,
+    request.body.description,
+    request.body.evidence,
+    request.body.userId
+  );
+
+  await request_update.update()
+
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length,
+  };
+  response.redirect("/requests");
+}

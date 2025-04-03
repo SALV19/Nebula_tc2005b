@@ -304,24 +304,19 @@
     const description          = document.getElementById("description");
     const evidenceContainer    = document.getElementById("evidenceContainer");
 
-    console.log(request_type_default.innerHTML)
-    console.log(start_date_default.innerHTML)
-    console.log(end_date_default.innerHTML)
-    console.log(ubicacion_default.value)
-    console.log(descripcion_default.value)
+    const userID               = document.getElementById("userId");
 
     requestType.value = request_type_default.innerHTML
     startDate.value   = re_format_date(start_date_default.innerHTML)
     endDate.value     = re_format_date(end_date_default.innerHTML)
     location.value    = ubicacion_default.value
     description.value = descripcion_default.value
+    userID.value      = id
     evidenceContainer.value = null
 
     
     const updateForm = document.getElementById("requests_form");
     updateForm.action = "/requests/update_request";
-
-    console.log(id)
   }
 
   // Consulta a db para la información de solicitudes

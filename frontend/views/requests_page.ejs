@@ -24,6 +24,7 @@
 
               <form action="/requests/insert_request" method="post" id="requests_form">
                 <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
+                <input type="hidden" name="userId" id="userId">
                 <input type="hidden" id="validDaysInput" name="validDays">
                 
                   <div class="cell">

@@ -1,13 +1,20 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor(colab_email, type, dates, location, reason, evidence) {
+  constructor(colab_email, type, dates, location, reason, evidence, request_id) {
     this.colab_email = colab_email;
     this.type = type;
     this.dates = dates;
     this.location = location;
     this.reason = reason;
     this.evidence = evidence;
+    this.request_id = request_id
+  }
+  static postConstructor(colab_email, type, dates, location, reason, evidence) {
+    return new Requests(colab_email, type, dates, location, reason, evidence, null)
+  }
+  static updateConstructor(colab_email, type, dates, location, reason, evidence, request_id) {
+    return new Requests(colab_email, type, dates, location, reason, evidence, request_id)
   }
 
   save() {
@@ -34,6 +41,14 @@ module.exports = class Requests {
                       VALUES (?, ?)`,
       [id, this.dates[idx]]
     );
+  }
+  
+  update() {
+    const dates = this.dates.join(',')
+    return db.execute(
+      `CALL update_abscence_request(?, ?, ?, ?, ?, ?)`,
+      [this.request_id, this.type, this.reason, this.location, this.evidence, dates]
+    )
   }
 
   static async fetchDaysApproved(email) {
