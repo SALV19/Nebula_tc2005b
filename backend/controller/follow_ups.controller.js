@@ -40,7 +40,6 @@ exports.get_requests = async (request, response) => {
 };
 
 exports.post_follow_ups = async (req, res) => {
-  console.log(req.body);
   try {
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
@@ -64,18 +63,50 @@ exports.post_follow_ups = async (req, res) => {
 }
 
 exports.get_meeting = (request, response, next) => {
-  console.log("entro a get_meeting");
   const googleLogin = request.user ? 1 : 0;
   Collab.fetchAllCompleteName()
     .then(collabs => {
       const [rows, fieldData] = collabs;
-      response.render('meetings_follow_up', {
-        permissions: request.session.permissions,
-        selectedOption: 'meetings',
-        colaboradores: rows, 
-        googleLogin: googleLogin,
-        csrfToken: request.csrfToken()
-      });
+
+      if(googleLogin == 1) {
+        const oauth2Client = new google.auth.OAuth2(
+          process.env.GOOGLE_CLIENT_ID,
+          process.env.GOOGLE_CLIENT_SECRET,
+          'http://localhost:3000/log_in/success'
+        );
+        
+        oauth2Client.setCredentials({
+          access_token: request.user.accessToken
+        });
+        
+        return listEvents(oauth2Client)
+          .then(events => {
+            // if (events && events.length > 0) {
+            //   events.forEach((event, i) => {
+            //     const start = event.start.dateTime || event.start.date;
+            //     console.log(`${start} - ${event.summary}`);
+            //   });
+            // }
+            
+            response.render('meetings_follow_up', {
+              permissions: request.session.permissions,
+              selectedOption: 'meetings',
+              colaboradores: rows, 
+              googleLogin: googleLogin,
+              events: events, 
+              csrfToken: request.csrfToken()
+            });
+          });
+      } else {
+        response.render('meetings_follow_up', {
+          permissions: request.session.permissions,
+          selectedOption: 'meetings',
+          colaboradores: rows, 
+          googleLogin: googleLogin,
+          events: [],
+          csrfToken: request.csrfToken()
+        });
+      }
     })
     .catch(error => {
       console.error('Error loading meetings page:', error);
@@ -88,7 +119,8 @@ exports.post_meeting = (request, response, next) => {
 
   const id_colaborador = request.body.id_colaborador;
   const fecha = request.body.fechaAgendada;
-  const hora = request.body.horaAgendada;
+  const startTime = request.body.startTime;
+  const endTime = request.body.endTime;
   const emailCollab =  Collab.fetchEmail(id_colaborador);
   const repeating = request.body.repeating;
   const summary = "Follow up Nebula";
@@ -108,17 +140,13 @@ exports.post_meeting = (request, response, next) => {
     occurrences = request.body.yearOccurrences;
   }
 
-
-  console.log("occurrences");
-  console.log(occurrences);
-
   Collab.fetchEmail(id_colaborador)
     .then(emailCollab => {
-      console.log("Imprimiendo emailCollab")
-      console.log(emailCollab);
-      const fechaHora = new Date(`${fecha}T${hora}:00`);
-      const startTimeRFC = fechaHora.toISOString();
-      const endTimeRFC = new Date(fechaHora.getTime() + 30 * 60 * 1000).toISOString();
+      const startFechaHora = new Date(`${fecha}T${startTime}:00`);
+      const startTimeRFC = startFechaHora.toISOString();
+
+      const endFechaHora = new Date(`${fecha}T${endTime}:00`);
+      const endTimeRFC = endFechaHora.toISOString();
 
       const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
@@ -132,7 +160,6 @@ exports.post_meeting = (request, response, next) => {
       
       return verificarAccesoCalendario(oauth2Client)
         .then(tieneAcceso => {
-          console.log("Tiene acceso al calendario:", tieneAcceso);
           
           if (!tieneAcceso) {
             throw new Error("No se tiene acceso al calendario");
@@ -151,7 +178,6 @@ exports.post_meeting = (request, response, next) => {
         });
   })
     .then(() => {
-        console.log("Evento creado exitosamente");
         response.redirect('/follow_ups');
     })
     .catch(error => {
@@ -163,7 +189,6 @@ exports.post_meeting = (request, response, next) => {
 function verificarAccesoCalendario(auth, calendarId = 'primary') {
   const calendar = google.calendar({ version: 'v3', auth });
   
-  console.log("Listando calendarios disponibles...");
   return calendar.calendarList.list()
       .then(response => {
           const calendarList = response.data;
@@ -176,10 +201,8 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
           const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
           
           if (calendarExiste) {
-              console.log(`El usuario tiene acceso al calendario: ${calendarId}`);
               return true;
           } else if (calendarId === 'primary') {
-              console.log("Usando el calendario principal del usuario");
               return true;
           } else {
               console.log(`El usuario NO tiene acceso al calendario: ${calendarId}`);
@@ -190,4 +213,20 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
           console.error("Error al verificar acceso al calendario:", error);
           return false;
       });
+}
+
+async function listEvents(auth) {
+  const calendar = google.calendar({version: 'v3', auth});
+  const res = await calendar.events.list({
+    calendarId: 'c_03768ccf82eda9630ea10180b3249084dda11ae3e62a2e67092ca0889e25ca56@group.calendar.google.com',
+    timeMin: new Date().toISOString(),
+    singleEvents: true,
+    orderBy: 'startTime',
+  });
+  const events = res.data.items;
+  if (!events || events.length === 0) {
+    console.log('No upcoming events found.');
+    return []; 
+  }
+  return events;
 }

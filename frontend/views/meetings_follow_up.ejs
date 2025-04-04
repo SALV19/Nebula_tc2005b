@@ -1,17 +1,17 @@
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <% if (googleLogin == 0) { %>
-  <div class="center">
+  <div class="has-text-centered">
     <br>
-    <label class="is-size-6 styling center" for="collaborators">Google login access is required</label>
+    <label class="is-size-6 styling " for="collaborators">Google login access is required</label>
     <br>
     <br>
-    <div class="control has-icons">
-      <a class="button is-white" href="/log_in/auth/google"
-        >Log in with Google</a
-      >
-      <span class="icon is-small is-left">
+    <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px;" 
+      href="/log_in/auth/google">
+      <span class="icon mr-2" style="margin-right: 8px;">
         <img src="/icons/google.webp" class="image is-24x24" />
       </span>
-    </div>
+      <span>Log in with Google</span>
+    </a>
   </div>
   <% } else { %> 
   <div class="left-form-container">
@@ -53,10 +53,20 @@
     
             <br> 
             <br>
+            
+            <div>
+              <label class="is-size-6 styling">Start time</label>
+              <input class="dateLine line-input text-style" type="time" id="filter_end" name="startTime" min="09:00" 
+              max="18:00" value="<%= new Date().toTimeString().split(' ')[0].substring(0, 5) %>"/>
+              <p id="dateError" class="text-hidden"> Select a valid time </p>
+            </div>
+
+            <br>
+            <br>
     
             <div>
-              <label class="is-size-6 styling">Hour</label>
-              <input class="dateLine" type="time" id="filter_end" name="horaAgendada" min="09:00" 
+              <label class="is-size-6 styling">End time</label>
+              <input class="dateLine line-input text-style" type="time" id="filter_end" name="endTime" min="09:00" 
               max="18:00" value="<%= new Date().toTimeString().split(' ')[0].substring(0, 5) %>"/>
               <p id="dateError" class="text-hidden"> Select a valid time </p>
             </div>
@@ -114,28 +124,12 @@
         </div>
       </form>
     </div>
+    <div class="right-form-container">
+      <h1> Hola mundo</h1>
+      <%- include('../components/home/home_logic.ejs') %>
+    </div>
   <% } %>
-  <script>
-    // function myFunc(id) {
-    //   let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
-      
-    //   blocks.forEach(block => {
-    //     let element = document.getElementById(block);
-    //     if (element) {
-    //       element.style.display = "none";
-    //     }
-    //   });
 
-    //   if (id !== "no") {
-    //     let selectedBlock = document.getElementById(`${id}Block`);
-    //     if (selectedBlock) {
-    //       selectedBlock.style.display = "block";
-    //     } else {
-    //       console.error("No se encontró el bloque para:", id);
-    //     }
-    //   }
-    // }
-  </script>
   
   <style>
     .left-form-container {
@@ -146,7 +140,16 @@
       margin-left: 0!important;
       margin-right: 0!important;
     }
-    
+
+    .right-form-container {
+      width: 100%;
+      display: flex;
+      justify-content: flex-end;
+      padding: 20px;
+      margin-left: 0!important;
+      margin-right: 0!important;
+    }
+      
     .column-container {
       width: 100%;
     }
