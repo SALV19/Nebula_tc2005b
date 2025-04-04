@@ -2,12 +2,12 @@ const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
 const Collab = require('../models/collabs.model');
 
-exports.update_estado = async (req, res) => {
+exports.update_estado = async (request, response) => {
   // console.log('Sesion', req.session);
   // console.log('Estado', req.body.estado);
   // console.log('ID: ', req.body.id_solicitud_falta);
-  await Requests.save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador);
-  res.redirect("/requests");
+  await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
+  response.redirect("/requests");
 };
 
 
