@@ -3,9 +3,6 @@ const Events = require("../models/events.model");
 const Collab = require('../models/collabs.model');
 
 exports.update_estado = (req, res) => {
-  // console.log('Sesion', req.session);
-  // console.log('Estado', req.body.estado);
-  // console.log('ID: ', req.body.id_solicitud_falta);
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador);
   res.redirect("/requests");
 };
@@ -44,14 +41,11 @@ exports.get_collabs_requests = async (request, response) => {
     .catch((e) => console.error(e));
   
   const acceptance_colab = await Promise.all(requests[0].map((e) => {
-    console.log('e', e);
     if (!e.colabAprobador){
       return 0;
     } 
     return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
   }))
-
-  console.log('Aprobador', acceptance_colab);
 
   response.json({
     selectedOption: "requests",

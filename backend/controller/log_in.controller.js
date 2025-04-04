@@ -15,6 +15,8 @@ exports.get_log_in = (request, response) => {
 };
 
 exports.post_log_in = async (request, response) => {
+  request.session.email = null;
+  request.session.id_colaborador = null;
   const email = request.body.email;
   const password = request.body.password;
 
