@@ -69,61 +69,78 @@
     return effective;
   }
 
+  
   function updateDaysCounter() {
-  const start = startDate.value;
-  const end = endDate.value;
-  const remainingCount = document.getElementById("remainingCount");
-  const warning = document.getElementById("vacationWarning");
+    const start = startDate.value;
+    const end = endDate.value;
+    const [type, subtype] = requestType.value.split("|");
+    const isVacationVacation = (type === "Vacation" && subtype === "Vacation");
 
-  if (start && end) {
-    const validDays = realsDaysOff(start, end);
-    const daysRequested = validDays.length;
+    // Referencias a elementos
+    const vacationCountersWrapper = document.getElementById("vacationCountersWrapper");
+    const remainingCount = document.getElementById("remainingCount");
+    const warning = document.getElementById("vacationWarning");
 
-    const approved = parseInt(document.getElementById('approvedCount').innerText);
-    const pending = parseInt(document.getElementById('pendingCount').innerText);
-    const total = <%= diasTotales %>;
-    const remaining = total - approved - pending - daysRequested;
+    // 1) Siempre calculamos los días válidos para mostrar
+    //    "You are requesting X valid days." en todos los tipos
+    if (start && end) {
+      const validDays = realsDaysOff(start, end);
+      const daysRequested = validDays.length;
 
-    // Actualiza texto del contador
-    remainingCount.innerText = `${remaining} / ${total}`;
+      // Actualiza el contador de días solicitados
+      if (daysRequested > 0) {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `You are requesting <strong>${daysRequested}</strong> valid days.`;
+      } else {
+        daysCounter.style.display = "block";
+        daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
+      }
 
-    // Colores y mensajes
-    warning.style.display = "none";
-    warning.classList.remove('has-text-warning', 'has-text-danger');
-    remainingCount.style.color = "";
+      // Guarda los días válidos en el hidden input
+      document.getElementById("validDaysInput").value = JSON.stringify(validDays);
 
-    if (remaining === 0) {
-      remainingCount.style.color = "gold";
-      warning.innerText = "Has alcanzado el límite de días disponibles.";
-      warning.classList.add("has-text-warning");
-      warning.style.display = "block";
-    } else if (remaining < 0) {
-      remainingCount.style.color = "red";
-      warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
-      warning.classList.add("has-text-danger");
-      warning.style.display = "block";
-    }
+      // 2) Si NO es Vacation|Vacation, ocultamos contadores y salimos
+      if (!isVacationVacation) {
+        vacationCountersWrapper.style.display = "none";
+        return;
+      }
 
-    // Actualiza contador de días válidos también
-    if (daysRequested > 0) {
-      daysCounter.style.display = "block";
-      daysCounterText.innerHTML = `You are requesting <strong>${daysRequested}</strong> valid days.`;
+      // 3) Si SÍ es Vacation|Vacation, mostramos contadores y aplicamos la lógica
+      vacationCountersWrapper.style.display = "block";
+
+      // Obtenemos "approved", "pending", etc.
+      const approved = parseInt(document.getElementById('approvedCount').innerText);
+      const pending = parseInt(document.getElementById('pendingCount').innerText);
+      const total = <%= diasTotales %>;
+
+      // remaining = total - (approved + pending + daysRequested)
+      const remaining = total - approved - pending - daysRequested;
+      remainingCount.innerText = `${remaining} / ${total}`;
+
+      // Reset estilos
+      warning.style.display = "none";
+      warning.classList.remove('has-text-warning', 'has-text-danger');
+      remainingCount.style.color = "";
+
+      // Validación de color y mensajes
+      if (remaining < 0) {
+        remainingCount.style.color = "red";
+        warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
+        warning.classList.add("has-text-danger");
+        warning.style.display = "block";
+      } else if (remaining === 0) {
+        remainingCount.style.color = "gold";
+        warning.innerText = "Has alcanzado el límite de días disponibles.";
+        warning.classList.add("has-text-warning");
+        warning.style.display = "block";
+      }
+
     } else {
-      daysCounter.style.display = "block";
-      daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
+      // Si no hay fechas, ocultamos contadores
+      daysCounter.style.display = "none";
+      vacationCountersWrapper.style.display = isVacationVacation ? "block" : "none";
     }
-
-    // Guarda los días válidos
-    document.getElementById("validDaysInput").value = JSON.stringify(validDays);
-
-  } else {
-    daysCounter.style.display = "none";
-    remainingCount.innerText = `<%= remainingDays %> / <%= diasTotales %>`;
-    warning.style.display = "none";
-    remainingCount.style.color = "";
   }
-}
-
 
 
   document.addEventListener("DOMContentLoaded", function () { 
@@ -136,6 +153,7 @@
     const evidenceContainer = document.getElementById("evidenceContainer");
     const daysCounter = document.getElementById("daysCounter");
     const daysCounterText = document.getElementById("daysCounterText");
+    const vacationCountersWrapper = document.getElementById("vacationCountersWrapper");
     
     // Check if the elements exist
     if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
@@ -146,6 +164,7 @@
     // Open the form
     openBtn.addEventListener("click", () => {
         requestPopup.style.display = "flex";
+        updateDaysCounter();
     });
 
     requestType.addEventListener("change", () => {
@@ -156,6 +175,7 @@
     startDate.addEventListener("change", () => {
       checkEvidenceRequirement();
       updateDaysCounter();
+      
     });
 
     endDate.addEventListener("change", () => {
@@ -168,12 +188,28 @@
     // Close the form
     closeBtn.addEventListener("click", () => {
 
+        // Resetea el tipo de request
         document.getElementById("requestType").value = "Absence|Academic Status";
+        // Resetea las fechas
         document.getElementById("startDate").value = null;
         document.getElementById("endDate").value = null;
+          // Resetea otros campos
         document.getElementById("location").value = "";
         document.getElementById("description").value = "";
         document.getElementById("evidence").value = "";
+        document.getElementById("validDaysInput").value = "[]";
+
+        // Resetea la UI de contadores
+        const remainingCount = document.getElementById("remainingCount");
+        remainingCount.innerText = "<%= remainingDays %> / <%= diasTotales %>"; 
+        remainingCount.style.color = "white";
+
+        const warning = document.getElementById("vacationWarning");
+        warning.style.display = "none";
+        
+        // Resetea la UI de días solicitados
+        daysCounter.style.display = "none";
+        daysCounterText.innerHTML = `You are requesting <strong>0</strong> valid days.`;
 
       requestPopup.style.display = "none";
 

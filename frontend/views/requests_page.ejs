@@ -47,22 +47,24 @@
                       </section>
 
                       <!-- Vacation counters - horizontal layout -->
-                      <div class="vacation-counters-row mb-4">
-                        <div class="vacation-counter-box">
-                          <div class="vacation-count" id="approvedCount"><%= approvedDays %></div>
-                          <div class="vacation-label">Approved Vacations</div>
+                      <!-- Vacation counters wrapper -->
+                      <div id="vacationCountersWrapper">
+                        <div class="vacation-counters-row mb-4" id="vacationCountersRow">
+                          <div class="vacation-counter-box">
+                            <div class="vacation-count" id="approvedCount"><%= approvedDays %></div>
+                            <div class="vacation-label">Approved Vacations</div>
+                          </div>
+                          <div class="vacation-counter-box">
+                            <div class="vacation-count" id="pendingCount"><%= pendingDays %></div>
+                            <div class="vacation-label">Pending Vacations</div>
+                          </div>
+                          <div class="vacation-counter-box">
+                            <div class="vacation-count" id="remainingCount"><%= remainingDays %> / <%= diasTotales %></div>
+                            <div class="vacation-label">Remaining Vacations</div>
+                          </div>
                         </div>
-                        <div class="vacation-counter-box">
-                          <div class="vacation-count" id="pendingCount"><%= pendingDays %></div>
-                          <div class="vacation-label">Pending Vacations</div>
-                        </div>
-                        <div class="vacation-counter-box">
-                          <div class="vacation-count" id="remainingCount"><%= remainingDays %> / <%= diasTotales %></div>
-                          <div class="vacation-label">Remaining Vacations</div>
-                        </div>
+                        <div class="vacation-warning mt-2" id="vacationWarning" style="display: none;"></div>
                       </div>
-
-                      <div class="vacation-warning mt-2" id="vacationWarning" style="display: none;"></div>
 
                       
                       <!-- Start date -->
