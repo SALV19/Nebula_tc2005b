@@ -1,3 +1,4 @@
+const { color } = require("chart.js/helpers");
 const Requests = require("../models/home.model");
 const {contVac} = require("../util/contVacations")
 const {google} = require('googleapis')
@@ -35,26 +36,25 @@ exports.get_home = async (request, response) => {
         return
       }
       const calendars = res.data.items;
-      // console.log('Calendario: ', calendars);
-      // response.json(calendars)
     })
 
-    // Obtener lista de calendarios
     const { data } = await calendar.calendarList.list();
-    // console.log('Calendarios:', data.items);
 
     const calendarListResponse = await calendar.calendarList.list();
     const calendars = calendarListResponse.data.items;
-    const nombre = calendarListResponse.data.items.map(e => ({
-      title : e.summary
-    }))
-    console.log('nombres', nombre);
+
+    const calendarMap = {};
+    const colors = ["#485FC7", "#B7A5E6", "#59A250", "#60508F", "#699895", "#886998", "#986980","#986969"];
+    const colorIndex = 0
   
     let eventos = [];
 
-    // 🔹 Iterar sobre cada calendario y obtener sus eventos
     for (const cal of calendars) {
       const calendarId = cal.id;
+
+      console.log("color ", cal.backgroundColor);
+      // calendarMap[calendarId] = colors[calendarId];
+
       const eventsResponse = await calendar.events.list({
         calendarId,
         singleEvents: true,
@@ -65,10 +65,8 @@ exports.get_home = async (request, response) => {
         title: event.summary,
         start: event.start.dateTime || event.start.date,
         end: event.end?.dateTime || event.end?.date,
-        backgroundColor: "0B8043", 
-        borderColor: '#2980b9'
+        backgroundColor: cal.backgroundColor,
       }));
-
       eventos = [...eventos, ...eventosDelCalendario];
     }
 
@@ -76,6 +74,7 @@ exports.get_home = async (request, response) => {
     
     contVac(request)
       .then(({diasDisponibles,diasTotales, error}) => {
+        console.log("eventos: ", eventos);
           response.render("home_page", {
             diasDisponibles,
             diasTotales,

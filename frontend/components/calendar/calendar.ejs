@@ -7,6 +7,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
+    console.log("eventos", eventos);
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       themeSystem: 'bootstrap5', 
@@ -16,11 +17,11 @@
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       events: eventos,
+      eventColor: "#FFFF",
       eventClick: function(info) {
         alert('Event: ' + info.event.title);
       }
     });
-
     calendar.render();
   });
 </script>
