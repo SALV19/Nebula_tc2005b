@@ -67,7 +67,6 @@ exports.post_follow_ups = (req, res) => {
     });
 };
 
-
 exports.get_followUps_info = (request, response, next) => {
   
   settings.selectedOption = 'Collaborators';
