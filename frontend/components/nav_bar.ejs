@@ -1,5 +1,6 @@
 <%- include ('../views/includes/_header.ejs') %>
 <link rel="stylesheet" href="/css/nav.css">
+<% if (permissions.length > 0) {%>
 <nav class="sidenav">
   <a href="/">
     <img src="/icons/nuclea.png" alt="" style="width: 30px; height: 30px;">
@@ -10,26 +11,30 @@
       <i class="bi bi-calendar"></i>
       <span>Calendar</span>
     </a>
-    <a href="/requests" >
-      <i class="bi bi-question-square"></i> 
-      <span>Request</span>
-    </a>
-    <a href="/follow_ups">
-      <i class="bi bi-graph-up"></i> 
-      <span>Follow-ups</span>
-    </a>
-    <a href="/view_collabs">
-      <i class="bi bi-people-fill"></i> 
-      <span>Collabs</span>
-    </a>
-    <a href="/reports" class="">
-      <i class="bi bi-pie-chart"></i> 
-      <span>Reports</span>
-    </a>
+      <a href="/requests" >
+        <i class="bi bi-question-square"></i> 
+        <span>Request</span>
+      </a>
+      <a href="/follow_ups">
+        <i class="bi bi-graph-up"></i> 
+        <span>Follow-ups</span>
+      </a>
+    <% if (permissions.includes('consult_collabs')) {%>
+      <a href="/view_collabs">
+        <i class="bi bi-people-fill"></i> 
+        <span>Collabs</span>
+      </a>
+    <% } %>
+    <% if (permissions.includes('create_reports')) {%>
+      <a href="/reports" class="">
+        <i class="bi bi-pie-chart"></i> 
+        <span>Reports</span>
+      </a>
+    <% } %>
   </div>
   <a href="/personal_info" class="">
     <i class="bi bi-person-fill"></i> 
     <span>Personal Info</span>
   </a>
-  
+<% } %>
 </nav>

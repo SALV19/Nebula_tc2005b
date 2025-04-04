@@ -129,7 +129,6 @@ module.exports = class Requests {
     }
   }
   static async fetchAllRequests(offset, filter = null) {
-    console.log("Offset: ", offset)
     if (!filter) {
       return db.execute(
         `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
@@ -158,10 +157,18 @@ module.exports = class Requests {
     }
   }
 
-  static save_State(estado, id_solicitud_falta) {
-    return db.execute(
-      "UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?",
-      [estado, id_solicitud_falta]
-    );
+  static async save_State(estado, id_solicitud_falta, colabAprobador) {
+    try {
+      return await db.execute(
+        `UPDATE solicitudes_falta 
+         SET estado = ?, colabAprobador = ? 
+         WHERE id_solicitud_falta = ?`,
+        [estado, colabAprobador, id_solicitud_falta]
+      );
+    } catch (error) {
+      console.error("Error al actualizar estado:", error);
+      throw error;
+    }
   }
+  
 };

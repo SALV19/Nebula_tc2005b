@@ -15,15 +15,15 @@
                         <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
                       </tr>`
   }
-  function accept_deny(element) {
-    // is checkmark
-    if (element.classList.contains('bi-check-circle')) {
-      console.log('Accept request')
-    }
-    else {
-      console.log('Deny request')
-    }
-  }
+  // function accept_deny(element) {
+  //   // is checkmark
+  //   if (element.classList.contains('bi-check-circle')) {
+  //     console.log('Accept request')
+  //   }
+  //   else {
+  //     console.log('Deny request')
+  //   }
+  // }
   function createCalendarElement(id) {
     return `<div class="cal-modal-container is-flex is-justify-content-center mb-2">
               <div class="cal-modal">
@@ -54,14 +54,25 @@
     // Información por cada renglón de la tabla
     data.requests[0].forEach((d, idx) => {
       table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td class='py-2'><i class="bi bi-caret-right-fill" id='caret-${idx}'></i> ${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td ><i class="bi bi-caret-right-fill" id='caret-${idx}'></i> ${d.nombre} ${d.apellidos}</td>`
       table_content += `<td>${my_formatDate(d.start)}</td>`
       table_content += `<td>${my_formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
-      if (d.estado == 0) {
+      if (d.estado == 0 ) {
         table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>
          <td>
-            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="1">
+            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
+              <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
+            </button>
+            <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
+              <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+            </button>
+          </td>
+          </tr>`
+      } else if (d.estado == 0.5) {
+        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>
+         <td>
+            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
             <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -95,6 +106,7 @@
                               </div>
                               <div class="column">
                                 <p><strong class='has-event'>Location: </strong>${d.ubicacion}</p>
+                                <p class="message-approved">Approved by: ${data.collab[idx] == 0 ? "Hasn't been approved" : data.collab[idx][0].nombre + " " + data.collab[idx][0].apellidos}  </p>
                               </div>
                             </div>
                           </td>
@@ -147,15 +159,14 @@
 
         Swal.fire({
           title: "Are you sure?",
-          text: `Do you want to set this to ${Number(newValue) === 1 ? "Accept" : "Deny"}?`,
+          text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
           icon: "question",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
+          confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
+          cancelButtonColor: "#7066E0",
           confirmButtonText: "Yes, update it!"
         }).then((result) => {
           if (result.isConfirmed) {
-            console.log('ID solicitud:',postId, ' Nuevo valor:', newValue); 
             updateField(postId, newValue);
             get_info();
           }
@@ -163,9 +174,23 @@
       });
     });
 
+    function showCollabApprove(){
+      const csrf = document.getElementById('_csrf').value;
+      const selected_option = document.querySelector('.selected');
+      const route = selected_option.innerHTML;
+
+      fetch(`/requests/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        return response.json()
+      })
+      .catch(e => console.error("error", e));
+    }
+
     function updateField(postId, newValue) {
       const csrf = document.getElementById('_csrf').value
-      fetch(`/requests`, {
+      fetch(`/requests/Requests/update`, {
         method: "POST", 
         headers: {
           "Content-Type": "application/json",
@@ -202,7 +227,6 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
-    console.log(filter)
     return fetch(`/requests/${route}`, {
       method: 'POST',
       headers: {

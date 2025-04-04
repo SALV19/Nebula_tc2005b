@@ -56,11 +56,10 @@ exports.contVac = (request, responsem, colab_id=null) => {
             });
             return Promise.all(promises).then(() => {
                 diasDisponibles = diasTotales - cantDiasSol;
-                console.log("DD: ", { diasDisponibles, diasTotales });
                 return { diasDisponibles, diasTotales };
             });
         })
         .catch((error) => {
-            console.log(error);
+            return {diasDisponibles: 0, diasTotales: 0, error: error}
         });
 };
