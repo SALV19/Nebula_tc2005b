@@ -123,6 +123,7 @@
       remainingCount.style.color = "";
 
       // Validación de color y mensajes
+      
       if (remaining < 0) {
         remainingCount.style.color = "red";
         warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
@@ -134,6 +135,8 @@
         warning.classList.add("has-text-warning");
         warning.style.display = "block";
       }
+      
+      return remaining;
 
     } else {
       // Si no hay fechas, ocultamos contadores
@@ -224,7 +227,7 @@
       const location = document.getElementById("location").value.trim();
       const evidenceInput = document.getElementById("evidence");
       const [type, subtype] = requestType.value.split("|");
-
+      const remaining = updateDaysCounter();
       const errors = [];
 
       let validDays = [];
@@ -267,11 +270,17 @@
         errors.push("Enter the location.");
       }
 
+    
+
 
       const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
 
       if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.value.trim()) {
         errors.push("Please attach evidence for absences longer than 3 valid days.");
+      }
+      console.log(remaining)
+      if (remaining < 0) {
+        errors.push("Requesting more vacations than available");
       }
 
 
