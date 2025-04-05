@@ -11,7 +11,7 @@ database Nebula as db
 
 ' ---- APROBAR SOLICITUD ----
 activate S
-S -> gr : fetch('requests)
+S -->> gr : fetch('requests' )
 
 activate gr
 gr -> SRoute : (' /Requests/update ')
@@ -50,7 +50,7 @@ SController -> rq : response.render("requests_page", \n { selectedOption: "vacat
 deactivate SController
 
 activate rq 
-rq -> S : HTML
+rq -->> S : HTML
 deactivate rq 
 
 deactivate S
