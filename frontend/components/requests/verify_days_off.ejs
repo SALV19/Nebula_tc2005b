@@ -1,7 +1,6 @@
 <script>
-  const holidays = <%- JSON.stringify(holidays)%>;
-  const all_requests = <%- JSON.stringify(all_requests)%>;
-  
+  let all_requests;
+  let holidays;
 
   function get_inbetween_dates(start, end) {
     let current = new Date(start);
@@ -69,8 +68,30 @@
     return effective;
   }
 
+  function createContent(data) {
+    const info = document.querySelector("#counter_box");
+    const content = `<div id="vacationCountersWrapper">
+                          <div class="vacation-counters-row mb-4" id="vacationCountersRow">
+                            <div class="vacation-counter-box">
+                              <div class="vacation-count" id="approvedCount">${data.approvedDays}</div>
+                              <div class="vacation-label">Approved Vacations</div>
+                            </div>
+                            <div class="vacation-counter-box">
+                              <div class="vacation-count" id="pendingCount">${data.pendingDays}</div>
+                              <div class="vacation-label">Pending Vacations</div>
+                            </div>
+                            <div class="vacation-counter-box">
+                              <div class="vacation-count" id="remainingCount">${data.remainingDays} / ${data.diasTotales}</div>
+                              <div class="vacation-label">Remaining Vacations</div>
+                            </div>
+                          </div>
+                          <div class="vacation-warning mt-2" id="vacationWarning" style="display: none;"></div>
+                        </div>`
+    info.innerHTML = content
+  } 
   
-  function updateDaysCounter() {
+  function updateDaysCounter(data) {
+    console.log("data", data)
     const start = startDate.value;
     const end = endDate.value;
     const [type, subtype] = requestType.value.split("|");
@@ -111,7 +132,7 @@
       // Obtenemos "approved", "pending", etc.
       const approved = parseInt(document.getElementById('approvedCount').innerText);
       const pending = parseInt(document.getElementById('pendingCount').innerText);
-      const total = <%= diasTotales %>;
+      const total = data.diasTotales
 
       // remaining = total - (approved + pending + daysRequested)
       const remaining = total - approved - pending - daysRequested;
@@ -135,7 +156,7 @@
         warning.classList.add("has-text-warning");
         warning.style.display = "block";
       }
-      
+
       return remaining;
 
     } else {
@@ -166,24 +187,24 @@
 
     // Open the form
     openBtn.addEventListener("click", () => {
-        requestPopup.style.display = "flex";
-        updateDaysCounter();
-    });
+        fetch("/requests/pop_up",{
+          method:"GET", 
+          headers:{"Content-Type": "aplication/json"}
+        }).then(response => {
+          return response.json()})
+        .then(data =>{
+          holidays = data.holidays;
+          all_requests = data.all_requests;
+          createContent(data)
+          requestPopup.style.display = "flex";
 
-    requestType.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter();
-    });
+          eventListeners(data)
+          updateDaysCounter(data);
 
-    startDate.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter();
-      
-    });
+        })
+        .catch(error=> console.error("Error al obtener los datos de las solicitudes:", error));
 
-    endDate.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter();
+        
     });
 
 
@@ -202,23 +223,41 @@
         document.getElementById("evidence").value = "";
         document.getElementById("validDaysInput").value = "[]";
 
-        // Resetea la UI de contadores
-        const remainingCount = document.getElementById("remainingCount");
-        remainingCount.innerText = "<%= remainingDays %> / <%= diasTotales %>"; 
-        remainingCount.style.color = "white";
+        // // Resetea la UI de contadores
+        // const remainingCount = document.getElementById("remainingCount");
+        // remainingCount.innerText = 
+        // remainingCount.style.color = "white";
 
-        const warning = document.getElementById("vacationWarning");
-        warning.style.display = "none";
+        // const warning = document.getElementById("vacationWarning");
+        // warning.style.display = "none";
         
-        // Resetea la UI de días solicitados
-        daysCounter.style.display = "none";
-        daysCounterText.innerHTML = `You are requesting <strong>0</strong> valid days.`;
+        // // Resetea la UI de días solicitados
+        // daysCounter.style.display = "none";
+        // daysCounterText.innerHTML = `You are requesting <strong>0</strong> valid days.`;
 
       requestPopup.style.display = "none";
 
     });
 
     const requestForm = document.querySelector("form"); 
+    
+    function eventListeners(data){
+
+      requestType.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter(data);
+    });
+
+    startDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter(data);
+      
+    });
+
+    endDate.addEventListener("change", () => {
+      checkEvidenceRequirement();
+      updateDaysCounter(data);
+    });
 
     // Select alert for at least one business day 
     requestForm.addEventListener("submit", function (e) {
@@ -227,7 +266,7 @@
       const location = document.getElementById("location").value.trim();
       const evidenceInput = document.getElementById("evidence");
       const [type, subtype] = requestType.value.split("|");
-      const remaining = updateDaysCounter();
+      const remaining = updateDaysCounter(data);
       const errors = [];
 
       let validDays = [];
@@ -278,7 +317,7 @@
       if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.value.trim()) {
         errors.push("Please attach evidence for absences longer than 3 valid days.");
       }
-      console.log(remaining)
+      console.log("remaining",remaining)
       if (remaining < 0) {
         errors.push("Requesting more vacations than available");
       }
@@ -290,6 +329,11 @@
         showErrorPopup(errors);
       }
     });
+
+    }
+
+
+
   });
 
   // Show or hide the evidence field

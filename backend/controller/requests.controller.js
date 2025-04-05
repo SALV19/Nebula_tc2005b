@@ -1,6 +1,7 @@
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
-const {contVac} = require("../util/contVacations")
+const {contVac} = require("../util/contVacations");
+const { request, response } = require("express");
 
 exports.update_estado = async (req, res) => {
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
@@ -8,6 +9,21 @@ exports.update_estado = async (req, res) => {
 };
 
 exports.get_requests = async (request, response) => {
+
+  const successRequest = request.session.successRequest;
+  delete request.session.successRequest;
+
+  response.render("requests_page", {
+    successRequest,
+    selectedOption: "vacations",
+    csrfToken: request.csrfToken(),
+    permissions: request.session.permissions,
+    
+    
+  });
+};
+
+exports.showPopUp= async(request,response)=>{
 
   const email = request.session.email;
   
@@ -42,22 +58,20 @@ exports.get_requests = async (request, response) => {
   const {_, diasTotales} = await contVac(request);
   const remainingDays = diasTotales - approvedDays - pendingDays;
 
-  const successRequest = request.session.successRequest;
-  delete request.session.successRequest;
 
-  response.render("requests_page", {
-    selectedOption: "vacations",
-    permissions: request.session.permissions,
-    all_requests: all_requests,
-    holidays: holidays,
-    csrfToken: request.csrfToken(),
-    successRequest, //Para el ejs
+  console.log(all_requests,holidays,approvedDays,pendingDays,remainingDays,diasTotales)
+
+  response.json({
+    all_requests,
+    holidays,
     approvedDays,
     pendingDays,
     remainingDays,
     diasTotales
-  });
-};
+  })
+
+}
+
 
 exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
