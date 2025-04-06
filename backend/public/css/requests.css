@@ -178,3 +178,22 @@ textarea{
     max-width: 90%;
     margin: 0 auto;
 }
+
+/* Date Columns*/
+.date-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vw; 
+    width: 100%;     
+    margin: 0;        
+    padding: 0;         
+}
+
+.input-wrapper {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+.dateLine {
+    text-align: left;
+}
