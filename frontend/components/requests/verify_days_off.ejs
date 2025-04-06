@@ -1,7 +1,12 @@
 <script>
+  /**
+   * Global state: holidays and approved requests are injected after fetch 
+   * (used in validation and counters)
+   */
   let all_requests;
   let holidays;
 
+  //Returns an array of date strings between start and end
   function get_inbetween_dates(start, end) {
     let current = new Date(start);
     end = new Date(end);
@@ -17,6 +22,7 @@
     return dates;
   }
 
+  // Converts holidays into an array of date strings
   function get_holidays() {
     const taken_days = [];
 
@@ -26,28 +32,31 @@
       if (h.fecha_inicio != h.fecha_fin) {
         const range = get_inbetween_dates(h.fecha_inicio, h.fecha_fin);
         taken_days.push(...range);
-      }
-      else {
+      }else {
 
         // yyyy-mm-dd
         const dateWhithoutTime = new Date(h.fecha_inicio).toISOString().split('T')[0];
         taken_days.push(dateWhithoutTime );
       }
     }
+
     return taken_days;
   }
 
+  // Converts approved request dates to yyyy-mm-dd strings
   function get_approved_days() {
     const approved_days = all_requests.map(r => {
-      
-      // 'yyyy-mm-dd'
+
       return new Date(r.fecha).toISOString().split('T')[0]; 
     });
 
       return approved_days;
   }
 
-  // Function to count business days (without Saturdays or Sundays)
+  /**
+   *  Returns business days (Mon–Fri) in range that are not 
+   * holidays or already approved requests
+   */
   function realsDaysOff(start, end) {
     const holidaysList = get_holidays();
     const approvedDays = get_approved_days();
@@ -65,31 +74,48 @@
 
       current.setDate(current.getDate() + 1);
     }
+
     return effective;
   }
 
+  // Injects the HTML content for the vacation counters
   function createContent(data) {
     const info = document.querySelector("#counter_box");
-    const content = `<div id="vacationCountersWrapper">
-                          <div class="vacation-counters-row mb-4" id="vacationCountersRow">
-                            <div class="vacation-counter-box">
-                              <div class="vacation-count" id="approvedCount">${data.approvedDays}</div>
-                              <div class="vacation-label">Approved Vacations</div>
-                            </div>
-                            <div class="vacation-counter-box">
-                              <div class="vacation-count" id="pendingCount">${data.pendingDays}</div>
-                              <div class="vacation-label">Pending Vacations</div>
-                            </div>
-                            <div class="vacation-counter-box">
-                              <div class="vacation-count" id="remainingCount">${data.remainingDays} / ${data.diasTotales}</div>
-                              <div class="vacation-label">Remaining Vacations</div>
-                            </div>
-                          </div>
-                          <div class="vacation-warning mt-2" id="vacationWarning" style="display: none;"></div>
-                        </div>`
-    info.innerHTML = content
+    const content = `
+    <div id="vacationCountersWrapper">
+      <div class="vacation-counters-row mb-4" id="vacationCountersRow">
+        <div class="vacation-counter-box">
+          <div class="vacation-count" id="approvedCount">
+            ${data.approvedDays}
+          </div>
+          <div class="vacation-label">
+            Approved Vacations
+          </div>
+        </div>
+        <div class="vacation-counter-box">
+          <div class="vacation-count" id="pendingCount">
+            ${data.pendingDays}
+          </div>
+          <div class="vacation-label">
+            Pending Vacations
+          </div>
+        </div>
+        <div class="vacation-counter-box">
+          <div class="vacation-count" id="remainingCount">
+            ${data.remainingDays} / ${data.diasTotales}
+          </div>
+          <div class="vacation-label">
+            Remaining Vacations
+          </div>
+        </div>
+      </div>
+      <div class="vacation-warning mt-2" id="vacationWarning" style="display: none;"></div>
+    </div>`;
+
+    info.innerHTML = content;
   } 
   
+  // Updates UI and validation logic based on selected request type and dates
   function updateDaysCounter(data) {
     console.log("data", data)
     const start = startDate.value;
@@ -97,18 +123,17 @@
     const [type, subtype] = requestType.value.split("|");
     const isVacationVacation = (type === "Vacation" && subtype === "Vacation");
 
-    // Referencias a elementos
+    // References to elements
     const vacationCountersWrapper = document.getElementById("vacationCountersWrapper");
     const remainingCount = document.getElementById("remainingCount");
     const warning = document.getElementById("vacationWarning");
 
-    // 1) Siempre calculamos los días válidos para mostrar
-    //    "You are requesting X valid days." en todos los tipos
+    // "You are requesting X valid days." on all types
     if (start && end) {
       const validDays = realsDaysOff(start, end);
       const daysRequested = validDays.length;
 
-      // Actualiza el contador de días solicitados
+      // Update the requested days counter
       if (daysRequested > 0) {
         daysCounter.style.display = "block";
         daysCounterText.innerHTML = `You are requesting <strong>${daysRequested}</strong> valid days.`;
@@ -117,19 +142,19 @@
         daysCounterText.innerHTML = `<span class="has-text-danger">⚠ You are not requesting any valid days.</span>`;
       }
 
-      // Guarda los días válidos en el hidden input
+      // Save the valid days in the hidden input
       document.getElementById("validDaysInput").value = JSON.stringify(validDays);
 
-      // 2) Si NO es Vacation|Vacation, ocultamos contadores y salimos
+      // If it is NOT Vacation|Vacation, we hide counters and exit
       if (!isVacationVacation) {
         vacationCountersWrapper.style.display = "none";
         return;
       }
 
-      // 3) Si SÍ es Vacation|Vacation, mostramos contadores y aplicamos la lógica
+      // If is Vacation|Vacation, we show counters and apply the logic
       vacationCountersWrapper.style.display = "block";
 
-      // Obtenemos "approved", "pending", etc.
+      // We get "approved", "pending", etc.
       const approved = parseInt(document.getElementById('approvedCount').innerText);
       const pending = parseInt(document.getElementById('pendingCount').innerText);
       const total = data.diasTotales
@@ -138,13 +163,12 @@
       const remaining = total - approved - pending - daysRequested;
       remainingCount.innerText = `${remaining} / ${total}`;
 
-      // Reset estilos
+      // Reset styles
       warning.style.display = "none";
       warning.classList.remove('has-text-warning', 'has-text-danger');
       remainingCount.style.color = "";
 
-      // Validación de color y mensajes
-      
+      // Color and message validation
       if (remaining < 0) {
         remainingCount.style.color = "red";
         warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
@@ -160,13 +184,15 @@
       return remaining;
 
     } else {
-      // Si no hay fechas, ocultamos contadores
+      
+      // If there are no dates, we hide counters
       daysCounter.style.display = "none";
       vacationCountersWrapper.style.display = isVacationVacation ? "block" : "none";
     }
   }
 
 
+  // Sets up all listeners and validation logic dynamically on form open
   document.addEventListener("DOMContentLoaded", function () { 
     const openBtn = document.getElementById("openRequestForm");
     const closeBtn = document.getElementById("closeRequestForm");
@@ -182,158 +208,163 @@
     // Check if the elements exist
     if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
         console.error("Error: The pop-up elements were not found.");
+
         return;
     }
 
     // Open the form
     openBtn.addEventListener("click", () => {
-        fetch("/requests/pop_up",{
-          method:"GET", 
-          headers:{"Content-Type": "aplication/json"}
-        }).then(response => {
-          return response.json()})
-        .then(data =>{
-          holidays = data.holidays;
-          all_requests = data.all_requests;
-          createContent(data)
-          requestPopup.style.display = "flex";
 
-          eventListeners(data)
-          updateDaysCounter(data);
-
-        })
-        .catch(error=> console.error("Error al obtener los datos de las solicitudes:", error));
-
+      fetch("/requests/pop_up",{
         
+        method:"GET", 
+        headers:{"Content-Type": "aplication/json"}
+      }).then(response => {
+
+        return response.json()
+      }).then(data =>{
+
+        holidays = data.holidays;
+        all_requests = data.all_requests;
+        createContent(data)
+        requestPopup.style.display = "flex";
+
+        eventListeners(data)
+        updateDaysCounter(data);
+
+      }).catch(error=> console.error("Error al obtener los datos de las solicitudes:", error));
+    
     });
 
 
 
-    // Close the form
+    // Close the form AND Resets all form fields and hides the popup
     closeBtn.addEventListener("click", () => {
 
-        // Resetea el tipo de request
-        document.getElementById("requestType").value = "Absence|Academic Status";
-        // Resetea las fechas
-        document.getElementById("startDate").value = null;
-        document.getElementById("endDate").value = null;
-          // Resetea otros campos
-        document.getElementById("location").value = "";
-        document.getElementById("description").value = "";
-        document.getElementById("evidence").value = "";
-        document.getElementById("validDaysInput").value = "[]";
-
-        // // Resetea la UI de contadores
-        // const remainingCount = document.getElementById("remainingCount");
-        // remainingCount.innerText = 
-        // remainingCount.style.color = "white";
-
-        // const warning = document.getElementById("vacationWarning");
-        // warning.style.display = "none";
-        
-        // // Resetea la UI de días solicitados
-        // daysCounter.style.display = "none";
-        // daysCounterText.innerHTML = `You are requesting <strong>0</strong> valid days.`;
+      // Resets the request type
+      document.getElementById("requestType").value = "Absence|Academic Status";
+      
+      // Reset the dates
+      document.getElementById("startDate").value = null;
+      document.getElementById("endDate").value = null;
+      
+      // Reset other fields
+      document.getElementById("location").value = "";
+      document.getElementById("description").value = "";
+      document.getElementById("evidence").value = "";
+      document.getElementById("validDaysInput").value = "[]";
 
       requestPopup.style.display = "none";
 
     });
 
     const requestForm = document.querySelector("form"); 
-    
+
+    /*
+    Set up event listeners for request type, dates and form submission.
+    Ensures dynamic validation and UI update based on current form state.
+     */
     function eventListeners(data){
-
+      
+      // On change: request type
       requestType.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter(data);
-    });
+        
+        // Check again if evidence is needed
+        checkEvidenceRequirement();
 
-    startDate.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter(data);
-      
-    });
+        // Update vacation counters and validation
+        updateDaysCounter(data);
+      });
 
-    endDate.addEventListener("change", () => {
-      checkEvidenceRequirement();
-      updateDaysCounter(data);
-    });
+      // On change: start date
+      startDate.addEventListener("change", () => {
 
-    // Select alert for at least one business day 
-    requestForm.addEventListener("submit", function (e) {
-      const start = startDate.value;
-      const end = endDate.value;
-      const location = document.getElementById("location").value.trim();
-      const evidenceInput = document.getElementById("evidence");
-      const [type, subtype] = requestType.value.split("|");
-      const remaining = updateDaysCounter(data);
-      const errors = [];
+        checkEvidenceRequirement();
+        updateDaysCounter(data);
+      });
 
-      let validDays = [];
+      // On change: end date
+      endDate.addEventListener("change", () => {
 
-      // Date validations
-      if (!start || !end) {
-        errors.push("Select the start and end date.");
-      } else {
-        const startDateObj = new Date(start);
-        const endDateObj = new Date(end);
+        checkEvidenceRequirement();
+        updateDaysCounter(data);
+      });
 
-        if (startDateObj > endDateObj) {
-          errors.push("The start date cannot be later than the end date.");
+      // On form submit: validate all inputs before allowing submission
+      requestForm.addEventListener("submit", function (e) {
+        const start = startDate.value;
+        const end = endDate.value;
+        const location = document.getElementById("location").value.trim();
+        const evidenceInput = document.getElementById("evidence");
+        const [type, subtype] = requestType.value.split("|");
+        const remaining = updateDaysCounter(data);
+        const errors = [];
+
+        let validDays = [];
+
+        // Date validations
+        if (!start || !end) {
+          errors.push("Select the start and end date.");
         } else {
-          validDays = realsDaysOff(start, end);
-          const allInRange = get_inbetween_dates(start, end);
-          const holidaysList = get_holidays();
-          const approvedDays = get_approved_days();
+          const startDateObj = new Date(start);
+          const endDateObj = new Date(end);
 
-          const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
-          const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
+          if (startDateObj > endDateObj) {
+            errors.push("The start date cannot be later than the end date.");
+          } else {
+            validDays = realsDaysOff(start, end);
+            const allInRange = get_inbetween_dates(start, end);
+            const holidaysList = get_holidays();
+            const approvedDays = get_approved_days();
 
-          if (validDays.length < 1) {
-            if (empalmeFeriados) {
-              errors.push("All selected dates overlap with holidays.");
-            } else if (empalmeAprobados) {
-              errors.push("All selected dates overlap with approved requests");
-            } else {
-              errors.push("You are selecting dates that overlap with holidays and approved requests.");
+            const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
+            const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
+
+            // If no valid days due to full overlap with feriados or aprobados
+            if (validDays.length < 1) {
+              if (empalmeFeriados) {
+                errors.push("All selected dates overlap with holidays.");
+              } else if (empalmeAprobados) {
+                errors.push("All selected dates overlap with approved requests");
+              } else {
+                errors.push("You are selecting dates that overlap with holidays and approved requests.");
+              }
             }
+
+            // Save valid days to hidden input
+            document.getElementById("validDaysInput").value = JSON.stringify(validDays);
           }
-
-          // Save valid days
-          document.getElementById("validDaysInput").value = JSON.stringify(validDays);
         }
-      }
-      
-      // Other validations
-      if (!location) {
-        errors.push("Enter the location.");
-      }
+        
+        // Location validation
+        if (!location) {
+          errors.push("Enter the location.");
+        }
 
-    
+        // Evidence validation (only for Absence > 3 valid days)
+        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
 
+        if (
+          type === "Absence" && 
+          validDays.length > 3 && 
+          !noEvidenceNeeded.includes(subtype) && 
+          !evidenceInput.value.trim()
+        ) {
+          errors.push("Please attach evidence for absences longer than 3 valid days.");
+        }
 
-      const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation"];
+        // Vacation overuse validation
+        if (remaining < 0) {
+          errors.push("Requesting more vacations than available");
+        }
 
-      if (type === "Absence" && validDays.length > 3 && !noEvidenceNeeded.includes(subtype) && !evidenceInput.value.trim()) {
-        errors.push("Please attach evidence for absences longer than 3 valid days.");
-      }
-      console.log("remaining",remaining)
-      if (remaining < 0) {
-        errors.push("Requesting more vacations than available");
-      }
-
-
-      // Show errors if they exist
-      if (errors.length > 0) {
-        e.preventDefault();
-        showErrorPopup(errors);
-      }
-    });
-
+        // Show errors if they exist
+        if (errors.length > 0) {
+          e.preventDefault();
+          showErrorPopup(errors);
+        }
+      });
     }
-
-
-
   });
 
   // Show or hide the evidence field
@@ -361,7 +392,7 @@
     }
   }
 
-
+  // Renders and shows a popup with validation error messages
   function showErrorPopup(messages) {
     const popup = document.getElementById("errorPopup");
     const container = document.getElementById("errorMessageList");
@@ -381,6 +412,7 @@
     popup.style.display = "flex";
   }
 
+  // Closes the error popup
   function closeErrorPopup() {
     document.getElementById("errorPopup").style.display = "none";
   }

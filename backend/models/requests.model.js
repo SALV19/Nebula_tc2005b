@@ -10,6 +10,7 @@ module.exports = class Requests {
     this.evidence = evidence;
   }
 
+  // Save the main request
   save() {
     return db.execute(
       `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
@@ -28,6 +29,8 @@ module.exports = class Requests {
       ]
     );
   }
+
+  // Save each individual date of the request
   saveDates(id, idx) {
     return db.execute(
       `INSERT INTO dias_solicitados(id_solicitud_falta, fecha)
@@ -36,6 +39,7 @@ module.exports = class Requests {
     );
   }
 
+  // Approved days (no specific type)
   static async fetchDaysApproved(email) {
     return db.execute(
       `SELECT ds.fecha
@@ -50,7 +54,7 @@ module.exports = class Requests {
     );
   }
 
-  // Get the number of approved vacation days
+  // Get approved vacation days
   static async fetchApprovedVacationDays(email) {
     return db.execute(`
       SELECT ds.fecha
@@ -61,7 +65,7 @@ module.exports = class Requests {
     `, [email]);
   }
 
-  // Get the number of pending vacation days
+  // Get pending vacation days
   static async fetchPendingVacationDays(email) {
     return db.execute(`
       SELECT ds.fecha

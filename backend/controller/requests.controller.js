@@ -23,54 +23,37 @@ exports.get_requests = async (request, response) => {
   });
 };
 
-exports.showPopUp= async(request,response)=>{
+exports.showPopUp = async (request, response) => {
+  try {
+    const email = request.session.email;
 
-  const email = request.session.email;
-  
-  const all_requests = await Requests.fetchDaysApproved(email)
-    .then(data => data[0])
-    .catch(e => {
-      console.error("Error al obtener días aprobados:", e);
-      return [];
+    const [allRequestsData] = await Requests.fetchDaysApproved(email);
+    const [holidaysData] = await Events.fetchEvents();
+    const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
+    const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
+
+    const approvedDays = approvedVacations.length;
+    const pendingDays = pendingVacations.length;
+
+    const { diasTotales } = await contVac(request);
+    const remainingDays = diasTotales - approvedDays - pendingDays;
+
+    response.json({
+      all_requests: allRequestsData,
+      holidays: holidaysData,
+      approvedDays,
+      pendingDays,
+      diasTotales,
+      remainingDays,
     });
-
-  const holidays = await Events.fetchEvents()
-    .then(data => data[0])
-    .catch(e => {
-      console.error("Error al obtener feriados:", e);
-      return [];
+  } catch (e) {
+    console.error("Error en showPopUp:", e);
+    response.status(500).json({ 
+      error: "Error al obtener datos para el pop-up" 
     });
+  }
+};
 
-  const approvedDays = await Requests.fetchApprovedVacationDays(email)
-    .then(data => data[0].length)
-    .catch(e => {
-      console.error("Error al obtener vacaciones aprobadas:", e);
-      return 0;
-    });
-
-  const pendingDays = await Requests.fetchPendingVacationDays(email)
-    .then(data => data[0].length)
-    .catch(e => {
-      console.error("Error al obtener vacaciones pendientes:", e);
-      return 0;
-    });
-
-  const {_, diasTotales} = await contVac(request);
-  const remainingDays = diasTotales - approvedDays - pendingDays;
-
-
-  console.log(all_requests,holidays,approvedDays,pendingDays,remainingDays,diasTotales)
-
-  response.json({
-    all_requests,
-    holidays,
-    approvedDays,
-    pendingDays,
-    remainingDays,
-    diasTotales
-  })
-
-}
 
 
 exports.get_collabs_requests = async (request, response) => {
@@ -95,6 +78,7 @@ exports.get_vacations = (request, response) => {
     selectedOption: settings.selectedOption,
   });
 };
+
 exports.get_abscences = (request, response) => {
   settings.selectedOption = "vacations";
 
@@ -104,25 +88,14 @@ exports.get_abscences = (request, response) => {
 };
 
 exports.post_abscence_requests = async (request, response, next) => {
+  
   // ahora son los realsDaysOff
   const daysOff = JSON.parse(request.body.validDays);
-
-  //Hacer validaciones en el servidor DESPUES
-  // // Validación: si es ausencia y hay más de 3 días hábiles, debe haber evidencia
-  // if (
-  //   request.body.requestType === "Absence" &&
-  //   daysOff.length > 3 &&
-  //   !request.body.evidence
-  // ) {
-  //   // Aquí puedes redirigir o mostrar un error
-  //   return response.status(400).send("Se requiere evidencia para ausencias mayores a 3 días hábiles.");
-  // }
-
   const [type, subtype] = request.body.requestType.split("|");
 
   const request_register = new Requests(
     request.session.email,
-    subtype, // <-- Guardamos solo el subtipo
+    subtype, 
     daysOff,
     request.body.location,
     request.body.description,
