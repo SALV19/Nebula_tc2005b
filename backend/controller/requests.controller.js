@@ -1,15 +1,35 @@
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
 const Collab = require('../models/collabs.model');
+const sendWhatsapp = require('../util/sendWhatsapp'); 
 
-exports.update_estado = (req, res) => {
-  // console.log('Sesion', req.session);
-  // console.log('Estado', req.body.estado);
-  // console.log('ID: ', req.body.id_solicitud_falta);
-  Requests.save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador);
-  res.redirect("/requests");
+exports.update_estado = async (req, res) => {
+  const { estado, id_solicitud_falta } = req.body;
+  const idAprobador = req.session.id_colaborador;
+
+  try {
+    await Requests.save_State(estado, id_solicitud_falta, idAprobador);
+
+    if (Number(estado) === 1) {
+      const info = await Requests.getNotificationData(id_solicitud_falta);
+
+      if (info && info.telefono) {
+
+        const fecha = new Date(info.start_date);
+        const fechaFormateada = fecha.toLocaleDateString('es-MX'); 
+        
+        await sendWhatsapp(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
+        console.log("Notificación enviada por WhatsApp");
+      } else {
+        console.warn("No se encontró teléfono del colaborador");
+      }
+    }
+    res.redirect("/requests");
+  } catch (error) {
+    console.error("Error al actualizar estado y enviar notificación:", error);
+    res.status(500).send("Error interno del servidor");
+  }
 };
-
 
 exports.get_requests = async (request, response) => {
   const all_requests = await Requests.fetchDaysApproved(request.session.email)
@@ -42,16 +62,16 @@ exports.get_collabs_requests = async (request, response) => {
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-  
   const acceptance_colab = await Promise.all(requests[0].map((e) => {
-    console.log('e', e);
+    // console.log('e', e);
     if (!e.colabAprobador){
       return 0;
     } 
     return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
   }))
 
-  console.log('Aprobador', acceptance_colab);
+  // console.log('Aprobador', acceptance_colab);
+  // console.log("R: ",requests)
 
   response.json({
     selectedOption: "requests",
