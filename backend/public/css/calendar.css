@@ -17,7 +17,6 @@
 
 /* Make event text and background colors more readable */
 .fc-event {
-    background-color: #485FC7 !important;
     color: white !important;
     font-size: 0.7rem;
     padding: 0.2rem;
@@ -133,3 +132,33 @@
 .fc-col-header-cell {
     border: none !important;
 }
+
+
+.popup-content {
+    background-color: white;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    text-align: center;
+}
+  
+.popup-content h2 {
+    margin-bottom: 10px;
+}
+  
+.popup-content p {
+    margin: 5px 0;
+}
+  
+button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+button:hover {
+    background-color: #0056b3;
+}
+  

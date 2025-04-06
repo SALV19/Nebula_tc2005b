@@ -1,4 +1,5 @@
 <link rel="stylesheet" href="/css/calendar.css" />
+
 <body>
   <div id='calendar' class="calendar"></div>
 </body>
@@ -7,7 +8,7 @@
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
-    console.log("eventos", eventos);
+    // console.log("eventos", eventos);
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       themeSystem: 'bootstrap5', 
@@ -17,11 +18,40 @@
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       events: eventos,
-      eventColor: "#FFFF",
       eventClick: function(info) {
-        alert('Event: ' + info.event.title);
+        // Mostrar el pop-up
+        const popup = document.getElementById('pop-up');
+        if (popup) {
+          const endDate = info.event.end;
+
+          // Opciones para formato en español
+          const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+          const horaOptions = { hour: '2-digit', minute: '2-digit' };
+          // Mostrar el pop-up
+          popup.style.display = 'block';  // Cambiar a 'block' para mostrarlo
+
+          // Rellenar la información del pop-up con los datos del evento
+          document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
+          document.getElementById('event-title').innerText = info.event.title;
+          const startDate = info.event.start;
+          // Mostrar solo la fecha
+          document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
+          // Mostrar hora de inicio
+          document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
+          // Mostrar hora de fin (si existe)
+          document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
+            : 'No end hour availablr';
+          document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
+        }
       }
     });
     calendar.render();
   });
+  
+  // Función para cerrar el pop-up
+  function closePopup() {
+    const popup = document.getElementById('pop-up');
+    popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
+  }
 </script>
+

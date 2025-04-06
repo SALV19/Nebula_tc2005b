@@ -5,15 +5,91 @@ body{
     display: flex;
     flex-direction: row;
     flex-wrap: wrap;
-    gap: 1vw;
     font-size: small;
 }
-
-.column {
+.columns-container{
     display: flex;
-    flex-direction: column;
-    flex: 1; /* Hace que las columnas tengan tamaños flexibles */
-    margin-top: 5rem;
-    margin-left: 7rem;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: small;
+    margin-left: -2rem;
 }
 
+.column2 {
+    display: flex;
+    align-items: center;
+}
+
+.column1 {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+    margin-left: 7rem;   
+}
+.vacations {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.pop-up-d {
+    height: 35vh;
+    width: 30vw;
+    position: absolute;
+    top:0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    margin-top: 18rem;
+    margin-left: 20rem;
+    border-radius: 1rem;   
+    padding: 0.4rem;
+    background-color: #454545;
+}
+  
+.pop-up-content-d {
+    padding: 1.5rem; 
+}
+
+.title-event{
+    font-weight: bold;
+    font-style:italic;
+    font-size: x-large;
+    color:#FFFF;
+}
+.text-event{
+    padding: 0.3rem;
+    font-size:small;
+    color:#FFFF;
+}
+
+.calendar-color-box {
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: middle;
+    border-radius: 0.3rem;
+    margin-right: 1rem;
+}
+
+.button-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .button-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }

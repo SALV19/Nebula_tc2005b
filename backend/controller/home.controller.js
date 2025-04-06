@@ -43,10 +43,6 @@ exports.get_home = async (request, response) => {
     const calendarListResponse = await calendar.calendarList.list();
     const calendars = calendarListResponse.data.items;
 
-    const calendarMap = {};
-    const colors = ["#485FC7", "#B7A5E6", "#59A250", "#60508F", "#699895", "#886998", "#986980","#986969"];
-    const colorIndex = 0
-  
     let eventos = [];
 
     for (const cal of calendars) {
@@ -66,15 +62,19 @@ exports.get_home = async (request, response) => {
         start: event.start.dateTime || event.start.date,
         end: event.end?.dateTime || event.end?.date,
         backgroundColor: cal.backgroundColor,
+        borderColor : cal.backgroundColor,
+        display: 'block',
+        color: '#FFFF',
+        description: event.description,
       }));
       eventos = [...eventos, ...eventosDelCalendario];
     }
-
     // console.log('Eventos obtenidos:', eventos);
     
     contVac(request)
       .then(({diasDisponibles,diasTotales, error}) => {
-        console.log("eventos: ", eventos);
+        // console.log("eventos: ", eventos);
+        // console.log('Permisos: ', request.session.permissions);
           response.render("home_page", {
             diasDisponibles,
             diasTotales,
@@ -90,37 +90,6 @@ exports.get_home = async (request, response) => {
 
 };
 
-
-
-// function verificarAccesoCalendario(auth, calendarId = 'primary') {
-//   const calendar = google.calendar({ version: 'v3', auth });
-  
-//   console.log("Listando calendarios disponibles...");
-//   return calendar.calendarList.list()
-//       .then(response => {
-//           const calendarList = response.data;
-          
-//           console.log(`El usuario tiene acceso a ${calendarList.items.length} calendarios:`);
-//           calendarList.items.forEach(cal => {
-//               console.log(`- ${cal.summary} (${cal.id})`);
-//           });
-          
-//           const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
-          
-//           if (calendarExiste) {
-//               console.log(`El usuario tiene acceso al calendario: ${calendarId}`);
-//               return true;
-//           } else if (calendarId === 'primary') {
-//               console.log("Usando el calendario principal del usuario");
-//               return true;
-//           } else {
-//               console.log(`El usuario NO tiene acceso al calendario: ${calendarId}`);
-//               return false;
-//           }
-//       })
-//       .catch(error => {
-//           console.error("Error al verificar acceso al calendario:", error);
-//           return false;
-//   });
-// }
-
+// <% if (error) {%>
+//   <%- include('../components/user_not_in_system.ejs') %>
+// <% } %>

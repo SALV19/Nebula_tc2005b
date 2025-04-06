@@ -1,46 +1,51 @@
 <link rel="stylesheet" href="/css/home.css" />
-<script src="https://unpkg.com/pdf-lib"></script>
 
 <%- include('../components/nav_bar.ejs') %>
 <input type="hidden" id="_csrf" value=<%= csrfToken %></input>
 
 <div class="column-container">
+    <div class="column1">
+      <aside class="pop-up-d" style="display: none;" id="pop-up">
+        <div class="pop-up-content-d">              
+          <button onclick="closePopup()" class="button-close">
+            <i class="bi bi-x"></i>
+          </button>
+          <div class="column-container">
+            <div class="column2">
+              <div id="color-calendar" class="calendar-color-box"></div>
+              <h2 id="event-title" class="title-event"></h2>
+            </div>                  
+          </div>
+          <p class="text-event"><strong>Date: </strong><span id="event-date"></span></p>
+          <p class="text-event"><strong>Start Hour: </strong><span id="event-hour-start"></span></p>
+          <p class="text-event"><strong>End Hour: </strong><span id="event-hour-end"></span></p>
+          <p class="text-event"><strong>Details: </strong> <span id="event-details"></span></p>
+        </div>
+      </aside>
+      <script>
+        let eventos = <%- eventos %>; 
+      </script>
+      <%- include('../components/calendar/calendar.ejs') %> 
+    </div>
 
-  <div class="column">
-    <script>
-      let eventos = <%- eventos %>; 
-    </script>
-    <%- include('../components/calendar/calendar.ejs') %>   
-  </div>
+    <div class="column1">
+      <div class="column3">
+        <div class="vacations"><%- include('../components/vacations_left.ejs') %></div>
+        <div class="vacations">
+          <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+            <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+          <% } %>
+        </div>
+      </div>
+      <div class="column3">
+        <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+        <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+          <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+        <% } %>
+      </div>
+    </div>
 
-  <div class="column">
-    <% if (error) {%>
-      <%- include('../components/user_not_in_system.ejs') %>
-    <% } %>
-    
-    <%- include ('../components/vacations_left.ejs')%>
-    
-    <%- include ('../components/current_absences.ejs', {
-      total_days: total_absences
-    }) %>
 
-    <!-- <iframe id="pdf" style="width: 100%; height: 100%;"></iframe> -->
-  </div> 
 </div>
 
-<!-- Footer fuera del contenedor -->
 <%- include('includes/_footer.ejs') %>
-
-</body>
-  
-<!-- <script>
-  createPdf();
-  async function createPdf() {
-    const pdfDoc = await PDFLib.PDFDocument.create();
-    const page = pdfDoc.addPage([350, 400]);
-    page.moveTo(110, 200);
-    page.drawText('Hello World! \n LOL');
-    const pdfDataUri = await pdfDoc.saveAsBase64({ dataUri: true });
-    document.getElementById('pdf').src = pdfDataUri;
-  }
-</script> -->
