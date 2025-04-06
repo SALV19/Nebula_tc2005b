@@ -1,0 +1,71 @@
+<link rel="stylesheet" href="/css/calendar.css" />
+<div id='calendar' class="calendar"></div>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    var calendarEl = document.getElementById('calendar');
+    
+    function parseEventos(eventosData) {
+      if (!eventosData) {
+        console.log("No event data available");
+        return [];
+      }
+      
+      console.log("Raw eventos:", typeof eventosData);
+      
+      let parsedData = [];
+      
+      if (typeof eventosData === 'string') {
+        try {
+          parsedData = JSON.parse(eventosData);
+        } catch (error) {
+          console.error("Error parsing eventos JSON:", error);
+        }
+      } else if (Array.isArray(eventosData)) {
+        parsedData = eventosData;
+      }
+      
+      console.log("Parsed eventos:", parsedData);
+      return parsedData;
+    }
+    
+    let eventData = parseEventos(window.eventos);
+    
+    const initializeCalendar = () => {
+      var calendar = new FullCalendar.Calendar(calendarEl, {
+        initialView: 'dayGridMonth',
+        height: 'auto',
+        headerToolbar: {
+          left: 'prev,next today',
+          center: 'title',
+          right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: eventData,
+        eventClick: function(info) {
+          alert('Event: ' + info.event.title);
+        },
+        dayMaxEvents: true, 
+        eventTimeFormat: {
+          hour: '2-digit',
+          minute: '2-digit',
+          meridiem: 'short'
+        }
+      });
+      
+      calendar.render();
+      return calendar;
+    };
+    
+    const calendar = initializeCalendar();
+    
+    window.updateCalendarEvents = function(newEvents) {
+      const existingEvents = calendar.getEvents();
+      existingEvents.forEach(e => e.remove());
+      
+      const parsedEvents = parseEventos(newEvents);
+      parsedEvents.forEach(event => {
+        calendar.addEvent(event);
+      });
+    };
+  });
+</script>

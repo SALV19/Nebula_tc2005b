@@ -264,10 +264,9 @@
         });
 
       } else if(selectedOption == 'Meetings' ) {
-
         fetch('/follow_ups/meeting')  
           .then(response => {
-            console.log("Respuesta recibida:", response.status);
+            console.log("Respuesta HTML recibida:", response.status);
             return response.text();
           })
           .then(html => {
@@ -278,13 +277,17 @@
             if (repeatingDropdown) {
               repeatingDropdown.addEventListener("change", function() {
                 let id = this.value;
-                console.log(id);
+                console.log("Seleccionado:", id);
                 let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
                 
                 blocks.forEach(block => {
                   let element = document.getElementById(block);
                   if (element) {
                     element.style.display = "none";
+                    const input = element.querySelector('input[type="number"]');
+                    if (input) {
+                      input.disabled = true;  
+                    }
                   }
                 });
 
@@ -292,18 +295,195 @@
                   let selectedBlock = document.getElementById(`${id}Block`);
                   if (selectedBlock) {
                     selectedBlock.style.display = "block";
+                    const input = selectedBlock.querySelector('input[type="number"]');
+                    if (input) {
+                      input.disabled = false;
+                    }
                   } else {
                     console.error("No se encontró el bloque para:", id);
                   }
                 }
               });
             }
+
+            const meetingForm = document.querySelector("form");
+            if (meetingForm) {
+              meetingForm.addEventListener("submit", function(event) {
+                let formValid = true;
+                
+                // Validate collaborator
+                const collaboratorSelect = document.getElementById("collaborators");
+                const errorMessage = document.getElementById("errorMessage");
+                
+                if (collaboratorSelect && collaboratorSelect.value === "default") {
+                  if (errorMessage) {
+                    errorMessage.classList.add("show");
+                  }
+                  formValid = false;
+                } else {
+                  if (errorMessage) {
+                    errorMessage.classList.remove("show");
+                  }
+                }
+                
+                // Validate date
+                const dateInput = document.querySelector('input[name="fechaAgendada"]');
+                const dateError = document.getElementById("dateError");
+                console.log("dateInput: ", dateInput.value);
+                
+                if (dateInput) {
+                  if (!dateInput.value) {
+                    if (dateError) {
+                      dateError.textContent = "Select a date";
+                      dateError.classList.add("show");
+                    }
+                    formValid = false;
+                  } else {
+                    const today = new Date();
+                    
+                    const todayFormatted = today.toISOString().split('T')[0];
+                    
+                    console.log("today: ", today);
+                    console.log("todatFormatted: ", todayFormatted );
+                    
+                    if (dateInput.value < todayFormatted) {
+                      dateError.classList.add("show");
+                      formValid = false;
+                    } else {
+                      // Date is today or in the future
+                      dateError.classList.remove("show");
+                    }
+                  }
+                }
+                
+                // Validate times
+                const startTimeInput = document.querySelector('input[name="startTime"]');
+                const endTimeInput = document.querySelector('input[name="endTime"]');
+                
+                // Validate start time
+                if (startTimeInput) {
+                  const startTimeError = document.getElementById("startTimeError") || 
+                                      createErrorElement("startTimeError", startTimeInput.parentNode.parentNode);
+                  
+                  if (!startTimeInput.value) {
+                    startTimeError.textContent = "Select start time";
+                    startTimeError.classList.add("show");
+                    formValid = false;
+                  } else {
+                    startTimeError.classList.remove("show");
+                  }
+                }
+                
+                // Validate end time
+                if (endTimeInput) {
+                  const endTimeError = document.getElementById("endTimeError") || 
+                                    createErrorElement("endTimeError", endTimeInput.parentNode.parentNode);
+                  
+                  if (!endTimeInput.value) {
+                    endTimeError.textContent = "Select end time";
+                    endTimeError.classList.add("show");
+                    formValid = false;
+                  } else if (startTimeInput && startTimeInput.value && 
+                            startTimeInput.value >= endTimeInput.value) {
+                    endTimeError.textContent = "End time must be after start time";
+                    endTimeError.classList.add("show");
+                    formValid = false;
+                  } else {  
+                    endTimeError.classList.remove("show");
+                  }
+                }
+                
+                // If form is not valid, prevent submission
+                if (!formValid) {
+                  event.preventDefault();
+                  
+                  // Add a simple error message at the top if not already present
+                  let errorSummary = document.getElementById("error-summary");
+                  if (!errorSummary) {
+                    errorSummary = document.createElement("p");
+                    errorSummary.id = "error-summary";
+                    errorSummary.className = "form-error-message";
+                    errorSummary.textContent = "Please fix the errors highlighted below.";
+                    
+                    // Insert at the beginning of the form
+                    meetingForm.insertBefore(errorSummary, meetingForm.firstChild);
+                  }
+                  
+                  // Scroll to the top of the form to see the error summary
+                  window.scrollTo(0, meetingForm.offsetTop);
+                }
+              });
+            }
+            
+            const googleLogin = document.querySelector('.section-container') !== null;
+            
+            if (googleLogin) {
+              console.log("Usuario autenticado, cargando eventos...");
+              return fetch('/follow_ups/meeting/events');
+            } else {
+              console.log("Usuario no autenticado, no se cargarán eventos");
+              return Promise.resolve(null);
+            }
+          })
+          .then(response => {
+            if (response) {
+              return response.json();
+            } else {
+              return [];
+            }
+          })
+          .then(eventos => {
+            console.log("Eventos recibidos:", eventos);
+            
+            const calendarEl = document.getElementById('calendar');
+            if (calendarEl) {
+              console.log("Inicializando calendario con", eventos.length, "eventos");
+              
+              const calendar = new FullCalendar.Calendar(calendarEl, {
+                initialView: 'dayGridMonth',
+                height: 'auto',
+                aspectRatio: 1.6,
+                headerToolbar: {
+                  left: 'prev,next today',
+                  center: 'title',
+                  right: 'dayGridMonth'
+                },
+                events: eventos,
+                moreLinkText: 'more',
+                moreLinkClick: 'popover',
+                dayMaxEvents: 2,
+                height: 600,
+                dayHeaderFormat: { weekday: 'short' },
+                eventClick: function(info) {
+                  console.log("Evento clickeado:", info.event.title);
+                  alert('Event: ' + info.event.title);
+                },
+                eventContent: function(arg) {
+                  return {
+                    html: '<div class="event-content">' + arg.event.title + '</div>'
+                  };
+                },
+              });
+              
+              calendar.render();
+              console.log("Calendario renderizado");
+            } else {
+              console.log("Elemento calendar no encontrado o usuario no autenticado");
+            }
           })
           .catch(error => {
-            console.error('Error al cargar la vista de meetings:', error);
+            console.error('Error al cargar vista o eventos:', error);
             contentContainer.innerHTML = '<p>Error al cargar las reuniones. Por favor, intente de nuevo.</p>';
           });
       }
+    }
+
+    function createErrorElement(id, parentElement) {
+      const element = document.createElement("p");
+      element.id = id;
+      element.className = "text-hidden";
+      parentElement.appendChild(element);
+      return element;
     }
     
 

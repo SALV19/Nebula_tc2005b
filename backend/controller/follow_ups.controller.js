@@ -63,66 +63,111 @@ exports.post_follow_ups = async (req, res) => {
 }
 
 exports.get_meeting = (request, response, next) => {
-  const googleLogin = request.user ? 1 : 0;
+  console.log("entro a get_meeting");
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  const validationErrors = request.session.validationErrors || {};
+  const formData = request.session.formData || {};
+  const errorMessage = request.session.errorMessage || null;
+  const successMessage = request.session.successMessage || null;
+
+  delete request.session.validationErrors;
+  delete request.session.formData;
+  delete request.session.errorMessage;
+  delete request.session.successMessage;
+
   Collab.fetchAllCompleteName()
     .then(collabs => {
       const [rows, fieldData] = collabs;
 
-      if(googleLogin == 1) {
-        const oauth2Client = new google.auth.OAuth2(
-          process.env.GOOGLE_CLIENT_ID,
-          process.env.GOOGLE_CLIENT_SECRET,
-          'http://localhost:3000/log_in/success'
-        );
-        
-        oauth2Client.setCredentials({
-          access_token: request.user.accessToken
-        });
-        
-        return listEvents(oauth2Client)
-          .then(events => {
-            // if (events && events.length > 0) {
-            //   events.forEach((event, i) => {
-            //     const start = event.start.dateTime || event.start.date;
-            //     console.log(`${start} - ${event.summary}`);
-            //   });
-            // }
-            
-            response.render('meetings_follow_up', {
-              permissions: request.session.permissions,
-              selectedOption: 'meetings',
-              colaboradores: rows, 
-              googleLogin: googleLogin,
-              events: events, 
-              csrfToken: request.csrfToken()
-            });
-          });
-      } else {
-        response.render('meetings_follow_up', {
-          permissions: request.session.permissions,
-          selectedOption: 'meetings',
-          colaboradores: rows, 
-          googleLogin: googleLogin,
-          events: [],
-          csrfToken: request.csrfToken()
-        });
-      }
+      response.locals.errors = validationErrors;
+      response.locals.formData = formData;
+      response.locals.errorMessage = errorMessage;
+      response.locals.successMessage = successMessage;
+      
+      response.render('meetings_follow_up', {
+        permissions: request.session.permissions,
+        selectedOption: 'meetings',
+        colaboradores: rows, 
+        googleLogin: googleLogin,
+        csrfToken: request.csrfToken()
+      });
     })
     .catch(error => {
       console.error('Error loading meetings page:', error);
       response.redirect('/dashboard');
     });
-}
+};
 
 exports.post_meeting = (request, response, next) => {
   console.log(request.body);
+
+  let validationErrors = {};
+  let hasErrors = false;
+  
+  // Validate required fields
+  if (!request.body.id_colaborador || request.body.id_colaborador === 'default') {
+    validationErrors.collaborator = 'Please select a collaborator';
+    hasErrors = true;
+  }
+
+  if (!request.body.fechaAgendada) {
+    validationErrors.date = 'Please select a date';
+    hasErrors = true;
+  } else {
+    const today = new Date();
+                    
+    const todayFormatted = today.toISOString().split('T')[0];
+
+    
+    if (request.body.fechaAgendada < todayFormatted) {
+      validationErrors.date = 'Please select today or a future date';
+      hasErrors = true;
+    }
+  }
+  
+  
+  
+  if (!request.body.startTime) {
+    validationErrors.startTime = 'Please select a start time';
+    hasErrors = true;
+  }
+  
+  if (!request.body.endTime) {
+    validationErrors.endTime = 'Please select an end time';
+    hasErrors = true;
+  } else if (request.body.startTime && request.body.startTime >= request.body.endTime) {
+    validationErrors.endTime = 'End time must be after start time';
+    hasErrors = true;
+  }
+
+  const repeating = request.body.repeating;
+  if (repeating && repeating !== 'no') {
+    const occurrencesField = `${repeating}Occurrences`;
+    const occurrences = request.body[occurrencesField];
+    
+    if (!occurrences || isNaN(occurrences) || occurrences < 1) {
+      validationErrors[occurrencesField] = 'Please enter a valid number of occurrences';
+      hasErrors = true;
+    }
+  }
+  
+  
+  if (hasErrors) {
+    console.error('Validation errors:', validationErrors);
+    
+    request.session.validationErrors = validationErrors;
+    request.session.formData = request.body;
+    request.session.errorMessage = "The form couldn't be submitted. Please check the highlighted fields.";
+    
+    
+    return response.redirect('/follow_ups');
+  }
 
   const id_colaborador = request.body.id_colaborador;
   const fecha = request.body.fechaAgendada;
   const startTime = request.body.startTime;
   const endTime = request.body.endTime;
-  const emailCollab =  Collab.fetchEmail(id_colaborador);
-  const repeating = request.body.repeating;
   const summary = "Follow up Nebula";
   let occurrences = 0;
   
@@ -182,7 +227,7 @@ exports.post_meeting = (request, response, next) => {
     })
     .catch(error => {
         console.error("Error al crear la reunión:", error);
-        response.status(500).send("Error al crear la reunión: " + error.message);
+        
   });
 }
 
@@ -215,18 +260,71 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
       });
 }
 
-async function listEvents(auth) {
-  const calendar = google.calendar({version: 'v3', auth});
-  const res = await calendar.events.list({
-    calendarId: 'c_03768ccf82eda9630ea10180b3249084dda11ae3e62a2e67092ca0889e25ca56@group.calendar.google.com',
-    timeMin: new Date().toISOString(),
-    singleEvents: true,
-    orderBy: 'startTime',
-  });
-  const events = res.data.items;
-  if (!events || events.length === 0) {
-    console.log('No upcoming events found.');
-    return []; 
+exports.get_meeting_events = (request, response) => {
+  console.log("Solicitando eventos de calendario");
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+  let eventos = [];
+
+  if (googleLogin == 1) {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID, 
+      process.env.GOOGLE_CLIENT_SECRET, 
+      'http://localhost:3000/log_in/success'
+    );
+    
+    oauth2Client.setCredentials({
+      access_token: request.user.accessToken
+    });
+
+    const calendar = google.calendar({version: 'v3', auth: oauth2Client});
+    
+    calendar.calendarList.list()
+      .then(calendarListResponse => {
+        const calendars = calendarListResponse.data.items;
+        console.log("Calendarios encontrados:", calendars.length);
+        
+        const eventPromises = calendars.map(cal => {
+          const calendarId = cal.id;
+          
+          return calendar.events.list({
+            calendarId,
+            singleEvents: true,
+            orderBy: 'startTime'
+          })
+          .then(eventsResponse => {
+            const eventosDelCalendario = eventsResponse.data.items.map(event => {
+              return {
+                id: event.id,
+                title: event.summary || 'No Title',
+                start: event.start?.dateTime || event.start?.date,
+                end: event.end?.dateTime || event.end?.date,
+                backgroundColor: cal.backgroundColor || '#4285F4',
+                borderColor: cal.backgroundColor || '#4285F4',
+                allDay: !event.start.dateTime
+              };
+            });
+            
+            return eventosDelCalendario;
+          })
+          .catch(error => {
+            console.error(`Error al obtener eventos del calendario ${calendarId}:`, error);
+            return [];
+          });
+        });
+
+        return Promise.all(eventPromises);
+      })
+      .then(eventArrays => {
+        eventos = eventArrays.flat();
+        console.log("Total eventos obtenidos:", eventos.length);
+        
+        response.json(eventos);
+      })
+      .catch(error => {
+        console.error("Error al acceder a Google Calendar:", error);
+        response.json([]);
+      });
+  } else {
+    response.json([]);
   }
-  return events;
-}
+};
