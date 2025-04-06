@@ -40,15 +40,7 @@ exports.get_register = async (request, response) => {
 };
 
 exports.post_follow_ups = async (req, res) => {
-  try {
-    console.log('Body colab: ', req.body.id_colaborador);
-    console.log('Body date: ', req.body.fechaAgendada);
-    console.log('Body pregunta: ', req.body.id_pregunta);
-    console.log('Body respuesta: ', req.body.respuesta);    
-    console.log('Body pregunta: ', req.body.id_indicador);
-    console.log('Body pregunta: ', req.body.valor_metrica);
-
-
+  try {  
     // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
@@ -95,7 +87,6 @@ exports.get_followUps_info = (request, response, next) => {
           fechaAgendada: `${year}-${month}-${day}` 
         };
       });
-      // console.log("Fechas formateadas: ", fechasAgendadas);
 
       return Promise.all([
         Evaluation.fetchAllQuestions(),
