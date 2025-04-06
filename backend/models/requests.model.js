@@ -11,24 +11,25 @@ module.exports = class Requests {
   }
 
   // Save the main request
-  save() {
+  save(estado) {
     return db.execute(
       `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
-                    VALUES((
-                      SELECT id_colaborador 
-                      FROM colaborador c 
-                      WHERE c.email = ?
-                    ), ?, ?, ?, ?, ?)`,
+        VALUES((
+          SELECT id_colaborador 
+          FROM colaborador 
+          WHERE email = ?
+        ), ?, ?, ?, ?, ?)`,
       [
         this.colab_email,
-        0,
+        estado,
         this.type,
         this.reason,
         this.location,
-        this.evidence,
+        this.evidence
       ]
     );
   }
+  
 
   // Save each individual date of the request
   saveDates(id, idx) {

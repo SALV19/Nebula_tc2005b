@@ -1,7 +1,9 @@
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
+const Equipo = require("../models/equipo.model");
 const {contVac} = require("../util/contVacations");
 const { request, response } = require("express");
+
 
 exports.update_estado = async (req, res) => {
   Requests.save_State(req.body.estado, req.body.id_solicitud_falta);
@@ -95,31 +97,41 @@ exports.post_abscence_requests = async (request, response, next) => {
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
+  // By default, the request is pending
+  let estadoSolicitud = 0; 
+
+
+  try {
+
+    // We get the collaborator's role using their email
+    const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
+    const idRol = rolData[0]?.id_rol;
+
+    //If the role SuperAdmin (id_rol === 3), it is automatically approved
+    if (idRol === 3) {
+      estadoSolicitud = 1; 
+    }
+  } catch (err) {
+    console.error("Error al obtener el rol del colaborador:", err);
+  }
+
   const request_register = new Requests(
     request.session.email,
     subtype, 
     daysOff,
     request.body.location,
     request.body.description,
-    request.body.evidence
+    request.body.evidence,
+    estadoSolicitud 
   );
 
-  if (true) {
-    await request_register
-      .save()
-      .then(async (e) => {
-        for (i in daysOff) {
-          await request_register
-            .saveDates(e[0].insertId, i)
-            .then((e) => e)
-            .catch((e) => {
-              console.error(e);
-              return e;
-            });
-        }
-      })
-      .catch((e) => console.log(e));
-  }
+  await request_register.save(estadoSolicitud) 
+    .then(async (e) => {
+      for (let i in daysOff) {
+        await request_register.saveDates(e[0].insertId, i);
+      }
+    })
+    .catch((e) => console.error(e));
 
   request.session.successRequest = {
     startDate: daysOff[0],
@@ -129,5 +141,6 @@ exports.post_abscence_requests = async (request, response, next) => {
     evidence: request.body.evidence,
     totalDays: daysOff.length,
   };
+
   response.redirect("/requests");
 };
