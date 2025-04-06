@@ -28,6 +28,7 @@ exports.showPopUp = async (request, response) => {
     const email = request.session.email;
 
     const [allRequestsData] = await Requests.fetchDaysApproved(email);
+    const [allPendingRequests] = await Requests.fetchDaysPending(email);
     const [holidaysData] = await Events.fetchEvents();
     const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
     const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
@@ -40,6 +41,7 @@ exports.showPopUp = async (request, response) => {
 
     response.json({
       all_requests: allRequestsData,
+      pending_requests: allPendingRequests,
       holidays: holidaysData,
       approvedDays,
       pendingDays,

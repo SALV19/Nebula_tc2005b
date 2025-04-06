@@ -132,6 +132,11 @@
     color: #3ec1d3; 
 }
 
+#daysCounter {
+    text-align: center;
+    width: 100%;
+}
+
 /*pop up confirm*/
 .swal2-confirm.btn-ok {
     background-color: #59A250; 

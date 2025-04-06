@@ -54,6 +54,21 @@ module.exports = class Requests {
     );
   }
 
+    // pending days (no specific type)
+    static async fetchDaysPending(email) {
+      return db.execute(
+        `SELECT ds.fecha
+                          FROM solicitudes_falta sf
+                          INNER JOIN dias_solicitados ds
+                            ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                          INNER JOIN colaborador c
+                            ON c.id_colaborador = sf.id_colaborador
+                          WHERE c.email = ? AND sf.estado = 0;
+                        `,
+        [email]
+      );
+    }
+
   // Get approved vacation days
   static async fetchApprovedVacationDays(email) {
     return db.execute(`

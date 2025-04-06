@@ -5,6 +5,7 @@
    */
   let all_requests;
   let holidays;
+  let pending_requests;
 
   //Returns an array of date strings between start and end
   function get_inbetween_dates(start, end) {
@@ -53,6 +54,17 @@
       return approved_days;
   }
 
+  
+  // Converts approved request dates to yyyy-mm-dd strings
+  function get_pending_days() {
+    const pending_days = pending_requests.map(r => {
+
+      return new Date(r.fecha).toISOString().split('T')[0]; 
+    });
+
+      return pending_days;
+  }
+
   /**
    *  Returns business days (Mon–Fri) in range that are not 
    * holidays or already approved requests
@@ -60,6 +72,7 @@
   function realsDaysOff(start, end) {
     const holidaysList = get_holidays();
     const approvedDays = get_approved_days();
+    const pendingDays = get_pending_days();
     const current = new Date(start);
     const final = new Date(end);
     const effective = [];
@@ -68,7 +81,11 @@
       const dateStr = current.toISOString().split('T')[0];
       const isWeekend = current.getDay() === 5 || current.getDay() === 6;
 
-      if (!isWeekend && !holidaysList.includes(dateStr) && !approvedDays.includes(dateStr)) {
+      const isHoliday = holidaysList.includes(dateStr);
+      const isApproved = approvedDays.includes(dateStr);
+      const isPending = pendingDays.includes(dateStr);
+
+      if (!isWeekend && !isHoliday && !isApproved && !isPending) {
         effective.push(dateStr);
       }
 
@@ -226,6 +243,7 @@
 
         holidays = data.holidays;
         all_requests = data.all_requests;
+        pending_requests = data.pending_requests
         createContent(data)
         requestPopup.style.display = "flex";
 
@@ -317,21 +335,26 @@
             errors.push("The start date cannot be later than the end date.");
           } else {
             validDays = realsDaysOff(start, end);
+            
             const allInRange = get_inbetween_dates(start, end);
             const holidaysList = get_holidays();
+            const pendingDays = get_pending_days()
             const approvedDays = get_approved_days();
 
             const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
             const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
+            const empalmePendientes = allInRange.every(d => pendingDays.includes(d));
 
             // If no valid days due to full overlap with feriados or aprobados
             if (validDays.length < 1) {
               if (empalmeFeriados) {
                 errors.push("All selected dates overlap with holidays.");
               } else if (empalmeAprobados) {
-                errors.push("All selected dates overlap with approved requests");
+                errors.push("All selected dates overlap with approved requests.");
+              } else if (empalmePendientes) {
+                errors.push("All selected dates overlap with pending requests.");
               } else {
-                errors.push("You are selecting dates that overlap with holidays and approved requests.");
+                errors.push("You are selecting dates that overlap with holidays and approved/pending requests.");
               }
             }
 
