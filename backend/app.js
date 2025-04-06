@@ -4,9 +4,6 @@ const path = require("path");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const MobiscrollCalendar = require('../frontend/components/calendar/calendar.js');
-const helmet = require("helmet");
-const compression = require("compression");
 
 require("dotenv").config();
 require("./util/google_auth");

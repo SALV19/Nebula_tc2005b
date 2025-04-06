@@ -136,11 +136,10 @@ module.exports = class Requests {
           query += `AND MAX(ds.fecha) <= '${filter.end_date}' `;
         }
       } else if (filter.end_date) {
-        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `;
+        query += `HAVING MAX(ds.fecha) <= '${filter.end_date}' `;
       }
       query += `ORDER BY sf.estado ASC, ds.fecha ASC
                 LIMIT 10 OFFSET ?`;
-
       return db.execute(query, [email, offset]);
     }
   }
@@ -148,19 +147,19 @@ module.exports = class Requests {
     if (!filter) {
       return db.execute(
         `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
-                          FROM solicitudes_falta sf
-                          JOIN dias_solicitados ds
-                            ON ds.id_solicitud_falta = sf.id_solicitud_falta
-                          JOIN colaborador c
-                            ON c.id_colaborador = sf.id_colaborador
-                          JOIN equipo e 
-                            ON e.id_colaborador = c.id_colaborador
-                          JOIN departamento d
-                            ON d.id_departamento = e.id_departamento
-                          GROUP BY sf.id_solicitud_falta
-                          LIMIT 10 OFFSET ?
-                          ORDER BY sf.estado ASC, ds.fecha ASC`,
-        [offset ?? 0]
+                        FROM solicitudes_falta sf
+                        JOIN dias_solicitados ds
+                          ON ds.id_solicitud_falta = sf.id_solicitud_falta
+                        JOIN colaborador c
+                          ON c.id_colaborador = sf.id_colaborador
+                        JOIN equipo e 
+                          ON e.id_colaborador = c.id_colaborador
+                        JOIN departamento d
+                          ON d.id_departamento = e.id_departamento
+                        GROUP BY sf.id_solicitud_falta
+                        ORDER BY sf.estado ASC, ds.fecha ASC
+                        LIMIT 10 OFFSET ?`,
+        [offset || 0]
       );
     }
   }
@@ -196,10 +195,19 @@ module.exports = class Requests {
                       GROUP BY sf.id_solicitud_falta;`, [collab_id]);
   }
 
-  static save_State(estado, id_solicitud_falta) {
-    return db.execute(
-      "UPDATE solicitudes_falta SET estado = ? WHERE id_solicitud_falta = ?",
-      [estado, id_solicitud_falta]
-    );
+  static async save_State(estado, id_solicitud_falta, colabAprobador) {
+    try {
+      return await db.execute(
+        `UPDATE solicitudes_falta 
+          SET estado = ?, colabAprobador = ? 
+          WHERE id_solicitud_falta = ?`,
+        [estado, colabAprobador, id_solicitud_falta]
+      );
+    } catch (error) {
+      console.error("Error al actualizar estado:", error);
+      throw error;
+    }
   }
+  
+  
 };

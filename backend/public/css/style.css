@@ -4,8 +4,6 @@
 
 body, section, table, thead, tr {
   background-color: #242424;
-  font-family: "Montserrat", sans-serif;
-  font-style: normal;
 }
 footer {
   border: 2px solid red;

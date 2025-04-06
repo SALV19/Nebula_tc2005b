@@ -1,7 +1,11 @@
 hr {
   border-top: white solid 2px;
   margin-top:7px;
+  margin-bottom: 7px;
   width: 100%;
+}
+table {
+  overflow-y: visible;
 }
 
 main {
