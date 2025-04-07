@@ -90,9 +90,16 @@ exports.get_abscences = async (request, response) => {
     .then((data) => data)
     .catch((e) => console.error(e));
 
+  const acceptance_colab = await Promise.all(abscences.map((e) => {
+    if (!e.colabAprobador){
+      return 0;
+    } 
+    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+  }))  
   response.json({
     selectedOption: "abscences",
     abscences,
+    collab: acceptance_colab,
   });
 };
 
