@@ -13,21 +13,6 @@
                                 <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required maxlength="150">
                             </section>
 
-                            <div><label class="subtitleForm">Position</label></div>
-                            <section class="input-container">
-                                <select name="puesto" id="position" class="line-input dropdown" required>
-                                    <option value="" disabled selected>Select Position</option>
-                                    <% if (puesto && puesto.length > 0) { %>
-                                        <% for (let i = 0; i < puesto.length; i++) { %>
-                                            <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
-                                        <% } %>
-                                    <% } else { %>
-                                        <option disabled>No positions available</option>
-                                    <% } %>
-                                </select>
-                            </section>
-
-                            
                             <div><label class="subtitleForm">Company</label></div>
                             <section class="input-container">
                                 <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
@@ -41,7 +26,21 @@
                                     <% } %>
                                 </select>
                             </section>
-                                
+                            
+                            <div><label class="subtitleForm">Position</label></div>
+                            <section class="input-container">
+                                <select name="puesto" id="position" class="line-input dropdown" required>
+                                    <option value="" disabled selected>Select Position</option>
+                                    <% if (puesto && puesto.length > 0) { %>
+                                        <% for (let i = 0; i < puesto.length; i++) { %>
+                                            <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
+                                        <% } %>
+                                    <% } else { %>
+                                        <option disabled>No positions available</option>
+                                    <% } %>
+                                </select>
+                            </section>
+                            
                             <div><label class="subtitleForm">Mail</label></div>
                             <section class="input-container">
                                 <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required maxlength="100">

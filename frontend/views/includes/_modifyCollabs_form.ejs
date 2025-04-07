@@ -12,6 +12,20 @@
                                         <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150">
                                     </section>
 
+                                    <div><label class="subtitleForm">Company</label></div>
+                                    <section class="input-container">
+                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
+                                            <option value="" disabled selected>Select Company</option>
+                                            <% if (empresa && empresa.length > 0) { %>
+                                                <% for (let i = 0; i < empresa.length; i++) { %>
+                                                    <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
+                                                <% } %>
+                                            <% } else { %>
+                                                <option disabled>No company available</option>
+                                            <% } %>
+                                        </select>
+                                    </section>
+
                                     <div><label class="subtitleForm">Position</label></div>
                                     <section class="input-container">
                                         <select name="puesto" id="position_modify" class="line-input dropdown" required>
@@ -22,21 +36,6 @@
                                                 <% } %>
                                             <% } else { %>
                                                 <option disabled>No positions available</option>
-                                            <% } %>
-                                        </select>
-                                    </section>
-
-                                    
-                                    <div><label class="subtitleForm">Empresa</label></div>
-                                    <section class="input-container">
-                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
-                                            <option value="" disabled selected>Select Company</option>
-                                            <% if (empresa && empresa.length > 0) { %>
-                                                <% for (let i = 0; i < empresa.length; i++) { %>
-                                                    <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
-                                                <% } %>
-                                            <% } else { %>
-                                                <option disabled>No company available</option>
                                             <% } %>
                                         </select>
                                     </section>
