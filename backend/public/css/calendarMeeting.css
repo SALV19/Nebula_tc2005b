@@ -23,6 +23,22 @@
     border-radius: 0.4rem;
 }
 
+.fc-event-time {
+    font-size: 0.6rem !important;
+    font-weight: bold;
+    min-width: 1rem; 
+    text-align: left;
+    flex-shrink: 0;
+}
+.fc-event-title {
+    font-size: 0.7rem !important;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    flex-grow: 1;
+}
+
+
 /* Change the current day highlight */
 .fc-day-today {
     background-color: #484848 !important;

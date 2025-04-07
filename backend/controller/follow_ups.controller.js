@@ -234,12 +234,10 @@ exports.post_meeting = (request, response, next) => {
           if (telefono) {
             await sendMeetingNotification.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
           }
-          request.session.successMessage = "La reunión ha sido agendada exitosamente";
           response.redirect('/follow_ups');
         })
         .catch(err => {
           console.error("Error enviando notificación de reunión:", err);
-          request.session.errorMessage = "La reunión se agendó pero hubo un error al enviar la notificación";
           response.redirect('/follow_ups');
         });
         
