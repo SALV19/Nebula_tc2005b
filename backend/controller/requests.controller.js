@@ -6,9 +6,16 @@ const {contVac} = require("../util/contVacations");
 const { request, response } = require("express");
 
 
-exports.update_estado = (req, res) => {
-  Requests.save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador);
-  res.redirect("/requests");
+exports.update_estado = async (request, response) => {
+  // console.log('Sesion', req.session);
+  // console.log('Estado', req.body.estado);
+  // console.log('ID: ', req.body.id_solicitud_falta);
+  const resultado = await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
+  console.log("Done");
+  // console.log("Res", resultado);
+  response.status(200).json({
+    estado: resultado,
+  })
 };
 
 
@@ -70,7 +77,7 @@ exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(
-    request.session.email,
+    request.session.permissions.includes('accept_requests') ? null : request.session.email,
     offset,
     filter
   )
