@@ -15,20 +15,35 @@ let settings = {
 
 exports.get_collabs = async (request, response) => {
   try {
-    const [collabsDataPues, collabsDataMod, depData, empData, rolData] =
+    const [collabsDataPues, collabsDataMod, depData, rolData] =
       await Promise.all([
         Colaborador.fetchAllColabPues(),
         Colaborador.fetchAllColabMod(),
         Departamento.fetchAllDep(),
-        Empresa.fetchAllEmp(),
+        // Empresa.fetchAllEmp(),
         Rol.fetchAllRol(),
       ]);
 
     const [rowsColP, fieldDataColPues] = collabsDataPues;
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
-    const [rowsEmp, fieldDataEmp] = empData;
+    // const [rowsEmp, fieldDataEmp] = empData;
     const [rowsRol, fieldDataRol] = rolData;
+
+    // console.log(rowsEmp)
+    const empresa = rowsDep.reduce(
+      (accum, emp_dep) => {
+        if (!accum.has(emp_dep.nombre_empresa)) {
+          accum.set(emp_dep.nombre_empresa, [{departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento}])
+        }
+        else {
+          accum.get(emp_dep.nombre_empresa).push({departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento})
+        }
+        return accum
+      },
+      new Map()
+    )
+    console.log(empresa)
 
     const successData = request.session.successData;
     request.session.successData = null;
@@ -42,8 +57,8 @@ exports.get_collabs = async (request, response) => {
       csrfToken: request.csrfToken(),
       puesto: rowsColP,
       modalidad: rowsColM,
-      empresa: rowsEmp,
-      departamento: rowsDep,
+      empresa: empresa,
+      // departamento: rowsDep,
       rol: rowsRol,
       successData,
       successDataUpdate,

@@ -47,12 +47,28 @@
     .catch(error => console.error("Error al obtener datos del colaborador:", error));
     
   }
+
   function closePopupModify() {
-    const pop_up_modify_collab = document.querySelector('#pop-up_modiify_collab')
+    const pop_up_modify_collab = document.querySelector('#pop-up_modiify_collab');
     if (pop_up_modify_collab) {
       pop_up_modify_collab.style.display = "none";
     }
+
+    //Limpiar los mensajes de error al cerrar el formulario
+    const errorMessages = [
+      "rfc-error_modify",
+      "curp-error_modify",
+      "mail-error_modify",
+      "phone-error_modify"
+    ];
+
+    errorMessages.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    });
+
   }
+
 
   function validateRFCModify() {
         const rfcInputM = document.getElementById("rfc-input_modify");
@@ -75,7 +91,27 @@
         }
     }
 
-    
+    function validateMail() {    
+        const mailInput = document.getElementById("mail-input_modify");
+        const mailError = document.getElementById("mail-error_modify");
+        
+        const validDomains = [
+            "@nuclea.solutions",
+            "@zigzag.house",
+            "@we.page",
+            "@mayaprotocol",
+            "@moca.app"
+        ];
+
+        const input = mailInput.value.trim().toLowerCase();
+        const isValid = validDomains.some(domain => input.endsWith(domain));
+
+        if (!isValid) {
+            mailError.style.display = "block";
+        } else {
+            mailError.style.display = "none";
+        }
+    }
         
     function validateMailModify() {    
         const mailInput = document.getElementById("mail-input_modify");
