@@ -22,6 +22,13 @@
         document.getElementById("rfc-input").value = null;
         document.getElementById("curp-input").value = null;
 
+        // Hide visible errors
+        document.getElementById("mail-error").style.display = "none";
+        document.getElementById("phone-error").style.display = "none";
+        document.getElementById("rfc-error").style.display = "none";
+        document.getElementById("curp-error").style.display = "none";
+
+
         const popup = document.getElementById("pop-up");
         if (popup) {
             popup.style.display = "none";
@@ -61,13 +68,23 @@
     function validateMail() {    
         const mailInput = document.getElementById("mail-input");
         const mailError = document.getElementById("mail-error");
-        const validDomain = /@nuclea\.solutions$/;
+        
+        const validDomains = [
+            "@nuclea.solutions",
+            "@zigzag.house",
+            "@we.page",
+            "@mayaprotocol",
+            "@moca.app"
+        ];
 
-            if (!validDomain.test(mailInput.value)) {
-                mailError.style.display = "block";
-            } else {
-                mailError.style.display = "none";
-            }
+        const input = mailInput.value.trim().toLowerCase();
+        const isValid = validDomains.some(domain => input.endsWith(domain));
+
+        if (!isValid) {
+            mailError.style.display = "block";
+        } else {
+            mailError.style.display = "none";
+        }
     }
 
     function validatePhone() {
@@ -82,4 +99,11 @@
             phoneError.style.display = "none";
         }
     }
+
+    const department_select = document.querySelector("#department");
+
+    function selectedCompany(val) {
+        console.log(val)
+    }
+    
 </script>

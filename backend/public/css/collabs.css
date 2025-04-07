@@ -24,9 +24,28 @@
     padding-top: 5vh; 
     border-radius: 5px;
     width: 45vw;  
-    height: 85vh;
+    height: auto; /* Optional to limit total height */
+    overflow-y: auto; /*To be able to scroll if the content is too large*/
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.pop-up-content::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.pop-up-content::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.pop-up-content::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.pop-up-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .cell {
@@ -119,4 +138,8 @@
 
 .container-scroll::-webkit-scrollbar-thumb:hover {
     background: #555;
+}
+
+.dateLine {
+    text-align: left;
 }

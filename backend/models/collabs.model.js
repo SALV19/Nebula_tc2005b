@@ -28,7 +28,7 @@ module.exports = class Colaborador {
 
   //
   static fetchAllCollabsName(id_colaborador){
-    return db.execute(`Select nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
+    return db.execute(`Select id_colaborador, nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
   }
 
   static fetchAllCompleteName(){
