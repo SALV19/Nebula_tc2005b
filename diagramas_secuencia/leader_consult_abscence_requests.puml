@@ -1,0 +1,53 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary requests.routes as rr
+boundary requests_page.ejs as rpe
+boundary consult_requests_logic.ejs as crl
+control requests.controller as rc
+entity requests.model as rm
+database Nebula as db
+
+activate u
+u -> rr : GET /requests
+deactivate u
+
+activate rr
+rr -> rc : get_requests()
+deactivate rr
+activate rc
+rc -> rpe : response.render('requests_page.ejs)
+deactivate rc
+activate rpe 
+rpe -> u : HTML requests_page.ejs
+activate u
+u ->> rpe : Selects requests
+rpe ->> crl : get_info()
+activate crl
+crl ->> rr : POST /requests/Requests
+deactivate crl
+activate rr
+rr ->> rc : get_collabs_requests()
+deactivate rr
+activate rc
+rc ->> rm : fetchRequests(request.session.email, offset, filter)
+activate rm
+rm ->> db : get_team_requests()
+activate db
+db -->> rm : [data] 
+deactivate db
+rm -->> rc : [data]
+deactivate rm
+rc -->> crl : [data]
+deactivate rc
+activate crl
+crl ->> crl : format_data_to_json
+crl -> crl : createTableRequests(data)
+crl -> rpe : [data]
+deactivate crl
+activate rpe
+rpe -> u : XML HTML content
+deactivate rpe
+
+
+@enduml

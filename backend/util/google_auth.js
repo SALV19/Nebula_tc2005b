@@ -19,8 +19,8 @@ passport.use(
       prompt: "consent",
     },
     function (accessToken, refreshToken, profile, cb) {
-      User.fetchByEmail(profile.emails[0].value, function (err, user) {
-        return cb(err, {profile, accessToken});
+      User.fetchByEmail(profile.emails[0].value, function (err, [[user]]) {
+        return cb(err, {profile, user, accessToken});
       });
     }
   )

@@ -1,4 +1,4 @@
-const Collab = require('../models/collabs.model');
+const Collaborator = require('../models/collabs.model');
 const QuestionsFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
@@ -7,17 +7,25 @@ const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
 const sendMeetingNotification = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+const Evaluation = require('../models/periodic_eval.model');
+const Answers = require('../models/questions_answers.model');
 
 
 let settings = {
-  selectedOption: 'active',
+  selectedOption: 'collab',
 };
 
-exports.get_requests = async (request, response) => {
-  try {
-    // Ejecuta ambas consultas en paralelo y espera sus resultados
+exports.get_FollowUp = (request, response) => {
+  response.render("followUp", {
+    selectedOption: 'collab',
+    permissions: request.session.permissions,
+    csrfToken : request.csrfToken(),
+  })
+}
+
+exports.get_register = async (request, response) => {
     const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
-      Collab.fetchAllCompleteName(),
+      Collaborator.fetchAllCompleteName(),
       QuestionsFollow.fetchAllQuestions(),
       Indicator.fetchAllindicators(),
     ]);
@@ -26,8 +34,7 @@ exports.get_requests = async (request, response) => {
     const [rows_ques, fieldData_ques] = questionsData;
     const [rows_indi, fieldData_indi] = indicatorsData;
 
-
-    response.render("followUp", {
+    response.json({
       ...settings,
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -35,37 +42,40 @@ exports.get_requests = async (request, response) => {
       questions: rows_ques,
       indicator: rows_indi,
     });
-
-  } catch (error) {
-    console.error("Error al obtener datos:", error);
-  }
 };
 
 exports.post_follow_ups = async (req, res) => {
-  try {
+  try {  
+    // Crear la evaluación y esperar su guardado
     const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
     // Ahora podemos acceder al ID generado
     const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-    console.log(id_evaluation);
 
     // Crear y guardar respuestas
+
     const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
     await answer_questions.save(); 
 
     const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
     await metrics_answer.save();
-    console.log(metrics_answer);
+    
 
     // Redirigir después de completar las operaciones
     res.redirect('/follow_ups');
   } catch (error) {
     console.error(error);
+    return res.status(400).render("register_follow_up_logic.ejs", {
+      error: "There was a problem saving the evaluation",
+      // validation : true,
+      csrfToken : req.csrfToken,
+    });
   };
 }
 
 exports.get_meeting = (request, response, next) => {
   console.log("entro a get_meeting");
+  settings.selectedOption = 'Meetings';
   const googleLogin = request.user?.accessToken ? 1 : 0;
 
   const validationErrors = request.session.validationErrors || {};
@@ -78,7 +88,7 @@ exports.get_meeting = (request, response, next) => {
   delete request.session.errorMessage;
   delete request.session.successMessage;
 
-  Collab.fetchAllCompleteName()
+  Collaborator.fetchAllCompleteName()
     .then(collabs => {
       const [rows, fieldData] = collabs;
 
@@ -185,7 +195,7 @@ exports.post_meeting = (request, response, next) => {
     occurrences = request.body.yearOccurrences;
   }
 
-  Collab.fetchEmail(id_colaborador)
+  Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
@@ -223,7 +233,7 @@ exports.post_meeting = (request, response, next) => {
         });
   })
     .then(() => {
-      Collab.fetchBasicInfoNoti(id_colaborador)
+      Collaborator.fetchBasicInfoNoti(id_colaborador)
         .then(async ([collabData]) => {
           const { nombre, telefono } = collabData[0];
 
@@ -347,3 +357,52 @@ exports.get_meeting_events = (request, response) => {
     response.json([]);
   }
 };
+
+
+exports.get_followUps_info = (request, response, next) => {
+  
+  settings.selectedOption = 'Collaborators';
+
+  const idColaborador = request.session.id_colaborador;
+
+  Evaluation.fetchAllInfo([idColaborador])
+    .then(([evalInfo]) => {
+      const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
+      const fechasAgendadas = evalInfo.map(evaluacion => {
+        const fecha = new Date(evaluacion.fechaAgendada);
+        const year = fecha.getFullYear().toString().slice(2); 
+        const month = (fecha.getMonth() + 1).toString().padStart(2, '0');
+        const day = fecha.getDate().toString().padStart(2, '0');
+        return {
+          id_evaluacion: evaluacion.id_evaluacion, 
+          fechaAgendada: `${year}-${month}-${day}` 
+        };
+      });
+
+      return Promise.all([
+        Evaluation.fetchAllQuestions(),
+        Indicators_metrics.fetchAll(id_evaluacion),
+        Indicator.fetchAllindicators()
+      ]).then(async ([questions, metrics, indicators]) => {
+        const pregunta = questions;
+        const metricas = metrics;
+        const indicadores = indicators;
+
+        const id_pregunta = questions[0].map(q => q.id_pregunta);
+
+        const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
+        response.json({
+          selectedOption: 'Collaborators',
+          fechasAgendadas,
+          pregunta,
+          respuestas,  
+          indicadores,
+          metricas
+        });
+      })
+    })
+    .catch(error => {
+      response.status(500).send("Error al obtener información");
+    });
+};
+

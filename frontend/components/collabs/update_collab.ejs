@@ -1,0 +1,140 @@
+<script>
+  function update_button(id) {
+
+    const csrf = document.getElementById('_csrf').value;
+
+    const pop_up_modify_collab = document.querySelector('#pop-up_modiify_collab')
+        if (pop_up_modify_collab) {
+            pop_up_modify_collab.style.display = "flex";
+        }
+
+      //Realiza una solicitud POST a /view_collabs/get_collab_data
+  //Regresará los datos del colaborador (data.colaborador) y el equipo (data.equipo)
+  fetch('/view_collabs/get_collab_data', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'csrf-token': csrf
+    },
+    body: JSON.stringify({ id_colaborador: id }),
+  })
+
+    //Lo vuelve un objeto json
+    .then(response => response.json())
+    .then(data => {
+      
+      // Llenado de todos los campos del formulario con data.colaborador y data.equipo
+      const col = data.colaborador;
+      const eq = data.equipo;      
+      
+      
+      document.getElementById('colab-id_modify').value = id;
+      document.getElementById('name_modify').value = col.nombre;
+      document.getElementById('last-name_modify').value = col.apellidos;
+      document.getElementById('birthday_modify').value = col.fechaNacimiento.split('T')[0];
+      document.getElementById('phone-input_modify').value = col.telefono;
+      document.getElementById('position_modify').value = col.puesto;
+      document.getElementById('mail-input_modify').value = col.email;
+      document.getElementById('entry-date_modify').value = col.fechaIngreso.split('T')[0];
+      document.getElementById('location_modify').value = col.ubicacion;
+      document.getElementById('modality_modify').value = col.modalidad;
+      document.getElementById('rfc-input_modify').value = col.rfc;
+      document.getElementById('curp-input_modify').value = col.curp;
+      document.getElementById('department_modify').value = eq.id_departamento;
+      document.getElementById('role_modify').value = eq.id_rol;
+       // Abre el pop up 
+  })
+    .catch(error => console.error("Error al obtener datos del colaborador:", error));
+    
+  }
+
+  function closePopupModify() {
+    const pop_up_modify_collab = document.querySelector('#pop-up_modiify_collab');
+    if (pop_up_modify_collab) {
+      pop_up_modify_collab.style.display = "none";
+    }
+
+    //Limpiar los mensajes de error al cerrar el formulario
+    const errorMessages = [
+      "rfc-error_modify",
+      "curp-error_modify",
+      "mail-error_modify",
+      "phone-error_modify"
+    ];
+
+    errorMessages.forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = "none";
+    });
+
+  }
+
+
+  function validateRFCModify() {
+        const rfcInputM = document.getElementById("rfc-input_modify");
+        const rfcpErrorM = document.getElementById("rfc-error_modify");
+        if (rfcInputM.value.length < 12 || rfcInputM.value.length > 13){
+            rfcpErrorM.style.display = "block"; 
+        } else {
+            rfcpErrorM.style.display = "none";
+        }
+    }
+    
+    function validateCURPModify() {
+        const curpInput = document.getElementById("curp-input_modify");
+        const curpError = document.getElementById("curp-error_modify");
+    
+        if (curpInput.value.length !== 18) {
+            curpError.style.display = "block"; 
+        } else {
+            curpError.style.display = "none";
+        }
+    }
+
+    function validateMail() {    
+        const mailInput = document.getElementById("mail-input_modify");
+        const mailError = document.getElementById("mail-error_modify");
+        
+        const validDomains = [
+            "@nuclea.solutions",
+            "@zigzag.house",
+            "@we.page",
+            "@mayaprotocol",
+            "@moca.app"
+        ];
+
+        const input = mailInput.value.trim().toLowerCase();
+        const isValid = validDomains.some(domain => input.endsWith(domain));
+
+        if (!isValid) {
+            mailError.style.display = "block";
+        } else {
+            mailError.style.display = "none";
+        }
+    }
+        
+    function validateMailModify() {    
+        const mailInput = document.getElementById("mail-input_modify");
+        const mailError = document.getElementById("mail-error_modify");
+        const validDomain = /@nuclea\.solutions$/;
+
+            if (!validDomain.test(mailInput.value)) {
+                mailError.style.display = "block";
+            } else {
+                mailError.style.display = "none";
+            }
+    }
+
+    function validatePhoneModify() {
+        const phoneInput = document.getElementById("phone-input_modify");
+        const phoneError = document.getElementById("phone-error_modify");
+        
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+
+        if (phoneInput.value.length < 10 || phoneInput.value.length > 15){
+            phoneError.style.display = "block"; 
+        } else {
+            phoneError.style.display = "none";
+        }
+    }
+</script>

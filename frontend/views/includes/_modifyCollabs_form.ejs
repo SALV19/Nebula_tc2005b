@@ -1,0 +1,176 @@
+        <form id="updateColabForm" action="/view_collabs/update_collab" method="POST" onsubmit="return validateForm()"> 
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+            <input type="hidden" id="colab-id_modify" name="id_colaborador">   
+                <aside id="pop-up_modiify_collab" class="pop-up" style="display: none">
+                    <div class="pop-up-content">
+                        <i class="bi bi-x-lg cancelButton" onclick="closePopupModify()"></i>
+                        <div class="fixed-grid">
+                            <div class="grid">
+                                <div class="cell">
+                                    <div><label class="subtitleForm">Name</label></div>
+                                    <section class="input-container">
+                                        <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150">
+                                    </section>
+
+                                    <div><label class="subtitleForm">Company</label></div>
+                                    <section class="input-container">
+                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
+                                            <option value="" disabled selected>Select Company</option>
+                                            <% if (empresa && empresa.length > 0) { %>
+                                                <% for (let i = 0; i < empresa.length; i++) { %>
+                                                    <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
+                                                <% } %>
+                                            <% } else { %>
+                                                <option disabled>No company available</option>
+                                            <% } %>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Position</label></div>
+                                    <section class="input-container">
+                                        <select name="puesto" id="position_modify" class="line-input dropdown" required>
+                                            <option value="" disabled selected>Select Position</option>
+                                            <% if (puesto && puesto.length > 0) { %>
+                                                <% for (let i = 0; i < puesto.length; i++) { %>
+                                                    <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
+                                                <% } %>
+                                            <% } else { %>
+                                                <option disabled>No positions available</option>
+                                            <% } %>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Mail</label></div>
+                                    <section class="input-container">
+                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMailModify()" required maxlength="100">
+                                        <p id="mail-error_modify" class="error" style="display: none;">
+                                            Invalid email domain
+                                            <span title="@nuclea.solutions, @zigzag.house, @we.page, @mayaprotocol, @moca.app" style="cursor: help; margin-left: 5px;">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                        </p>
+                                    </section>
+                                    
+                                    <div><label class="subtitleForm">Location</label></div>
+                                    <section class="input-container">
+                                        <input name="ubicacion" type="text" id="location_modify" placeholder="Insert collab location" class="line-input" required maxlength="150">
+                                    </section>
+                                    
+                                    <div><label class="subtitleForm">Modality</label></div>
+                                    <section class="input-container">
+                                        <select name="modalidad" id="modality_modify" class="line-input dropdown" required>
+                                            <option value="" disabled selected>Select Modality</option>
+                                            <% if (modalidad && modalidad.length > 0) { %>
+                                                <% for (let i = 0; i < modalidad.length; i++) { %>
+                                                    <% let modalidadLabel; %>
+                                                    <% if (modalidad[i].modalidad === 0) { %>
+                                                        <% modalidadLabel = "In-person"; %>
+                                                    <% } else if (modalidad[i].modalidad === 1) { %>
+                                                        <% modalidadLabel = "Hybrid"; %>
+                                                    <% } else if (modalidad[i].modalidad === 2) { %>
+                                                        <% modalidadLabel = "Remote"; %>
+                                                    <% } %>
+                                                    <option value="<%= modalidad[i].modalidad %>"><%= modalidadLabel %></option>
+                                                <% } %>
+                                                    <% } else { %>
+                                                        <option disabled>No modality available</option>
+                                                    <% } %>
+                                        </select>
+                                    </section>
+
+                                    <div><label class="subtitleForm">Phone</label></div>
+                                        <section class="input-container">
+                                            <input name="telefono" type="text" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validatePhoneModify()" required maxlength="15">
+                                            <p id="phone-error_modify" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
+                                        </section>
+                                    </div>
+                                                            
+                                    <div class="cell">
+                                        <div><label class="subtitleForm">Last Name</label></div>
+                                        <section class="input-container">
+                                            <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required required maxlength="150">
+                                        </section>
+                                        
+                                        <div><label class="subtitleForm">Department</label></div>
+                                        <section class="input-container">
+                                            <select name="id_departamento" id="department_modify" class="line-input dropdown" required>
+                                                <option value="" disabled selected>Select Department</option>
+                                                
+                                            </select>
+                                        </section>
+
+                                        <div><label class="subtitleForm">Role</label></div>
+                                        <section class="input-container">
+                                            <select name="id_rol" id="role_modify" class="line-input dropdown" required>
+                                                <option value="" disabled selected>Select Role</option>
+                                                <% if (rol && rol.length > 0) { %>
+                                                    <% for (let i = 0; i < rol.length; i++) { %>
+                                                        <% let rolLabel; %>
+                                                        <% if (rol[i].id_rol === 1) { %>
+                                                            <% rolLabel = "Collaborator"; %>
+                                                        <% } else if (rol[i].id_rol === 2) { %>
+                                                            <% rolLabel = "Lider"; %>
+                                                        <% } else if (rol[i].id_rol === 3) { %>
+                                                            <% rolLabel = "Super Admin"; %>
+                                                        <% } %>
+                                                        <option value="<%= rol[i].id_rol %>"><%= rolLabel %></option>
+                                                    <% } %>
+                                                <% } else { %>
+                                                    <option disabled>No roles available</option>
+                                                <% } %>
+                                            </select>
+                                        </section>
+
+                                        <div><label class="subtitleForm">Birthday</label></div>
+                                        <input name="fechaNacimiento" id="birthday_modify" class="dateLine" type="date" required>
+
+                                        <div><label class="subtitleForm">Entry Date</label></div>
+                                        <input name="fechaIngreso" id="entry-date_modify" class="dateLine" type="date" required>
+
+                                        <div><label class="subtitleForm">RFC</label></div>
+                                        <section class="input-container">
+                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateRFCModify()" maxlength="13">
+                                            <p id="rfc-error_modify" class="error" style="display: none;">RCF must be between 12 to 13 characters</p>
+                                        </section>
+
+                                        <div><label class="subtitleForm">CURP</label></div>
+                                        <section class="input-container">
+                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateCURPModify()" maxlength="18">
+                                            <p id="curp-error_modify" class="error" style="display: none;">CURP must be of 18 characters</p>
+                                        </section>
+
+                                    <div class="buttons">
+                                        <button type="submit" class="button is-save">Save</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </aside>
+        </form>
+
+        <script>
+            document.getElementById("updateColabForm").addEventListener("submit", function(event) {
+                event.preventDefault();
+            
+                Swal.fire({
+                    title: "Are you sure?",
+                    text: "You won't be able to revert this!",
+                    icon: "warning",
+                    showCancelButton: true,
+                    confirmButtonColor: "#59A250",
+                    cancelButtonColor: "#d33",
+                    confirmButtonText: "Yes, save it!"
+                }).then((result) => {
+                    if (result.isConfirmed) {
+                    Swal.fire({
+                        title: "Saved!",
+                        text: "It has been saved",
+                        icon: "success"
+                    }).then(() => {
+                        document.getElementById("updateColabForm").submit();
+                    });
+                    }
+                });
+                });
+        </script>

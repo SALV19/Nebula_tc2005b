@@ -1,34 +1,24 @@
-const {google} = require('googleapis')
-require('dotenv').config()
+const Requests = require("../models/home.model");
+const {contVac} = require("../util/contVacations")
 
-exports.get_home = async (request, response) => {
-
-  if (request.user?.accessToken) {
-    const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, 'http://localhost:3000/log_in/success')
-    oauth2Client.setCredentials({
-      access_token: request.user.accessToken
+exports.get_home = async (request, response, next) => {
+  const absences = await Requests.fetchDaysApproved(request.session.email)
+  .then(data => data[0])
+  .catch(e => {
+    console.error("Error fetching approved absences:", e);
+    return [];
+  });
+    contVac(request)
+    .then(({diasDisponibles,diasTotales, error}) => {
+        response.render("home_page", {
+          diasDisponibles,
+          diasTotales,
+          error,
+          permissions: request.session.permissions,
+          total_absences: absences.length,
+          csrfToken: request.csrfToken(),
+        })
     })
+    .catch(error => {console.error(error)})
 
-    request.session.googleTokenInfo = {
-      accessToken : request.user.accessToken,
-    }
-    
-    const tokenInfo = await oauth2Client.getTokenInfo(request.user.accessToken);
-    console.log("Token Scopes:", tokenInfo.scopes);
-    console.log("expire date", tokenInfo.expiry_date);
-
-    const calendar = google.calendar({version: 'v3', auth: oauth2Client})
-    calendar.calendarList.list({}, (err, res) => {
-      if(err) {
-        console.log('Error with calendar: ', err)
-        response.end('Error')
-        return
-      }
-      const calendars = res.data.items;
-      console.log(calendars)
-      // response.json(calendars)
-    })
-  }
-  response.render("home_page"); 
-  
 };

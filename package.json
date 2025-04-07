@@ -10,14 +10,15 @@
   "author": "Nebula",
   "license": "MIT",
   "dependencies": {
+    "@mobiscroll/javascript": "npm:@mobiscroll/javascript-trial@^5.33.2",
     "argon2": "^0.41.1",
     "axios": "^1.8.4",
     "body-parser": "^1.20.3",
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.8",
-    "connect-sqlite3": "^0.9.15",
     "cookie-parser": "^1.4.7",
     "cookie-session": "^2.1.0",
+    "check-password-strength": "^3.0.0",
     "csurf": "^1.11.0",
     "dotenv": "^16.4.7",
     "ejs": "^3.1.10",
@@ -25,9 +26,15 @@
     "express-session": "^1.18.1",
     "fullcalendar": "^6.1.15",
     "googleapis": "^148.0.0",
+    "generate-password": "^1.7.1",
+    "generate-password-browser": "^1.1.0",
+    "js-generate-password": "^1.0.0",
     "mysql2": "^3.13.0",
+    "node-cache": "^5.1.2",
+    "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
-    "passport-google-oauth20": "^2.0.0"
+    "passport-google-oauth20": "^2.0.0",
+    "sweetalert2": "^11.17.2"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

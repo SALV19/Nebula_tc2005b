@@ -1,0 +1,29 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    const successDataUpdate = <%- JSON.stringify(successDataUpdate || null) %>;
+
+    if (successDataUpdate) {
+        Swal.fire({
+            title: "¡Colaborador actualizado!",
+            html: `
+                <p><b>Nombre:</b> ${successDataUpdate.nombre} ${successDataUpdate.apellidos}</p>
+                <p><b>Correo:</b> ${successDataUpdate.email}</p>
+                <p><b>Teléfono:</b> ${successDataUpdate.telefono}</p>
+                <p><b>RFC:</b> ${successDataUpdate.rfc}</p>
+                <p><b>CURP:</b> ${successDataUpdate.curp}</p>
+                <p><b>Puesto:</b> ${successDataUpdate.puesto}</p>
+                <p><b>Ubicación:</b> ${successDataUpdate.ubicacion}</p>
+                <p><b>Modalidad:</b> ${successDataUpdate.modalidad}</p>
+                <p><b>Rol:</b> ${successDataUpdate.rol}</p>
+                <p><b>Fecha de Ingreso:</b> ${successDataUpdate.entryDate}</p>
+                <p><b>Fecha de Nacimiento:</b> ${successDataUpdate.birthday}</p>
+            `,
+            icon: "success",
+            confirmButtonText: "OK",
+        }).then(() => {
+            window.history.replaceState({}, document.title, window.location.pathname);
+        });
+    }
+});
+</script>

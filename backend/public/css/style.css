@@ -1,7 +1,14 @@
+* {
+  font-family: Montserrat;
+}
+
 body, section, table, thead, tr {
   background-color: #242424;
 }
-
+footer {
+  border: 2px solid red;
+  visibility: hidden;
+}
 body {
   height: 102vh;
 }
@@ -19,6 +26,22 @@ body {
 footer {
   position: absolute; 
   top: 95%;
+  right: 0;
+  width: 100vw;
+}
+
+
+
+html,
+body,
+#app {
+  height: 105vh;
+  background-color: #242424;
+}
+
+footer {
+  position: absolute; 
+  top: 100%;
   right: 0;
   width: 100vw;
 }
@@ -43,9 +66,44 @@ footer {
   height: 60%;
 }
 
-
 .hero-body {
   margin-left: 8vw;
   width: 90vw;
   position: relative; 
+}
+
+.hidden-row {
+  display: none;
+}
+.dateLine {
+  color: #747474; /* Color del texto */
+  background: transparent;
+  border: none;
+  border-bottom: 0.04vh solid #fff;
+  outline: none;
+  width: 100%;
+  padding: 0.5vh 0;
+  font-size: 2vh;
+  text-align: center;
+  margin-bottom: 2vh;
+}
+
+.dateLine::-webkit-calendar-picker-indicator {
+  filter: invert(1);
+}
+
+.flex-centered {
+  display: flex;
+  flex-flow: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.headingVac{
+  font-size: 1.5vh;
+  display: inline-block;
+  margin-right: 1vh;
+  margin-left: 1vh;
+
+  
 }
