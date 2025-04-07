@@ -1,0 +1,34 @@
+@startuml REQ_7
+autonumber
+actor Collaborator as C 
+boundary general.routes.json as Route
+boundary home.ejs as home
+control home.controller.js as HController
+actor GoogleAPI as GoogleApi
+
+
+activate C
+C ->> Route : GET /
+deactivate C 
+
+activate Route
+Route -->> HController : get_home()
+deactivate Route
+
+activate HController
+HController -->> GoogleApi : calendar.calendarList.list()
+deactivate HController
+
+activate GoogleApi
+GoogleApi -->> HController : eventos
+deactivate GoogleApi
+
+activate HController
+HController --> home : response.render ("home_page", { diasDisponibles, diasTotales, error,\n permissions: request.session.permissions,total_absences: absences.length,\n csrfToken: request.csrfToken(),  eventos})
+deactivate HController
+
+activate home
+home -->> C : HTML calendar
+deactivate home
+
+@enduml

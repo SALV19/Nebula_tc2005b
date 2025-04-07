@@ -1,6 +1,7 @@
 const Requests = require("../models/requests.model");
 const Events = require("../models/events.model");
 const Equipo = require("../models/equipo.model");
+const Collab = require("../models/collabs.model");
 const {contVac} = require("../util/contVacations");
 const { request, response } = require("express");
 
