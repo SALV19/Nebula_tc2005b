@@ -20,8 +20,12 @@ HController -->> GoogleApi : calendar.calendarList.list()
 deactivate HController
 
 activate GoogleApi
-GoogleApi -->> home : response.render ("home_page", { diasDisponibles, diasTotales, error,\n permissions: request.session.permissions,total_absences: absences.length,\n csrfToken: request.csrfToken(),  eventos})
+GoogleApi -->> HController : eventos
 deactivate GoogleApi
+
+activate HController
+HController --> home : response.render ("home_page", { diasDisponibles, diasTotales, error,\n permissions: request.session.permissions,total_absences: absences.length,\n csrfToken: request.csrfToken(),  eventos})
+deactivate HController
 
 activate home
 home -->> C : HTML calendar
