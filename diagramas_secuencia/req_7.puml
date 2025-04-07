@@ -14,7 +14,7 @@ C -> Route : GET /
 deactivate C 
 
 activate Route
-Route -> HController : get_holiday_info()
+Route -> HController : get_home()
 deactivate Route
 
 activate HController
