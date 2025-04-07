@@ -1,4 +1,5 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="/css/calendar.css" />
 <link rel="stylesheet" href="/css/collabs.css">
 <% if (googleLogin == 0) { %>
@@ -137,170 +138,29 @@
       </form>
     </div>
     
-    <!-- COLUMNA DERECHA: CALENDARIO -->
     <div class="calendar-column">
+      <aside class="pop-up-d" style="display: none;" id="pop-up">
+        <div class="pop-up-content-d">              
+          <button onclick="closePopup()" class="button-close">
+            <i class="bi bi-x"></i>
+          </button>
+          <div class="column-container">
+            <div class="column2">
+              <div id="color-calendar" class="calendar-color-box"></div>
+              <h2 id="event-title" class="title-event"></h2>
+            </div>                  
+          </div>
+          <p class="text-event"><strong>Date: </strong><span id="event-date"></span></p>
+          <p class="text-event"><strong>Start Hour: </strong><span id="event-hour-start"></span></p>
+          <p class="text-event"><strong>End Hour: </strong><span id="event-hour-end"></span></p>
+          <p class="text-event"><strong>Details: </strong> <span id="event-details"></span></p>
+        </div>
+      </aside>
       <div id="calendar" class="calendar"></div>
     </div>
   </div>
 <% } %>
 
 <style>
-  /* Reset box model */
-  *, *::before, *::after {
-    box-sizing: border-box !important;
-  }
-  
-  /* Combinar las clases de contenedor para compatibilidad */
-  .section-container.row-container {
-    display: grid;
-    grid-template-columns: 350px 1fr;
-    grid-gap: 30px;
-    width: 100%;
-    max-width: 100%;
-    padding: 20px;
-  }
-  
-  /* Columna del formulario */
-  .form-column {
-    grid-column: 1;
-    width: 100%;
-    max-width: 100%;
-    padding: 10px;
-  }
-  
-  /* Columna del calendario */
-  .calendar-column {
-    grid-column: 2;
-    width: 100%;
-    max-width: 100%;
-  }
-  
-  /* Campos de formulario más pequeños */
-  .dateLine, .line-input {
-    width: 100% !important;
-    max-width: 240px !important;
-    height: 36px !important;
-  }
-  
-  /* Botón centrado */
-  .button-container {
-    margin-top: 20px;
-    display: flex;
-    justify-content: center;
-  }
-  
-  /* Mensaje de error oculto */
-  .text-hidden {
-    display: none;
-    color: #B8453E;
-    font-size: 12px;
-    margin-top: 5px;
-  }
-  
-  /* Mostrar mensaje de error */
-  .text-hidden.show {
-    display: block;
-  }
-  
-  /* Eventos más pequeños */
-  .fc-event {
-    background-color: #485FC7 !important;
-    color: white !important;
-    font-size: 0.65rem !important;
-    padding: 1px 3px !important;
-    border-radius: 3px !important;
-    z-index: 100 !important;
-    position: relative !important;
-    margin: 1px 0 !important;
-    line-height: 1.2 !important;
-    max-height: 18px !important;
-    overflow: hidden !important;
-  }
-  
-  /* Eventos horizontales más pequeños */
-  .fc-h-event {
-    border: none !important;
-    background-color: #485FC7 !important;
-    height: 18px !important;
-  }
-  
-  /* Contenido del evento más pequeño */
-  .event-content {
-    font-size: 0.65rem !important;
-    font-weight: normal !important;
-    white-space: nowrap !important;
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    padding: 0 !important;
-    line-height: 1.2 !important;
-  }
-  
-  /* Enlaces "más" más pequeños */
-  .fc-more-link {
-    font-size: 0.65rem !important;
-    padding: 0 2px !important;
-    margin: 1px 0 !important;
-  }
-  
-  /* Día más compacto */
-  .fc-daygrid-day-frame {
-    min-height: 70px !important;
-  }
-  
-  /* Título truncado */
-  .fc-event-title {
-    overflow: hidden !important;
-    text-overflow: ellipsis !important;
-    white-space: nowrap !important;
-    font-size: 0.65rem !important;
-    font-weight: normal !important;
-  }
-  
-  /* Mantener los estilos del calendario */
-  .calendar {
-    width: 100% !important;
-    min-height: 600px !important;
-    color: white !important;
-    border-radius: 10px !important;
-    padding: 0.7rem !important;
-  }
-  
-  /* Responsive: cambiar a una columna en pantallas pequeñas */
-  @media (max-width: 768px) {
-    .section-container.row-container {
-      grid-template-columns: 1fr;
-    }
-    
-    .form-column,
-    .calendar-column {
-      grid-column: 1;
-    }
-    
-    .calendar-column {
-      margin-top: 30px;
-    }
-  }
-  .form-error-message {
-    color:#B8453E;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  .form-success-message {
-    color: green;
-    font-weight: bold;
-    margin-bottom: 15px;
-  }
-  
-  /* Field-level error display */
-  .text-hidden {
-    display: none;
-    color: #B8453E;
-    font-size: 12px;
-    margin-top: 5px;
-  }
-  
-  .text-hidden.show {
-    display: block;
-  }
+ 
 </style>

@@ -34,6 +34,7 @@
     const initializeCalendar = () => {
       var calendar = new FullCalendar.Calendar(calendarEl, {
         initialView: 'dayGridMonth',
+        themeSystem: 'bootstrap5', 
         height: 'auto',
         headerToolbar: {
           left: 'prev,next today',
@@ -42,7 +43,23 @@
         },
         events: eventData,
         eventClick: function(info) {
-          alert('Event: ' + info.event.title);
+          const popup = document.getElementById('pop-up');
+          if (popup) {
+            const endDate = info.event.end;
+
+            const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+            const horaOptions = { hour: '2-digit', minute: '2-digit' };
+            popup.style.display = 'block'; 
+
+            document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
+            document.getElementById('event-title').innerText = info.event.title;
+            const startDate = info.event.start;
+            document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
+            document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
+            document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
+              : 'No end hour availablr';
+            document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
+          }
         },
         dayMaxEvents: true, 
         eventTimeFormat: {
@@ -55,6 +72,11 @@
       calendar.render();
       return calendar;
     };
+
+    function closePopup() {
+      const popup = document.getElementById('pop-up');
+      popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
+    }
     
     const calendar = initializeCalendar();
     

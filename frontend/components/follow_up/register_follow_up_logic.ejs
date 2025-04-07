@@ -441,6 +441,7 @@
               
               const calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
+                themeSystem: 'bootstrap5', 
                 height: 'auto',
                 aspectRatio: 1.6,
                 headerToolbar: {
@@ -455,8 +456,23 @@
                 height: 600,
                 dayHeaderFormat: { weekday: 'short' },
                 eventClick: function(info) {
-                  console.log("Evento clickeado:", info.event.title);
-                  alert('Event: ' + info.event.title);
+                  const popup = document.getElementById('pop-up');
+                  if (popup) {
+                    const endDate = info.event.end;
+
+                    const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+                    const horaOptions = { hour: '2-digit', minute: '2-digit' };
+                    popup.style.display = 'block'; 
+
+                    document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
+                    document.getElementById('event-title').innerText = info.event.title;
+                    const startDate = info.event.start;
+                    document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
+                    document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
+                    document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
+                      : 'No end hour availablr';
+                    document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
+                  }
                 },
                 eventContent: function(arg) {
                   return {
@@ -476,6 +492,11 @@
             contentContainer.innerHTML = '<p>Error al cargar las reuniones. Por favor, intente de nuevo.</p>';
           });
       }
+    }
+
+    window.closePopup = function() {
+      const popup = document.getElementById('pop-up');
+      popup.style.display = 'none';
     }
 
     function createErrorElement(id, parentElement) {

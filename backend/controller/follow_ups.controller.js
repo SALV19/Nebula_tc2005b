@@ -300,7 +300,8 @@ exports.get_meeting_events = (request, response) => {
                 end: event.end?.dateTime || event.end?.date,
                 backgroundColor: cal.backgroundColor || '#4285F4',
                 borderColor: cal.backgroundColor || '#4285F4',
-                allDay: !event.start.dateTime
+                description: event.description,
+                display: 'block',
               };
             });
             
