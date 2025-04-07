@@ -1,5 +1,7 @@
 const { color } = require("chart.js/helpers");
 const Requests = require("../models/home.model");
+const Event = require("../models/events.model");
+const Collab = require("../models/collabs.model")
 const {contVac} = require("../util/contVacations")
 const {google} = require('googleapis')
 require('dotenv').config()
@@ -90,6 +92,25 @@ exports.get_home = async (request, response) => {
 
 };
 
-// <% if (error) {%>
-//   <%- include('../components/user_not_in_system.ejs') %>
-// <% } %>
+exports.add_event = (request, response) => {
+  const motive = request.body.motive;
+  const type = request.body.type;
+  const startDate = request.body.startDate;
+  const endDate = request.body.endDate;
+  console.log('user:', request.user.accessToken);
+
+  Collab.fetchEmails().then(data => {
+  const [rowsE, fieldDataE] = data;
+    console.log("rowsE", rowsE); 
+    console.log("fieldDataE", fieldDataE); 
+    const evento = new Event(startDate, endDate, motive, type);
+    evento.save();
+    return Event.insertEvents(startDate, endDate, motive, request.user.accessToken);
+  }).catch(error => {
+    console.error(error);
+  })
+
+
+
+  response.redirect("/");
+}

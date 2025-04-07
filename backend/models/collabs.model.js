@@ -119,6 +119,10 @@ module.exports = class Colaborador {
     }
   }
 
+  static async fetchEmails() {
+    return db.execute(`SELECT email FROM colaborador`);
+  }
+
   static async fetchCollabs(email, offset, filter = null) {
     if (email) {
       return Colaborador.fetchTeamCollabs(email, offset, filter ? filter : null);

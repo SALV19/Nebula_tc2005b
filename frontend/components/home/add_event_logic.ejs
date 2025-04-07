@@ -1,0 +1,17 @@
+<script>
+    function openAddEventPopup()     {
+        const popup = document.getElementById("add-event-pop-up");
+        if (popup) {
+            popup.style.display = "flex";
+        }
+    }
+
+    function closePopup() {
+        const addEventPopup = document.getElementById("add-event-pop-up");
+        const detailsPopup = document.getElementById("event-details-popup");
+        
+
+        if (addEventPopup) addEventPopup.style.display = "none";
+        if (detailsPopup) detailsPopup.style.display = "none";
+    }
+</script>

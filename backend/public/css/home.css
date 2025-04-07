@@ -31,9 +31,39 @@ body{
     flex-direction: row;
     align-items: center;
 }
+.dateLine {
+    color: #747474; /* Color del texto */
+    background: transparent;
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 29vw;
+    font-size: 2vh;
+    text-align: center;
+    margin-top: 2vh;
+    margin-left: 3.5vw;
+    margin-bottom: 2vh;     
+}
 .pop-up-d {
     height: 35vh;
     width: 30vw;
+    position: absolute;
+    top:0;
+    left: 0;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999; 
+    margin-top: 18rem;
+    margin-left: 20rem;
+    border-radius: 1rem;   
+    padding: 0.4rem;
+    background-color: #454545;
+}
+.pop-up-k {
+    height: fit-content;
+    max-width: 90vw;
+    display: flex; 
+    flex-direction: column;
     position: absolute;
     top:0;
     left: 0;
@@ -62,7 +92,17 @@ body{
     font-size:small;
     color:#FFFF;
 }
-
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: #747474;
+    margin-bottom: 2vh; 
+}
 .calendar-color-box {
     width: 25px;
     height: 20px;
@@ -93,3 +133,43 @@ body{
     background-color: rgba(255, 255, 255, 0.1);
     border-radius: 50%;
   }
+
+.button.is-link.is-rounded {
+    padding: 0.25em 0.5em;
+    width:fit-content;
+    display: inline-block;
+    background-color: #B8453E;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.subtitleForm {
+    color: white;
+    font-size: 2vh;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vw;
+}
+
+.date-row .form-section {
+    flex: 1;
+}
+
+.button.is-success.is-rounded {
+    padding: 0.25em 0.5em;
+    width:fit-content;
+    display: inline-block;
+    background-color: #59A250;
+    color:#EEEEEE;
+}
+
+.line-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}

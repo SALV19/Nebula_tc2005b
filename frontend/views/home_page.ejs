@@ -2,9 +2,12 @@
 
 <%- include('../components/nav_bar.ejs') %>
 <input type="hidden" id="_csrf" value=<%= csrfToken %></input>
-
 <div class="column-container">
     <div class="column1">
+      <div style="display: flex;">
+        <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
+        <%- include('includes/_addEvent_form.ejs') %>
+      </div>
       <aside class="pop-up-d" style="display: none;" id="pop-up">
         <div class="pop-up-content-d">              
           <button onclick="closePopup()" class="button-close">
@@ -26,6 +29,7 @@
         let eventos = <%- eventos %>; 
       </script>
       <%- include('../components/calendar/calendar.ejs') %> 
+      <%- include ('../components/home/add_event_logic.ejs') %>
     </div>
 
     <div class="column1">

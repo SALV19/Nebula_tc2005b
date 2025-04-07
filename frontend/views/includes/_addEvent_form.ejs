@@ -1,0 +1,40 @@
+<aside id="add-event-pop-up" class="pop-up-k" style="display: none;">
+    <div class="pop-up-content-d">
+      <button onclick="closePopup()" class="button-close">
+        <i class="bi bi-x"></i>
+      </button>
+      <form id="addEventForm" action="/addEvent" method="POST" onsubmit="return validateForm()"> 
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+  
+        <div class="form-section">
+          <label class="subtitleForm">Type</label>
+          <select id="type" name="type" class="line-input" required>
+            <option value="" disabled selected hidden>Select type</option>
+            <option value="officialHoliday">Official Holiday</option>
+            <option value="unofficialHoliday">Unofficial Holiday</option>
+          </select>
+        </div>
+  
+        <div class="form-section">
+          <label class="subtitleForm">Motive</label>
+          <input type="text" id="motive" name="motive" placeholder="Motive" class="line-input" required>
+        </div>
+  
+        <div class="date-row">
+          <div class="form-section">
+            <label class="subtitleForm">Start Date</label>
+            <input type="date" name="startDate" class="line-input" value="<%= new Date().toISOString().split('T')[0] %>" required>
+          </div>
+          <div class="form-section">
+            <label class="subtitleForm">End Date</label>
+            <input type="date" name="endDate" class="line-input" value="<%= new Date().toISOString().split('T')[0] %>" required>
+          </div>
+        </div>
+  
+        <div class="button-container" style="margin-top: 2vh; text-align: center;">
+          <button class="button is-success is-rounded" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+  </aside>
+  
