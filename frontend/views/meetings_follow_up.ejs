@@ -1,6 +1,6 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-<link rel="stylesheet" href="/css/calendar.css" />
+<link rel="stylesheet" href="/css/calendarMeeting.css" />
 <link rel="stylesheet" href="/css/collabs.css">
 <% if (googleLogin == 0) { %>
   <div class="has-text-centered">
@@ -36,7 +36,7 @@
         <input type="hidden" name="_csrf" value="<%= csrfToken %>">
         <div>
           <label class="subtitleForm">Collaborator</label>
-          <select name="id_colaborador" id="collaborators" class="line-input dropdown 
+          <select name="id_colaborador" id="collaborators" class="line-input-calendar dropdown 
           <%= typeof errors !== 'undefined' %>" required>
           <option value="default" disabled <%= typeof formData === 'undefined' || !formData.id_colaborador ? 'selected' : '' %>>
             Select Collaborator
@@ -60,7 +60,7 @@
         <div>
           <label class="subtitleForm">Date</label>
           <section class="input-container">
-            <input class="line-input" type="date" id="filter_end" name="fechaAgendada" value="<%= new Date().toISOString().split('T')[0] %>"/ required>
+            <input class="line-input-calendar" type="date" id="filter_end" name="fechaAgendada" value="<%= new Date().toISOString().split('T')[0] %>"/ required>
           </section>
           <p id="dateError" class="text-hidden"> Select a valid date </p>
         </div>
@@ -69,7 +69,7 @@
         <div>
           <label class="subtitleForm">Start time</label>
           <section class="input-container">
-            <input class="line-input" type="time" id="filter_end" name="startTime" min="09:00" 
+            <input class="line-input-calendar" type="time" id="filter_end" name="startTime" min="09:00" 
             max="18:00" value="<%= new Date().toTimeString().split(' ')[0].substring(0, 5) %>"/ required>
           </section>
           <p id="dateError" class="text-hidden"> Select a valid date </p>
@@ -80,7 +80,7 @@
         <div>
           <label class="subtitleForm">End time</label>
           <section class="input-container">
-            <input class="line-input" type="time" id="filter_end" name="endTime" min="09:00" 
+            <input class="line-input-calendar" type="time" id="filter_end" name="endTime" min="09:00" 
             max="18:00" value="<%= new Date(Date.now() + 30*60000).toTimeString().split(' ')[0].substring(0, 5) %>" required>
           </section>
           <p id="dateError" class="text-hidden"> Select a valid time </p>
@@ -90,7 +90,7 @@
         
         <div>
           <label class="subtitleForm">Repeating</label>
-          <select id="repeating" name="repeating" class="line-input dropdown" required>
+          <select id="repeating" name="repeating" class="line-input-calendar dropdown" required>
             <option value="no">Does not repeat</option>
             <option value="day">Day</option>
             <option value="week">Week</option>
@@ -104,7 +104,7 @@
           <br>
           <label class="subtitleForm">After</label>
           <input type="number" id="dayOccurrences" name="dayOccurrences" min="1" 
-            max="25" placeholder="occurrences" class="line-input" >
+            max="25" placeholder="occurrences" class="line-input-calendar" >
           <p id="dateError" class="text-hidden"> Select a valid number (1-25) </p>
         </div> 
 
@@ -112,7 +112,7 @@
           <br>
           <label class="subtitleForm">After</label>
           <input type="number" id="weekOccurrences" name="weekOccurrences" min="1" 
-            max="5" placeholder="occurrences" class="line-input" >
+            max="5" placeholder="occurrences" class="line-input-calendar" >
           <p id="dateError" class="text-hidden"> Select a valid number (1-5) </p>
         </div> 
 
@@ -120,7 +120,7 @@
           <br>
           <label class="subtitleForm">After</label>
           <input type="number" id="monthOccurrences" name="monthOccurrences" min="1" 
-            max="12" placeholder="occurrences" class="line-input" >
+            max="12" placeholder="occurrences" class="line-input-calendar" >
           <p id="dateError" class="text-hidden"> Select a valid number (1-12) </p>
         </div> 
 
@@ -128,12 +128,12 @@
           <br>
           <label class="subtitleForm">After</label>
           <input type="number" id="yearOccurrences" name="yearOccurrences" min="1" 
-            max="3" placeholder="occurrences" class="dateLine" class="line-input" >
+            max="3" placeholder="occurrences" class="dateLine" class="line-input-calendar" >
           <p id="dateError" class="text-hidden"> Select a valid number (1-3) </p>
         </div> 
 
         <div class="button-container">
-          <button id="submitButton" class="approve-button" type="submit">Submit</button>
+          <button id="submitButton" class="button is-success" type="submit">Submit</button>
         </div>
       </form>
     </div>
@@ -162,5 +162,153 @@
 <% } %>
 
 <style>
- 
+  .section-container.row-container {
+    display: grid;
+    grid-template-columns: 350px 1fr;
+    grid-gap: 30px;
+    width: 100%;
+    max-width: 100%;
+    padding: 20px;
+  }
+   
+  .form-column {
+    grid-column: 1;
+    width: 100%;
+    max-width: 100%;
+    padding: 10px;
+  }
+   
+  .calendar-column {
+    grid-column: 2;
+    width: 100%;
+    max-width: 100%;
+  }
+  
+  /* Campos de formulario más pequeños */
+  .dateLine, .line-input {
+    width: 100% !important;
+    max-width: 240px !important;
+    height: 36px !important;
+  }
+  
+  /* Botón centrado */
+  .button-container {
+    margin-top: 20px;
+    display: flex;
+    justify-content: center;
+  }
+  
+  /* Mensaje de error oculto */
+  .text-hidden {
+    display: none;
+    color: #B8453E;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  /* Mostrar mensaje de error */
+  .text-hidden.show {
+    display: block;
+  }
+  
+  /* Eventos más pequeños */
+  .fc-event {
+    color: white !important;
+    font-size: 0.65rem !important;
+    padding: 1px 3px !important;
+    border-radius: 3px !important;
+    z-index: 100 !important;
+    position: relative !important;
+    margin: 1px 0 !important;
+    line-height: 1.2 !important;
+    max-height: 18px !important;
+    overflow: hidden !important;
+  }
+  
+  /* Eventos horizontales más pequeños */
+  .fc-h-event {
+    border: none !important;
+    height: 18px !important;
+  }
+  
+  /* Contenido del evento más pequeño */
+  .event-content {
+    font-size: 0.65rem !important;
+    font-weight: normal !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    padding: 0 !important;
+    line-height: 1.2 !important;
+  }
+  
+  /* Enlaces "más" más pequeños */
+  .fc-more-link {
+    font-size: 0.65rem !important;
+    padding: 0 2px !important;
+    margin: 1px 0 !important;
+  }
+  
+  /* Día más compacto */
+  .fc-daygrid-day-frame {
+    min-height: 70px !important;
+  }
+  
+  /* Título truncado */
+  .fc-event-title {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    font-size: 0.65rem !important;
+    font-weight: normal !important;
+  }
+  
+  /* Mantener los estilos del calendario */
+  .calendar {
+    width: 100% !important;
+    min-height: 600px !important;
+    color: white !important;
+    border-radius: 10px !important;
+    padding: 0.7rem !important;
+  }
+  
+  /* Responsive: cambiar a una columna en pantallas pequeñas */
+  @media (max-width: 768px) {
+    .section-container.row-container {
+      grid-template-columns: 1fr;
+    }
+
+    .form-column,
+    .calendar-column {
+      grid-column: 1;
+    }
+    
+    .calendar-column {
+      margin-top: 30px;
+    }
+
+    
+  }
+  .form-error-message {
+    color:#B8453E;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .form-success-message {
+    color: green;
+    font-weight: bold;
+    margin-bottom: 15px;
+  }
+  
+  .text-hidden {
+    display: none;
+    color: #B8453E;
+    font-size: 12px;
+    margin-top: 5px;
+  }
+  
+  .text-hidden.show {
+    display: block;
+  }
 </style>
