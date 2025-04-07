@@ -6,8 +6,12 @@ exports.update_estado = async (request, response) => {
   // console.log('Sesion', req.session);
   // console.log('Estado', req.body.estado);
   // console.log('ID: ', req.body.id_solicitud_falta);
-  await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
-  response.redirect("/requests");
+  const estado = await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
+  console.log("Done");
+  console.log("Estado", estado);
+  response.status(200).json({
+    estado
+  })
 };
 
 
@@ -44,14 +48,14 @@ exports.get_collabs_requests = async (request, response) => {
     .catch((e) => console.error(e));
   
   const acceptance_colab = await Promise.all(requests[0].map((e) => {
-    console.log('e', e);
+    // console.log('e', e);
     if (!e.colabAprobador){
       return 0;
     } 
     return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
   }))
 
-  console.log('Aprobador', acceptance_colab);
+  // console.log('Aprobador', acceptance_colab);
 
   response.json({
     selectedOption: "requests",

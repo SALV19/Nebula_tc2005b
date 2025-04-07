@@ -1,8 +1,6 @@
 @startuml REQ_27 SuperAdmin registra aprobación de falta
 autonumber
 actor SuperAdmin as S
-boundary approve_requests_logic.ejs as Requests
-boundary requests_page as rq
 boundary general.routes.js as gr
 boundary requests.routes.js as SRoute
 control requests.controller.js as SController
@@ -34,24 +32,8 @@ deactivate db
 SModel -->> SController : estado
 deactivate SModel
 
-SController -> gr : res.redirect("/requests")
+SController -->> S : res json
 deactivate SController
-
-activate gr
-gr -> SRoute : (/requests)
-deactivate gr 
-
-activate SRoute 
-SRoute -> SController : get_requests
-deactivate SRoute 
-
-activate SController
-SController -> rq : response.render("requests_page", \n { selectedOption: "vacations", permissions: request.session.permissions, \nall_requests: all_requests,holidays: holidays, \ncsrfToken: request.csrfToken(), successRequest});
-deactivate SController
-
-activate rq 
-rq -->> S : HTML
-deactivate rq 
 
 deactivate S
 @enduml

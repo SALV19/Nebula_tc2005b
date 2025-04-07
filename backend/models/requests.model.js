@@ -202,7 +202,7 @@ module.exports = class Requests {
 
   static async save_State(estado, id_solicitud_falta, colabAprobador) {
     try {
-      return await db.execute(
+      await db.execute(
         `UPDATE solicitudes_falta 
          SET estado = ?, colabAprobador = ? 
          WHERE id_solicitud_falta = ?`,
