@@ -9,7 +9,7 @@
                                 <div class="cell">
                                     <div><label class="subtitleForm">Name</label></div>
                                     <section class="input-container">
-                                        <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required>
+                                        <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150">
                                     </section>
 
                                     <div><label class="subtitleForm">Position</label></div>
@@ -43,13 +43,13 @@
                                         
                                     <div><label class="subtitleForm">Mail</label></div>
                                     <section class="input-container">
-                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMailModify()" required>
+                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMailModify()" required maxlength="100">
                                         <p id="mail-error_modify" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
                                     </section>
                                     
                                     <div><label class="subtitleForm">Location</label></div>
                                     <section class="input-container">
-                                        <input name="ubicacion" type="text" id="location_modify" placeholder="Insert location" class="line-input" required>
+                                        <input name="ubicacion" type="text" id="location_modify" placeholder="Insert location" class="line-input" required maxlength="150">
                                     </section>
                                     
                                     <div><label class="subtitleForm">Modality</label></div>
@@ -76,7 +76,7 @@
 
                                     <div><label class="subtitleForm">Phone</label></div>
                                         <section class="input-container">
-                                            <input name="telefono" type="number" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validatePhoneModify()" required>
+                                            <input name="telefono" type="number" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validatePhoneModify()" required required maxlength="15">
                                             <p id="phone-error_modify" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                         </section>
                                     </div>
@@ -84,7 +84,7 @@
                                     <div class="cell">
                                         <div><label class="subtitleForm">Last Name</label></div>
                                         <section class="input-container">
-                                            <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required>
+                                            <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required required maxlength="150">
                                         </section>
                                         
                                         <div><label class="subtitleForm">Department</label></div>
@@ -132,13 +132,13 @@
 
                                         <div><label class="subtitleForm">RFC</label></div>
                                         <section class="input-container">
-                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC" class="line-input" oninput="validateRFCModify()" required>
+                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateRFCModify()" maxlength="13">
                                             <p id="rfc-error_modify" class="error" style="display: none;">RCF must be between 12 to 13 characters</p>
                                         </section>
 
                                         <div><label class="subtitleForm">CURP</label></div>
                                         <section class="input-container">
-                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP" class="line-input" oninput="validateCURPModify()" required>
+                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateCURPModify()" maxlength="18">
                                             <p id="curp-error_modify" class="error" style="display: none;">CURP must be of 18 characters</p>
                                         </section>
 

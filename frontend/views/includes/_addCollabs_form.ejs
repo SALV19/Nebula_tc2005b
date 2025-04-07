@@ -6,9 +6,9 @@
                 <div class="fixed-grid">
                     <div class="grid">
                         <div class="cell">
-                            <div><label class="subtitleForm">Name</label></div>
+                            <div><label class="subtitleForm" >Name</label></div>
                             <section class="input-container">
-                                <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required>
+                                <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required maxlength="150">
                             </section>
 
                             <div><label class="subtitleForm">Position</label></div>
@@ -42,13 +42,13 @@
                                 
                             <div><label class="subtitleForm">Mail</label></div>
                             <section class="input-container">
-                                <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required>
+                                <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required maxlength="100">
                                 <p id="mail-error" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
                             </section>
                             
                             <div><label class="subtitleForm">Location</label></div>
                             <section class="input-container">
-                                <input name="ubicacion" type="text" id="location" placeholder="Insert location" class="line-input" required>
+                                <input name="ubicacion" type="text" id="location" placeholder="Insert location" class="line-input" required maxlength="150">
                             </section>
                             
                             <div><label class="subtitleForm">Modality</label></div>
@@ -75,7 +75,7 @@
 
                             <div><label class="subtitleForm">Phone</label></div>
                                 <section class="input-container">
-                                    <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required>
+                                    <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required maxlength="15">
                                     <p id="phone-error" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                 </section>
                             </div>
@@ -83,7 +83,7 @@
                             <div class="cell">
                                 <div><label class="subtitleForm">Last Name</label></div>
                                 <section class="input-container">
-                                    <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input" required>
+                                    <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input" required maxlength="150">
                                 </section>
                                 
                                 <div><label class="subtitleForm">Department</label></div>
@@ -131,13 +131,13 @@
 
                                 <div><label class="subtitleForm">RFC</label></div>
                                 <section class="input-container">
-                                    <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC" class="line-input" oninput="validateRFC()" required>
+                                    <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateRFC()"  maxlength="13">
                                     <p id="rfc-error" class="error" style="display: none;">RCF must be of 13 characters</p>
                                 </section>
 
                                 <div><label class="subtitleForm">CURP</label></div>
                                 <section class="input-container">
-                                    <input name="curp" type="text" id="curp-input" placeholder="Insert CURP" class="line-input" oninput="validateCURP()" required>
+                                    <input name="curp" type="text" id="curp-input" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateCURP()"  maxlength="18">
                                     <p id="curp-error" class="error" style="display: none;">CURP must be of 18 characters</p>
                                 </section>
 
