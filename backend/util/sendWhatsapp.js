@@ -45,7 +45,7 @@ async function sendWhatsAppNotiRequests(name, type, date, telefono) {
                 },
             }
         );
-        console.log("Mensaje enviado con éxito:", response.data);
+        console.log("Mensaje de WhatsApp enviado con éxito:", response.data);
     } catch (error) {
         console.error("Error al enviar mensaje de WhatsApp:", error.response ? error.response.data : error);
     }

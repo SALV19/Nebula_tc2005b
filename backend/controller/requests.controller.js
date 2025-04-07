@@ -16,10 +16,13 @@ exports.update_estado = async (req, res) => {
       if (info && info.telefono) {
 
         const fecha = new Date(info.start_date);
-        const fechaFormateada = fecha.toLocaleDateString('es-MX'); 
+        const dia = String(fecha.getDate()).padStart(2, '0');
+        const mes = String(fecha.getMonth() + 1).padStart(2, '0');
+        const año = fecha.getFullYear();
+        const fechaFormateada = `${dia}/${mes}/${año}`;
         
         await sendWhatsapp(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
-        console.log("Notificación enviada por WhatsApp");
+        console.log("info enviada");
       } else {
         console.warn("No se encontró teléfono del colaborador");
       }
