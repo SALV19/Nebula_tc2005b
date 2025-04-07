@@ -13,10 +13,14 @@ exports.update_estado = async (req, res) => {
 exports.get_requests = async (request, response) => {
 
   const successRequest = request.session.successRequest;
+  const errorRequest = request.session.errorRequest;
+
   delete request.session.successRequest;
+  delete request.session.errorRequest;
 
   response.render("requests_page", {
     successRequest,
+    errorRequest,
     selectedOption: "vacations",
     csrfToken: request.csrfToken(),
     permissions: request.session.permissions,
@@ -92,55 +96,54 @@ exports.get_abscences = (request, response) => {
 };
 
 exports.post_abscence_requests = async (request, response, next) => {
-  
-  // ahora son los realsDaysOff
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
-  // By default, the request is pending
-  let estadoSolicitud = 0; 
-
+  let estadoSolicitud = 0;
 
   try {
-
-    // We get the collaborator's role using their email
+    // Obtener el rol del colaborador
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
 
-    //If the role SuperAdmin (id_rol === 3), it is automatically approved
     if (idRol === 3) {
-      estadoSolicitud = 1; 
+      estadoSolicitud = 1;
     }
-  } catch (err) {
-    console.error("Error al obtener el rol del colaborador:", err);
+
+    // Crear solicitud
+    const request_register = new Requests(
+      request.session.email,
+      subtype,
+      daysOff,
+      request.body.location,
+      request.body.description,
+      request.body.evidence,
+      estadoSolicitud
+    );
+
+    // Guardar solicitud (simula error si quieres probar)
+    const result = await request_register.save(estadoSolicitud);
+    //throw new Error("Simulación de error de servidor"); // <- solo si quieres forzar error
+
+    for (let i in daysOff) {
+      await request_register.saveDates(result[0].insertId, i);
+    }
+
+    // Si todo sale bien
+    request.session.successRequest = {
+      startDate: daysOff[0],
+      endDate: daysOff[daysOff.length - 1],
+      location: request.body.location,
+      description: request.body.description,
+      evidence: request.body.evidence,
+      totalDays: daysOff.length,
+    };
+
+  } catch (error) {
+    console.error("Error al guardar solicitud:", error);
+    request.session.errorRequest = true;
   }
 
-  const request_register = new Requests(
-    request.session.email,
-    subtype, 
-    daysOff,
-    request.body.location,
-    request.body.description,
-    request.body.evidence,
-    estadoSolicitud 
-  );
-
-  await request_register.save(estadoSolicitud) 
-    .then(async (e) => {
-      for (let i in daysOff) {
-        await request_register.saveDates(e[0].insertId, i);
-      }
-    })
-    .catch((e) => console.error(e));
-
-  request.session.successRequest = {
-    startDate: daysOff[0],
-    endDate: daysOff[daysOff.length - 1],
-    location: request.body.location,
-    description: request.body.description,
-    evidence: request.body.evidence,
-    totalDays: daysOff.length,
-  };
-
+  // Redirige solo una vez, sin importar si hubo error o éxito
   response.redirect("/requests");
 };
