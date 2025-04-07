@@ -40,11 +40,16 @@
                                             <% } %>
                                         </select>
                                     </section>
-                                        
+
                                     <div><label class="subtitleForm">Mail</label></div>
                                     <section class="input-container">
                                         <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateMailModify()" required maxlength="100">
-                                        <p id="mail-error_modify" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
+                                        <p id="mail-error_modify" class="error" style="display: none;">
+                                            Invalid email domain
+                                            <span title="@nuclea.solutions, @zigzag.house, @we.page, @mayaprotocol, @moca.app" style="cursor: help; margin-left: 5px;">
+                                                <i class="fas fa-info-circle"></i>
+                                            </span>
+                                        </p>
                                     </section>
                                     
                                     <div><label class="subtitleForm">Location</label></div>

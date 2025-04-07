@@ -207,8 +207,8 @@ textarea{
     color: white;
     border-radius: 5px;
     width: 7rem;
-  }
-  
+}
+
 .half-color-button {
     background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
     text-align: center;
@@ -218,4 +218,4 @@ textarea{
 .mesaage-approved{
     font-size: bold;
 }
-  
+

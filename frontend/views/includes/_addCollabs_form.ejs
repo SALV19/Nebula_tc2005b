@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <form id="addColabForm" action="/view_collabs" method="POST" onsubmit="return validateForm()"> 
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
         <aside id="pop-up" class="pop-up" style="display: none;">
@@ -43,7 +45,12 @@
                             <div><label class="subtitleForm">Mail</label></div>
                             <section class="input-container">
                                 <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required maxlength="100">
-                                <p id="mail-error" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
+                                <p id="mail-error" class="error" style="display: none;">
+                                    Invalid email domain
+                                    <span title="@nuclea.solutions, @zigzag.house, @we.page, @mayaprotocol, @moca.app" style="cursor: help; margin-left: 5px;">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                </p>
                             </section>
                             
                             <div><label class="subtitleForm">Location</label></div>
