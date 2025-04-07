@@ -70,15 +70,17 @@ body{
     justify-content: center;
     align-items: center;
     z-index: 9999; 
-    margin-top: 18rem;
-    margin-left: 20rem;
-    border-radius: 1rem;   
+    margin-top: 15rem;
+    margin-left: 20rem;   
     padding: 0.4rem;
     background-color: #454545;
 }
   
 .pop-up-content-d {
     padding: 1.5rem; 
+}
+.pop-up-content-k {
+    padding: 0.7rem; 
 }
 
 .title-event{
@@ -168,6 +170,7 @@ body{
     display: inline-block;
     background-color: #59A250;
     color:#EEEEEE;
+    border-radius: 0.2rem; 
 }
 
 .line-input::-webkit-calendar-picker-indicator {
