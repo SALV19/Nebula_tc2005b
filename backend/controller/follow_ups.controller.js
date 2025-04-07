@@ -232,7 +232,7 @@ exports.post_meeting = (request, response, next) => {
       const formattedTime = `${startTime} - ${endTime}`;
 
       if (telefono) {
-        await sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
+        await sendMeetingNotification.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
       }
 
     response.redirect('/follow_ups');

@@ -14,7 +14,7 @@ module.exports = class Collab {
         return rows.length > 0 ? rows[0].email : null;
     }
 
-    static fetchBasicInfo(id_colaborador) {
+    static fetchBasicInfoNoti(id_colaborador) {
         return db.execute(
             `SELECT nombre, telefono FROM colaborador WHERE id_colaborador = ?`, 
             [id_colaborador]
