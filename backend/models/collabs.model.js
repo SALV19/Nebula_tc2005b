@@ -13,4 +13,11 @@ module.exports = class Collab {
         const [rows] = await db.execute('SELECT email FROM colaborador WHERE id_colaborador = (?) ', [id_colaborador]);
         return rows.length > 0 ? rows[0].email : null;
     }
+
+    static fetchBasicInfo(id_colaborador) {
+        return db.execute(
+            `SELECT nombre, telefono FROM colaborador WHERE id_colaborador = ?`, 
+            [id_colaborador]
+        );
+    }
 }

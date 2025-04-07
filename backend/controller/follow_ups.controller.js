@@ -6,6 +6,8 @@ const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
+const sendMeetingNotification = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+
 
 let settings = {
   selectedOption: 'active',
@@ -126,8 +128,6 @@ exports.post_meeting = (request, response, next) => {
     }
   }
   
-  
-  
   if (!request.body.startTime) {
     validationErrors.startTime = 'Please select a start time';
     hasErrors = true;
@@ -223,6 +223,24 @@ exports.post_meeting = (request, response, next) => {
         });
   })
     .then(() => {
+      Collab.fetchBasicInfoNoti(id_colaborador)
+    .then(async ([collabData]) => {
+      const { nombre, telefono } = collabData[0];
+
+      const [year, month, dayNum] = fecha.split("-");
+      const formattedDate = `${dayNum.padStart(2, '0')}/${month.padStart(2, '0')}/${year}`;
+      const formattedTime = `${startTime} - ${endTime}`;
+
+      if (telefono) {
+        await sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
+      }
+
+    response.redirect('/follow_ups');
+  })
+  .catch(err => {
+    console.error("Error enviando notificación de reunión:", err);
+    response.redirect('/follow_ups');
+  });
         response.redirect('/follow_ups');
     })
     .catch(error => {
