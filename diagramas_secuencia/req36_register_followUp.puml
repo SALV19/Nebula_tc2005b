@@ -56,7 +56,7 @@ activate db
 db ->> cm : colaboradores
 deactivate db
 
-cm -->> SController : colaboradores
+cm -->> SController : info colaborador
 deactivate cm 
 
 SController ->> PEval : fetchAllQuestions()
@@ -67,9 +67,8 @@ activate db
 db ->> PEval : questions
 deactivate db
 
-PEval -->> SController : questions
-deactivate PEval 
-
+Model -->> SController : info preguntas_evaluacion
+deactivate Model 
 
 ' --- GET INFO INDICADORES ---
 SController ->> IModel : fetchAllindicators()
