@@ -11,7 +11,7 @@
         text: "Something went wrong",
       });
 
-      // Limpia la sesión para que no vuelva a salir
+      // Clear the session so it doesn't log out again
       history.replaceState({}, document.title, window.location.pathname);
     }
   });

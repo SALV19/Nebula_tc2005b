@@ -2,6 +2,7 @@
 
 <script>
   document.addEventListener("DOMContentLoaded", function () {
+    
     // We get the object with the data from the successfully sent request
     const successRequest = <%- JSON.stringify(successRequest || null) %>;
 
@@ -38,6 +39,7 @@
           confirmButton: 'btn-ok'
       }
       }).then(() => {
+
         // Clear the URL to prevent the pop-up from appearing again
           window.history.replaceState({}, document.title, window.location.pathname);
       });

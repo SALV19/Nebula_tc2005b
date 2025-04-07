@@ -189,12 +189,12 @@
       // Color and message validation
       if (remaining < 0) {
         remainingCount.style.color = "red";
-        warning.innerText = "⚠ No puedes solicitar más días de vacaciones de los permitidos.";
+        warning.innerText = "⚠ You cannot request more vacation days than allowed.";
         warning.classList.add("has-text-danger");
         warning.style.display = "block";
       } else if (remaining === 0) {
         remainingCount.style.color = "gold";
-        warning.innerText = "Has alcanzado el límite de días disponibles.";
+        warning.innerText = "You have reached the limit of available days";
         warning.classList.add("has-text-warning");
         warning.style.display = "block";
       }
@@ -251,7 +251,7 @@
         eventListeners(data)
         updateDaysCounter(data);
 
-      }).catch(error=> console.error("Error al obtener los datos de las solicitudes:", error));
+      }).catch(error=> console.error("Error getting request data:", error));
     
     });
 
@@ -391,20 +391,22 @@
           e.preventDefault();
           showErrorPopup(errors);
         } else {
-          e.preventDefault(); // Detenemos el submit para confirmar
+          
+          // We stop the submit to confirm
+          e.preventDefault(); 
 
           Swal.fire({
-            title: "¿Estás seguro?",
-            text: "Se enviará tu solicitud de falta.",
+            title: "You're sure?",
+            text: "Your missing request will be sent.",
             icon: "question",
             showCancelButton: true,
             confirmButtonColor: "#3085d6",
             cancelButtonColor: "#d33",
-            confirmButtonText: "Sí, enviar",
-            cancelButtonText: "Cancelar"
+            confirmButtonText: "Yes, send",
+            cancelButtonText: "Cancel"
           }).then((result) => {
             if (result.isConfirmed) {
-              requestForm.submit(); // Si confirma, ahora sí enviamos
+              requestForm.submit(); 
             }
           });
         }

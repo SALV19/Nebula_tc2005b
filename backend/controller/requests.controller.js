@@ -57,7 +57,7 @@ exports.showPopUp = async (request, response) => {
   } catch (e) {
     console.error("Error en showPopUp:", e);
     response.status(500).json({ 
-      error: "Error al obtener datos para el pop-up" 
+      error: "Error fetching data for pop-up"
     });
   }
 };
@@ -99,18 +99,20 @@ exports.post_abscence_requests = async (request, response, next) => {
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
+  // Default status is "pending" (0)
   let estadoSolicitud = 0;
 
   try {
-    // Obtener el rol del colaborador
+     // Get the collaborator's role using their email (session)
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
 
+     // If the role is SuperAdmin (id_rol = 3), automatically approve 
     if (idRol === 3) {
       estadoSolicitud = 1;
     }
 
-    // Crear solicitud
+     // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
       subtype,
@@ -121,15 +123,18 @@ exports.post_abscence_requests = async (request, response, next) => {
       estadoSolicitud
     );
 
-    // Guardar solicitud (simula error si quieres probar)
+    // Save the main request record to the database
+    
     const result = await request_register.save(estadoSolicitud);
-    //throw new Error("Simulación de error de servidor"); // <- solo si quieres forzar error
+    // Optional: simulate an error here if you want to test
+    // throw new Error("Simulated server error");
 
+    // Save each of the individual requested days 
     for (let i in daysOff) {
       await request_register.saveDates(result[0].insertId, i);
     }
 
-    // Si todo sale bien
+    // If everything was successful
     request.session.successRequest = {
       startDate: daysOff[0],
       endDate: daysOff[daysOff.length - 1],
@@ -140,10 +145,11 @@ exports.post_abscence_requests = async (request, response, next) => {
     };
 
   } catch (error) {
-    console.error("Error al guardar solicitud:", error);
+    // If any error occurs during saving
+    console.error("Error saving request:", error);
     request.session.errorRequest = true;
   }
 
-  // Redirige solo una vez, sin importar si hubo error o éxito
+  // Always redirect to the main requests page
   response.redirect("/requests");
 };
