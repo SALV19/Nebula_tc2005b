@@ -75,6 +75,22 @@ exports.get_home = async (request, response) => {
       .then(({diasDisponibles,diasTotales, error}) => {
         // console.log("eventos: ", eventos);
         // console.log('Permisos: ', request.session.permissions);
+        response.render("home_page", {
+          diasDisponibles,
+          diasTotales,
+          error,
+          permissions: request.session.permissions,
+          total_absences: absences.length,
+          csrfToken: request.csrfToken(),
+          eventos: JSON.stringify(eventos),
+        })
+      })
+      .catch(error => {console.error(error)}) 
+  } else {
+    contVac(request)
+        .then(({diasDisponibles,diasTotales, error}) => {
+          // console.log("eventos: ", eventos);
+          // console.log('Permisos: ', request.session.permissions);
           response.render("home_page", {
             diasDisponibles,
             diasTotales,
@@ -82,10 +98,10 @@ exports.get_home = async (request, response) => {
             permissions: request.session.permissions,
             total_absences: absences.length,
             csrfToken: request.csrfToken(),
-            eventos: JSON.stringify(eventos),
+            eventos: null,
           })
-      })
-      .catch(error => {console.error(error)}) 
+        })
+        .catch(error => {console.error(error)}) 
   }
 
 };
