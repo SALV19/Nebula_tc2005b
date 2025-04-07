@@ -23,7 +23,6 @@ function get_progress_color(data, fecha) {
     
 }
 function get_average_progress(data, fecha) {
-    console.log(data)
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
     .map(metricaObj => metricaObj.valor_metrica);

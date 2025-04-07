@@ -25,15 +25,8 @@
                             
                             <div><label class="subtitleForm">Position</label></div>
                             <section class="input-container">
-                                <select name="puesto" id="position" class="line-input dropdown" required>
-                                    <option value="" disabled selected>Select Position</option>
-                                    <% if (puesto && puesto.length > 0) { %>
-                                        <% for (let i = 0; i < puesto.length; i++) { %>
-                                            <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
-                                        <% } %>
-                                    <% } else { %>
-                                        <option disabled>No positions available</option>
-                                    <% } %>
+                                <select name="puesto" id="position" class="line-input dropdown" required disabled>
+                                    
                                 </select>
                             </section>
                             
@@ -90,11 +83,11 @@
                                 
                                 <div><label class="subtitleForm">Department</label></div>
                                 <section class="input-container">
-                                    <select name="id_departamento" id="department" class="line-input dropdown" required>
+                                    <select name="id_departamento" id="department" class="line-input dropdown" required disabled onchange="selectedDepartment(this.value)">
                                         <option value="" disabled selected>Select Department</option>
                                         <% for (const [key, value] of empresa) {%>
                                             <% for (let i = 0; i < value.length; i++) {%>
-                                                <option value="<%= value[i].departamento %>"><%= value[i].departamento %></option>
+                                                <option value="<%= value[i].departamento %>" class="department_option" id="option-<%= key %>"><%= value[i].departamento %></option>
                                             <% } %>
                                         <% } %>
                                     </select>
