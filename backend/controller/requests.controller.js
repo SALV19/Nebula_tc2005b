@@ -6,11 +6,11 @@ exports.update_estado = async (request, response) => {
   // console.log('Sesion', req.session);
   // console.log('Estado', req.body.estado);
   // console.log('ID: ', req.body.id_solicitud_falta);
-  const estado = await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
+  const resultado = await Requests.save_State(request.body.estado, request.body.id_solicitud_falta, request.session.id_colaborador);
   console.log("Done");
-  console.log("Estado", estado);
+  // console.log("Res", resultado);
   response.status(200).json({
-    estado
+    estado: resultado,
   })
 };
 
@@ -56,7 +56,7 @@ exports.get_collabs_requests = async (request, response) => {
   }))
 
   // console.log('Aprobador', acceptance_colab);
-
+  console.log("collabs_requests")
   response.json({
     selectedOption: "requests",
     requests: requests,

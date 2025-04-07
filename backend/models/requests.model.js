@@ -202,12 +202,13 @@ module.exports = class Requests {
 
   static async save_State(estado, id_solicitud_falta, colabAprobador) {
     try {
-      await db.execute(
+      const [result] = await db.execute(
         `UPDATE solicitudes_falta 
          SET estado = ?, colabAprobador = ? 
          WHERE id_solicitud_falta = ?`,
         [estado, colabAprobador, id_solicitud_falta]
       );
+      return result;
     } catch (error) {
       console.error("Error al actualizar estado:", error);
       throw error;

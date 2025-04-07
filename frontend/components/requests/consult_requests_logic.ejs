@@ -13,15 +13,6 @@
     return `${day}/${month}/${year}`;
   }
 
-  function accept_deny(element) {
-    // is checkmark
-    if (element.classList.contains('bi-check-circle')) {
-      console.log('Accept request')
-    }
-    else {
-      console.log('Deny request')
-    }
-  }
 
   // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
@@ -53,7 +44,7 @@
       if (d.estado == 0) {
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
          <td>
-          <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
+          <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
             <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -65,7 +56,7 @@
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
          <td>`
           if (data.collab[idx][0].id_colaborador != sesionUsuario) {
-            table_content += `<button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
+            table_content += `<button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
                   <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
                 </button>
                 <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -171,11 +162,10 @@
           confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
           cancelButtonColor: "#7066E0",
           confirmButtonText: "Yes, update it!"
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
             console.log("entro");
             updateField(postId, newValue);
-            get_info();
           }
         });
       });
@@ -198,7 +188,6 @@
     // function to send update filed 
     function updateField(postId, newValue) {
       const csrf = document.getElementById('_csrf').value;
-
       fetch(`/requests/Requests/update`, {
         method: "POST", 
         headers: {
@@ -210,10 +199,6 @@
           id_solicitud_falta : postId
         }), 
       }) 
-      .then((res) => {
-          console.log("RESPUESTA");
-          return res.json()
-        })
         .then((data) => {
           console.log("Data", data);
           Swal.fire({
@@ -221,13 +206,8 @@
             text: `The request has been updated.`,
             icon: "success",
           });
-
-          console.log(data);
-
-          let p = document.getElementById(postId);
-          //p.classList
-          p.innerHTML = "Accepted";
-
+          get_info()
+          
         })
         .catch((error) => {
           Swal.fire({
@@ -236,7 +216,9 @@
             icon: "error",
           });
           console.error("Update error:", error);
+          
         });
+        
     }
   }
 
