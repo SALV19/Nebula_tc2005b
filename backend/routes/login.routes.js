@@ -23,7 +23,6 @@ router.get(
 router.get("/auth/failure", log_in_routes.auth_fail);
 router.get('/success', other_controllers.get_permissions)
 
-
 const reset_password_routes = require("../controller/reset_password.controller");
 const token_middleware=require("../util/token_middleware")
 router.get("/forgot_password", reset_password_routes.get_reset_password_request);

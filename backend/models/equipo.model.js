@@ -18,6 +18,17 @@ module.exports = class Equipo {
         );
     }
 
+    static fetchRolByEmail(email) {
+        return db.execute(`
+            SELECT r.id_rol
+            FROM equipo e
+            JOIN colaborador c ON c.id_colaborador = e.id_colaborador
+            JOIN rol r ON r.id_rol = e.id_rol
+            WHERE c.email = ?
+        `, [email]);
+    }
+    
+
     updateById(id_colaborador) {
         return db.execute(
         `UPDATE equipo 

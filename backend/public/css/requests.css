@@ -1,8 +1,60 @@
+
+/*Pop-Up Modal Styling*/
 .cancelButton {
     position: absolute; 
-    right: 3vw; /* Changed from px to vw to be responsive */
-    top: 3vh;  /* Changed from px to vh */
+    right: 3vw; 
+    top: 3vh; 
     cursor: pointer;
+}
+
+.container-scroll{
+    width: 84vw;
+    height:75vh;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    border: none;
+}
+
+.container-scroll::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.container-scroll::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.container-scroll::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.container-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.custom-textarea {
+    resize: none;
+    width: 100%; 
+    
+    background-color: #242424; 
+    color: #ffffff; 
+    
+    border: 1px solid #747474;
+    border-radius: 10px; 
+    
+    padding: 10px; 
+    padding-bottom: -3rem;
+    
+    font-size: 1rem; 
+    font-family: Arial, sans-serif; 
+    
+    outline: none; 
+}
+
+td {
+    line-height: 1.8rem;
+    text-align: center;
+
 }
 
 .pop-up {
@@ -24,8 +76,8 @@
     padding-top: 5vh;
     border-radius: 5px;
     width: 30vw;
-    height: auto; /* Optional to limit total height */
-    overflow-y: auto; /*To be able to scroll if the content is too large*/
+    height: auto; 
+    overflow-y: auto; 
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
 }
@@ -43,15 +95,13 @@
     border-radius: 10px;
 }
 
-
 .pop-up-content::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 
-
 #errorPopup .pop-up-content {
-    max-width: 30vw;      /* We increased from 30vw to 40vw */
-    max-height: 50vh;     /* Lower height so it doesn't extend as much */
+    max-width: 30vw;     
+    max-height: 50vh;   
     overflow-y: auto;    
     padding: 2vh 2vw;
     border-radius: 10px;
@@ -65,39 +115,11 @@
     margin: 2vh;
 }
 
-/*FORMATO FORM*/
-.subtitleForm {
-    font-size: 2vh; /* Changed from px a vh */
-    display: flex;
-    margin-bottom: 0; 
-    padding-bottom: 0.4vh; /* Changed from  px a vh */
-    align-items: center;
-    gap: 0.8vw; /* Changed from px a vw */
-    width: 100%;
-}
-
-.line-input {
-    border: none;
-    border-bottom: 0.04vh solid #fff; /* Changed to vh */
-    outline: none;
-    width: 100%;
-    padding: 0.5vh 0; /* Changed from px a vh */
-    background: transparent;
-    font-size: 2vh; /* Changed from px a vh */
-    color: #747474;
-    margin-bottom: 2vh; /* Changed from px a vh */
-}
-
-.input-container {
-    width: 100%; 
-    margin-top: 0; 
-}
-
 .buttons {
     position: relative;
     width: 100%;
-    display: flex; /* Added flexbox */
-    justify-content: flex-end; /* Aligns elements to the end, that is, to the right */
+    display: flex; 
+    justify-content: flex-end; 
 }
 
 .button.is-save {
@@ -107,8 +129,36 @@
     margin-top: 1vh;
 }
 
+/*FORMATO FORM*/
+.subtitleForm {
+    font-size: 2vh; 
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; 
+    align-items: center;
+    gap: 0.8vw; 
+    width: 100%;
+}
 
-/* leyendas*/
+/* Utility*/
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0;
+    background: transparent;
+    font-size: 2vh; 
+    color: #747474;
+    margin-bottom: 2vh; 
+}
+
+.input-container {
+    width: 100%; 
+    margin-top: 0; 
+}
+
+/*Counter and Error Section*/
 .error {
     color: rgb(255, 138, 138);
     display: none;
@@ -119,17 +169,22 @@
 }
 
 .validity-message {
-    font-size: 1.8vh;  /* Tamaño reducido */
+    font-size: 1.8vh;  
     margin-top: 1vh;
     margin-bottom: 1vh;
 }
 
 .validity-message.error {
-    color: #ff6b6b;  /* rojo */
+    color: #ff6b6b;  
 }
 
 .validity-message.success {
-    color: #3ec1d3;  /* azul clarito */
+    color: #3ec1d3; 
+}
+
+#daysCounter {
+    text-align: center;
+    width: 100%;
 }
 
 /*pop up confirm*/
@@ -146,3 +201,76 @@
 textarea{
     resize:none;
 }
+
+/*Vacation Counters*/
+.vacation-counters-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5vh;
+    margin-bottom: 2vh;
+    text-align: center;
+}
+
+.vacation-counter-box {
+    flex: 1;
+    padding: 0 1vw;
+}
+
+.vacation-count {
+    font-size: 3vh;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.vacation-label {
+    font-size: 1.6vh;
+    color: #9e9e9e;
+}
+
+.vacation-warning {
+    font-size: 1.8vh;
+    font-weight: 500;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+/* Date Columns*/
+.date-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vw; 
+    width: 100%;     
+    margin: 0;        
+    padding: 0;         
+}
+
+.input-wrapper {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+.dateLine {
+    text-align: left;
+}
+.my_event {
+    background-color: red;
+}
+.status {
+    display: inline-block; /* Para que no ocupe todo el ancho */
+    padding: 0rem;
+    font-size: 0.9rem;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+}
+
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+}
+.mesaage-approved{
+    font-size: bold;
+}
+
