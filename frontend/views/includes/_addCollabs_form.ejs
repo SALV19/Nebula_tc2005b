@@ -15,14 +15,10 @@
 
                             <div><label class="subtitleForm">Company</label></div>
                             <section class="input-container">
-                                <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
+                                <select name="nombre_empresa" id="empresa" class="line-input dropdown" required onchange="selectedCompany(this.value)">
                                     <option value="" disabled selected>Select Company</option>
-                                    <% if (empresa && empresa.length > 0) { %>
-                                        <% for (let i = 0; i < empresa.length; i++) { %>
-                                            <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
-                                        <% } %>
-                                    <% } else { %>
-                                        <option disabled>No company available</option>
+                                    <% for (const [key, value] of empresa) { %>
+                                        <option value="<%= key %>"><%= key %></option>
                                     <% } %>
                                 </select>
                             </section>
@@ -96,13 +92,10 @@
                                 <section class="input-container">
                                     <select name="id_departamento" id="department" class="line-input dropdown" required>
                                         <option value="" disabled selected>Select Department</option>
-                                        <% if (departamento && departamento.length > 0) { %>
-                                            <% for (let i = 0; i < departamento.length; i++) { %>
-                                                <option value="<%= departamento[i].id_departamento %>">
-                                                    <%= departamento[i].nombre_departamento %></option>
-                                                <% } %>
-                                        <% } else { %>
-                                            <option disabled>No departments available</option>
+                                        <% for (const [key, value] of empresa) {%>
+                                            <% for (let i = 0; i < value.length; i++) {%>
+                                                <option value="<%= value[i].departamento %>"><%= value[i].departamento %></option>
+                                            <% } %>
                                         <% } %>
                                     </select>
                                 </section>

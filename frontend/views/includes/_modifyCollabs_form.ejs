@@ -95,14 +95,7 @@
                                         <section class="input-container">
                                             <select name="id_departamento" id="department_modify" class="line-input dropdown" required>
                                                 <option value="" disabled selected>Select Department</option>
-                                                <% if (departamento && departamento.length > 0) { %>
-                                                    <% for (let i = 0; i < departamento.length; i++) { %>
-                                                        <option value="<%= departamento[i].id_departamento %>">
-                                                            <%= departamento[i].nombre_departamento %></option>
-                                                        <% } %>
-                                                <% } else { %>
-                                                    <option disabled>No departments available</option>
-                                                <% } %>
+                                                
                                             </select>
                                         </section>
 
