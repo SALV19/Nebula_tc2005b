@@ -42,11 +42,10 @@ function get_average_progress(data, fecha) {
     
 function TableFollowUps(data) {
     const table = document.querySelector('#content-section');
-    let table_content = `<div class="container-scroll">
-    <table class="table is-fullwidth"">
-
-    
-<tbody>`;
+    let table_content = `
+    <div class="container-scroll">
+        <table class="table is-fullwidth"">
+            <tbody>`;
 
 
     data.fechasAgendadas.forEach((fecha, idx) => { 
@@ -201,20 +200,16 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 }
 
 // Consulta a db para la información de solicitudes
-const get_info_FU = (pagination=0, filter=null) => {
+const get_info_FU = ( ) => {
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
     fetch(`/follow_ups/${route}`, {
-    method: 'POST',
+    method: 'GET',
     headers: {
             'Content-Type': 'application/json',
             'csrf-token': csrf
         },
-    body: JSON.stringify({
-        offset: pagination,
-        filter: filter,
-    }),
     })
     .then(response => {
         return response.json()})
@@ -225,30 +220,4 @@ const get_info_FU = (pagination=0, filter=null) => {
     .catch(e => console.log(e))
 }
 
-
-const prev_button = document.querySelector("#prev-page");
-const next_button = document.querySelector("#next-page");
-const pagination_value = document.querySelector("#pagination");
-
-// Cambiar de página / ver los siguientes 10 registros
-prev_button.addEventListener('click', () => {
-    pagination_value.value = 
-    pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para el botón "Siguiente"
-next_button.addEventListener('click', () => {
-    pagination_value.value = Number(pagination_value.value) + 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para cambiar de página manualmente
-pagination_value.addEventListener('change', () => {
-    const pageNumber = Number(pagination_value.value);
-    const offset = (pageNumber - 1) * 10;  // Si tienes 10 registros por página
-    get_info_FU(offset);  // Llama a la función con el offset
-})
 </script>

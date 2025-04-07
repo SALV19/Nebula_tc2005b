@@ -9,7 +9,10 @@ router.get('/Abscences', request_controller.get_abscences);
 router.get('/Vacations', request_controller.get_vacations);
 router.get('/pop_up', request_controller.showPopUp)
 router.post('/insert_request', request_controller.post_abscence_requests)
+router.post('/Requests/update', request_controller.update_estado);
 
 router.post('/', request_controller.update_estado);
+
+
 
 module.exports = router;
