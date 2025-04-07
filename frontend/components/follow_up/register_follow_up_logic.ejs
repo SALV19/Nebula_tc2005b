@@ -314,25 +314,6 @@
               })
             }
           });
-              
-      document.querySelectorAll(".submitButton").forEach((button) => {
-        button.addEventListener("click", function () {
-          const collabID = document.getElementById("collaborators"); 
-          // const dateSelected = document.getElementById("filter_end"); 
-
-          Swal.fire({
-            title: "Are you sure?",
-            text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
-            cancelButtonColor: "#7066E0",
-            confirmButtonText: "Yes, update it!"
-          })
-        });
-      });
-
-
     }
 
     
