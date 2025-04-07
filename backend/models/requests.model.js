@@ -255,5 +255,24 @@ module.exports = class Requests {
       throw error;
     }
   }
+
+  static async getNotificationData(id_solicitud_falta) {
+    try {
+      const [rows] = await db.execute(
+        `SELECT c.nombre, c.telefono, sf.tipo_falta, MIN(ds.fecha) AS start_date
+         FROM solicitudes_falta sf
+         JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+         JOIN dias_solicitados ds ON ds.id_solicitud_falta = sf.id_solicitud_falta
+         WHERE sf.id_solicitud_falta = ?
+         GROUP BY c.nombre, c.telefono, sf.tipo_falta`,
+        [id_solicitud_falta]
+      );
+      return rows[0];
+    } catch (error) {
+      console.error("Error al obtener datos para notificación:", error);
+      throw error;
+    }
+  }
+  
   
 };

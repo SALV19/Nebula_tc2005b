@@ -92,8 +92,8 @@
       else if (d.estado == 1) {
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
         <td class="back"></td>
-        </tr>
-`
+        </tr>`
+        console.log("d: ", d)
       }
       else if (d.estado == 2) {
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
@@ -263,7 +263,7 @@
     })
     .catch(e => console.error(e))
   }
-  
+
   // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
   for (let i=0; i<options.length; i++) {  
