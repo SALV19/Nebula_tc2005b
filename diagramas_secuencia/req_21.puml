@@ -1,0 +1,20 @@
+@startuml REQ-21
+autonumber
+actor collab
+control request.controller.js as requestController
+boundary sendWhatsapp.ejs as sendWhatsapp
+actor API_WhatsApp
+
+activate requestController
+
+requestController -> sendWhatsapp: sendWhatsapp(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
+deactivate requestController
+activate sendWhatsapp
+
+sendWhatsapp -> API_WhatsApp: sendWhatsAppNotiRequests(name, type, date, telefono)
+deactivate sendWhatsapp
+activate API_WhatsApp
+
+API_WhatsApp -->> collab: { response }
+deactivate API_WhatsApp
+

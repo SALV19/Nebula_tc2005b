@@ -16,14 +16,14 @@ module.exports = class Evaluation {
         return result.insertId;
     }
 
-    static fetchAllQuestions(){
-        return db.execute('SELECT * FROM preguntas_evaluacion');
-    }
-
     static fetchAllInfo(idColaborador){
         return db.execute(`SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento 
                             WHERE id_colaborador = ?
                             ORDER BY fechaAgendada DESC`,idColaborador);
+    }
+
+    static fetchAllQuestions(){
+        return db.execute('SELECT * FROM preguntas_evaluacion');
     }
 
 }

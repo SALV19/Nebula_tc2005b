@@ -141,6 +141,7 @@
 
         if (s_p.has(val)) {
             const roles = s_p.get(val);
+            console.log(val)
             for (let i = 0; i < roles.length; i++) {
                 options += `<option value="${roles[i]}">${roles[i]}</option>`;
             }

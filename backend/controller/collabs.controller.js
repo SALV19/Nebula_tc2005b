@@ -20,6 +20,7 @@ exports.get_collabs = async (request, response) => {
         Colaborador.fetchAllColabPues(),
         Colaborador.fetchAllColabMod(),
         Departamento.fetchAllDep(),
+        // Empresa.fetchAllEmp(),
         Rol.fetchAllRol(),
       ]);
 

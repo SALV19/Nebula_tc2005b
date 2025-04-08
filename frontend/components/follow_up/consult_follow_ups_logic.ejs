@@ -1,5 +1,7 @@
 <script>
 
+    console.log("entro a consult follow ups logic");
+
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
@@ -200,6 +202,7 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = ( ) => {
+    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML

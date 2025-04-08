@@ -29,6 +29,11 @@
   }
   // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
+    
+    console.log("Sesion: ", data.sesion.id_colaborador)
+    let sesionUsuario = data.sesion.id_colaborador;
+    console.log("Collab: ", sesionUsuario);
+
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
                             <tr>
@@ -49,10 +54,10 @@
       table_content += `<td>${my_formatDate(d.start)}</td>`
       table_content += `<td>${my_formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
-      if (d.estado == 0 ) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>
+      if (d.estado == 0) {
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
          <td>
-            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
+          <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
             <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -61,25 +66,29 @@
           </td>
           </tr>`
       } else if (d.estado == 0.5) {
-        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>
-         <td>
-            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}  ">
-              <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
-            </button>
-            <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
-              <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
-            </button>
-          </td>
-          </tr>`
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
+         <td>`
+          if (data.collab[idx][0].id_colaborador != sesionUsuario) {
+            table_content += `<button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
+                  <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
+                </button>
+                <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
+                  <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+                </button>
+              </td>
+              </tr>`
+          }
+        
       }
       else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
         <td class="back"></td>
-        </tr>
-`
+        </tr>`
+        console.log("d: ", d)
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
+        <td class="back"></td>
         </tr>`
       }
       // Contenido desplegable
@@ -156,10 +165,10 @@
           confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
           cancelButtonColor: "#7066E0",
           confirmButtonText: "Yes, update it!"
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
+            console.log("entro");
             updateField(postId, newValue);
-            get_info();
           }
         });
       });
@@ -179,8 +188,9 @@
       .catch(e => console.error("error", e));
     }
 
+    // function to send update filed 
     function updateField(postId, newValue) {
-      const csrf = document.getElementById('_csrf').value
+      const csrf = document.getElementById('_csrf').value;
       fetch(`/requests/Requests/update`, {
         method: "POST", 
         headers: {
@@ -191,14 +201,16 @@
           estado: newValue,
           id_solicitud_falta : postId
         }), 
-      })
-        .then(() => {
+      }) 
+        .then((data) => {
+          console.log("Data", data);
           Swal.fire({
             title: "Updated!",
             text: `The request has been updated.`,
             icon: "success",
           });
-
+          get_info()
+          
         })
         .catch((error) => {
           Swal.fire({
@@ -207,10 +219,10 @@
             icon: "error",
           });
           console.error("Update error:", error);
+          
         });
+        
     }
-
-
   }
 
   // Consulta a db para la información de solicitudes
@@ -242,7 +254,7 @@
     })
     .catch(e => console.error(e))
   }
-  
+
   // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
   for (let i=0; i<options.length; i++) {  
