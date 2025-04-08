@@ -22,4 +22,8 @@ module.exports = class Evaluation {
                             ORDER BY fechaAgendada DESC`,idColaborador);
     }
 
+    static fetchAllQuestions(){
+        return db.execute('SELECT * FROM preguntas_evaluacion');
+    }
+
 }

@@ -12,6 +12,7 @@ const Answers = require('../models/questions_answers.model');
 const Eval_Questions = require('../models/eval_questions.model');
 
 
+
 let settings = {
   selectedOption: 'collab',
 };
@@ -364,8 +365,12 @@ exports.get_followUps_info = (request, response, next) => {
 
   const idColaborador = request.session.id_colaborador;
 
+  console.log("entro a get follow ups info");
+
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
+
+      console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
@@ -386,6 +391,8 @@ exports.get_followUps_info = (request, response, next) => {
         const pregunta = questions;
         const metricas = metrics;
         const indicadores = indicators;
+
+        console.log("entro al segundo then");
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
