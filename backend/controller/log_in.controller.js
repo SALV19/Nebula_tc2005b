@@ -6,9 +6,8 @@ let status = {
 }
 
 exports.get_log_in = (request, response) => {
+  response.clearCookie('email');
   response.render("log_in", {
-    ...status, 
-    csrfToken: request.csrfToken(),
     ...status, 
     csrfToken: request.csrfToken(),
   });

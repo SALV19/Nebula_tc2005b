@@ -87,6 +87,7 @@ exports.get_meeting = (request, response, next) => {
   delete request.session.formData;
   delete request.session.errorMessage;
   delete request.session.successMessage;
+  response.clearCookie('email');
 
   Collaborator.fetchAllCompleteName()
     .then(collabs => {
