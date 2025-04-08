@@ -60,21 +60,40 @@ body{
     background-color: #454545;
 }
 .pop-up-k {
-    height: fit-content;
-    max-width: 90vw;
-    display: flex; 
-    flex-direction: column;
-    position: absolute;
-    top:0;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #454545;
+    padding: 1.5rem;
+    display: none; 
+    height: auto;
+    width: auto;
+  }
+/* .pop-up {
+    position: fixed;
+    top: 0;
     left: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 9999; 
-    margin-top: 15rem;
-    margin-left: 20rem;   
-    padding: 0.4rem;
-    background-color: #454545;
+    z-index: 999; 
 }
+
+.pop-up-content {
+    background-color: #242424;
+    padding: 2vw; 
+    padding-top: 5vh; 
+    border-radius: 5px;
+    width: 45vw;  
+    height: 85vh;
+    position: relative;
+    
+} */
   
 .pop-up-content-d {
     padding: 1.5rem; 
@@ -175,4 +194,27 @@ body{
 
 .line-input::-webkit-calendar-picker-indicator {
     filter: invert(1);
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* efecto nublado */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998; /* debajo del popup */
+  }
+
+.error {
+    color:#B8453E;
+    display: none;
+    font-size: 1.5vh;
+    margin-top: 0.1vh; 
+    margin-bottom: 0.4vh; 
+    text-align:center;
+    font-weight: 600; 
 }

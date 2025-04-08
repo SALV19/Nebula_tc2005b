@@ -97,20 +97,21 @@ exports.add_event = (request, response) => {
   const type = request.body.type;
   const startDate = request.body.startDate;
   const endDate = request.body.endDate;
-  console.log('user:', request.user.accessToken);
+  const endDateParts = endDate.split('-');
+  const year = parseInt(endDateParts[0]);
+  const month = parseInt(endDateParts[1]) - 1; 
+  const day = parseInt(endDateParts[2]);
+
+  let endDateObject = new Date(year, month, day);
+  endDateObject.setDate(endDateObject.getDate() + 1);
+  const endDateAdjusted = endDateObject.toISOString().split('T')[0];
 
   Collab.fetchEmails().then(data => {
   const [rowsE, fieldDataE] = data;
-    console.log("rowsE", rowsE); 
-    console.log("fieldDataE", fieldDataE); 
     const evento = new Event(startDate, endDate, motive, type);
     evento.save();
-    return Event.insertEvents(startDate, endDate, motive, request.user.accessToken);
+    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken);
   }).catch(error => {
     console.error(error);
   })
-
-
-
-  response.redirect("/");
 }
