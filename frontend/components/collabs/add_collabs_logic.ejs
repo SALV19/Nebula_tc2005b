@@ -36,49 +36,49 @@
     }
 
     function validateForm() {
-    let isValid = true;
+        let isValid = true;
 
-    // Email
-    const mailInput = document.getElementById("mail-input");
-    const mailError = document.getElementById("mail-error");
-    const validDomains = ["@nuclea.solutions", "@zigzag.house", "@we.page", "@mayaprotocol", "@moca.app"];
-    const mail = mailInput.value.trim().toLowerCase();
-    const isEmailValid = validDomains.some(domain => mail.endsWith(domain));
-    mailError.style.display = isEmailValid ? "none" : "block";
-    if (!isEmailValid) isValid = false;
+        // Email
+        const mailInput = document.getElementById("mail-input");
+        const mailError = document.getElementById("mail-error");
+        const validDomains = ["@nuclea.solutions", "@zigzag.house", "@we.page", "@mayaprotocol", "@moca.app"];
+        const mail = mailInput.value.trim().toLowerCase();
+        const isEmailValid = validDomains.some(domain => mail.endsWith(domain));
+        mailError.style.display = isEmailValid ? "none" : "block";
+        if (!isEmailValid) isValid = false;
 
-    // Phone
-    const phoneInput = document.getElementById("phone-input");
-    const phoneError = document.getElementById("phone-error");
-    phoneInput.value = phoneInput.value.replace(/\D/g, '');
-    const isPhoneValid = phoneInput.value.length >= 10 && phoneInput.value.length <= 15;
-    phoneError.style.display = isPhoneValid ? "none" : "block";
-    if (!isPhoneValid) isValid = false;
+        // Phone
+        const phoneInput = document.getElementById("phone-input");
+        const phoneError = document.getElementById("phone-error");
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+        const isPhoneValid = phoneInput.value.length >= 10 && phoneInput.value.length <= 15;
+        phoneError.style.display = isPhoneValid ? "none" : "block";
+        if (!isPhoneValid) isValid = false;
 
-    // RFC (optional)
-    const rfcInput = document.getElementById("rfc-input");
-    const rfcError = document.getElementById("rfc-error");
-    rfcInput.value = rfcInput.value.toUpperCase();
-    if (rfcInput.value && (rfcInput.value.length < 12 || rfcInput.value.length > 13)) {
-        rfcError.style.display = "block";
-        isValid = false;
-    } else {
-        rfcError.style.display = "none";
+        // RFC (optional)
+        const rfcInput = document.getElementById("rfc-input");
+        const rfcError = document.getElementById("rfc-error");
+        rfcInput.value = rfcInput.value.toUpperCase();
+        if (rfcInput.value && (rfcInput.value.length < 12 || rfcInput.value.length > 13)) {
+            rfcError.style.display = "block";
+            isValid = false;
+        } else {
+            rfcError.style.display = "none";
+        }
+
+        // CURP (optional)
+        const curpInput = document.getElementById("curp-input");
+        const curpError = document.getElementById("curp-error");
+        curpInput.value = curpInput.value.toUpperCase();
+        if (curpInput.value && curpInput.value.length !== 18) {
+            curpError.style.display = "block";
+            isValid = false;
+        } else {
+            curpError.style.display = "none";
+        }
+
+        return isValid;
     }
-
-    // CURP (optional)
-    const curpInput = document.getElementById("curp-input");
-    const curpError = document.getElementById("curp-error");
-    curpInput.value = curpInput.value.toUpperCase();
-    if (curpInput.value && curpInput.value.length !== 18) {
-        curpError.style.display = "block";
-        isValid = false;
-    } else {
-        curpError.style.display = "none";
-    }
-
-    return isValid;
-}
 
 
     function selectedCompany(val) {     
