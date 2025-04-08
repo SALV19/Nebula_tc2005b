@@ -6,7 +6,7 @@ const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
-const sendMeetingNotification = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+const sendWhatsapp = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
 const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
 const Eval_Questions = require('../models/eval_questions.model');
@@ -73,8 +73,7 @@ exports.post_follow_ups = (req, res) => {
     });
 };
 
-exports.get_meeting = (request, response, next) => {
-  console.log("entro a get_meeting");
+exports.get_meeting = (request, response, next) => {  
   settings.selectedOption = 'Meetings';
   const googleLogin = request.user?.accessToken ? 1 : 0;
 
@@ -180,6 +179,7 @@ exports.post_meeting = (request, response, next) => {
   const endTime = request.body.endTime;
   const summary = "Follow up Nebula";
   let occurrences = 0;
+  console.log("id_colaborador: ", id_colaborador)
   
 
   if(repeating == 'day') {
@@ -197,6 +197,8 @@ exports.post_meeting = (request, response, next) => {
 
   Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
+      const [rowsE, fieldData] = emailCollab;
+      console.log(rowsE);
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
 
@@ -225,7 +227,7 @@ exports.post_meeting = (request, response, next) => {
             fecha,
             startTimeRFC,
             endTimeRFC,
-            emailCollab, 
+            rowsE, 
             repeating,
             occurrences,
             summary,
@@ -242,7 +244,7 @@ exports.post_meeting = (request, response, next) => {
           const formattedTime = `${startTime} - ${endTime}`;
 
           if (telefono) {
-            await sendMeetingNotification.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
+            await sendWhatsapp.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
           }
           response.redirect('/follow_ups');
         })

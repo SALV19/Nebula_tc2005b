@@ -28,7 +28,6 @@ exports.get_collabs = async (request, response) => {
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
     const [rowsRol, fieldDataRol] = rolData;
-
     const empresa = rowsDep.reduce(
       (accum, emp_dep) => {
         if (!accum.has(emp_dep.nombre_empresa)) {
