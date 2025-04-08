@@ -161,8 +161,11 @@ exports.post_reset_password = async (request, response, next) => {
       const result = await PasswordReset.resetPassword(token, hashedPassword, email2);
     }
 
-    delete request.session;
-    delete request.user;
+    if(request.user) {
+      request.user.user.contrasena = hashedPassword;
+    }
+    // delete request.session;
+    // delete request.user;
     
     return response.redirect('/log_in?message=password_updated');
     
