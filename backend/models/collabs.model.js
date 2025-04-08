@@ -28,7 +28,7 @@ module.exports = class Colaborador {
 
   //
   static fetchAllCollabsName(id_colaborador){
-    return db.execute(`Select nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
+    return db.execute(`Select id_colaborador, nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
   }
 
   static fetchAllCompleteName(){
@@ -92,8 +92,37 @@ module.exports = class Colaborador {
   }
   static async fetchTeamCollabs(email, offset, filter = null) {
     if (!filter) {
-      // TO DEFINE
-      return;
+      return db.execute(`SELECT  c.id_colaborador, c.nombre, c.apellidos, 
+        c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+        c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+        c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+        d.nombre_departamento, em.nombre_empresa,
+        r.tipo_rol,
+        COUNT(fa.id_fa) AS FaltasAdministrativas
+        FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN rol r ON r.id_rol = e.id_rol
+        LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
+        LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
+        AND d.id_departamento = (
+          SELECT d.id_departamento
+          FROM departamento d
+          INNER JOIN equipo e
+            ON e.id_departamento = d.id_departamento
+          INNER JOIN colaborador c
+            ON c.id_colaborador = e.id_colaborador
+          WHERE c.email = "santialducin@gmail.com"
+        )
+        GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
+                c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+                c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+                c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+                d.nombre_departamento
+        ORDER BY c.nombre ASC
+            LIMIT 10 OFFSET ?`, [email, offset])
     } else {
       // TO DEFINE
       return;
@@ -125,6 +154,70 @@ module.exports = class Colaborador {
             LIMIT 10 OFFSET ?`, [offset])
     }
   }
+  static async fetchInactiveTeamCollabs(email, offset, filter = null) {
+    if (!filter) {
+      return db.execute(`SELECT  c.id_colaborador, c.nombre, c.apellidos, 
+        c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+        c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+        c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+        d.nombre_departamento, em.nombre_empresa,
+        r.tipo_rol,
+        COUNT(fa.id_fa) AS FaltasAdministrativas
+        FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN rol r ON r.id_rol = e.id_rol
+        LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
+        LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 0
+        AND d.id_departamento = (
+          SELECT d.id_departamento
+          FROM departamento d
+          INNER JOIN equipo e
+            ON e.id_departamento = d.id_departamento
+          INNER JOIN colaborador c
+            ON c.id_colaborador = e.id_colaborador
+          WHERE c.email = "santialducin@gmail.com"
+        )
+        GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
+                c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+                c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+                c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+                d.nombre_departamento
+        ORDER BY c.nombre ASC
+            LIMIT 10 OFFSET ?`, [email, offset])
+    } else {
+      // TO DEFINE
+      return;
+    }
+  }
+  static async fetchInactiveAllCollabs(offset, filter = null) {
+    if (!filter) {
+      return db.execute(`SELECT  c.id_colaborador, c.nombre, c.apellidos, 
+        c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+        c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+        c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+        d.nombre_departamento, em.nombre_empresa,
+        r.tipo_rol,
+        COUNT(fa.id_fa) AS FaltasAdministrativas
+        FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN rol r ON r.id_rol = e.id_rol
+        LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
+        LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 0
+        GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
+                c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+                c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+                c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+                d.nombre_departamento
+        ORDER BY c.nombre ASC
+            LIMIT 10 OFFSET ?`, [offset])
+    }
+  }
 
   static async fetchCollabs(email, offset, filter = null) {
     if (email) {
@@ -133,6 +226,15 @@ module.exports = class Colaborador {
       return Colaborador.fetchAllCollabs(offset, filter);
     }
   }
+
+  static async fetchInactiveCollabs(email, offset, filter = null) {
+    if (email) {
+      return Colaborador.fetchInactiveTeamCollabs(email, offset, filter ? filter : null);
+    } else {
+      return Colaborador.fetchInactiveAllCollabs(offset, filter);
+    }
+  }
+
   static fetchColabVac(idColaborador){
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
                           WHERE id_colaborador = ?`,[idColaborador]);
