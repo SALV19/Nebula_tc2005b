@@ -4,8 +4,30 @@
 
 body, section, table, thead, tr {
   background-color: #242424;
-  font-family: "Montserrat", sans-serif;
-  font-style: normal;
+}
+footer {
+  border: 2px solid red;
+  visibility: hidden;
+}
+body {
+  height: 102vh;
+}
+
+.example::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.example {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;  /* Firefox */
+}
+
+footer {
+  position: absolute; 
+  top: 95%;
+  right: 0;
+  width: 100vw;
 }
 
 
@@ -75,4 +97,11 @@ footer {
   flex-flow: column;
   justify-content: center;
   align-items: center;
+}
+
+.headingVac{
+  font-size: 1.5vh;
+  display: inline-block;
+  margin-right: 1vh;
+  margin-left: 1vh; 
 }

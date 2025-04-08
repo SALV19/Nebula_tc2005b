@@ -6,6 +6,7 @@ let status = {
 }
 
 exports.get_log_in = (request, response) => {
+  response.clearCookie('email');
   response.render("log_in", {
     ...status, 
     csrfToken: request.csrfToken(),
@@ -13,6 +14,8 @@ exports.get_log_in = (request, response) => {
 };
 
 exports.post_log_in = async (request, response) => {
+  request.session.email = null;
+  request.session.id_colaborador = null;
   const email = request.body.email;
   const password = request.body.password;
 
@@ -28,9 +31,11 @@ exports.post_log_in = async (request, response) => {
       response.redirect("/log_in/initial_password");
     } else if (await argon2.verify(user_info[0][0].contrasena, password)) {
       request.session.email = request.body.email;
+      
       request.session.id_colaborador = user_info[0][0].id_colaborador;
       response.redirect("/log_in/success");
     } else {
+      status.error = 'wrong_password'
       response.render("log_in", {
         ...status, 
         csrfToken: request.csrfToken(),

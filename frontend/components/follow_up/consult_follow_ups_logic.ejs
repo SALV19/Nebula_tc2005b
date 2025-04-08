@@ -1,18 +1,65 @@
 <script>
-function TableFollowUps(data) {
 
-    const table = document.querySelector('#content-section');
-    let table_content = `<div class="container-scroll">
-    <table class="table is-fullwidth"">
+    console.log("entro a consult follow ups logic");
+
+function get_progress_color(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
+    
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+    if (indicatorAvg >= 75) {
+        return 'success';
+    }
+    else if (indicatorAvg >= 30) {
+        return 'warning';
+    }
+    else {
+        return 'danger';
+    }
 
     
-<tbody>`;
-
-    data.fechasAgendadas.forEach((fecha, idx) => {
+}
+function get_average_progress(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    if (indicators.length <= 0) {
+        return 0;
+    }
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
         
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+
+    return indicatorAvg;
+}
+    
+function TableFollowUps(data) {
+    const table = document.querySelector('#content-section');
+    let table_content = `
+    <div class="container-scroll">
+        <table class="table is-fullwidth"">
+            <tbody>`;
+
+
+    data.fechasAgendadas.forEach((fecha, idx) => { 
+        const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
-        table_content += `<td> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
-        table_content += `<td style="text-align: right;">
+        table_content += `<td class="fixed-width"> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
+        table_content += `<td class='is-flex is-align-items-center'>
+                            <p style="width: 4rem">${indicadorAverage}%</p>
+                            <div style="width: 20rem;">
+                                <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
+                            </div>
+                        </td>`
+        table_content += `<td style="text-align: right; width: 10px;">
                         <i class="bi bi-caret-down-fill toggle-icon"></i>
                         </td>`;
         table_content += `</tr>`;
@@ -56,7 +103,8 @@ function TableFollowUps(data) {
                                     <!-- Tercera columna -->
                                     <div class="column is-one-fifth">
                                         Notes
-                                        <textarea class="custom-textarea"></textarea>
+                                        <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
+                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>
@@ -154,20 +202,17 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 }
 
 // Consulta a db para la información de solicitudes
-const get_info_FU = (pagination=0, filter=null) => {
+const get_info_FU = ( ) => {
+    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
     fetch(`/follow_ups/${route}`, {
-    method: 'POST',
+    method: 'GET',
     headers: {
             'Content-Type': 'application/json',
             'csrf-token': csrf
         },
-    body: JSON.stringify({
-        offset: pagination,
-        filter: filter,
-    }),
     })
     .then(response => {
         return response.json()})
@@ -177,31 +222,4 @@ const get_info_FU = (pagination=0, filter=null) => {
     })
     .catch(e => console.log(e))
 }
-
-
-const prev_button = document.querySelector("#prev-page");
-const next_button = document.querySelector("#next-page");
-const pagination_value = document.querySelector("#pagination");
-
-// Cambiar de página / ver los siguientes 10 registros
-prev_button.addEventListener('click', () => {
-    pagination_value.value = 
-    pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para el botón "Siguiente"
-next_button.addEventListener('click', () => {
-    pagination_value.value = Number(pagination_value.value) + 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para cambiar de página manualmente
-pagination_value.addEventListener('change', () => {
-    const pageNumber = Number(pagination_value.value);
-    const offset = (pageNumber - 1) * 10;  // Si tienes 10 registros por página
-    get_info_FU(offset);  // Llama a la función con el offset
-})
 </script>

@@ -1,42 +1,39 @@
-@startuml REQ_27
+@startuml REQ_27 SuperAdmin registra aprobación de falta
 autonumber
 actor SuperAdmin as S
-boundary general.routes.js as SRoute
-boundary approve_requests.ejs as Requests
+boundary general.routes.js as gr
+boundary requests.routes.js as SRoute
 control requests.controller.js as SController
-entity SolicitudesFalta.model as SModel
-entity SolicitudFalta.model as Model
+entity requests.model.js as SModel
 database Nebula as db
 
 ' ---- APROBAR SOLICITUD ----
 activate S
-S -> SRoute : POST /requests
-deactivate S
+S -->> gr : fetch('requests' )
+
+activate gr
+gr -> SRoute : (' /Requests/update ')
+deactivate gr 
+
 
 activate SRoute
-SRoute -> SController : post_approve_requests(requests_id, estado)
+SRoute -> SController : update_estado()
 deactivate SRoute
 
 activate SController 
-create SModel
-SController -> SModel : new SolicitudesFalta(request_id, estado)
-SController ->> SModel : save()
+SController ->> SModel : save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador)
 
 activate SModel
-SModel ->> db : UPDATE Solicitudes_Falta SET estado = ? WHERE id = request_id , (estado)
+SModel ->> db : `UPDATE solicitudes_falta SET estado = ?, colabAprobador = ? \nWHERE id_solicitud_falta = ?`,[estado, colabAprobador, id_solicitud_falta]
 activate db
-db -->> SModel : Query OK (Rows Affected)
+db -->> SModel : estado
 deactivate db
 
-SModel -->> SController : resolve('Success') / reject('Error')
+SModel -->> SController : estado
 deactivate SModel
 
-SController -> Requests : response.render('approve_requests.ejs', { requestsList })
+SController -->> S : res json
 deactivate SController
 
-activate Requests
-Requests -> S : HTML approve_requests.ejs
-deactivate Requests
-
-activate S
+deactivate S
 @enduml

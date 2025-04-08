@@ -8,16 +8,21 @@
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
         <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
-        <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
-        <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
-        <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
-            <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick=""></i>
-        </div>
+        <% if (permissions?.includes('register_followUp') || permissions?.includes('register_meeting')) { %>
+          <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
+          <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
+          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
+              <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick=""></i>
+          </div>
+        <% } else { %>
+          <br><br>
+        <% } %>
       </div>   
     </div> 
     <hr/>
     <div id="content-section">
       <%- include ('../components/follow_up/consult_follow_ups_logic.ejs') %>
+      <%- include ('../components/follow_up/register_follow_up_notes.ejs') %>
     </div>
     <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
 </main>

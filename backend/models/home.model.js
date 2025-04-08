@@ -10,14 +10,27 @@ module.exports = class Requests {
         this.evidence = evidence
     }
 
-    static async fetchDaysApproved(email) {
-        return db.execute(`SELECT ds.fecha
-                            FROM solicitudes_falta sf
-                            INNER JOIN dias_solicitados ds
-                                ON sf.id_solicitud_falta = ds.id_solicitud_falta
-                            INNER JOIN colaborador c
-                                ON c.id_colaborador = sf.id_colaborador
-                            WHERE c.email = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
-                        `, [email])
+    static async fetchDaysApproved(email, id=null) {
+        if(email) {
+            return db.execute(`SELECT ds.fecha
+                                FROM solicitudes_falta sf
+                                INNER JOIN dias_solicitados ds
+                                    ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                                INNER JOIN colaborador c
+                                    ON c.id_colaborador = sf.id_colaborador
+                                WHERE c.email = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
+                            `, [email])
+        }
+        else {
+            return db.execute(`SELECT ds.fecha
+                FROM solicitudes_falta sf
+                INNER JOIN dias_solicitados ds
+                    ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                INNER JOIN colaborador c
+                    ON c.id_colaborador = sf.id_colaborador
+                WHERE c.id_colaborador = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
+            `, [id])
+        }
     }
 }
+
