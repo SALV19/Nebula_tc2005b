@@ -1,5 +1,7 @@
 <script>
 
+    console.log("entro a consult follow ups logic");
+
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
@@ -23,7 +25,6 @@ function get_progress_color(data, fecha) {
     
 }
 function get_average_progress(data, fecha) {
-    console.log(data)
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
     .map(metricaObj => metricaObj.valor_metrica);
@@ -102,7 +103,8 @@ function TableFollowUps(data) {
                                     <!-- Tercera columna -->
                                     <div class="column is-one-fifth">
                                         Notes
-                                        <textarea class="custom-textarea"></textarea>
+                                        <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
+                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>
@@ -201,6 +203,7 @@ document.querySelectorAll('.fecha-row').forEach(row => {
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = ( ) => {
+    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
@@ -219,5 +222,4 @@ const get_info_FU = ( ) => {
     })
     .catch(e => console.log(e))
 }
-
 </script>
