@@ -132,19 +132,17 @@
         const position_select = document.querySelector("#position")
         position_select.disabled = false
         let options = ""
-        options += `<option value="" disabled selected>Select Company</option>
+        options += `<option value="" disabled selected>Select Department</option>
                 <option value="Chief Financial Officer">Chief Financial Officer</option>
                 <option value="Chief Executive Officer">Chief Executive Officer</option>
                 <option value="Chief Information Officer">Chief Information Officer</option>
                 <option value="Chief Technology Officer">Chief Technology Officer</option>
                 <option value="Chief Design Officer">Chief Design Officer</option>` 
-        for (const [k, v] of s_p) {
-            if (k != val) {
-                break
-            }
 
-            for (let i = 0; i < v.length; i++) {
-                options += `<option value="${v[i]}">${v[i]}</option>`
+        if (s_p.has(val)) {
+            const roles = s_p.get(val);
+            for (let i = 0; i < roles.length; i++) {
+                options += `<option value="${roles[i]}">${roles[i]}</option>`;
             }
         }
         position_select.innerHTML = options
