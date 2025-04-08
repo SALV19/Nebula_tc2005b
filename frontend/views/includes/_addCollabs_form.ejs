@@ -83,11 +83,11 @@
                                 
                                 <div><label class="subtitleForm">Department</label></div>
                                 <section class="input-container">
-                                    <select name="id_departamento" id="department" class="line-input dropdown" required disabled onchange="selectedDepartment(this.value)">
+                                    <select name="id_departamento" id="department" class="line-input dropdown" required disabled onchange="selectedDepartment(this)">
                                         <option value="" disabled selected>Select Department</option>
                                         <% for (const [key, value] of empresa) {%>
                                             <% for (let i = 0; i < value.length; i++) {%>
-                                                <option value="<%= value[i].departamento %>" class="department_option" id="option-<%= key %>"><%= value[i].departamento %></option>
+                                                <option value="<%= value[i].id %>" class="department_option" id="option-<%= key %>"><%= value[i].departamento %></option>
                                             <% } %>
                                         <% } %>
                                     </select>

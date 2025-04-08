@@ -12,31 +12,21 @@
                                         <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150">
                                     </section>
 
+                                    
                                     <div><label class="subtitleForm">Company</label></div>
                                     <section class="input-container">
-                                        <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
+                                        <select name="nombre_empresa" id="empresa_modify" class="line-input dropdown" required onchange="selectedCompanyModify(this.value)">
                                             <option value="" disabled selected>Select Company</option>
-                                            <% if (empresa && empresa.length > 0) { %>
-                                                <% for (let i = 0; i < empresa.length; i++) { %>
-                                                    <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
-                                                <% } %>
-                                            <% } else { %>
-                                                <option disabled>No company available</option>
+                                            <% for (const [key, value] of empresa) { %>
+                                                <option value="<%= key %>"><%= key %></option>
                                             <% } %>
                                         </select>
                                     </section>
 
                                     <div><label class="subtitleForm">Position</label></div>
                                     <section class="input-container">
-                                        <select name="puesto" id="position_modify" class="line-input dropdown" required>
-                                            <option value="" disabled selected>Select Position</option>
-                                            <% if (puesto && puesto.length > 0) { %>
-                                                <% for (let i = 0; i < puesto.length; i++) { %>
-                                                    <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
-                                                <% } %>
-                                            <% } else { %>
-                                                <option disabled>No positions available</option>
-                                            <% } %>
+                                        <select name="puesto" id="position_modify" class="line-input dropdown" required disabled>
+                                            <option value="" selected>Select Position</option>
                                         </select>
                                     </section>
 
@@ -90,12 +80,16 @@
                                         <section class="input-container">
                                             <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required required maxlength="150">
                                         </section>
-                                        
+                                                                        
                                         <div><label class="subtitleForm">Department</label></div>
                                         <section class="input-container">
-                                            <select name="id_departamento" id="department_modify" class="line-input dropdown" required>
+                                            <select name="id_departamento" id="department_modify" class="line-input dropdown" required disabled onchange="selectedDepartment(this)">
                                                 <option value="" disabled selected>Select Department</option>
-                                                
+                                                <% for (const [key, value] of empresa) {%>
+                                                    <% for (let i = 0; i < value.length; i++) {%>
+                                                        <option value="<%= value[i].id %>" class="department_option_modify" id="option-modify-<%= key %>"><%= value[i].departamento %></option>
+                                                    <% } %>
+                                                <% } %>
                                             </select>
                                         </section>
 

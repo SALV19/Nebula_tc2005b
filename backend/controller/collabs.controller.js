@@ -94,6 +94,7 @@ exports.post_collab = (request, response) => {
         throw new Error("No se encontró el colaborador insertado.");
       const idcolab = rows[0].id_colaborador;
 
+      console.log("ID DEPT0",request.body.id_departamento)
       const new_equipo = new Equipo(
         request.body.id_departamento,
         request.body.id_rol
@@ -237,6 +238,7 @@ exports.get_collab_data = async (req, res) => {
 
     const [collabResult] = await Colaborador.fetchCollabById(id);
     const [equipoResult] = await Equipo.fetchEquipoById(id);    
+
 
     res.json({
       colaborador: collabResult[0],

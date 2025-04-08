@@ -100,12 +100,14 @@
         }
     }
 
-    const department_select = document.querySelector("#department");
+    //const department_select = document.querySelector("#department");
 
-    function selectedCompany(val) {
+    function selectedCompany(val) {     
         const selector = document.querySelector("#department")
         selector.disabled = false
         const options = document.querySelectorAll(".department_option")
+        const position_select = document.querySelector("#position")
+        position_select.disabled = true;
         let selected_option;
         options.forEach(o => {
             if (o.id != `option-${val}`) {
@@ -118,6 +120,8 @@
     }
     
     function selectedDepartment(val) {
+        val = val.selectedOptions[0].text
+        
         const s_p = new Map()
         s_p.set("Digital Solutions", ["Chief Information Officer(Manager)","Digital Solutions Architect"])
         s_p.set("Human Resources", ["Human Resources Manager"])
