@@ -93,9 +93,10 @@ module.exports = class Requests {
   }
 
   static async fetchTeamRequests(email, offset, filter = null) {
-    if (!filter) {
+    if (!filter?.length > 0) {
+      console.log(email);
       return db.execute(
-        `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+        `SELECT  c.email, c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                         FROM solicitudes_falta sf
                         JOIN dias_solicitados ds
                           ON ds.id_solicitud_falta = sf.id_solicitud_falta
@@ -112,15 +113,17 @@ module.exports = class Requests {
                               ON c.id_colaborador = e.id_colaborador
                             INNER JOIN departamento d
                               ON d.id_departamento = e.id_departamento
-                            WHERE c.email = ?
+                            WHERE c.email = 'a01711434@tec.mx'
                           )
+                           AND c.email != 'a01711434@tec.mx'
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
                         `,
-        [email, offset]
+        [ offset]
       );
     } else {
+      console.log(filter)
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds
@@ -172,7 +175,7 @@ module.exports = class Requests {
     }
   }
   static async fetchAllRequests(offset, filter = null) {
-    if (!filter) {
+      if (!filter?.length > 0) {
       return db.execute(
         `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                         FROM solicitudes_falta sf

@@ -14,7 +14,9 @@ body{
     font-size: small;
     margin-left: -2rem;
 }
-
+.center-log{
+    margin:13rem;
+}
 .columns{
     margin-left: 5rem;
 }

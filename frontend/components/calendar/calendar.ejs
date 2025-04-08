@@ -12,12 +12,17 @@
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       themeSystem: 'bootstrap5', 
+      height: "auto",
+      aspectRatio: 1.6,
       headerToolbar: {
         left: 'prev,next today',
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
       events: eventos,
+      moreLinkText: 'more',
+      dayMaxEvents: 3,
+      height: 700,
       eventClick: function(info) {
         // Mostrar el pop-up
         const popup = document.getElementById('pop-up');
