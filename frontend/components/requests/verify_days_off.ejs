@@ -98,6 +98,7 @@
 
   // Injects the HTML content for the vacation counters
   function createContent(data) {
+    console.log("createContent")
     const info = document.querySelector("#counter_box");
     const content = `
     <div id="vacationCountersWrapper">
@@ -135,7 +136,7 @@
   
   // Updates UI and validation logic based on selected request type and dates
   function updateDaysCounter(data) {
-    console.log("data", data)
+    console.log("updateDaysCounter")
     const start = startDate.value;
     const end = endDate.value;
     const [type, subtype] = requestType.value.split("|");
@@ -232,7 +233,8 @@
 
     // Open the form
     openBtn.addEventListener("click", () => {
-
+      const form = document.querySelector("#form_element")
+      form.setAttribute('action', '/requests/insert_request')
       fetch("/requests/pop_up",{
         
         method:"GET", 
@@ -288,6 +290,7 @@
     Ensures dynamic validation and UI update based on current form state.
      */
     function eventListeners(data){
+      console.log("eventListeners")
       
       // On change: request type
       requestType.addEventListener("change", () => {

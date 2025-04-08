@@ -1,5 +1,138 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+  function eventListeners(data){
+      
+      const requestType          = document.getElementById("requestType");
+      const startDate            = document.getElementById("startDate");
+      const endDate              = document.getElementById("endDate");
+      const location             = document.getElementById("location");
+      const description          = document.getElementById("description");
+      const evidenceContainer    = document.getElementById("evidenceContainer");
+      const requestForm = document.querySelector("form"); 
+
+      // On change: request type
+      requestType.addEventListener("change", () => {
+        
+        // Check again if evidence is needed
+        checkEvidenceRequirement();
+
+        // Update vacation counters and validation
+        updateDaysCounter(data);
+      });
+
+      // On change: start date
+      startDate.addEventListener("change", () => {
+
+        checkEvidenceRequirement();
+        updateDaysCounter(data);
+      });
+
+      // On change: end date
+      endDate.addEventListener("change", () => {
+
+        checkEvidenceRequirement();
+        updateDaysCounter(data);
+      });
+
+      // On form submit: validate all inputs before allowing submission
+      requestForm.addEventListener("submit", function (e) {
+        const start = startDate.value;
+        const end = endDate.value;
+        const location = document.getElementById("location").value.trim();
+        const evidenceInput = document.getElementById("evidence");
+        const [type, subtype] = requestType.value.split("|");
+        const remaining = updateDaysCounter(data);
+        const errors = [];
+
+        let validDays = [];
+
+        // Date validations
+        if (!start || !end) {
+          errors.push("Select the start and end date.");
+        } else {
+          const startDateObj = new Date(start);
+          const endDateObj = new Date(end);
+
+          if (startDateObj > endDateObj) {
+            errors.push("The start date cannot be later than the end date.");
+          } else {
+            validDays = realsDaysOff(start, end);
+            
+            const allInRange = get_inbetween_dates(start, end);
+            const holidaysList = get_holidays();
+            const pendingDays = get_pending_days()
+            const approvedDays = get_approved_days();
+
+            const empalmeFeriados = allInRange.every(d => holidaysList.includes(d));
+            const empalmeAprobados = allInRange.every(d => approvedDays.includes(d));
+            const empalmePendientes = allInRange.every(d => pendingDays.includes(d));
+
+            // If no valid days due to full overlap with feriados or aprobados
+            if (validDays.length < 1) {
+              if (empalmeFeriados) {
+                errors.push("All selected dates overlap with holidays.");
+              } else if (empalmeAprobados) {
+                errors.push("All selected dates overlap with approved requests.");
+              } else if (empalmePendientes) {
+                errors.push("All selected dates overlap with pending requests.");
+              } else {
+                errors.push("You are selecting dates that overlap with holidays and approved/pending requests.");
+              }
+            }
+
+            // Save valid days to hidden input
+            document.getElementById("validDaysInput").value = JSON.stringify(validDays);
+          }
+        }
+        
+        // Location validation
+        if (!location) {
+          errors.push("Enter the location.");
+        }
+
+        // Evidence validation (only for Absence > 3 valid days)
+        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental rest", "Personal commitment"];
+
+        if (
+          type === "Absence" && 
+          validDays.length > 3 && 
+          !noEvidenceNeeded.includes(subtype) && 
+          !evidenceInput.value.trim()
+        ) {
+          errors.push("Please attach evidence for absences longer than 3 valid days.");
+        }
+
+        // Vacation overuse validation
+        if (remaining < 0) {
+          errors.push("Requesting more vacations than available");
+        }
+
+        // Show errors if they exist
+        if (errors.length > 0) {
+          e.preventDefault();
+          showErrorPopup(errors);
+        } else {
+          
+          // We stop the submit to confirm
+          e.preventDefault(); 
+
+          Swal.fire({
+            title: "Are you sure?",
+            text: "You won't be able to revert this!",
+            icon: "warning",
+            showCancelButton: true,
+            confirmButtonColor: "#59A250",
+            cancelButtonColor: "#d33",
+            confirmButtonText: "Yes, save it!",
+            cancelButtonText: "Cancel"
+          }).then((result) => {
+            if (result.isConfirmed) {
+              requestForm.submit(); 
+            }
+          });
+        }
+      });
+    }
 
   function my_formatDate(date) {
     const d = new Date(date);
@@ -15,15 +148,7 @@
                         <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
                       </tr>`
   }
-  // function accept_deny(element) {
-  //   // is checkmark
-  //   if (element.classList.contains('bi-check-circle')) {
-  //     console.log('Accept request')
-  //   }
-  //   else {
-  //     console.log('Deny request')
-  //   }
-  // }
+
   function createCalendarElement(id) {
     return `<div class="cal-modal-container is-flex is-justify-content-center mb-2">
               <div class="cal-modal">
@@ -36,12 +161,107 @@
               </div>
             </div>` 
   }
+
+  function createTableAbscences(data) {
+    const table = document.querySelector('#requests_table')
+    let table_content = `<thead>
+    <tr>
+      <th >Start-date</th>
+      <th >End-date</th>
+      <th >Request Type</th>
+      <th >Status</th>      
+    </tr>
+  </thead>
+  <tbody >`
+    // Información por cada renglón de la tabla
+    data.abscences.forEach((d, idx) => {
+      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}'>`;
+      table_content += `<td class="is-flex">
+                          <i class="bi bi-caret-right-fill mr-4" id='caret-${idx}'></i>
+                          <p id="start_date-${d.id_solicitud_falta}">${my_formatDate(d.start)}</p>
+                        </td>`
+      table_content += `<td id="end_date-${d.id_solicitud_falta}">${my_formatDate(d.end)}</td>`
+      table_content += `<td id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
+      if (d.estado == 0) {
+        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+      } else if (d.estado == 0.5) {
+        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>`
+      }
+      else if (d.estado == 1) {
+        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+      }
+      else if (d.estado == 2) {
+        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+      }
+      table_content += `<td style="display: none">
+                          <input type='hidden' value='${d.ubicacion}' id="ubicacion-${d.id_solicitud_falta}"/>
+                          <input type='hidden' value='${d.descripcion}' id="descripcion-${d.id_solicitud_falta}"/>
+                        </td>`
+      // Contenido desplegable
+      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+                          <td colspan='6'>
+                            <div class='columns'>
+                              <div class="column is-half">
+                                <p><strong>Type: </strong>${d.tipo_falta}</p>`
+        table_content += createCalendarElement(idx);
+        table_content +=    `</div>
+                              <div class="column">
+                                <p><strong>Reason: </strong></p>
+                                <p class='has-background-black p-3 box' id="descripcion-${d.id_solicitud_falta}">${d.descripcion}</p>
+                              </div>
+                              <div class="column">
+                                  <p><strong>Location:</strong> <p id="ubicacion-${d.id_solicitud_falta}">${d.ubicacion}</p>
+                                  <p class="message-approved">Approved by: ${data.collab[idx] == 0 ? "Hasn't been approved" : data.collab[idx][0].nombre + " " + data.collab[idx][0].apellidos}  </p>`
+        const x = new Date().getTime() + 3 * 24 * 60 * 60 * 1000
+        if (!(d.estado > 1 || new Date(d.start).getTime() < x)) {
+          table_content += `<div class='is-flex is-justify-content-center'>
+                                    <button class="button is-link is-rounded small_btn" onclick="updateRequest(${d.id_solicitud_falta})">Update</button>
+                                  </div>`
+        }
+        table_content += `</div>
+                            </div>
+                          </td>
+                        </tr>`;
+      table.innerHTML = table_content
+    })
+    table_content += '</tbody>'
+    table.innerHTML = table_content
+
+    data.abscences.forEach((d, idx) => {
+      createCalendar(idx, get_inbetween_dates(d.start, d.end))
+    })
+
+    // Añade función para expandir el contenido extra
+    const entries = document.querySelectorAll('#request')
+    entries.forEach((node, idx) => {
+      node.addEventListener('click', (v) => {        
+        const additionalRow = document.getElementById(`additional-row-${idx}`)
+        const caret = document.querySelector(`#caret-${idx}`)
+        
+        // hacer que en los botones de aceptar o rechazar no se expanda la vista
+        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
+        if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
+          return;
+        }
+
+        if (additionalRow.style.display === "none") {
+          additionalRow.style.display = "table-row";
+          caret.classList.add('bi-caret-down-fill')
+          caret.classList.remove('bi-caret-right-fill')
+        } else {
+          additionalRow.style.display = "none";
+
+          caret.classList.remove('bi-caret-down-fill')
+          caret.classList.add('bi-caret-right-fill')
+        }
+      })
+    })
+  }
+
+
   // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
-    
-    console.log("Sesion: ", data.sesion.id_colaborador)
     let sesionUsuario = data.sesion.id_colaborador;
-    console.log("Collab: ", sesionUsuario);
 
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
@@ -93,7 +313,6 @@
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
         <td class="back"></td>
         </tr>`
-        console.log("d: ", d)
       }
       else if (d.estado == 2) {
         table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
@@ -176,7 +395,6 @@
           confirmButtonText: "Yes, update it!"
         }).then(async (result) => {
           if (result.isConfirmed) {
-            console.log("entro");
             updateField(postId, newValue);
           }
         });
@@ -212,7 +430,6 @@
         }), 
       }) 
         .then((data) => {
-          console.log("Data", data);
           Swal.fire({
             title: "Updated!",
             text: `The request has been updated.`,
@@ -234,6 +451,62 @@
     }
   }
 
+  function re_format_date(date) {
+    let new_date = date.split('/')
+    new_date = [new_date[2], new_date[1], new_date[0]].join('-')
+    return new_date
+  }
+
+
+  function updateRequest(id) {
+    const csrf = document.getElementById('_csrf').value
+    const requestPopup = document.getElementById("requestPopup");
+    requestPopup.style.display = "flex";
+
+    const selected = document.querySelector(`[id="request"][data-key="${id}"]`);
+    const form = document.querySelector('#form_element')
+    form.setAttribute('action', '/requests/update_request')
+
+    const request_type_default = document.getElementById(`tipo_falta-${id}`);
+    const start_date_default   = document.getElementById(`start_date-${id}` );
+    const end_date_default     = document.getElementById(`end_date-${id}`);
+    const ubicacion_default    = document.getElementById(`ubicacion-${id}`);
+    const descripcion_default  = document.getElementById(`descripcion-${id}`);
+    
+    const requestType          = document.getElementById("requestType");
+    const startDate            = document.getElementById("startDate");
+    const endDate              = document.getElementById("endDate");
+    const location             = document.getElementById("location");
+    const description          = document.getElementById("description");
+    const evidenceContainer    = document.getElementById("evidenceContainer");
+    const request_id           = document.getElementById('request_id');
+
+    // requestType.value = request_type_default.innerHTML
+    startDate.value   = re_format_date(start_date_default.innerHTML)
+    endDate.value     = re_format_date(end_date_default.innerHTML)
+    location.value    = ubicacion_default.value
+    description.value = descripcion_default.value
+    request_id.value  = id
+    // evidenceContainer.value = null
+
+    
+    fetch("/requests/pop_up",{
+        
+        method:"GET", 
+        headers:{"Content-Type": "aplication/json"}
+      }).then(response => response.json())
+      .then(data =>{
+        holidays = data.holidays;
+        all_requests = data.all_requests;
+        pending_requests = data.pending_requests
+        createContent(data)
+        requestPopup.style.display = "flex";
+
+        eventListeners(data)
+        updateDaysCounter(data);
+      }).catch(error=> console.error("Error getting request data:", error));
+  }
+
   // Consulta a db para la información de solicitudes
   const get_info = (pagination=0, filter=null) => {
     const csrf = document.getElementById('_csrf').value
@@ -250,16 +523,25 @@
         filter: filter,
       }),
     })
-    .then(response => response.json())
+    .then(response => {
+      return response.json()
+    })
     .then(data => {
-      if (data.requests[0].length <= 0) {
+      const data_lenght = (data.requests ?? data.abscences).length
+
+      if (data_lenght <= 0) {
         if (pagination_value.value == 1) {
           createEmpty()
         }
         return 0
       }
-      createTableRequests(data)
-      return data.requests[0].length
+      else if (route == 'Requests') {
+        createTableRequests(data)
+      } 
+      else {
+        createTableAbscences(data)
+      }
+      return data_lenght
     })
     .catch(e => console.error(e))
   }
@@ -362,5 +644,7 @@
     let y = date.getFullYear();
     return '' + y + '-' + (m<=9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
   }
+
+  document.addEventListener('DOMContentLoaded', get_info())
 
 </script>
