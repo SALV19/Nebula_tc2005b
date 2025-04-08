@@ -180,6 +180,7 @@ exports.post_meeting = (request, response, next) => {
   const endTime = request.body.endTime;
   const summary = "Follow up Nebula";
   let occurrences = 0;
+  console.log("id_colaborador: ", id_colaborador)
   
 
   if(repeating == 'day') {
@@ -197,6 +198,8 @@ exports.post_meeting = (request, response, next) => {
 
   Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
+      const [rowsE, fieldData] = emailCollab;
+      console.log(rowsE);
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
 
@@ -225,7 +228,7 @@ exports.post_meeting = (request, response, next) => {
             fecha,
             startTimeRFC,
             endTimeRFC,
-            emailCollab, 
+            rowsE, 
             repeating,
             occurrences,
             summary,

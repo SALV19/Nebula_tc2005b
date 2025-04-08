@@ -37,7 +37,7 @@ module.exports = class Meeting {
             dateTime: endTime,
             timeZone: 'America/Mexico_City'
             }, 
-            attendees: [{ email: emailCollab }],
+            attendees: emailCollab,
             reminders: {
                 useDefault: false,
                 overrides: [

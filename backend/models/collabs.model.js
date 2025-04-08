@@ -1,3 +1,4 @@
+const bodyParser = require('body-parser');
 const db = require('../util/database')
 module.exports = class Colaborador {
   constructor(
@@ -68,6 +69,10 @@ module.exports = class Colaborador {
   static fetchAllColabPues() {
     return db.execute(`SELECT DISTINCT puesto FROM colaborador
                       ORDER BY puesto ASC`);
+  }
+  
+  static fetchEmail(id_colaborador) {
+    return db.execute(`SELECT email FROM COLABORADOR WHERE id_colaborador = ?`, [id_colaborador]);
   }
 
   static fetchAllColabMod() {
@@ -351,6 +356,13 @@ module.exports = class Colaborador {
       return Colaborador.fetchInactiveAllCollabs(offset, filter);
     }
   }
+
+  static fetchBasicInfoNoti(id_colaborador) {
+    return db.execute(
+        `SELECT nombre, telefono FROM colaborador WHERE id_colaborador = ?`, 
+        [id_colaborador]
+    );
+}
 
   static fetchColabVac(idColaborador){
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
