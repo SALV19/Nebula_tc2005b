@@ -137,7 +137,11 @@
     pagination_value.addEventListener('change', (v) => {
         get_info(pagination_value.value-1)
     })
-
+  
+  function searchParam(content) {
+    get_info(0, content)
+  }
+  
   document.addEventListener("DOMContentLoaded", function() {
     get_info()
   })
