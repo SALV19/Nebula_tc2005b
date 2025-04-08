@@ -27,9 +27,7 @@ exports.get_collabs = async (request, response) => {
     const [rowsColP, fieldDataColPues] = collabsDataPues;
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
-    // const [rowsEmp, fieldDataEmp] = empData;
     const [rowsRol, fieldDataRol] = rolData;
-    
     const empresa = rowsDep.reduce(
       (accum, emp_dep) => {
         if (!accum.has(emp_dep.nombre_empresa)) {
@@ -41,7 +39,7 @@ exports.get_collabs = async (request, response) => {
         return accum
       },
       new Map()
-    )    
+    )
 
     const successData = request.session.successData;
     request.session.successData = null;

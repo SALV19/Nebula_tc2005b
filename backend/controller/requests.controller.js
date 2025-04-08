@@ -24,7 +24,7 @@ exports.update_estado = async (req, res) => {
         const año = fecha.getFullYear();
         const fechaFormateada = `${dia}/${mes}/${año}`;
         
-        await sendWhatsapp(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
+        await sendWhatsapp.sendWhatsAppNotiRequests(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
         console.log("info enviada");
       } else {
         console.warn("No se encontró teléfono del colaborador");

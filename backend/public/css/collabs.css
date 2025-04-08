@@ -161,3 +161,7 @@
 .dateLine {
     text-align: left;
 }
+
+select option[disabled] {
+    display: none;
+}

@@ -13,7 +13,7 @@ module.exports = class Departamento {
                             ON de.id_departamento = d.id_departamento
                             INNER JOIN empresa e
                             ON e.id_empresa = de.id_empresa
-                            ORDER BY nombre_empresa ASC;`);
+                            ORDER BY nombre_empresa, nombre_departamento ASC;`);
     }
     
 };
