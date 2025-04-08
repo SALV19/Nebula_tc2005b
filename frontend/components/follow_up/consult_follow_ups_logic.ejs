@@ -103,7 +103,8 @@ function TableFollowUps(data) {
                                     <!-- Tercera columna -->
                                     <div class="column is-one-fifth">
                                         Notes
-                                        <textarea class="custom-textarea"></textarea>
+                                        <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
+                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>
@@ -221,5 +222,4 @@ const get_info_FU = ( ) => {
     })
     .catch(e => console.log(e))
 }
-
 </script>

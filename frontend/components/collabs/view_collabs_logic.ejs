@@ -52,9 +52,12 @@
                                     <p class='has-text-centered is-size-7'>Current<br>abscences</p>
                                   </div>
                                 </div>
-                                <div class='is-flex is-justify-content-center'>
-                                  <button class='button is-link is-rounded is-small is-size-7' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
-                                </div>
+                                ${d.estado <= 0 
+                                  ? '' 
+                                  : `<div class='is-flex is-justify-content-center '}>
+                                      <button class='button is-link is-rounded is-small is-size-7' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
+                                    </div>`
+                                    }
                               </div>
                             </div>
                           </td>
@@ -108,9 +111,9 @@
         options.forEach((element) => {
             element.classList.remove('selected')
         })
-        options[i].classList.add('selected')
+          options[i].classList.add('selected')
 
-        get_info()
+          get_info()  
         })
     }
 
@@ -134,7 +137,11 @@
     pagination_value.addEventListener('change', (v) => {
         get_info(pagination_value.value-1)
     })
-
+  
+  function searchParam(content) {
+    get_info(0, content)
+  }
+  
   document.addEventListener("DOMContentLoaded", function() {
     get_info()
   })

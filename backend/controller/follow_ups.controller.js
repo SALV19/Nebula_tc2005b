@@ -372,6 +372,7 @@ exports.get_followUps_info = (request, response, next) => {
 
       console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
+      const notes = evalInfo.map(n => n.notas)      
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -379,7 +380,8 @@ exports.get_followUps_info = (request, response, next) => {
         const day = fecha.getDate().toString().padStart(2, '0');
         return {
           id_evaluacion: evaluacion.id_evaluacion, 
-          fechaAgendada: `${year}-${month}-${day}` 
+          fechaAgendada: `${year}-${month}-${day}`,
+          notes: notes
         };
       });
 
@@ -412,3 +414,27 @@ exports.get_followUps_info = (request, response, next) => {
     });
 };
 
+exports.create_note = async (request, response) => {
+  const {content, id} = request.body
+  const eval_note = Evaluation.createNote(id, content)
+
+  const {success, error} = await eval_note.save_note()
+                                    .then(ok => {return {success: ok, error: null}})
+                                    .catch(error => {return {success: null, error: error}})
+  if (success) {    
+    response.json({
+      success,
+      message: "Success"
+    })
+    return 
+  }
+  else {
+    response.status(500).json({
+      error,
+      message: "Error"
+    })
+  }
+
+
+
+}
