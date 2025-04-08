@@ -1,21 +1,46 @@
 @startuml REQ_36
 autonumber
 actor SuperAdmin as S
+boundary register_follow_up_logic.ejs as Register
+boundary collabs.ejs as collabs
+boundary general_routes.ejs as GR
 boundary followUp.routes.js as Route
-boundary register_followUp.ejs as Register
 control register.controller.js as SController
-entity register_followUp.model as SModel
 entity indicators.model as IModel
-entity periodic_eval.model as QFollow
-entity periodic_eval.model as PEval
+entity periodic_eval.model.js as QFollow
+entity eval_questions.model.js as PEval
 entity collabs.model as cm
 entity questions_answers.model as Questions
 entity indicators_metrics.model as IMetrics
 database Nebula as db
 
-' --- GET COLLABS ---
+' --- GET COLLABS ---1
 activate S
-S -> Route : fetch (`/follow_ups/Register`)
+S -> GR : follow_ups routes
+deactivate S
+
+activate GR
+GR -> Route : GET /follow_ups/Register
+deactivate GR
+
+activate Route
+Route -> SController : get_register()
+deactivate Route 
+
+activate SController
+SController -> Route : render(/follow_ups/Register)
+deactivate SController
+
+activate Route 
+Route -> S : HTML
+deactivate Route
+
+activate S
+S -->> GR : fetch (`/follow_ups`)
+
+activate GR
+GR -> Route : (' /Register ')
+deactivate GR 
 
 activate Route
 Route -> SController : get_register()
@@ -25,7 +50,7 @@ activate SController
 SController ->> cm : fetchAllCompleteName()
 
 activate cm
-cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
+cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)') 
 
 activate db
 db ->> cm : colaboradores
@@ -48,19 +73,25 @@ deactivate Model
 ' --- GET INFO INDICADORES ---
 SController ->> IModel : fetchAllindicators()
 activate IModel 
-IModel ->> db : indicador
+IModel ->> db : SELECT * FROM indicador
 activate db
 db -->> IModel : indicador
 deactivate db
 IModel -->> SController : indicador
 deactivate IModel 
 
-SController -> Register : response.render('register_followUp.ejs')
+SController -->> S : JSON response (colaboradores, questions, indicator) 
 deactivate SController
-deactivate S
+
+S -> S : get_info_register
 
 ' ---- REGISTER FOLLOW UP ----
-S -> Route : POST /follow_ups
+S -> GR : POST ('/follow_ups')
+deactivate S
+
+activate GR
+GR -> Route : POST ('/Register/save')
+deactivate GR  
 
 activate Route
 Route -> SController : post_follow_ups()
@@ -72,7 +103,8 @@ SController -> QFollow: new QuestionsFollow(id_colaborador, fechaAgendada)
 SController -> QFollow: save()
 
 activate QFollow
-QFollow -> db: `SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento WHERE id_colaborador = ? ORDER BY fechaAgendada DESC`,idColaborador)
+QFollow -> db:  'INSERT INTO evaluaciones_de_seguimiento (id_colaborador, fechaAgendada) VALUES (?, ?)', [this.collab, this.date]; return result.insertId;
+
 activate db
 db -->> QFollow: id_evaluacion
 deactivate db
@@ -85,7 +117,7 @@ SController -> Questions: new Questions(id_pregunta, id_evaluation, respuesta)
 SController -> Questions : save()
 
 activate Questions
-Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta) VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
+Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta)\n VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
 activate db
 db -->> Questions : Query OK
 deactivate db 
@@ -97,7 +129,7 @@ SController -> IMetrics : new Indicators_metrics(id_evaluation, id_indicador, va
 SController -> IMetrics : save()
 
 activate IMetrics
-IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length){throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( 'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
+IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length)\n{throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( \n'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
 
 activate db
 db -->> IMetrics : Query OK
@@ -105,8 +137,23 @@ deactivate db
 IMetrics -->> SController: Promesa
 deactivate IMetrics 
 
-SController -> S : res.redirect('/follow_ups');
+SController ->  Route : res.redirect('/follow_ups');
 deactivate SController
+
+activate Route
+Route -> SController : get_FollowUp
+deactivate Route
+
+activate SController
+SController -> collabs: render("followUp")
+deactivate SController
+
+activate collabs 
+collabs -> S : HTML
+deactivate collabs 
+
+activate S
+deactivate S
 
 
 @enduml

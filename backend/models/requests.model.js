@@ -192,6 +192,47 @@ module.exports = class Requests {
                         LIMIT 10 OFFSET ?`,
         [offset || 0]
       );
+    } else {
+      let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+                  FROM solicitudes_falta sf
+                  JOIN dias_solicitados ds
+                    ON ds.id_solicitud_falta = sf.id_solicitud_falta
+                  JOIN colaborador c
+                    ON c.id_colaborador = sf.id_colaborador
+                  JOIN equipo e 
+                    ON e.id_colaborador = c.id_colaborador
+                  JOIN departamento d
+                    ON d.id_departamento = e.id_departamento
+                  `;
+      if (filter.pending) {
+        query += `AND sf.estado = 0 `;
+        if (filter.accepted) {
+          query += `OR sf.estado = 1 `;
+        }
+        if (filter.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter.accepted) {
+        query += `AND sf.estado = 1 `;
+        if (filter.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter.denied) {
+        query += `AND sf.estado = 2 `;
+      }
+      query += "GROUP BY sf.id_solicitud_falta ";
+      if (filter.start_date) {
+        query += `HAVING MIN(ds.fecha) >= '${filter.start_date}' `;
+        if (filter.end_date) {
+          query += `AND MAX(ds.fecha) <= '${filter.end_date}' `;
+        }
+      } else if (filter.end_date) {
+        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `;
+      }
+      query += `ORDER BY sf.estado ASC, ds.fecha ASC
+                LIMIT 10 OFFSET ?`;
+
+      return db.execute(query, [offset]);
     }
   }
 
@@ -205,16 +246,36 @@ module.exports = class Requests {
 
   static async save_State(estado, id_solicitud_falta, colabAprobador) {
     try {
-      return await db.execute(
+      const [result] = await db.execute(
         `UPDATE solicitudes_falta 
          SET estado = ?, colabAprobador = ? 
          WHERE id_solicitud_falta = ?`,
         [estado, colabAprobador, id_solicitud_falta]
       );
+      return result;
     } catch (error) {
       console.error("Error al actualizar estado:", error);
       throw error;
     }
   }
+
+  static async getNotificationData(id_solicitud_falta) {
+    try {
+      const [rows] = await db.execute(
+        `SELECT c.nombre, c.telefono, sf.tipo_falta, MIN(ds.fecha) AS start_date
+         FROM solicitudes_falta sf
+         JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+         JOIN dias_solicitados ds ON ds.id_solicitud_falta = sf.id_solicitud_falta
+         WHERE sf.id_solicitud_falta = ?
+         GROUP BY c.nombre, c.telefono, sf.tipo_falta`,
+        [id_solicitud_falta]
+      );
+      return rows[0];
+    } catch (error) {
+      console.error("Error al obtener datos para notificación:", error);
+      throw error;
+    }
+  }
+  
   
 };

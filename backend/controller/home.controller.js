@@ -1,5 +1,7 @@
 const { color } = require("chart.js/helpers");
 const Requests = require("../models/home.model");
+const Event = require("../models/events.model");
+const Collab = require("../models/collabs.model")
 const {contVac} = require("../util/contVacations")
 const {google} = require('googleapis')
 require('dotenv').config()
@@ -104,7 +106,27 @@ exports.get_home = async (request, response) => {
 
 };
 
+exports.add_event = (request, response) => {
+  const motive = request.body.motive;
+  const type = request.body.type;
+  const startDate = request.body.startDate;
+  const endDate = request.body.endDate;
+  const endDateParts = endDate.split('-');
+  const year = parseInt(endDateParts[0]);
+  const month = parseInt(endDateParts[1]) - 1; 
+  const day = parseInt(endDateParts[2]);
 
-// <% if (error) {%>
-//   <%- include('../components/user_not_in_system.ejs') %>
-// <% } %>
+  let endDateObject = new Date(year, month, day);
+  endDateObject.setDate(endDateObject.getDate() + 1);
+  const endDateAdjusted = endDateObject.toISOString().split('T')[0];
+
+  Collab.fetchEmails().then(data => {
+  const [rowsE, fieldDataE] = data;
+    const evento = new Event(startDate, endDate, motive, type);
+    console.log(rowsE);
+    evento.save();
+    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
+  }).catch(error => {
+    console.error(error);
+  })
+}

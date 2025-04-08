@@ -76,6 +76,24 @@
     color: #747474;
     margin-bottom: 2vh; 
 }
+.search-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: white;
+    margin-bottom: 2vh; 
+    width: 0;
+    transition: all 0.1s;
+    direction: ltr;
+}
+.search-bar:hover > .search-input,  
+.search-bar:focus-within > .search-input{
+    width: 10rem;
+}
 
 .input-container {
     width: 100%; 
@@ -142,4 +160,8 @@
 
 .dateLine {
     text-align: left;
+}
+
+select option[disabled] {
+    display: none;
 }

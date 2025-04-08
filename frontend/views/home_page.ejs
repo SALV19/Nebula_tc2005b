@@ -1,10 +1,12 @@
 <link rel="stylesheet" href="/css/home.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%- include('../components/nav_bar.ejs') %>
 <input type="hidden" id="_csrf" value=<%= csrfToken %></input>
 
 <div class="columns">
   <div class="is-three-quarters">
+    
     <aside class="pop-up-d" style="display: none;" id="pop-up">
       <div class="pop-up-content-d">              
         <button onclick="closePopup()" class="button-close">
@@ -26,7 +28,13 @@
       let eventos = <%- eventos %>; 
     </script>
     <% if (eventos) { %>
+      <div style="display: flex;">
+        <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
+        <%- include('includes/_addEvent_form.ejs') %>
+        </div>
       <%- include('../components/calendar/calendar.ejs') %> 
+      <%- include ('../components/home/add_event_logic.ejs') %>
+
     <% } else { %>
       <div class="is-three-quarters center-log">
         <br>
@@ -42,7 +50,7 @@
         </a>
       </div>
     <% } %>
-  </div>
+    </div>
 
   <div class="column column-counter">
     <%- include('../components/vacations_left.ejs') %>

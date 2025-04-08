@@ -1,14 +1,16 @@
 const Collaborator = require('../models/collabs.model');
-const QuestionsFollow = require('../models/periodic_eval.model');
+const RegisterFollow = require('../models/periodic_eval.model');
 const Indicator = require('../models/indicators.model');
 const Questions = require('../models/questions_answers.model');
 const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
-const sendMeetingNotification = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+const sendWhatsapp = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
 const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
+const Eval_Questions = require('../models/eval_questions.model');
+
 
 
 let settings = {
@@ -24,11 +26,10 @@ exports.get_FollowUp = (request, response) => {
 }
 
 exports.get_register = async (request, response) => {
-    const [collabsData, questionsData, indicatorsData, lastEvalutation] = await Promise.all([
-      Collaborator.fetchAllCompleteName(),
-      QuestionsFollow.fetchAllQuestions(),
-      Indicator.fetchAllindicators(),
-    ]);
+  
+    const collabsData =  await Collaborator.fetchAllCompleteName();
+    const questionsData = await Eval_Questions.fetchAllQuestions();
+    const indicatorsData = await Indicator.fetchAllindicators();
 
     const [rows, fieldData] = collabsData;
     const [rows_ques, fieldData_ques] = questionsData;
@@ -44,34 +45,33 @@ exports.get_register = async (request, response) => {
     });
 };
 
-exports.post_follow_ups = async (req, res) => {
-  try {  
-    // Crear la evaluación y esperar su guardado
-    const evaluation = new QuestionsFollow(req.body.id_colaborador, req.body.fechaAgendada);
+exports.post_follow_ups = (req, res) => {
+  // Crear la evaluación y guardarla
+  const evaluation = new RegisterFollow(req.body.id_colaborador, req.body.fechaAgendada);
 
-    // Ahora podemos acceder al ID generado
-    const id_evaluation = await evaluation.save(); // Esperamos el resultado de la promesa
-
-    // Crear y guardar respuestas
-
-    const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
-    await answer_questions.save(); 
-
-    const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
-    await metrics_answer.save();
-    
-
-    // Redirigir después de completar las operaciones
-    res.redirect('/follow_ups');
-  } catch (error) {
-    console.error(error);
-    return res.status(400).render("register_follow_up_logic.ejs", {
-      error: "There was a problem saving the evaluation",
-      // validation : true,
-      csrfToken : req.csrfToken,
+  evaluation.save()
+    .then((id_evaluation) => {
+      // Guardar respuestas una vez que tenemos el ID de la evaluación
+      const answer_questions = new Questions(req.body.id_pregunta, id_evaluation, req.body.respuesta);
+      return answer_questions.save().then(() => id_evaluation); // Pasamos el id_evaluation adelante
+    })
+    .then((id_evaluation) => {
+      // Guardar métricas con el mismo ID
+      const metrics_answer = new Indicators_metrics(id_evaluation, req.body.id_indicador, req.body.valor_metrica);
+      return metrics_answer.save();
+    })
+    .then(() => {
+      // Redirigir solo cuando todo esté guardado
+      res.redirect('/follow_ups');
+    })
+    .catch((error) => {
+      console.error(error);
+      res.status(400).render("register_follow_up_logic.ejs", {
+        error: "There was a problem saving the evaluation",
+        csrfToken: req.csrfToken(),
+      });
     });
-  };
-}
+};
 
 exports.get_meeting = (request, response, next) => {
   console.log("entro a get_meeting");
@@ -180,6 +180,7 @@ exports.post_meeting = (request, response, next) => {
   const endTime = request.body.endTime;
   const summary = "Follow up Nebula";
   let occurrences = 0;
+  console.log("id_colaborador: ", id_colaborador)
   
 
   if(repeating == 'day') {
@@ -197,6 +198,8 @@ exports.post_meeting = (request, response, next) => {
 
   Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
+      const [rowsE, fieldData] = emailCollab;
+      console.log(rowsE);
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
 
@@ -225,7 +228,7 @@ exports.post_meeting = (request, response, next) => {
             fecha,
             startTimeRFC,
             endTimeRFC,
-            emailCollab, 
+            rowsE, 
             repeating,
             occurrences,
             summary,
@@ -242,7 +245,7 @@ exports.post_meeting = (request, response, next) => {
           const formattedTime = `${startTime} - ${endTime}`;
 
           if (telefono) {
-            await sendMeetingNotification.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
+            await sendWhatsapp.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
           }
           response.redirect('/follow_ups');
         })
@@ -365,9 +368,14 @@ exports.get_followUps_info = (request, response, next) => {
 
   const idColaborador = request.session.id_colaborador;
 
+  console.log("entro a get follow ups info");
+
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
+
+      console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
+      const notes = evalInfo.map(n => n.notas)      
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -375,7 +383,8 @@ exports.get_followUps_info = (request, response, next) => {
         const day = fecha.getDate().toString().padStart(2, '0');
         return {
           id_evaluacion: evaluacion.id_evaluacion, 
-          fechaAgendada: `${year}-${month}-${day}` 
+          fechaAgendada: `${year}-${month}-${day}`,
+          notes: notes
         };
       });
 
@@ -387,6 +396,8 @@ exports.get_followUps_info = (request, response, next) => {
         const pregunta = questions;
         const metricas = metrics;
         const indicadores = indicators;
+
+        console.log("entro al segundo then");
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
@@ -406,3 +417,27 @@ exports.get_followUps_info = (request, response, next) => {
     });
 };
 
+exports.create_note = async (request, response) => {
+  const {content, id} = request.body
+  const eval_note = Evaluation.createNote(id, content)
+
+  const {success, error} = await eval_note.save_note()
+                                    .then(ok => {return {success: ok, error: null}})
+                                    .catch(error => {return {success: null, error: error}})
+  if (success) {    
+    response.json({
+      success,
+      message: "Success"
+    })
+    return 
+  }
+  else {
+    response.status(500).json({
+      error,
+      message: "Error"
+    })
+  }
+
+
+
+}
