@@ -3,6 +3,7 @@ const User = require("../models/password_token.model");
 const PasswordReset = require("../models/password_token.model");
 const { passwordStrength } = require('check-password-strength');
 const argon2 = require("argon2");
+const { sourcerepo } = require("googleapis/build/src/apis/sourcerepo");
 
 const options = [
     {
@@ -37,6 +38,7 @@ exports.get_reset_password_request = (request, response, next) => {
 
 exports.post_reset_password_request = (request, response, next) => {
     const email = request.body.email;
+    request.session.firstLogin = false;
     
     if (!email) {
         console.error("Error: Email not provided");
@@ -68,13 +70,11 @@ exports.get_token = (request, response, next) => {
 exports.post_token = (request, response, next) => {
     const token = request.body.token;
 
-
-    
-
     PasswordReset.verifyToken(token).then((result) => {
         if(result.valid) {
             request.session.resetEmail = result.email;
             request.session.userToken = token;
+            request.session.sourceRoute = "forgot";
             return response.redirect('/log_in/reset_password');
         } else {
 
@@ -94,34 +94,51 @@ exports.get_reset_password = (request, response, next) => {
         
         return response.redirect('/log_in/reset_password_request?error=session_expired');
     }
-    response.render("reset_password", { csrfToken: request.csrfToken() });
+    const sourceRoute = request.session.sourceRoute || "forgot"; 
+    response.render("reset_password", { csrfToken: request.csrfToken(), sourceRoute: sourceRoute });
 };
 
 exports.post_reset_password = async (request, response, next) => {
+  const sourceRoute = request.session.sourceRoute;
   try {
     const password = request.body.password;
     const password2 = request.body.password2;
     const token = request.session.userToken;
     const email = request.session.resetEmail;
+    const email2 = request.session.email;
     
     if (!password || !password2) {
       console.error("Error: Passwords not provided");
       return response.render("reset_password", { error: "Both passwords are required" ,
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
       });
     }
-    
-    if (!token || !email) {
+
+    if (!token && request.session.firstLogin==false) {
       console.error("Error: Token or email not found in session");
       return response.render("reset_password", { error: "Invalid or expired session",
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
+       });
+    }
+    
+    if (!email && request.session.firstLogin==false) {
+      console.error("Error: Token or email not found in session");
+      return response.render("reset_password", { error: "Invalid or expired session",
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
+       });
+    }
+
+    if(!email2 && request.session.firstLogin==true) {
+      console.error("Error: Token or email not found in session");
+      return response.render("reset_password", { error: "Invalid or expired session",
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
        });
     }
 
     if (password !== password2) {
       console.error("Error: Passwords do not match");
       return response.render("reset_password", { error: "Passwords do not match" ,
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
       });
     }
 
@@ -132,18 +149,20 @@ exports.post_reset_password = async (request, response, next) => {
       return response.render("reset_password", { 
         error: `Password too weak. Please use at least 8 characters with a mix 
           of uppercase, lowercase, numbers, and symbols (minimum 3 types).` ,
-        csrfToken: request.csrfToken()
+        csrfToken: request.csrfToken(), sourceRoute : sourceRoute
       });
     }
 
     const hashedPassword = await encryptPassword(password);
     
-    const result = await PasswordReset.resetPassword(token, hashedPassword, email);
-    
+    if(request.session.firstLogin==false) {
+      const result = await PasswordReset.resetPassword(token, hashedPassword, email);
+    } else {
+      const result = await PasswordReset.resetPassword(token, hashedPassword, email2);
+    }
 
-    delete request.session.resetToken;
-    delete request.session.userToken;
-    delete request.session.resetEmail;
+    delete request.session;
+    delete request.user;
     
     return response.redirect('/log_in?message=password_updated');
     
@@ -151,10 +170,16 @@ exports.post_reset_password = async (request, response, next) => {
     console.error("Error changing password:", error);
     return response.render("reset_password", { 
       error: "Error changing password: " + error.message ,
-      csrfToken: request.csrfToken()
+      csrfToken: request.csrfToken(), sourceRoute : sourceRoute
     });
   }
 };
+
+exports.get_initial_password = async (request, response, next) => {
+  request.session.sourceRoute = "initial";
+  response.render("reset_password", { csrfToken: request.csrfToken(), sourceRoute: request.session.sourceRoute});
+};
+
 
 async function encryptPassword(plainPassword) {
     try {
