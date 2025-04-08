@@ -70,13 +70,13 @@ exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
   const requests = await Requests.fetchRequests(
-    request.session.email,
+    request.session.permissions.includes('accept_requests') ? null : request.session.email,
     offset,
     filter
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-  
+  // console.log("Requests", requests);
   const acceptance_colab = await Promise.all(requests[0].map((e) => {
     if (!e.colabAprobador){
       return 0;

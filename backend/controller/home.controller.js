@@ -104,9 +104,6 @@ exports.get_home = async (request, response) => {
 
 };
 
-exports.get_requests = async (request, response) {
-
-};
 
 // <% if (error) {%>
 //   <%- include('../components/user_not_in_system.ejs') %>
