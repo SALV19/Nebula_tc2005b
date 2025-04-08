@@ -1,93 +1,57 @@
 <link rel="stylesheet" href="/css/calendar.css" />
-<div id='calendar' class="calendar"></div>
 
+<body>
+  <div id='calendar' class="calendar"></div>
+</body>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script>
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
-    
-    function parseEventos(eventosData) {
-      if (!eventosData) {
-        console.log("No event data available");
-        return [];
-      }
-      
-      console.log("Raw eventos:", typeof eventosData);
-      
-      let parsedData = [];
-      
-      if (typeof eventosData === 'string') {
-        try {
-          parsedData = JSON.parse(eventosData);
-        } catch (error) {
-          console.error("Error parsing eventos JSON:", error);
+
+    // console.log("eventos", eventos);
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      themeSystem: 'bootstrap5', 
+      headerToolbar: {
+        left: 'prev,next today',
+        center: 'title',
+        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+      },
+      events: eventos,
+      eventClick: function(info) {
+        // Mostrar el pop-up
+        const popup = document.getElementById('pop-up');
+        if (popup) {
+          const endDate = info.event.end;
+
+          // Opciones para formato en español
+          const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+          const horaOptions = { hour: '2-digit', minute: '2-digit' };
+          // Mostrar el pop-up
+          popup.style.display = 'block';  // Cambiar a 'block' para mostrarlo
+
+          // Rellenar la información del pop-up con los datos del evento
+          document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
+          document.getElementById('event-title').innerText = info.event.title;
+          const startDate = info.event.start;
+          // Mostrar solo la fecha
+          document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
+          // Mostrar hora de inicio
+          document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
+          // Mostrar hora de fin (si existe)
+          document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
+            : 'No end hour availablr';
+          document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
         }
-      } else if (Array.isArray(eventosData)) {
-        parsedData = eventosData;
       }
-      
-      console.log("Parsed eventos:", parsedData);
-      return parsedData;
-    }
-    
-    let eventData = parseEventos(window.eventos);
-    
-    const initializeCalendar = () => {
-      var calendar = new FullCalendar.Calendar(calendarEl, {
-        initialView: 'dayGridMonth',
-        themeSystem: 'bootstrap5', 
-        height: 'auto',
-        headerToolbar: {
-          left: 'prev,next today',
-          center: 'title',
-          right: 'dayGridMonth,timeGridWeek,timeGridDay'
-        },
-        events: eventData,
-        eventClick: function(info) {
-          const popup = document.getElementById('pop-up');
-          if (popup) {
-            const endDate = info.event.end;
-
-            const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
-            const horaOptions = { hour: '2-digit', minute: '2-digit' };
-            popup.style.display = 'block'; 
-
-            document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
-            document.getElementById('event-title').innerText = info.event.title;
-            const startDate = info.event.start;
-            document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
-            document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
-            document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
-              : 'No end hour availablr';
-            document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
-          }
-        },
-        dayMaxEvents: true, 
-        eventTimeFormat: {
-          hour: '2-digit',
-          minute: '2-digit',
-          meridiem: 'short'
-        }
-      });
-      
-      calendar.render();
-      return calendar;
-    };
-
-    function closePopup() {
-      const popup = document.getElementById('pop-up');
-      popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
-    }
-    
-    const calendar = initializeCalendar();
-    
-    window.updateCalendarEvents = function(newEvents) {
-      const existingEvents = calendar.getEvents();
-      existingEvents.forEach(e => e.remove());
-      
-      const parsedEvents = parseEventos(newEvents);
-      parsedEvents.forEach(event => {
-        calendar.addEvent(event);
-      });
-    };
+    });
+    calendar.render();
   });
+  
+  // Función para cerrar el pop-up
+  function closePopup() {
+    const popup = document.getElementById('pop-up');
+    popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
+  }
 </script>
+

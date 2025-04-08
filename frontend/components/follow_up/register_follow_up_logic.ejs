@@ -3,8 +3,7 @@
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script>
     document.addEventListener("DOMContentLoaded", () => {
-      get_info_FU(), 
-      get_meeting()
+      get_info_FU()
     })
     // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
     function get_register(data) {
@@ -279,19 +278,26 @@
           event.preventDefault(); 
 
           if (collaboratorSelect.value === "default"){
-               event.preventDefault();
-               errorMessage.classList.add("show");
-             } else {
-               errorMessage.classList.remove("show");
-               Swal.fire({
-                 title: "Are you sure?",
-                 text: `Do you want to register this evaluation?`,
-                 icon: "question",
-                 showCancelButton: true,
-                 confirmButtonColor: `#59A250`,
-                 cancelButtonColor: "#7066E0",
-                 confirmButtonText: "Yes, update it!"
-               }).then((result) => {
+              event.preventDefault();
+              errorMessage.classList.add("show");
+              Swal.fire({
+                title: "Incomplete Form",
+                text: "Please fill out all required fields before submitting.",
+                icon: "error",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "OK"
+              });
+            } else {
+              errorMessage.classList.remove("show");
+              Swal.fire({
+                title: "Are you sure?",
+                text: `Do you want to register this evaluation?`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: `#59A250`,
+                cancelButtonColor: "#7066E0",
+                confirmButtonText: "Yes, update it!"
+              }).then((result) => {
                   if (result.isConfirmed) { 
                     try {
                         document.getElementById("form_method").submit();
@@ -305,29 +311,10 @@
                             confirmButtonText: "OK",  
                         });
                     }
-                  }
-                })
+                  } 
+              })
             }
           });
-              
-      document.querySelectorAll(".submitButton").forEach((button) => {
-        button.addEventListener("click", function () {
-          const collabID = document.getElementById("collaborators"); 
-          // const dateSelected = document.getElementById("filter_end"); 
-
-          Swal.fire({
-            title: "Are you sure?",
-            text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
-            icon: "question",
-            showCancelButton: true,
-            confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
-            cancelButtonColor: "#7066E0",
-            confirmButtonText: "Yes, update it!"
-          })
-        });
-      });
-
-
     }
 
     
