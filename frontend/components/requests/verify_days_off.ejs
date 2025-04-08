@@ -98,7 +98,6 @@
 
   // Injects the HTML content for the vacation counters
   function createContent(data) {
-    console.log("createContent")
     const info = document.querySelector("#counter_box");
     const content = `
     <div id="vacationCountersWrapper">
@@ -289,7 +288,6 @@
     Ensures dynamic validation and UI update based on current form state.
      */
     function eventListeners(data){
-      console.log("eventListeners")
       
       // On change: request type
       requestType.addEventListener("change", () => {
@@ -372,7 +370,7 @@
         }
 
         // Evidence validation (only for Absence > 3 valid days)
-        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental rest", "Personal commitment"];
+        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental Rest", "Personal Commitment","Work Event"];
 
         if (
           type === "Absence" && 
@@ -425,7 +423,7 @@
     const end = endDate.value;
     const validDays = realsDaysOff(start, end);
 
-    const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental rest", "Personal commitment"];
+    const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental Rest", "Personal Commitment","Work Event"];
 
     if (type === "Absence" && start && end) {
       if (validDays.length > 3 && !noEvidenceNeeded.includes(subtype)) {
