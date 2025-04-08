@@ -175,6 +175,64 @@ exports.get_collabs_info = async (request, response) => {
     abscences,
   });
 };
+exports.get_inactive = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  let collabs;
+  let diasDisponibles_Totales, abscences;
+
+  if (request.session.permissions.includes('consult_all_collabs')) {
+    [collabs] = await Colaborador.fetchInactiveCollabs(null, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+                        const dias_disponibles_totales = await contVac(null, null, colab_id=c.id_colaborador)
+                          .then((e) => {
+                            return e
+                          })
+                        return dias_disponibles_totales
+                      }))
+                    
+  }
+  else {
+    [collabs] = await Colaborador.fetchCollabs(request.session.email, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+      const aaaa = await contVac(null, null, colab_id=c.id_colaborador)
+        .then((e) => {
+          return e
+        })
+      return aaaa
+    })) 
+  }
+  
+  response.json({
+    selectedOption: "Active",
+    collabs: collabs,
+    diasDisponibles_Totales: diasDisponibles_Totales,
+    abscences,
+  });
+};
 
 exports.get_collab_data = async (req, res) => {
   try {
