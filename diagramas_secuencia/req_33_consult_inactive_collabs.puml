@@ -22,14 +22,14 @@ activate ce
 ce -> u : HTML collabs.ejs
 deactivate ce
 activate u
-u ->> cr : POST /view_collabs/Active
+u ->> cr : POST /view_collabs/Inactive
 activate cr
 cr ->> cc : get_collabs_info()
 deactivate cr
 activate cc
 cc ->> cm : Colaborador.fetchCollabs()
 activate cm
-cm ->> db : SELECT (...) FROM collabs \nJOIN (...) \nWHERE id = 1\nAND estado = 1
+cm ->> db : SELECT (...) FROM collabs \nJOIN (...) \nWHERE id = 1\nAND estado = 0
 activate db
 db -->> cm : [collabs]
 deactivate db
