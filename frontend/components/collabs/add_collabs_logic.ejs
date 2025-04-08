@@ -35,77 +35,58 @@
         }
     }
 
-    function validateRFC() {
+    function validateForm() {
+        let isValid = true;
+
+        // Email
+        const mailInput = document.getElementById("mail-input");
+        const mailError = document.getElementById("mail-error");
+        const validDomains = ["@nuclea.solutions", "@zigzag.house", "@we.page", "@mayaprotocol", "@moca.app"];
+        const mail = mailInput.value.trim().toLowerCase();
+        const isEmailValid = validDomains.some(domain => mail.endsWith(domain));
+        mailError.style.display = isEmailValid ? "none" : "block";
+        if (!isEmailValid) isValid = false;
+
+        // Phone
+        const phoneInput = document.getElementById("phone-input");
+        const phoneError = document.getElementById("phone-error");
+        phoneInput.value = phoneInput.value.replace(/\D/g, '');
+        const isPhoneValid = phoneInput.value.length >= 10 && phoneInput.value.length <= 15;
+        phoneError.style.display = isPhoneValid ? "none" : "block";
+        if (!isPhoneValid) isValid = false;
+
+        // RFC (optional)
         const rfcInput = document.getElementById("rfc-input");
-        const rfcpError = document.getElementById("rfc-error");
-        if (rfcInput.value.length < 12 || rfcInput.value.length > 13){
-            rfcpError.style.display = "block"; 
+        const rfcError = document.getElementById("rfc-error");
+        rfcInput.value = rfcInput.value.toUpperCase();
+        if (rfcInput.value && (rfcInput.value.length < 12 || rfcInput.value.length > 13)) {
+            rfcError.style.display = "block";
+            isValid = false;
         } else {
-            rfcpError.style.display = "none";
+            rfcError.style.display = "none";
         }
-    }
-    
-    function validateCURP() {
+
+        // CURP (optional)
         const curpInput = document.getElementById("curp-input");
         const curpError = document.getElementById("curp-error");
-    
-        if (curpInput.value.length !== 18) {
-            curpError.style.display = "block"; 
+        curpInput.value = curpInput.value.toUpperCase();
+        if (curpInput.value && curpInput.value.length !== 18) {
+            curpError.style.display = "block";
+            isValid = false;
         } else {
             curpError.style.display = "none";
         }
+
+        return isValid;
     }
 
-    const rfcInput = document.querySelector('input[placeholder="Insert RFC"]');
-    rfcInput.addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
-    const curpInput = document.querySelector('input[placeholder="Insert CURP"]');
-    curpInput.addEventListener('input', function() {
-        this.value = this.value.toUpperCase();
-    });
-        
-    function validateMail() {    
-        const mailInput = document.getElementById("mail-input");
-        const mailError = document.getElementById("mail-error");
-        
-        const validDomains = [
-            "@nuclea.solutions",
-            "@zigzag.house",
-            "@we.page",
-            "@mayaprotocol",
-            "@moca.app"
-        ];
 
-        const input = mailInput.value.trim().toLowerCase();
-        const isValid = validDomains.some(domain => input.endsWith(domain));
-
-        if (!isValid) {
-            mailError.style.display = "block";
-        } else {
-            mailError.style.display = "none";
-        }
-    }
-
-    function validatePhone() {
-        const phoneInput = document.getElementById("phone-input");
-        const phoneError = document.getElementById("phone-error");
-        
-        phoneInput.value = phoneInput.value.replace(/\D/g, '');
-
-        if (phoneInput.value.length < 10 || phoneInput.value.length > 15){
-            phoneError.style.display = "block"; 
-        } else {
-            phoneError.style.display = "none";
-        }
-    }
-
-    const department_select = document.querySelector("#department");
-
-    function selectedCompany(val) {
+    function selectedCompany(val) {     
         const selector = document.querySelector("#department")
         selector.disabled = false
         const options = document.querySelectorAll(".department_option")
+        const position_select = document.querySelector("#position")
+        position_select.disabled = true;
         let selected_option;
         options.forEach(o => {
             if (o.id != `option-${val}`) {
@@ -118,6 +99,8 @@
     }
     
     function selectedDepartment(val) {
+        val = val.selectedOptions[0].text
+        
         const s_p = new Map()
         s_p.set("Digital Solutions", ["Chief Information Officer(Manager)","Digital Solutions Architect"])
         s_p.set("Human Resources", ["Human Resources Manager"])
