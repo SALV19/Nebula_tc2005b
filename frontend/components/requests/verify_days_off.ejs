@@ -135,7 +135,6 @@
   
   // Updates UI and validation logic based on selected request type and dates
   function updateDaysCounter(data) {
-    console.log("data", data)
     const start = startDate.value;
     const end = endDate.value;
     const [type, subtype] = requestType.value.split("|");
@@ -232,7 +231,8 @@
 
     // Open the form
     openBtn.addEventListener("click", () => {
-
+      const form = document.querySelector("#form_element")
+      form.setAttribute('action', '/requests/insert_request')
       fetch("/requests/pop_up",{
         
         method:"GET", 

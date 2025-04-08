@@ -12,8 +12,15 @@ module.exports = class Equipo {
         }
 
     static fetchEquipoById(id) {
-        return db.execute(
-        `SELECT id_rol, id_departamento FROM equipo WHERE id_colaborador = ?`,
+        return db.execute(`
+        SELECT * FROM equipo eq
+        INNER JOIN departamento d 
+        ON eq.id_departamento = d.id_departamento
+        INNER JOIN departamento_empresa de
+        ON de.id_departamento = d.id_departamento
+        INNER JOIN empresa e
+        ON e.id_empresa = de.id_empresa
+        WHERE id_colaborador = ? `,
         [id]
         );
     }

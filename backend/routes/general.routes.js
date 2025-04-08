@@ -16,5 +16,7 @@ router.get("/personal_info", permissions_middleware.general_permissions, persona
 router.get("/reports", permissions_middleware.view_reports, reports_routes.get_reports);
 router.use("/requests", permissions_middleware.general_permissions, request_routes);
 router.get("/", home_routes.get_home);
+router.post("/addEvent", permissions_middleware.general_permissions, home_routes.add_event);
+
 
 module.exports = router;

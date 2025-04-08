@@ -22,8 +22,10 @@
             <div class="pop-up-content">
               <i class="bi bi-x-lg cancelButton" id="closeRequestForm"></i>
 
-              <form action="/requests/insert_request" method="post">
+              <form action="/requests/insert_request" method="post" id="form_element">
                 <input type="hidden" name="_csrf" id="_csrf" value=<%= csrfToken%>>
+                <input type="hidden" name="request_id" id="request_id" value=''>
+
                 <input type="hidden" id="validDaysInput" name="validDays">
                 
                   <div class="cell">

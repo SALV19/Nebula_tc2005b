@@ -84,9 +84,20 @@ SELECT  c.id_colaborador, c.nombre, c.apellidos,
         LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
         LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
         LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.nombre LIKE '%sa%'
         GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
                 c.fechaNacimiento, c.telefono, c.puesto, c.email, 
                 c.fechaIngreso, c.fechaSalida, c.ubicacion, 
                 c.modalidad, c.foto, c.curp, c.rfc, c.estado,
                 d.nombre_departamento
         ORDER BY c.nombre ASC;
+
+
+SELECT DISTINCT e.nombre_empresa, e.id_empresa, d.id_departamento, d.nombre_departamento
+FROM departamento d
+INNER JOIN departamento_empresa de
+  ON de.id_departamento = d.id_departamento
+INNER JOIN empresa e
+  ON e.id_empresa = de.id_empresa
+ORDER BY nombre_empresa ASC;
+
