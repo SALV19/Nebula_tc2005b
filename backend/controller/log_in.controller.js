@@ -22,7 +22,14 @@ exports.post_log_in = async (request, response) => {
   const user_info = await getUserLoginInfo(email, password);
 
   if (user_info[0].length) {
-    if (await argon2.verify(user_info[0][0].contrasena, password)) {
+    if(await first_login(password, user_info[0][0].contrasena)) {
+      console.log("viene de usuario y contraseña");
+      console.log(" ");
+      request.session.email = request.body.email;
+      request.session.firstLogin = true;
+      request.session.sourceRoute = "initial";
+      response.redirect("/log_in/initial_password");
+    } else if (await argon2.verify(user_info[0][0].contrasena, password)) {
       request.session.email = request.body.email;
       
       request.session.id_colaborador = user_info[0][0].id_colaborador;
@@ -42,6 +49,13 @@ exports.post_log_in = async (request, response) => {
     });
   }
 };
+
+async function first_login(password, dbpassword) {
+  if(password == dbpassword){
+    return true;
+  }
+  return false;
+}
 
 async function getUserLoginInfo(email) {
   const user_info = await User.fetchByEmail(email);
