@@ -6,7 +6,7 @@ exports.get_reports = async(request, response) => {
 
   const [collabs] = await Colaborador.fetchAllCompleteName()
 
-  const [empresa] = await Empresa.fetchAllE(id_empresa)
+  const [empresa] = await Empresa.fetchAllEmp()
   
   const departamentosNested = await Promise.all(
     empresa.map(async (e) => {
@@ -16,7 +16,7 @@ exports.get_reports = async(request, response) => {
   
   const departamento = departamentosNested;
 
-  console.log("DP: ", departamentosNested)
+  // console.log("DP: ", departamentosNested)
     response.render("reports",{
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -25,3 +25,4 @@ exports.get_reports = async(request, response) => {
       empresa,
     });
   };
+
