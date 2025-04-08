@@ -103,7 +103,52 @@
     const department_select = document.querySelector("#department");
 
     function selectedCompany(val) {
-        console.log(val)
+        const selector = document.querySelector("#department")
+        selector.disabled = false
+        const options = document.querySelectorAll(".department_option")
+        let selected_option;
+        options.forEach(o => {
+            if (o.id != `option-${val}`) {
+                o.disabled = true;
+            }
+            else {
+                o.disabled = false;
+            }
+        })
+    }
+    
+    function selectedDepartment(val) {
+        const s_p = new Map()
+        s_p.set("Digital Solutions", ["Chief Information Officer(Manager)","Digital Solutions Architect"])
+        s_p.set("Human Resources", ["Human Resources Manager"])
+        s_p.set("Administration", ["Chief Financial Officer(Manager)","Finances and Billing Assistant"])
+        s_p.set("UX/UI", ["UX/UI Designer", "UX/UI Manager"])
+        s_p.set("Design", ["Chief Design Officer(Manager)","Digital Arts Designer","Filmmaker", "Motion Graphics Designer", "Web Designer"  ])
+        s_p.set("Backend", ["Backend Developer", "Backend Manager"])
+        s_p.set("Frontend", ["Frontend Developer", "Frontend Manager"])
+        s_p.set("Robotics", ["Algorithms Developer","ML Developer"])
+        s_p.set("Research and Development", ["FlutterFlow Developer", "Fullstack Developer",  "Interns/Trainees"])
+
+        const position_select = document.querySelector("#position")
+        position_select.disabled = false
+        let options = ""
+        options += `<option value="" disabled selected>Select Department</option>
+                <option value="Chief Financial Officer">Chief Financial Officer</option>
+                <option value="Chief Executive Officer">Chief Executive Officer</option>
+                <option value="Chief Information Officer">Chief Information Officer</option>
+                <option value="Chief Technology Officer">Chief Technology Officer</option>
+                <option value="Chief Design Officer">Chief Design Officer</option>` 
+        const positions = new Map([...s_p].sort())
+        
+        if (positions.has(val)) {
+            const roles = positions.get(val);
+            console.log(val)
+            for (let i = 0; i < roles.length; i++) {
+                options += `<option value="${roles[i]}">${roles[i]}</option>`;
+            }
+        }
+        position_select.innerHTML = options
+
     }
     
 </script>
