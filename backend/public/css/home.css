@@ -88,3 +88,24 @@ body{
     align-self: flex-start; 
     margin-bottom: -1px
 }
+.center-log{
+    align-items: center;
+    justify-content: center;
+    padding: 18rem;
+}
+.fc-popover-body {
+    background-color: #454545;
+}
+
+
+.fc-theme-standard 
+.fc-popover-header{
+    background-color: #454545;
+    border-color: #454545;
+}
+
+.fc-theme-standard 
+.fc-popover{
+    background-color: #454545;
+    border-color: #454545;
+}

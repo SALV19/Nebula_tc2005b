@@ -25,7 +25,23 @@
     <script>
       let eventos = <%- eventos %>; 
     </script>
-    <%- include('../components/calendar/calendar.ejs') %> 
+    <% if (eventos) { %>
+      <%- include('../components/calendar/calendar.ejs') %> 
+    <% } else { %>
+      <div class="is-three-quarters center-log">
+        <br>
+        <label class="is-size-6 styling " for="collaborators">Google login access is required</label>
+        <br>
+        <br>
+        <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px; margin-left: 1rem;" 
+          href="/log_in/auth/google">
+          <span class="icon mr-2" style="margin-right: 8px;">
+            <img src="/icons/google.webp" class="image is-24x24" />
+          </span>
+          <span>Log in with Google</span>
+        </a>
+      </div>
+    <% } %>
   </div>
 
   <div class="column column-counter">
