@@ -73,8 +73,7 @@ exports.post_follow_ups = (req, res) => {
     });
 };
 
-exports.get_meeting = (request, response, next) => {
-  console.log("entro a get_meeting");
+exports.get_meeting = (request, response, next) => {  
   settings.selectedOption = 'Meetings';
   const googleLogin = request.user?.accessToken ? 1 : 0;
 
