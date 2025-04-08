@@ -1,92 +1,159 @@
 @startuml REQ_36
 autonumber
 actor SuperAdmin as S
-boundary general.routes.js as Route
-boundary register_followUp.ejs as Register
+boundary register_follow_up_logic.ejs as Register
+boundary collabs.ejs as collabs
+boundary general_routes.ejs as GR
+boundary followUp.routes.js as Route
 control register.controller.js as SController
-entity register_followUp.model as SModel
-entity register_followUp.model as Model
+entity indicators.model as IModel
+entity periodic_eval.model.js as QFollow
+entity eval_questions.model.js as PEval
 entity collabs.model as cm
+entity questions_answers.model as Questions
+entity indicators_metrics.model as IMetrics
 database Nebula as db
 
-' --- GET COLLABS ---
+' --- GET COLLABS ---1
 activate S
-S -> Route : GET /view_collabs
+S -> GR : follow_ups routes
 deactivate S
 
+activate GR
+GR -> Route : GET /follow_ups/Register
+deactivate GR
+
 activate Route
-Route -> SController : get_collabs()
+Route -> SController : get_register()
+deactivate Route 
+
+activate SController
+SController -> Route : render(/follow_ups/Register)
+deactivate SController
+
+activate Route 
+Route -> S : HTML
+deactivate Route
+
+activate S
+S -->> GR : fetch (`/follow_ups`)
+
+activate GR
+GR -> Route : (' /Register ')
+deactivate GR 
+
+activate Route
+Route -> SController : get_register()
 deactivate Route
 
 activate SController
-SController ->> cm : fetchAll()
+SController ->> cm : fetchAllCompleteName()
 
 activate cm
-cm ->> db : execute(SELECT * FROM colaborador)
+cm ->> db : execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)') 
 
 activate db
-db ->> cm : info colaborador
+db ->> cm : colaboradores
 deactivate db
 
 cm -->> SController : info colaborador
 deactivate cm 
 
-SController ->> Model : fetchAll()
+SController ->> PEval : fetchAllQuestions()
 
-activate Model 
-Model ->> db : execute(SELECT * FROM preguntas_evaluacion)
+activate PEval
+PEval ->> db : SELECT * FROM preguntas_evaluacion
 activate db
-db ->> Model : info preguntas_evaluacion
+db ->> PEval : questions
 deactivate db
 
 Model -->> SController : info preguntas_evaluacion
 deactivate Model 
 
 ' --- GET INFO INDICADORES ---
-SController ->> Model : fetchAll()
-activate Model 
-Model ->> db : execute(SELECT * FROM indicadores)
+SController ->> IModel : fetchAllindicators()
+activate IModel 
+IModel ->> db : SELECT * FROM indicador
 activate db
-db -->> Model : info indicadores
+db -->> IModel : indicador
 deactivate db
-Model -->> SController : info indicadores
-deactivate Model 
+IModel -->> SController : indicador
+deactivate IModel 
 
-SController -> Register : response.render('register_followUp.ejs')
+SController -->> S : JSON response (colaboradores, questions, indicator) 
 deactivate SController
 
-activate Register
-Register -> S : HTML
-deactivate Register
+S -> S : get_info_register
 
 ' ---- REGISTER FOLLOW UP ----
-activate S
-S -> Route : POST /follow_ups
+S -> GR : POST ('/follow_ups')
 deactivate S
+
+activate GR
+GR -> Route : POST ('/Register/save')
+deactivate GR  
 
 activate Route
 Route -> SController : post_follow_ups()
 deactivate Route
 
 activate SController
-create SModel 
-SController -> SModel: new FollowUp()
-SController -> SModel : save()
+create QFollow
+SController -> QFollow: new QuestionsFollow(id_colaborador, fechaAgendada)
+SController -> QFollow: save()
 
-activate SModel
-SModel -> db : execute("INSERT INTO evaluaciones_de_seguimiento")
+activate QFollow
+QFollow -> db:  'INSERT INTO evaluaciones_de_seguimiento (id_colaborador, fechaAgendada) VALUES (?, ?)', [this.collab, this.date]; return result.insertId;
+
 activate db
-db -->> SModel : Query OK
+db -->> QFollow: id_evaluacion
 deactivate db
 
-SModel -->> SController : promise
-deactivate SModel
+QFollow -->> SController: id_evaluacion
+deactivate QFollow
 
-SController -> Register : response.render('register_followUp.ejs')
+create Questions
+SController -> Questions: new Questions(id_pregunta, id_evaluation, respuesta)
+SController -> Questions : save()
+
+activate Questions
+Questions -> db: if (!Array.isArray(this.preg) || !Array.isArray(this.resp) || this.preg.length != this.resp.length){throw new Error("The arrays are not of the same length");} \n for (let i = 0; i < this.preg.length; i++){  await db.execute( 'INSERT INTO respuestas_pregunta(id_pregunta, id_evaluacion, respuesta)\n VALUES(?, ?, ?)',  [this.preg[i], this.eval, this.resp[i]] );};
+activate db
+db -->> Questions : Query OK
+deactivate db 
+Questions -->> SController : Promesa
+deactivate Questions
+
+create IMetrics
+SController -> IMetrics : new Indicators_metrics(id_evaluation, id_indicador, valor_metrica)
+SController -> IMetrics : save()
+
+activate IMetrics
+IMetrics -> db : if (!Array.isArray(this.indi) || !Array.isArray(this.val) || this.indi.length != this.val.length)\n{throw new Error("The arrays are not of the same length");} for (let i = 0; i < this.indi.length; i++){ await db.execute( \n'INSERT INTO metrica_indicadores(id_evaluacion, id_indicador, valor_metrica) VALUES(?, ?, ?)', [this.eval, this.indi[i], this.val[i]]);};
+
+activate db
+db -->> IMetrics : Query OK
+deactivate db 
+IMetrics -->> SController: Promesa
+deactivate IMetrics 
+
+SController ->  Route : res.redirect('/follow_ups');
 deactivate SController
 
-activate Register
-Register -> S : HTML register_followUp.ejs
-deactivate Register
+activate Route
+Route -> SController : get_FollowUp
+deactivate Route
+
+activate SController
+SController -> collabs: render("followUp")
+deactivate SController
+
+activate collabs 
+collabs -> S : HTML
+deactivate collabs 
+
+activate S
+deactivate S
+
 
 @enduml

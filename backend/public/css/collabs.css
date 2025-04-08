@@ -24,9 +24,28 @@
     padding-top: 5vh; 
     border-radius: 5px;
     width: 45vw;  
-    height: 85vh;
+    height: auto; /* Optional to limit total height */
+    overflow-y: auto; /*To be able to scroll if the content is too large*/
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.pop-up-content::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.pop-up-content::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.pop-up-content::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.pop-up-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .cell {
@@ -56,6 +75,24 @@
     font-size: 2vh;
     color: #747474;
     margin-bottom: 2vh; 
+}
+.search-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: white;
+    margin-bottom: 2vh; 
+    width: 0;
+    transition: all 0.1s;
+    direction: ltr;
+}
+.search-bar:hover > .search-input,  
+.search-bar:focus-within > .search-input{
+    width: 10rem;
 }
 
 .input-container {
@@ -94,4 +131,37 @@
 
 .swal2-confirm.btn-ok:hover {
     background-color: #304cc7; 
+}
+.container-scroll{
+    width: 84vw;
+    height:75vh;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    border: none;
+}
+
+.container-scroll::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.container-scroll::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.container-scroll::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.container-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.dateLine {
+    text-align: left;
+}
+
+select option[disabled] {
+    display: none;
 }

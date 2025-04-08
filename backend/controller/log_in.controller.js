@@ -6,15 +6,16 @@ let status = {
 }
 
 exports.get_log_in = (request, response) => {
+  response.clearCookie('email');
   response.render("log_in", {
-    ...status, 
-    csrfToken: request.csrfToken(),
     ...status, 
     csrfToken: request.csrfToken(),
   });
 };
 
 exports.post_log_in = async (request, response) => {
+  request.session.email = null;
+  request.session.id_colaborador = null;
   const email = request.body.email;
   const password = request.body.password;
 

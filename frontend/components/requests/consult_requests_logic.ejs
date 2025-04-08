@@ -1,10 +1,7 @@
-<script src='https://cdn.jsdelivr.net/npm/fullcalendar/index.global.min.js'></script>
-<link rel="stylesheet" href="/css/calendario">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
 
-  
-  function formatDate(date) {
+  function my_formatDate(date) {
     const d = new Date(date);
     const day = String(d.getDate()).padStart(2, '0');
     const month = String(d.getMonth() + 1).padStart(2, '0'); 
@@ -12,43 +9,55 @@
     
     return `${day}/${month}/${year}`;
   }
-
-  function accept_deny(element) {
-    // is checkmark
-    if (element.classList.contains('bi-check-circle')) {
-      console.log('Accept request')
-    }
-    else {
-      console.log('Deny request')
-    }
+  function createEmpty() {
+    const table = document.querySelector('#requests_table')
+    table.innerHTML = `<tr>
+                        <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
+                      </tr>`
   }
-
+  function createCalendarElement(id) {
+    return `<div class="cal-modal-container is-flex is-justify-content-center mb-2">
+              <div class="cal-modal">
+                <h3>UPCOMING EVENTS</h3>
+                <div id="calendar-${id}">
+                  <div class="placeholder"></div>
+                  <div class="calendar-events">
+                  </div>
+                </div>
+              </div>
+            </div>` 
+  }
   // Crea el contenido de la tabla para solicitudes
   function createTableRequests(data) {
+    
+    console.log("Sesion: ", data.sesion.id_colaborador)
+    let sesionUsuario = data.sesion.id_colaborador;
+    console.log("Collab: ", sesionUsuario);
+
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
-    <tr>
-      <th >Name</th>
-      <th >Start-date</th>
-      <th >End-date</th>
-      <th >Request-type</th>
-      <th >Status</th>
-      <th >Action</th>
-    </tr>
-  </thead>
-  <tbody >`
+                            <tr>
+                              <th >Name</th>
+                              <th >Start-date</th>
+                              <th >End-date</th>
+                              <th >Request-type</th>
+                              <th >Status</th>
+                              <th >Action</th>
+                            </tr>
+                          </thead>
+                          <tbody >`
+
     // Información por cada renglón de la tabla
     data.requests[0].forEach((d, idx) => {
-
       table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td><i class="bi bi-caret-right-fill" id='caret'></i> ${d.nombre} ${d.apellidos}</td>`
-      table_content += `<td>${formatDate(d.start)}</td>`
-      table_content += `<td>${formatDate(d.end)}</td>`
+      table_content += `<td ><i class="bi bi-caret-right-fill" id='caret-${idx}'></i> ${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td>${my_formatDate(d.start)}</td>`
+      table_content += `<td>${my_formatDate(d.end)}</td>`
       table_content += `<td>${d.tipo_falta}</td>`
       if (d.estado == 0) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
          <td>
-            <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="1">
+          <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
             <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
@@ -56,40 +65,60 @@
             </button>
           </td>
           </tr>`
+      } else if (d.estado == 0.5) {
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
+         <td>`
+          if (data.collab[idx][0].id_colaborador != sesionUsuario) {
+            table_content += `<button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
+                  <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
+                </button>
+                <button class="approve" type="submit" name="estado" value="2" data-id="${d.id_solicitud_falta}">
+                  <i class="bi bi-x-circle is-size-5 is-clickable has-text-danger deny-icon" data-id="${d.id}"></i>
+                </button>
+              </td>
+              </tr>`
+          }
+        
       }
       else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
         <td class="back"></td>
-        </tr>
-`
+        </tr>`
+        console.log("d: ", d)
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>
+        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
+        <td class="back"></td>
         </tr>`
       }
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
-                              <div class="column is-half">
-                                <p><strong>Type: </strong>${d.tipo_falta}</p>
-                              </div>
-                              <div class="column">
+                              <div class="column is-two-fifths">
+                                <p><strong>Type: </strong>${d.tipo_falta}</p>`
+      table_content += createCalendarElement(idx)
+      table_content +=  `</div>
+                              <div class="column ">
                                 <p><strong>Reason: </strong></p>
-                                <p class='has-background-black p-3 box'>${d.descripcion}</p>
-                                ${d.evidencia ? 'evidencia' : 'no hay evidencia'}
+                                <p class='custom-textarea box'>${d.descripcion}</p>
+                                ${d.evidencia ? `<a class="button is-link is-light" href="${d.evidencia}"><i class="bi bi-link-45deg"></i> Evidence</a>` : ``}
                               </div>
                               <div class="column">
-                                <p><strong>Location:</strong></p>
-                                <p class='is-underlined	'>${d.ubicacion}</p>
+                                <p><strong class='has-event'>Location: </strong>${d.ubicacion}</p>
+                                <p class="message-approved">Approved by: ${data.collab[idx] == 0 ? "Hasn't been approved" : data.collab[idx][0].nombre + " " + data.collab[idx][0].apellidos}  </p>
                               </div>
                             </div>
                           </td>
                         </tr>`;
-      table.innerHTML = table_content
     })
     table_content += '</tbody>'
     table.innerHTML = table_content
+
+    data.requests[0].forEach((d, idx) => {
+      createCalendar(idx, get_inbetween_dates(d.start, d.end))
+    })
+
 
     // Añade función para expandir el contenido extra
     const entries = document.querySelectorAll('#request')
@@ -101,10 +130,11 @@
         }
         
         const additionalRow = document.getElementById(`additional-row-${idx}`)
-        const caret = document.querySelector('#caret')
+        const caret = document.querySelector(`#caret-${idx}`)
         
         // hacer que en los botones de aceptar o rechazar no se expanda la vista
-        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
+        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase 
+        // "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
         if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
           return;
         }
@@ -113,21 +143,6 @@
           additionalRow.style.display = "table-row";
           caret.classList.add('bi-caret-down-fill')
           caret.classList.remove('bi-caret-right-fill')
-
-          // const calendarEl = document.getElementById(`calendar_${idx}`)
-          // const calendar = new FullCalendar.Calendar(calendarEl, {
-          //   initialView: 'dayGridMonth',
-          //   initialDate: data.requests[0][idx].start.split('T')[0],
-          //   events: [
-          //     {
-          //       start: data.requests[0][idx].start.split('T')[0],
-          //       end: data.requests[0][idx].end.split('T')[0],
-          //       display: 'background',
-          //       backgroundColor: '#635d991' 
-          //     }
-          //   ],
-          // })
-          // calendar.render()
         } else {
           additionalRow.style.display = "none";
 
@@ -139,29 +154,44 @@
 
     document.querySelectorAll(".approve").forEach((button) => {
       button.addEventListener("click", function () {
-        const postId = this.getAttribute("data-id"); // Get the ID from the button
-        const newValue = this.getAttribute("value"); // Get the value to update
+        const postId = this.getAttribute("data-id"); 
+        const newValue = this.getAttribute("value"); 
 
         Swal.fire({
           title: "Are you sure?",
-          text: `Do you want to set this to ${Number(newValue) === 1 ? "Accept" : "Deny"}?`,
+          text: `Do you want to set this to ${Number(newValue) === 2 ?  "Deny" : "Accept" }?`,
           icon: "question",
           showCancelButton: true,
-          confirmButtonColor: "#3085d6",
-          cancelButtonColor: "#d33",
+          confirmButtonColor: `${Number(newValue) === 2 ?  "#B8453E" : "#59A250"}`,
+          cancelButtonColor: "#7066E0",
           confirmButtonText: "Yes, update it!"
-        }).then((result) => {
+        }).then(async (result) => {
           if (result.isConfirmed) {
+            console.log("entro");
             updateField(postId, newValue);
-            get_info();
           }
         });
       });
     });
 
+    function showCollabApprove(){
+      const csrf = document.getElementById('_csrf').value;
+      const selected_option = document.querySelector('.selected');
+      const route = selected_option.innerHTML;
+
+      fetch(`/requests/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        return response.json()
+      })
+      .catch(e => console.error("error", e));
+    }
+
+    // function to send update filed 
     function updateField(postId, newValue) {
-      const csrf = document.getElementById('_csrf').value
-      fetch(`/requests`, {
+      const csrf = document.getElementById('_csrf').value;
+      fetch(`/requests/Requests/update`, {
         method: "POST", 
         headers: {
           "Content-Type": "application/json",
@@ -171,14 +201,16 @@
           estado: newValue,
           id_solicitud_falta : postId
         }), 
-      })
-        .then(() => {
+      }) 
+        .then((data) => {
+          console.log("Data", data);
           Swal.fire({
             title: "Updated!",
             text: `The request has been updated.`,
             icon: "success",
           });
-
+          get_info()
+          
         })
         .catch((error) => {
           Swal.fire({
@@ -187,10 +219,10 @@
             icon: "error",
           });
           console.error("Update error:", error);
+          
         });
+        
     }
-
-
   }
 
   // Consulta a db para la información de solicitudes
@@ -198,7 +230,7 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
-    fetch(`/requests/${route}`, {
+    return fetch(`/requests/${route}`, {
       method: 'POST',
       headers: {
             'Content-Type': 'application/json',
@@ -211,11 +243,18 @@
     })
     .then(response => response.json())
     .then(data => {
+      if (data.requests[0].length <= 0) {
+        if (pagination_value.value == 1) {
+          createEmpty()
+        }
+        return 0
+      }
       createTableRequests(data)
+      return data.requests[0].length
     })
     .catch(e => console.error(e))
   }
-  
+
   // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
   for (let i=0; i<options.length; i++) {  
@@ -246,7 +285,73 @@
     
     pagination_value.dispatchEvent(new Event('change'));
   })
-  pagination_value.addEventListener('change', (v) => {
-    get_info(pagination_value.value-1, filter_options ?? null)
+  pagination_value.addEventListener('change', async (v) => {
+    const content = await get_info(pagination_value.value-1, filter_options ?? null)
+    if (content <= 0) {
+      pagination_value.value = pagination_value.value -1;
+    }
+    if (pagination_value.value <= 0) {
+      pagination_value.value = 1;
+    }
   })
+</script>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+<script>
+  
+  function createCalendar(id, dates) {
+    let eventDates = {}
+    dates.forEach((d) => {
+      eventDates[d] = ['']
+    })
+
+
+    let flatpickrInstance = $(`#calendar-${id} .placeholder`).flatpickr({
+      inline: true,
+      showMonths: 1,
+      disableMobile: "true",
+      defaultDate: dates[0],
+      onChange: function(date, str, inst) {
+      },
+      locale: {
+        weekdays: {
+          shorthand: ["S", "M", "T", "W", "T", "F", "S"],
+          longhand: [
+            "Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday",
+          ]
+        }
+      },
+      onDayCreate: function(dObj, dStr, fp, dayElem) {
+        let dateStr = formatDate(new Date(dayElem.dateObj));
+        if (eventDates[dateStr]) {
+          dayElem.classList.add("my_event"); 
+          if (dateStr == dates[0] || dateStr == dates.at(-1)) {
+            dayElem.style.backgroundColor = '#B7A5E6'
+            dayElem.style.borderRadius = '10px'
+          }
+          else {
+            dayElem.style.backgroundColor = 'rgba(183, 165, 230, 0.6)'
+            dayElem.style.borderRadius = '10px'
+          }
+        }
+      }
+    });    
+  }
+
+  function eventCaledarResize($el) {
+    let width = $el.width()
+    flatpickr.set('showMonths', 1)
+    flatpickr.set('maxDate', maxDate[1])
+    $('.flatpickr-calendar').css('width', '')
+  }
+
+  function formatDate(date) {
+    let d = date.getDate();
+    let m = date.getMonth() + 1; //Month from 0 to 11
+    let y = date.getFullYear();
+    return '' + y + '-' + (m<=9 ? '0' + m : m) + '-' + (d <= 9 ? '0' + d : d);
+  }
+
 </script>

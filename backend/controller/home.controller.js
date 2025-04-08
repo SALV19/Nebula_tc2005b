@@ -14,8 +14,6 @@ exports.get_home = async (request, response) => {
     return [];
   });
   
-  console.log('user:', request.user.accessToken);
-  console.log('acces:', request.user.accessToken);
   if (request.user?.accessToken) {
     const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, 'http://localhost:3000/log_in/success')
     oauth2Client.setCredentials({
@@ -77,6 +75,22 @@ exports.get_home = async (request, response) => {
       .then(({diasDisponibles,diasTotales, error}) => {
         // console.log("eventos: ", eventos);
         // console.log('Permisos: ', request.session.permissions);
+        response.render("home_page", {
+          diasDisponibles,
+          diasTotales,
+          error,
+          permissions: request.session.permissions,
+          total_absences: absences.length,
+          csrfToken: request.csrfToken(),
+          eventos: JSON.stringify(eventos),
+        })
+      })
+      .catch(error => {console.error(error)}) 
+  } else {
+    contVac(request)
+        .then(({diasDisponibles,diasTotales, error}) => {
+          // console.log("eventos: ", eventos);
+          // console.log('Permisos: ', request.session.permissions);
           response.render("home_page", {
             diasDisponibles,
             diasTotales,
@@ -84,10 +98,10 @@ exports.get_home = async (request, response) => {
             permissions: request.session.permissions,
             total_absences: absences.length,
             csrfToken: request.csrfToken(),
-            eventos: JSON.stringify(eventos),
+            eventos: null,
           })
-      })
-      .catch(error => {console.error(error)}) 
+        })
+        .catch(error => {console.error(error)}) 
   }
 
 };
@@ -109,8 +123,9 @@ exports.add_event = (request, response) => {
   Collab.fetchEmails().then(data => {
   const [rowsE, fieldDataE] = data;
     const evento = new Event(startDate, endDate, motive, type);
+    console.log(rowsE);
     evento.save();
-    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken);
+    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
   }).catch(error => {
     console.error(error);
   })

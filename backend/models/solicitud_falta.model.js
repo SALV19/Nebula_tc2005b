@@ -2,7 +2,6 @@ const db = require('../util/database');
 
 module.exports = class SolicitudFalta {
     constructor(id_solicitdFalta, tipo_falta, estado) {
-
         this.id = id_solicitdFalta;
         this.tipo = tipo_falta; 
         this.estado = estado; 

@@ -1,3 +1,5 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
 <form id="addColabForm" action="/view_collabs" method="POST" onsubmit="return validateForm()"> 
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
         <aside id="pop-up" class="pop-up" style="display: none;">
@@ -6,49 +8,42 @@
                 <div class="fixed-grid">
                     <div class="grid">
                         <div class="cell">
-                            <div><label class="subtitleForm">Name</label></div>
+                            <div><label class="subtitleForm" >Name</label></div>
                             <section class="input-container">
-                                <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required>
+                                <input name="nombre" type="text" id="name" placeholder="Insert name" class="line-input" required maxlength="150">
                             </section>
 
-                            <div><label class="subtitleForm">Position</label></div>
-                            <section class="input-container">
-                                <select name="puesto" id="position" class="line-input dropdown" required>
-                                    <option value="" disabled selected>Select Position</option>
-                                    <% if (puesto && puesto.length > 0) { %>
-                                        <% for (let i = 0; i < puesto.length; i++) { %>
-                                            <option value="<%= puesto[i].puesto %>"><%= puesto[i].puesto %></option>
-                                        <% } %>
-                                    <% } else { %>
-                                        <option disabled>No positions available</option>
-                                    <% } %>
-                                </select>
-                            </section>
-
-                            
                             <div><label class="subtitleForm">Company</label></div>
                             <section class="input-container">
-                                <select name="nombre_empresa" id="empresa" class="line-input dropdown" required>
+                                <select name="nombre_empresa" id="empresa" class="line-input dropdown" required onchange="selectedCompany(this.value)">
                                     <option value="" disabled selected>Select Company</option>
-                                    <% if (empresa && empresa.length > 0) { %>
-                                        <% for (let i = 0; i < empresa.length; i++) { %>
-                                            <option value="<%= empresa[i].nombre_empresa %>"><%= empresa[i].nombre_empresa %></option>
-                                        <% } %>
-                                    <% } else { %>
-                                        <option disabled>No company available</option>
+                                    <% for (const [key, value] of empresa) { %>
+                                        <option value="<%= key %>"><%= key %></option>
                                     <% } %>
                                 </select>
                             </section>
-                                
+                            
+                            <div><label class="subtitleForm">Position</label></div>
+                            <section class="input-container">
+                                <select name="puesto" id="position" class="line-input dropdown" required disabled>
+                                    <option value="" selected>Select Position</option>
+                                </select>
+                            </section>
+                            
                             <div><label class="subtitleForm">Mail</label></div>
                             <section class="input-container">
-                                <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required>
-                                <p id="mail-error" class="error" style="display: none;">Mail must be @nuclea.solutions</p>
+                                <input name="email" type="text" id="mail-input" placeholder="Insert mail" class="line-input" onblur="validateMail()" required maxlength="100">
+                                <p id="mail-error" class="error" style="display: none;">
+                                    Invalid email domain
+                                    <span title="@nuclea.solutions, @zigzag.house, @we.page, @mayaprotocol, @moca.app" style="cursor: help; margin-left: 5px;">
+                                        <i class="fas fa-info-circle"></i>
+                                    </span>
+                                </p>
                             </section>
                             
                             <div><label class="subtitleForm">Location</label></div>
                             <section class="input-container">
-                                <input name="ubicacion" type="text" id="location" placeholder="Insert location" class="line-input" required>
+                                <input name="ubicacion" type="text" id="location" placeholder="Insert collab location" class="line-input" required maxlength="150">
                             </section>
                             
                             <div><label class="subtitleForm">Modality</label></div>
@@ -75,7 +70,7 @@
 
                             <div><label class="subtitleForm">Phone</label></div>
                                 <section class="input-container">
-                                    <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required>
+                                    <input name="telefono" type="text" id="phone-input" placeholder="Insert phone" class="line-input" oninput="validatePhone()" required maxlength="15">
                                     <p id="phone-error" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                 </section>
                             </div>
@@ -83,20 +78,17 @@
                             <div class="cell">
                                 <div><label class="subtitleForm">Last Name</label></div>
                                 <section class="input-container">
-                                    <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input" required>
+                                    <input name="apellidos" type="text" id="last-name" placeholder="Insert last name" class="line-input" required maxlength="150">
                                 </section>
                                 
                                 <div><label class="subtitleForm">Department</label></div>
                                 <section class="input-container">
-                                    <select name="id_departamento" id="department" class="line-input dropdown" required>
+                                    <select name="id_departamento" id="department" class="line-input dropdown" required disabled onchange="selectedDepartment(this.value)">
                                         <option value="" disabled selected>Select Department</option>
-                                        <% if (departamento && departamento.length > 0) { %>
-                                            <% for (let i = 0; i < departamento.length; i++) { %>
-                                                <option value="<%= departamento[i].id_departamento %>">
-                                                    <%= departamento[i].nombre_departamento %></option>
-                                                <% } %>
-                                        <% } else { %>
-                                            <option disabled>No departments available</option>
+                                        <% for (const [key, value] of empresa) {%>
+                                            <% for (let i = 0; i < value.length; i++) {%>
+                                                <option value="<%= value[i].departamento %>" class="department_option" id="option-<%= key %>"><%= value[i].departamento %></option>
+                                            <% } %>
                                         <% } %>
                                     </select>
                                 </section>
@@ -131,13 +123,13 @@
 
                                 <div><label class="subtitleForm">RFC</label></div>
                                 <section class="input-container">
-                                    <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC" class="line-input" oninput="validateRFC()" required>
+                                    <input name="rfc" type="text" id="rfc-input" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateRFC()"  maxlength="13">
                                     <p id="rfc-error" class="error" style="display: none;">RCF must be of 13 characters</p>
                                 </section>
 
                                 <div><label class="subtitleForm">CURP</label></div>
                                 <section class="input-container">
-                                    <input name="curp" type="text" id="curp-input" placeholder="Insert CURP" class="line-input" oninput="validateCURP()" required>
+                                    <input name="curp" type="text" id="curp-input" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateCURP()"  maxlength="18">
                                     <p id="curp-error" class="error" style="display: none;">CURP must be of 18 characters</p>
                                 </section>
 

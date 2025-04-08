@@ -4,36 +4,31 @@ actor Collaborator as C
 boundary general.routes.json as Route
 boundary home.ejs as home
 control home.controller.js as HController
-entity holiday_info.model as HModel
-database Nebula as db
-actor GoogleCalendarAPI as GoogleAPI
+actor GoogleAPI as GoogleApi
 
-' --- Consultar días feriados desde la BD ---
+
 activate C
-C -> Route : GET /
+C ->> Route : GET /
 deactivate C 
 
 activate Route
-Route -> HController : get_holiday_info()
+Route -->> HController : get_home()
 deactivate Route
 
 activate HController
-HController -> HModel : fetchAll()
+HController -->> GoogleApi : calendar.calendarList.list()
 deactivate HController
 
-activate HModel 
-HModel -> db : SELECT fecha_inicio, fecha_fin FROM evento
-db -->> HModel : holiday_dates
-HModel -->> HController : holiday_dates
-deactivate HModel
+activate GoogleApi
+GoogleApi -->> HController : eventos
+deactivate GoogleApi
 
 activate HController
-HController -> home : response.render
+HController --> home : response.render ("home_page", { diasDisponibles, diasTotales, error,\n permissions: request.session.permissions,total_absences: absences.length,\n csrfToken: request.csrfToken(),  eventos})
 deactivate HController
 
-' --- Mostrar datos en Google Calendar (Frontend) ---
 activate home
-home -> C : Show updated calendar
+home -->> C : HTML calendar
 deactivate home
 
 @enduml

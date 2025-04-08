@@ -15,6 +15,19 @@ body{
     margin-left: -2rem;
 }
 
+.columns{
+    margin-left: 5rem;
+}
+.is-three-quarters{
+    padding-left: 8rem;
+    padding-top: 5rem;
+    font-size: small;
+}
+
+.column-counter{
+    margin-top: 5rem;    
+    font-size: small;
+}
 .column2 {
     display: flex;
     align-items: center;
@@ -42,7 +55,11 @@ body{
     text-align: center;
     margin-top: 2vh;
     margin-left: 3.5vw;
-    margin-bottom: 2vh;     
+    margin-bottom: 2vh;  
+}   
+.column-counters{
+    margin-top: 4.9rem;    
+    font-size: small;
 }
 .pop-up-d {
     height: 35vh;
@@ -217,4 +234,10 @@ body{
     margin-bottom: 0.4vh; 
     text-align:center;
     font-weight: 600; 
+}
+  
+
+.align-counter{
+    align-self: flex-start; 
+    margin-bottom: -1px
 }

@@ -26,17 +26,17 @@ module.exports = class Event {
                       WHERE te.id_evento IS NULL;`)
   }
 
-  static insertEvents(startDate, endDate, motive, accessToken) {
+  static insertEvents(startDate, endDate, motive, accessToken, emails) {
     const oauth2Client = new google.auth.OAuth2(  
       process.env.GOOGLE_CLIENT_ID,
       process.env.GOOGLE_CLIENT_SECRET,
       'http://localhost:3000/log_in/success'
     );
-    console.log("oauth2Client", oauth2Client);
 
     oauth2Client.setCredentials({
       access_token: accessToken
     });
+    const attendees = emails.map(item => ({ email: item.email }));
 
     const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
     var event = {
@@ -49,11 +49,12 @@ module.exports = class Event {
         date: endDate,
         timeZone: 'America/Mexico_City'
         }, 
+        attendees: attendees,
         reminders: {
             useDefault: false,
             overrides: [
-                { method: 'email', minutes: 1},
-                { method: 'popup', minutes: 1}
+                { method: 'email', minutes: 10},
+                { method: 'popup', minutes: 10}
             ]
         }
     };
