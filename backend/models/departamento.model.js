@@ -15,5 +15,5 @@ module.exports = class Departamento {
                             ON e.id_empresa = de.id_empresa
                             ORDER BY nombre_empresa, nombre_departamento ASC;`);
     }
-    
+
 };

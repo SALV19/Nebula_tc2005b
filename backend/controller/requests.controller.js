@@ -56,6 +56,55 @@ exports.get_requests = async (request, response) => {
   });
 };
 
+exports.get_vacations = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const [abscences] = await Requests.fetchVacations(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
+
+  const acceptance_colab = await Promise.all(abscences.map((e) => {
+    if (!e.colabAprobador){
+      return 0;
+    } 
+    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+  }))
+
+  response.json({
+    selectedOption: "vacations",
+    abscences,
+    collab: acceptance_colab,
+  });
+};
+exports.get_abscences = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const [abscences] = await Requests.fetchAbscences(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
+
+  const acceptance_colab = await Promise.all(abscences.map((e) => {
+    if (!e.colabAprobador){
+      return 0;
+    } 
+    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+  }))
+
+  response.json({
+    selectedOption: "abscences",
+    abscences,
+    collab: acceptance_colab
+  });
+};
+
 exports.showPopUp = async (request, response) => {
   try {
     const email = request.session.email;
@@ -116,22 +165,8 @@ exports.get_collabs_requests = async (request, response) => {
   });
 };
 
-exports.get_vacations = (request, response) => {
-  settings.selectedOption = "vacations";
-  response.json({
-    selectedOption: settings.selectedOption,
-  }); 
-};
-
-exports.get_abscences = (request, response) => {
-  settings.selectedOption = "vacations";
-
-  response.json({
-    selectedOption: settings.selectedOption,
-  });
-};
-
 exports.post_abscence_requests = async (request, response, next) => {
+  console.log("hola")
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
@@ -142,12 +177,19 @@ exports.post_abscence_requests = async (request, response, next) => {
      // Get the collaborator's role using their email (session)
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
+    console.log(idRol)
 
-     // If the role is SuperAdmin (id_rol = 3), automatically approve 
+     /**If the role is SuperAdmin (id_rol = 3), automatically approve 
+      * And if is lider (id_rol = 3), automatically status = 0.5 */ 
     if (idRol === 3) {
       estadoSolicitud = 1;
+    } else if (idRol === 2) {
+        estadoSolicitud = 0.5;
+    } else {
+        estadoSolicitud = 0;
     }
 
+    console.log(estadoSolicitud)
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -189,3 +231,25 @@ exports.post_abscence_requests = async (request, response, next) => {
   // Always redirect to the main requests page
   response.redirect("/requests");
 };
+
+exports.update_request = async (request, response) => {
+  // ahora son los realsDaysOff
+  const daysOff = JSON.parse(request.body.validDays);  
+
+  const [_ , subtype] = request.body.requestType.split("|");
+
+  const request_update = Requests.updateConstructor(
+    request.session.email,
+    subtype, 
+    daysOff,
+    request.body.location,
+    request.body.description,
+    request.body.evidence,
+    request.body.request_id
+  );
+  // console.log(request_update)
+  await request_update.update()
+
+  // Always redirect to the main requests page
+  response.redirect("/requests");
+}

@@ -28,7 +28,6 @@ exports.get_collabs = async (request, response) => {
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
     const [rowsRol, fieldDataRol] = rolData;
-
     const empresa = rowsDep.reduce(
       (accum, emp_dep) => {
         if (!accum.has(emp_dep.nombre_empresa)) {
@@ -94,6 +93,7 @@ exports.post_collab = (request, response) => {
         throw new Error("No se encontró el colaborador insertado.");
       const idcolab = rows[0].id_colaborador;
 
+      console.log("ID DEPT0",request.body.id_departamento)
       const new_equipo = new Equipo(
         request.body.id_departamento,
         request.body.id_rol
@@ -110,7 +110,7 @@ exports.post_collab = (request, response) => {
     })
     .catch((error) => {
       console.error(error);
-      response.redirect("/view_collabs?error=true");
+      response.redirect("/view_collabs?error=true&message=ER_DUP_ENTRY");
     });
 };
 
@@ -237,6 +237,7 @@ exports.get_collab_data = async (req, res) => {
 
     const [collabResult] = await Colaborador.fetchCollabById(id);
     const [equipoResult] = await Equipo.fetchEquipoById(id);    
+
 
     res.json({
       colaborador: collabResult[0],

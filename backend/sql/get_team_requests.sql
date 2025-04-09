@@ -1,5 +1,5 @@
 -- SQLBook: Code
-SELECT c.nombre, c.apellidos sf.*, MIN(ds.fecha), MAX(ds.fecha)
+SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha), MAX(ds.fecha)
 FROM solicitudes_falta sf
 JOIN dias_solicitados ds
 	ON ds.id_solicitud_falta = sf.id_solicitud_falta
@@ -18,16 +18,20 @@ WHERE d.nombre_departamento = (
 		ON d.id_departamento = e.id_departamento
 	WHERE c.email = 'santialducin@gmail.com'
 )
-GROUP BY sf.id_solicitud_falta
+AND c.email <> 'santialducin@gmail.com'
+GROUP BY sf.id_solicitud_falta;
+
+SELECT * FROM solicitudes_falta;
 
 INSERT INTO solicitudes_falta(id_solicitud_falta, id_colaborador, estado, tipo_falta, descripcion, ubicacion) VALUES
-	(54, 4, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 6, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
-	(32, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico');
+	(51, 4, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(52, 4, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(33, 6, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(34, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(35, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(36, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(37, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico'),
+	(38, 9, 14, 'ausencia medica', 'Me siento mal', 'Mexico');
 
 INSERT INTO dias_solicitados(id_solicitud_falta, fecha) VALUES
 	(54, '2025-04-17'),
@@ -80,4 +84,17 @@ SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                           ON d.id_departamento = e.id_departamento
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
-                        LIMIT 10 OFFSET 0
+                        LIMIT 10 OFFSET 0;
+
+SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+                      FROM solicitudes_falta sf
+                      INNER JOIN colaborador c
+                        ON c.id_colaborador = sf.id_colaborador
+                      INNER JOIN dias_solicitados ds
+                        ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                      WHERE sf.tipo_falta = 'Vacation'
+                      GROUP BY sf.id_solicitud_falta;
+
+
+
+UPDATE solicitudes_falta SET estado = 2;
