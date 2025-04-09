@@ -5,10 +5,7 @@
 body, section, table, thead, tr {
   background-color: #242424;
 }
-footer {
-  border: 2px solid red;
-  visibility: hidden;
-}
+
 body {
   height: 102vh;
 }
@@ -37,13 +34,6 @@ body,
 #app {
   height: 105vh;
   background-color: #242424;
-}
-
-footer {
-  position: absolute; 
-  top: 100%;
-  right: 0;
-  width: 100vw;
 }
 
 .pop-up {
