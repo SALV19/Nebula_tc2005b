@@ -101,3 +101,25 @@ INNER JOIN empresa e
   ON e.id_empresa = de.id_empresa
 ORDER BY nombre_empresa ASC;
 
+SELECT  c.email, c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+                        FROM solicitudes_falta sf
+                        JOIN dias_solicitados ds
+                          ON ds.id_solicitud_falta = sf.id_solicitud_falta
+                        JOIN colaborador c
+                          ON c.id_colaborador = sf.id_colaborador
+                        JOIN equipo e 
+                          ON e.id_colaborador = c.id_colaborador
+                        JOIN departamento d
+                          ON d.id_departamento = e.id_departamento
+                        WHERE d.nombre_departamento = (
+                            SELECT nombre_departamento
+                            FROM colaborador c
+                            INNER JOIN equipo e
+                              ON c.id_colaborador = e.id_colaborador
+                            INNER JOIN departamento d
+                              ON d.id_departamento = e.id_departamento
+                            WHERE c.email = 'a01707122@tec.mx'
+                          )
+                           AND c.email != 'a01707122@tec.mx'
+                        GROUP BY sf.id_solicitud_falta
+                        ORDER BY sf.estado ASC, ds.fecha ASC
