@@ -279,3 +279,6 @@ textarea{
 .has-background {
     background-color: #454545;  
 }
+.ml-6, .mx-6 {
+    margin-left: 5.5rem !important;
+}

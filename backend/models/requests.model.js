@@ -79,11 +79,49 @@ module.exports = class Requests {
                             ON sf.id_solicitud_falta = ds.id_solicitud_falta
                           INNER JOIN colaborador c
                             ON c.id_colaborador = sf.id_colaborador
+                          WHERE c.email = ? AND sf.estado < 1;
+                        `,
+        [email]
+      );
+    }
+
+  // Get approved vacation days
+  static async fetchApprovedVacationDays(email) {
+    return db.execute(`
+      SELECT ds.fecha
+      FROM solicitudes_falta sf
+      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
+      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+      WHERE c.email = ? AND sf.estado = 1 AND sf.tipo_falta = 'Vacation'
+    `, [email]);
+  }
+
+  // Get pending vacation days
+  static async fetchPendingVacationDays(email) {
+    return db.execute(`
+      SELECT ds.fecha
+      FROM solicitudes_falta sf
+      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
+      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
+      WHERE c.email = ? AND sf.estado < 1 AND sf.tipo_falta = 'Vacation'
+    `, [email]);
+  }
+
+  static async fetchTeamRequests(email, offset, filter = null) {
+    if (!filter) {
+      return db.execute(
+        `SELECT ds.fecha
+                          FROM solicitudes_falta sf
+                          INNER JOIN dias_solicitados ds
+                            ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                          INNER JOIN colaborador c
+                            ON c.id_colaborador = sf.id_colaborador
                           WHERE c.email = ? AND sf.estado = 0;
                         `,
         [email]
       );
     }
+  }
 
   // Get approved vacation days
   static async fetchApprovedVacationDays(email) {
