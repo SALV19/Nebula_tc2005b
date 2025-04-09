@@ -57,7 +57,7 @@ exports.post_reset_password_request = (request, response, next) => {
         return response.redirect("/log_in/token");
     }).catch((error) => {
         console.error("Error creating token:", error);
-        return response.status(500).render("reset_password_email", { 
+        return response.status(500).render("error_401", { 
             error: error.message || "Error generating recovery token" 
         });
     });
