@@ -67,7 +67,7 @@ exports.get_home = async (request, response) => {
         color: '#FFFF',
         description: event.description,
       }));
-      eventos = [...eventos, ...eventosDelCalendario];
+      eventos = eventos.concat(eventosDelCalendario);
     }
     // console.log('Eventos obtenidos:', eventos);
     
