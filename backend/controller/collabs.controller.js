@@ -109,7 +109,7 @@ exports.post_collab = (request, response) => {
     })
     .catch((error) => {
       console.error(error);
-      response.redirect("/view_collabs?error=true");
+      response.redirect("/view_collabs?error=true&message=ER_DUP_ENTRY");
     });
 };
 
