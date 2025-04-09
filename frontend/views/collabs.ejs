@@ -49,12 +49,14 @@
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const error = urlParams.get('error');
+    const message = urlParams.get('message');
+    console.log(message)
 
     if (error) {
         Swal.fire({
         icon: "error",
         title: "Oops...",
-        html: "Something went wrong!<br>Try again later",
+        html: `${message ? 'There is already a user with this email' : 'Something went wrong!<br>Try again later'}`,
         });
     }
 </script>

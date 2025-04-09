@@ -166,14 +166,14 @@ module.exports = class Requests {
                               ON c.id_colaborador = e.id_colaborador
                             INNER JOIN departamento d
                               ON d.id_departamento = e.id_departamento
-                            WHERE c.email = 'a01711434@tec.mx'
+                            WHERE c.email = ?
                           )
-                           AND c.email != 'a01711434@tec.mx'
+                           AND c.email != ?
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
                         `,
-        [ offset]
+        [email, email, offset]
       );
     } else {
       console.log(filter)
@@ -196,6 +196,7 @@ module.exports = class Requests {
                         ON d.id_departamento = e.id_departamento
                       WHERE c.email = ?
                     )
+                  AND c.email <> ?
                   `;
       if (filter.pending) {
         query += `AND sf.estado = 0 `;
@@ -224,7 +225,7 @@ module.exports = class Requests {
       }
       query += `ORDER BY sf.estado ASC, ds.fecha ASC
                 LIMIT 10 OFFSET ?`;
-      return db.execute(query, [email, offset]);
+      return db.execute(query, [email, email, offset]);
     }
   }
   static async fetchAllRequests(offset, filter = null) {
@@ -291,6 +292,7 @@ module.exports = class Requests {
 
   static async fetchRequests(email, offset, filter = null) {
     if (email) {
+      console.log("Team requests")
       return Requests.fetchTeamRequests(email, offset, filter ? filter : null);
     } else {
       return Requests.fetchAllRequests(offset, filter);
