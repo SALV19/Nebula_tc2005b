@@ -56,39 +56,6 @@ exports.get_requests = async (request, response) => {
   });
 };
 
-exports.showPopUp = async (request, response) => {
-  try {
-    const email = request.session.email;
-
-    const [allRequestsData] = await Requests.fetchDaysApproved(email);
-    const [allPendingRequests] = await Requests.fetchDaysPending(email);
-    const [holidaysData] = await Events.fetchEvents();
-    const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
-    const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
-
-    const approvedDays = approvedVacations.length;
-    const pendingDays = pendingVacations.length;
-
-    const { diasTotales } = await contVac(request);
-    const remainingDays = diasTotales - approvedDays - pendingDays;
-
-    response.json({
-      all_requests: allRequestsData,
-      pending_requests: allPendingRequests,
-      holidays: holidaysData,
-      approvedDays,
-      pendingDays,
-      diasTotales,
-      remainingDays,
-    });
-  } catch (e) {
-    console.error("Error en showPopUp:", e);
-    response.status(500).json({ 
-      error: "Error fetching data for pop-up"
-    });
-  }
-};
-
 exports.get_vacations = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
@@ -138,6 +105,41 @@ exports.get_abscences = async (request, response) => {
   });
 };
 
+exports.showPopUp = async (request, response) => {
+  try {
+    const email = request.session.email;
+
+    const [allRequestsData] = await Requests.fetchDaysApproved(email);
+    const [allPendingRequests] = await Requests.fetchDaysPending(email);
+    const [holidaysData] = await Events.fetchEvents();
+    const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
+    const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
+
+    const approvedDays = approvedVacations.length;
+    const pendingDays = pendingVacations.length;
+
+    const { diasTotales } = await contVac(request);
+    const remainingDays = diasTotales - approvedDays - pendingDays;
+
+    response.json({
+      all_requests: allRequestsData,
+      pending_requests: allPendingRequests,
+      holidays: holidaysData,
+      approvedDays,
+      pendingDays,
+      diasTotales,
+      remainingDays,
+    });
+  } catch (e) {
+    console.error("Error en showPopUp:", e);
+    response.status(500).json({ 
+      error: "Error fetching data for pop-up"
+    });
+  }
+};
+
+
+
 exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
@@ -175,12 +177,19 @@ exports.post_abscence_requests = async (request, response, next) => {
      // Get the collaborator's role using their email (session)
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
+    console.log(idRol)
 
-     // If the role is SuperAdmin (id_rol = 3), automatically approve 
+     /**If the role is SuperAdmin (id_rol = 3), automatically approve 
+      * And if is lider (id_rol = 3), automatically status = 0.5 */ 
     if (idRol === 3) {
       estadoSolicitud = 1;
+    } else if (idRol === 2) {
+        estadoSolicitud = 0.5;
+    } else {
+        estadoSolicitud = 0;
     }
 
+    console.log(estadoSolicitud)
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -241,13 +250,6 @@ exports.update_request = async (request, response) => {
   // console.log(request_update)
   await request_update.update()
 
-  request.session.successRequest = {
-    startDate: daysOff[0],
-    endDate: daysOff[daysOff.length - 1],
-    location: request.body.location,
-    description: request.body.description,
-    evidence: request.body.evidence,
-    totalDays: daysOff.length,
-  };
+  // Always redirect to the main requests page
   response.redirect("/requests");
 }
