@@ -29,14 +29,17 @@ exports.get_reports = async(request, response) => {
   };
 
 exports.get_general_report = async (request, response) => {
-  
-
+  console.log(request.body)
   const [rows, fieldData] = await Empresa.fetchAllEmp();
   const empresas = rows.map(r => r.nombre_empresa)
 
-  const [empresas_validaciones] = Reports.fetchCompany(empresas, '2025-01-01', '2025-05-01')
+  let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, '2025-01-01', '2025-05-01')
   console.log(empresas_validaciones)
+  empresas_validaciones = empresas_validaciones.reduce((a, v) => {
+    console.log(a)
+    return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
+  }, {})
 
-  response.send(empresas_validaciones)
+  response.status(200).json(empresas_validaciones)
 }
 

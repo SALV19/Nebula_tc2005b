@@ -18,7 +18,7 @@ module.exports = class Reports {
   }
 
   static fetchCompany(empresas, start, end) {
-    let query = `SELECT i.indicador, em.nombre_empresa, AVG(m.valor_metrica)
+    let query = `SELECT i.indicador, em.nombre_empresa, AVG(m.valor_metrica) as average
                         FROM evaluaciones_de_seguimiento es
                         INNER JOIN metrica_indicadores m
                           ON m.id_evaluacion = es.id_evaluacion
@@ -33,10 +33,10 @@ module.exports = class Reports {
                         INNER JOIN empresa em
                           ON em.id_empresa = de.id_empresa
                         WHERE em.nombre_empresa = ? \n`
-    for (let i = 1; i < empresas; i++) {
+    for (let i = 1; i < empresas.length; i++) {
       query += 'OR em.nombre_empresa = ? \n'
     }
-    query += `AND e.'fechaAgendada' BETWEEN ? AND ?
+    query += `AND es.fechaAgendada BETWEEN ? AND ? 
                         GROUP BY i.id_indicador, em.nombre_empresa;`
                         
     return db.execute(query, [...empresas, start, end])

@@ -14,7 +14,7 @@ router.use("/view_collabs", permissions_middleware.view_collabs, collabs_routes)
 router.use("/follow_ups", permissions_middleware.general_permissions, followUp_routes);
 router.get("/personal_info", permissions_middleware.general_permissions, personal_info_routes.get_personal_info);
 router.get("/reports", permissions_middleware.view_reports, reports_routes.get_reports);
-router.get("/reports/test", permissions_middleware.view_reports, reports_routes.get_general_report);
+router.post("/reports", permissions_middleware.view_reports, reports_routes.get_general_report);
 router.use("/requests", permissions_middleware.general_permissions, request_routes);
 router.get("/", home_routes.get_home);
 

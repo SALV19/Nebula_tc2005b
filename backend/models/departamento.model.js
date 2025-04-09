@@ -19,8 +19,6 @@ module.exports = class Departamento {
     
 
     static fetch(id_empresa){
-        console.log("ID: ", id_empresa)
-
         if (id_empresa){
             return Departamento.fetchByID(id_empresa);
         } else {

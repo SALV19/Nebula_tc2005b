@@ -76,6 +76,7 @@
                 <i class="bi bi-download is-size-4 is-clickable"></i>
             </div> 
         <hr/>
+        <button class="button is-success is-rounded" onclick="fetchData()">Update</button>
     </div>
 </div>
 <%- include('includes/_footer.ejs') %>
@@ -94,4 +95,22 @@
             expanded = false;
         }
     }
+    
+    function fetchData() {
+        const csrf = document.querySelector('#_csrf').value        
+        fetch('/reports', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+            },
+            body: JSON.stringify({
+                message: "Prueba metodo post"
+            })
+        })
+        .then((response) => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error("ERROR: ", error))
+    }
+
 </script>
