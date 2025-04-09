@@ -274,3 +274,6 @@ textarea{
     font-size: bold;
 }
 
+.ml-6, .mx-6 {
+    margin-left: 5.5rem !important;
+}
