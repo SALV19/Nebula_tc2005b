@@ -166,7 +166,7 @@ module.exports = class Requests {
                               ON c.id_colaborador = e.id_colaborador
                             INNER JOIN departamento d
                               ON d.id_departamento = e.id_departamento
-                            WHERE c.email = 'a01711434@tec.mx'
+                            WHERE c.email = ?
                           )
                            AND c.email != ?
                         GROUP BY sf.id_solicitud_falta
