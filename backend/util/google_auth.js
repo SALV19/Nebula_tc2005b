@@ -7,7 +7,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/log_in/google/callback",
+      callbackURL: process.env.CALL_BACK ?? "http://localhost:3000/log_in/google/callback",
     },
     function (accessToken, refreshToken, profile, cb) {
       User.fetchByEmail(profile.emails[0].value, function (err, [[user]]) {

@@ -69,6 +69,7 @@ hr{
     padding: 0.1rem;
     border-color: #454545;
     margin: 0.2rem;
+    border-radius: 10px;
 }
   
 .checkboxes label {
@@ -89,3 +90,20 @@ form {
     padding: 0.3rem;
 }
   
+.checkboxes::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.checkboxes::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.checkboxes::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.checkboxes::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
