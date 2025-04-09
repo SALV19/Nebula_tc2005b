@@ -10,13 +10,9 @@
         <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
         <% if (permissions?.includes('register_followUp') || permissions?.includes('register_meeting')) { %>
           <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
-          <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p>
-          <div class="column is-narrow is-offset-7 is-offset-desktop-8 is-offset-tablet-6 is-offset-mobile-1">
-              <i class="bi bi-plus-lg mr-4 subtitle is-clickable" onclick=""></i>
-          </div>
-        <% } else { %>
-          <br><br>
+          <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p> 
         <% } %>
+        <br><br>
       </div>   
     </div> 
     <hr/>
