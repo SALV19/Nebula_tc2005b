@@ -128,8 +128,10 @@ exports.add_event = (request, response) => {
     const evento = new Event(startDate, endDate, motive, type);
     console.log(rowsE);
     evento.save();
+    
     return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
   }).catch(error => {
     console.error(error);
   })
+  response.redirect('/');
 }
