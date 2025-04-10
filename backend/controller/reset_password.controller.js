@@ -58,7 +58,8 @@ exports.post_reset_password_request = (request, response, next) => {
     }).catch((error) => {
         console.error("Error creating token:", error);
         return response.status(500).render("reset_password_email", { 
-            error: error.message || "Error generating recovery token" 
+            error: error.message || "Error generating recovery token",
+            csrfToken: request.csrfToken()
         });
     });
 };

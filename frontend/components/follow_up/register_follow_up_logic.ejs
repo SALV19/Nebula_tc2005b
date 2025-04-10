@@ -52,12 +52,12 @@
             if (i === 0){
             content += `
               <div class="question-container">
-                  <p class="line-questions icon-close">
+                <p class="line-questions icon-close">
                   <span>
-                      ${data.questions[i].pregunta}
-                  </span>
-                  <i class="bi bi-caret-down-fill"></i>
-                  </p>
+                    ${data.questions[i].pregunta}
+                    </span>
+                      <i class="bi bi-caret-right-fill" id="icon-${i}"> </i>
+                    </p>
               
                   <!-- Campo oculto para enviar el ID de la pregunta -->
                   <input type="hidden" class="show-question-container" name="id_pregunta" value="${data.questions[i].id_pregunta}">
@@ -73,7 +73,7 @@
                   <span>
                       ${data.questions[i].pregunta}
                   </span>
-                  <i class="bi bi-caret-down-fill"></i>
+                  <i class="bi bi-caret-down-fill" id="icon-${i}""></i>
                   </p>
 
                   <!-- Campo oculto para enviar el ID  la pregunta -->
@@ -157,6 +157,28 @@
 
     function logicRegister () {
       
+      document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
+          toggleIcon.addEventListener("click", (event) => {
+              const questionContainer = event.target.closest(".question-container");
+              const textArea = questionContainer.querySelector("textarea"); // Encuentra el textarea del contenedor
+              const caret = questionContainer.querySelector("i"); // Encuentra el icono
+
+              if (textArea) {
+                  textArea.classList.toggle("hidden-content"); // Alterna la visibilidad
+                  textArea.classList.toggle("show-question-container"); // Alterna la clase de visibilidad
+              }
+
+              // Cambiar el icono entre down y right
+              if (caret.classList.contains('bi-caret-down-fill')) {
+                  caret.classList.remove('bi-caret-down-fill');
+                  caret.classList.add('bi-caret-right-fill');
+              } else {
+                  caret.classList.remove('bi-caret-right-fill');
+                  caret.classList.add('bi-caret-down-fill');
+              }
+          });
+      });
+      
       const progressBars = document.querySelectorAll(".progress-bar");
       const progressTexts = document.querySelectorAll(".progress-text");
       const questions = document.querySelectorAll("line-questions");
@@ -168,19 +190,6 @@
       }
 
       let indicatorValues = new Array(indicatorLabels.length).fill(0);
-
-
-          document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
-              toggleIcon.addEventListener("click", (event) => {
-                  const questionContainer = event.target.closest(".question-container");
-                  const textArea = questionContainer.querySelector("textarea"); // Encuentra el textarea del contenedor
-
-                  if (textArea) {
-                      textArea.classList.toggle("hidden-content"); // Alterna la visibilidad
-                      textArea.classList.toggle("show-question-container"); // Alterna la clase de visibilidad
-                  }
-              });
-          });
 
           const ctx = document.getElementById("myRadarChart")
           ctx.getContext("2d");
@@ -253,6 +262,9 @@
           })
         })
 
+        
+
+
         // VALIDATE COLLAB AND DATE
         let collaboratorSelect = document.getElementById("collaborators");
         let errorMessage = document.getElementById("errorMessage");
@@ -264,6 +276,7 @@
         today.setDate(today.getDate());  
 
         let currentDate = today.toISOString().split('T')[0]; 
+        
 
          // VALIDATE COLLAB
         collaboratorSelect.addEventListener("change", function(){
@@ -504,8 +517,6 @@
                 
               });
             }
-              
-              
               
             const googleLogin = document.querySelector('.section-container') !== null;
               

@@ -197,7 +197,7 @@
                           <input type='hidden' value='${d.descripcion}' id="descripcion-${d.id_solicitud_falta}"/>
                         </td>`
       // Contenido desplegable
-      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+      table_content += `<tr class="additional-row has-background" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
                               <div class="column is-half">
@@ -206,7 +206,7 @@
         table_content +=    `</div>
                               <div class="column">
                                 <p><strong>Reason: </strong></p>
-                                <p class='has-background-black p-3 box' id="descripcion-${d.id_solicitud_falta}">${d.descripcion}</p>
+                                <p class='custom-textarea' id="descripcion-${d.id_solicitud_falta}">${d.descripcion}</p>
                               </div>
                               <div class="column">
                                   <p><strong>Location:</strong> <p id="ubicacion-${d.id_solicitud_falta}">${d.ubicacion}</p>
@@ -314,12 +314,12 @@
         </tr>`
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
+        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>
         <td class="back"></td>
         </tr>`
       }
       // Contenido desplegable
-      table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+      table_content += `<tr class="additional-row has-background" id="additional-row-${idx}" style="display: none;">
                           <td colspan='6'>
                             <div class='columns'>
                               <div class="column is-two-fifths">
@@ -328,7 +328,7 @@
       table_content +=  `</div>
                               <div class="column ">
                                 <p><strong>Reason: </strong></p>
-                                <p class='custom-textarea box'>${d.descripcion}</p>
+                                <p class='custom-textarea'>${d.descripcion}</p>
                                 ${d.evidencia ? `<a class="button is-link is-light" href="${d.evidencia}"><i class="bi bi-link-45deg"></i> Evidence</a>` : ``}
                               </div>
                               <div class="column">

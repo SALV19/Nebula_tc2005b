@@ -372,7 +372,7 @@
         }
 
         // Evidence validation (only for Absence > 3 valid days)
-        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental rest", "Personal commitment"];
+        const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental Rest", "Personal Commitment","Work Event"];
 
         if (
           type === "Absence" && 
@@ -425,7 +425,7 @@
     const end = endDate.value;
     const validDays = realsDaysOff(start, end);
 
-    const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental rest", "Personal commitment"];
+    const noEvidenceNeeded = ["Vacation", "Mourning", "Emergency", "Family Situation", "Mental Rest", "Personal Commitment","Work Event"];
 
     if (type === "Absence" && start && end) {
       if (validDays.length > 3 && !noEvidenceNeeded.includes(subtype)) {

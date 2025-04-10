@@ -25,8 +25,8 @@ exports.get_home = async (request, response) => {
     }
     
     const tokenInfo = await oauth2Client.getTokenInfo(request.user.accessToken);
-    console.log("Token Scopes:", tokenInfo.scopes);
-    console.log("expire date", tokenInfo.expiry_date);
+    // console.log("Token Scopes:", tokenInfo.scopes);
+    // console.log("expire date", tokenInfo.expiry_date);
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client})
     calendar.calendarList.list({}, (err, res) => {
@@ -67,7 +67,7 @@ exports.get_home = async (request, response) => {
         color: '#FFFF',
         description: event.description,
       }));
-      eventos = [...eventos, ...eventosDelCalendario];
+      eventos = eventos.concat(eventosDelCalendario);
     }
     // console.log('Eventos obtenidos:', eventos);
     
@@ -79,10 +79,11 @@ exports.get_home = async (request, response) => {
           diasDisponibles,
           diasTotales,
           error,
+          permissions_error: request.session.permissions.length,
           permissions: request.session.permissions,
           total_absences: absences.length,
           csrfToken: request.csrfToken(),
-          eventos: JSON.stringify(eventos),
+          eventos: JSON.stringify(eventos),          
         })
       })
       .catch(error => {console.error(error)}) 
@@ -95,6 +96,7 @@ exports.get_home = async (request, response) => {
             diasDisponibles,
             diasTotales,
             error,
+            permissions_error: request.session.permissions.length,
             permissions: request.session.permissions,
             total_absences: absences.length,
             csrfToken: request.csrfToken(),

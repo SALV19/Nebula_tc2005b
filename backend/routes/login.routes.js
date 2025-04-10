@@ -37,4 +37,9 @@ router.post("/reset_password", reset_password_routes.post_reset_password);
 
 router.get("/initial_password", initial_password_middleware.initial_middleware, reset_password_routes.get_initial_password);
 
+router.get('/logout', (request, response, next) => {
+  request.session.destroy()
+  response.redirect('/')
+})
+
 module.exports = router;
