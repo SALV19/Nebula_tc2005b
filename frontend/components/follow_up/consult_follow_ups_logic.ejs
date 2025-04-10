@@ -1,20 +1,78 @@
 <script>
-function TableFollowUps(data) {
 
-    const table = document.querySelector('#content-section');
-    let table_content = `<div class="container-scroll">
-    <table class="table is-fullwidth"">
+    console.log("entro a consult follow ups logic");
+
+function get_progress_color(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
+    
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+    if (indicatorAvg >= 75) {
+        return 'success';
+    }
+    else if (indicatorAvg >= 30) {
+        return 'warning';
+    }
+    else {
+        return 'danger';
+    }
 
     
-<tbody>`;
-
-    data.fechasAgendadas.forEach((fecha, idx) => {
+}
+function get_average_progress(data, fecha) {
+    const indicators = data.metricas[0]
+    .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
+    .map(metricaObj => metricaObj.valor_metrica);
+    if (indicators.length <= 0) {
+        return 0;
+    }
+    const indicatorSum = indicators
+        .reduce((a, b) => {
+            return a + b
+        });
         
+    const indicatorAvg = indicatorSum * 100 / (indicators.length*5);
+
+    return indicatorAvg;
+}
+    
+function TableFollowUps(data) {
+    const table = document.querySelector('#content-section');
+    let table_content = `
+    <div class="container-scroll">
+        <table class="table is-fullwidth"">
+            <tbody>`;
+
+    data.fechasAgendadas.forEach((fecha, idx) => { 
+        const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
-        table_content += `<td> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
-        table_content += `<td style="text-align: right;">
-                        <i class="bi bi-caret-down-fill toggle-icon"></i>
-                        </td>`;
+            table_content += `<td style="text-align: left; width: 10px;">
+                <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
+                </td>`;
+
+    function formatDate(dateString) {
+        const [day, month, year] = dateString.split('-');
+                const fullYear = '20' + year;
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${fullYear}`;
+    }
+
+    const formattedDate = formatDate(fecha.fechaAgendada);
+
+        table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
+        console.log(fecha.fechaAgendada);             
+  // Columna de fecha
+        table_content += `<td class='is-flex is-align-items-center'>
+                            <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
+                            <p style="margin-right: 0.5rem; width: auto;">${indicadorAverage}%</p>
+                            <div style="width: 20rem;">
+                                <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
+                            </div>
+                        </td>`
         table_content += `</tr>`;
 
         // Fila adicional oculta por defecto
@@ -56,7 +114,8 @@ function TableFollowUps(data) {
                                     <!-- Tercera columna -->
                                     <div class="column is-one-fifth">
                                         Notes
-                                        <textarea class="custom-textarea"></textarea>
+                                        <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
+                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>
@@ -115,21 +174,52 @@ function TableFollowUps(data) {
         });
     });
 
-    // Manejo de filas adicionales
+document.querySelectorAll('.question-container').forEach(questionContainer => {
+    const responseText = questionContainer.querySelector(".response-text");
+    const icon = questionContainer.querySelector(".toggle-icon");
+
+    // Inicialmente las respuestas están ocultas y las flechas hacia la derecha
+    responseText.classList.remove("show");
+    icon.classList.remove("bi-caret-down-fill");
+    icon.classList.add("bi-caret-right-fill");
+});
+
+// Manejo de filas adicionales (mostrar u ocultar la fila mayor y sus respuestas)
 document.querySelectorAll('.fecha-row').forEach(row => {
     row.addEventListener('click', () => {
         const idx = row.getAttribute('data-index');
         const additionalRow = document.getElementById(`additional-row-${idx}`);
-    
+        const caret = document.getElementById(`caret-${idx}`);
+        const questionContainers = additionalRow?.querySelectorAll('.question-container'); // Si la fila adicional existe
+
         if (additionalRow) {
             const currentDisplay = additionalRow.style.display;
             if (currentDisplay === "none" || currentDisplay === "") {
                 additionalRow.style.display = "table-row";  
+                caret.classList.remove("bi-caret-right-fill");
+                caret.classList.add("bi-caret-down-fill");
+
+                // Cuando la fila mayor se abre, las preguntas deben permanecer como están, sin cerrarse
+                questionContainers?.forEach(questionContainer => {
+                    const responseText = questionContainer.querySelector(".response-text");
+                    const icon = questionContainer.querySelector(".toggle-icon");
+
+                    // No modificamos el estado de las respuestas ni las flechas aquí
+                });
+
             } else {
                 additionalRow.style.display = "none"; 
-                const questionContainers = additionalRow.querySelectorAll('.response-text');
-                questionContainers.forEach(responseText => {
-                    responseText.classList.remove('show'); 
+                caret.classList.remove("bi-caret-down-fill");
+                caret.classList.add("bi-caret-right-fill");
+
+                // Si la fila mayor se cierra, cerramos todas las respuestas y las flechas apuntan hacia la derecha
+                questionContainers?.forEach(questionContainer => {
+                    const responseText = questionContainer.querySelector(".response-text");
+                    const icon = questionContainer.querySelector(".toggle-icon");
+
+                    responseText.classList.remove("show"); // Ocultar las respuestas
+                    icon.classList.remove("bi-caret-down-fill");
+                    icon.classList.add("bi-caret-right-fill"); // Flecha hacia la derecha
                 });
             }
         } else {
@@ -138,36 +228,45 @@ document.querySelectorAll('.fecha-row').forEach(row => {
     });
 });
 
-    // Manejo de preguntas (mostrar u ocultar respuestas)
-    document.querySelectorAll('.toggle-question').forEach(question => {
-        question.addEventListener('click', (event) => {
-            const questionContainer = event.target.closest(".question-container");
-            const responseText = questionContainer.querySelector(".response-text");
+// Manejo de preguntas (mostrar u ocultar respuestas al hacer clic)
+document.querySelectorAll('.toggle-question').forEach(question => {
+    question.addEventListener('click', (event) => {
+        const questionContainer = event.target.closest(".question-container");
+        const responseText = questionContainer.querySelector(".response-text");
+        const icon = questionContainer.querySelector(".toggle-icon");
 
-            if (responseText) {
-                responseText.classList.toggle("show");
+        if (responseText) {
+            // Mostrar u ocultar la respuesta
+            responseText.classList.toggle("show");
+
+            // Cambiar la flecha de acuerdo al estado de la respuesta
+            if (responseText.classList.contains("show")) {
+                icon.classList.remove("bi-caret-right-fill");
+                icon.classList.add("bi-caret-down-fill"); // Flecha hacia abajo
             } else {
-                console.error("No se encontró el texto de respuesta");
+                icon.classList.remove("bi-caret-down-fill");
+                icon.classList.add("bi-caret-right-fill"); // Flecha hacia la derecha
             }
-        });
+        } else {
+            console.error("No se encontró el texto de respuesta");
+        }
     });
+});
+
 }
 
 // Consulta a db para la información de solicitudes
-const get_info_FU = (pagination=0, filter=null) => {
+const get_info_FU = ( ) => {
+    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
     fetch(`/follow_ups/${route}`, {
-    method: 'POST',
+    method: 'GET',
     headers: {
             'Content-Type': 'application/json',
             'csrf-token': csrf
         },
-    body: JSON.stringify({
-        offset: pagination,
-        filter: filter,
-    }),
     })
     .then(response => {
         return response.json()})
@@ -177,31 +276,4 @@ const get_info_FU = (pagination=0, filter=null) => {
     })
     .catch(e => console.log(e))
 }
-
-
-const prev_button = document.querySelector("#prev-page");
-const next_button = document.querySelector("#next-page");
-const pagination_value = document.querySelector("#pagination");
-
-// Cambiar de página / ver los siguientes 10 registros
-prev_button.addEventListener('click', () => {
-    pagination_value.value = 
-    pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para el botón "Siguiente"
-next_button.addEventListener('click', () => {
-    pagination_value.value = Number(pagination_value.value) + 1
-    
-    pagination_value.dispatchEvent(new Event('change'));  // Simula el cambio de valor
-})
-
-// Evento para cambiar de página manualmente
-pagination_value.addEventListener('change', () => {
-    const pageNumber = Number(pagination_value.value);
-    const offset = (pageNumber - 1) * 10;  // Si tienes 10 registros por página
-    get_info_FU(offset);  // Llama a la función con el offset
-})
 </script>
