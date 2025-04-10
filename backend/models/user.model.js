@@ -54,9 +54,9 @@ module.exports = class User {
                                             ON c.id_colaborador = e.id_colaborador
                                           INNER JOIN departamento d
                                             ON d.id_departamento = e.id_departamento
-                                          WHERE c.email = "santialducin@gmail.com")
-                                          AND c.email <> "santialducin@gmail.com";
-                                          `);
+                                          WHERE c.email = ?)
+                                          AND c.email <> ?;
+                                          `, [email, email]);
     return colaboradores;
   }
 };
