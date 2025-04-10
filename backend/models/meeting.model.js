@@ -52,7 +52,7 @@ module.exports = class Meeting {
             
             promesas.push(
                 calendar.events.insert({
-                    calendarId: 'c_03768ccf82eda9630ea10180b3249084dda11ae3e62a2e67092ca0889e25ca56@group.calendar.google.com',
+                    calendarId: process.env.CALENDAR_ID_MEETING ,
                     resource: event
                 })
             );
