@@ -92,6 +92,7 @@ exports.get_home = async (request, response) => {
         .then(({diasDisponibles,diasTotales, error}) => {
           // console.log("eventos: ", eventos);
           // console.log('Permisos: ', request.session.permissions);
+          response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
           response.render("home_page", {
             diasDisponibles,
             diasTotales,

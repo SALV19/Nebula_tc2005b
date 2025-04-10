@@ -77,6 +77,10 @@ exports.get_meeting = (request, response, next) => {
   settings.selectedOption = 'Meetings';
   const googleLogin = request.user?.accessToken ? 1 : 0;
 
+  if(googleLogin == 0) {
+    response.cookie("come_from", 1, {maxAge: 360000, httpOnly: true});
+  }
+
   const validationErrors = request.session.validationErrors || {};
   const formData = request.session.formData || {};
   const errorMessage = request.session.errorMessage || null;
@@ -246,11 +250,11 @@ exports.post_meeting = (request, response, next) => {
           if (telefono) {
             await sendWhatsapp.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
           }
-          response.redirect('/follow_ups');
+          return response.json({ success: true, message: 'Meeting scheduled successfully!' });
         })
         .catch(err => {
           console.error("Error enviando notificación de reunión:", err);
-          response.redirect('/follow_ups');
+          return response.status(500).json({ success: false, message: 'Failed to schedule the meeting.' });
         });
         
         
