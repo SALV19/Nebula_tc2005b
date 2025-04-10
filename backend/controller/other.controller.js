@@ -12,7 +12,12 @@ exports.get_permissions = async (request, response, next) => {
     request.session.email = request.cookies.email;
     request.session.permissions = request.cookies.permissions;
     request.session.id_colaborador = request.cookies.id_colaborador;
-    response.redirect('/follow_ups?selectedOption=Meetings');
+    if(request.cookies.come_from == 1) {
+      response.redirect('/follow_ups?selectedOption=Meetings');
+    } else {
+      response.redirect('/');
+    }
+    
     return;
   }
 
@@ -45,6 +50,7 @@ exports.get_permissions = async (request, response, next) => {
   response.cookie("email", email, {maxAge: 360000, httpOnly: true});
   response.cookie("id_colaborador", request.session.id_colaborador, {maxAge: 360000, httpOnly: true});
   response.cookie("permissions", request.session.permissions, {maxAge: 360000, httpOnly: true});
+  response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
   
   response.redirect('/')
 }

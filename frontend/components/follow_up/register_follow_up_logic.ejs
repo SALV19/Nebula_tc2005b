@@ -360,7 +360,6 @@
           .then(html => {
             console.log("HTML recibido, actualizando contenido");
             contentContainer.innerHTML = html;
-            
             const repeatingDropdown = document.getElementById("repeating");
             if (repeatingDropdown) {
               repeatingDropdown.addEventListener("change", function() {
@@ -501,19 +500,77 @@
                 } else {
                   event.preventDefault(); 
 
-                Swal.fire({
-                  title: 'Confirm Meeting',
-                  text: 'Are you sure you want to schedule this meeting?',
-                  icon: 'question',
-                  showCancelButton: true,
-                  confirmButtonText: 'Yes, schedule it',
-                  cancelButtonText: 'Cancel'
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    meetingForm.submit();
+                  Swal.fire({
+                    title: 'Confirm Meeting',
+                    text: 'Are you sure you want to schedule this meeting?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, schedule it!',
+                    cancelButtonText: 'Cancel',
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                      return fetch(meetingForm.action, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                          'X-CSRF-TOKEN': csrf 
+                        },
+                        body: new URLSearchParams(new FormData(meetingForm)).toString()
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error(response.statusText);
+                        }
+                        return response.json(); 
+                      })
+                      .catch(error => {
+                        Swal.showValidationMessage(
+                          `Request failed: ${error}`
+                        );
+                      });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  if (result.value && result.value.success) {
+                    Toast.fire({
+                        title: 'Success!',
+                        text: result.value.message || 'Meeting scheduled successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                      window.location.href = '/follow_ups?selectedOption=Meetings';
+                    });
+                  } else if (result.value && result.value.error) {
+                    Toast.fire({
+                      title: 'Error!',
+                      text: result.value.message || 'Failed to schedule meeting.',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  } else {
+                    Swal.fire({
+                      title: 'Something went wrong!',
+                      text: 'The server did not provide a clear success or error message.',
+                      icon: 'warning',
+                      confirmButtonText: 'OK'
+                    });
                   }
-                });
                 }
+              });
+                  
+              }
                 
               });
             }
