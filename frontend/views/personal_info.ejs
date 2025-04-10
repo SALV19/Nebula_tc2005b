@@ -1,0 +1,18 @@
+<link
+      rel="stylesheet"
+      href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
+    />
+<main>
+  <button class="button is-danger" onclick="logout()">Log out</button>
+
+</main>
+<script>
+  function logout() {
+    fetch('/log_in/logout', {
+      method: "GET"
+    })
+    .then(response => {
+      window.location.href = '/log_in'
+    })
+  }
+</script>
