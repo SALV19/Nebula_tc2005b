@@ -15,20 +15,31 @@ let settings = {
 
 exports.get_collabs = async (request, response) => {
   try {
-    const [collabsDataPues, collabsDataMod, depData, empData, rolData] =
+    const [collabsDataPues, collabsDataMod, depData, rolData] =
       await Promise.all([
         Colaborador.fetchAllColabPues(),
         Colaborador.fetchAllColabMod(),
         Departamento.fetchAllDep(),
-        Empresa.fetchAllEmp(),
+        // Empresa.fetchAllEmp(),
         Rol.fetchAllRol(),
       ]);
 
     const [rowsColP, fieldDataColPues] = collabsDataPues;
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
-    const [rowsEmp, fieldDataEmp] = empData;
     const [rowsRol, fieldDataRol] = rolData;
+    const empresa = rowsDep.reduce(
+      (accum, emp_dep) => {
+        if (!accum.has(emp_dep.nombre_empresa)) {
+          accum.set(emp_dep.nombre_empresa, [{departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento}])
+        }
+        else {
+          accum.get(emp_dep.nombre_empresa).push({departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento})
+        }
+        return accum
+      },
+      new Map()
+    )
 
     const successData = request.session.successData;
     request.session.successData = null;
@@ -42,8 +53,8 @@ exports.get_collabs = async (request, response) => {
       csrfToken: request.csrfToken(),
       puesto: rowsColP,
       modalidad: rowsColM,
-      empresa: rowsEmp,
-      departamento: rowsDep,
+      empresa: empresa,
+      // departamento: rowsDep,
       rol: rowsRol,
       successData,
       successDataUpdate,
@@ -82,6 +93,7 @@ exports.post_collab = (request, response) => {
         throw new Error("No se encontró el colaborador insertado.");
       const idcolab = rows[0].id_colaborador;
 
+      console.log("ID DEPT0",request.body.id_departamento)
       const new_equipo = new Equipo(
         request.body.id_departamento,
         request.body.id_rol
@@ -98,7 +110,7 @@ exports.post_collab = (request, response) => {
     })
     .catch((error) => {
       console.error(error);
-      response.redirect("/view_collabs?error=true");
+      response.redirect("/view_collabs?error=true&message=ER_DUP_ENTRY");
     });
 };
 
@@ -160,6 +172,64 @@ exports.get_collabs_info = async (request, response) => {
     abscences,
   });
 };
+exports.get_inactive = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  let collabs;
+  let diasDisponibles_Totales, abscences;
+
+  if (request.session.permissions.includes('consult_all_collabs')) {
+    [collabs] = await Colaborador.fetchInactiveCollabs(null, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+                        const dias_disponibles_totales = await contVac(null, null, colab_id=c.id_colaborador)
+                          .then((e) => {
+                            return e
+                          })
+                        return dias_disponibles_totales
+                      }))
+                    
+  }
+  else {
+    [collabs] = await Colaborador.fetchCollabs(request.session.email, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+      const aaaa = await contVac(null, null, colab_id=c.id_colaborador)
+        .then((e) => {
+          return e
+        })
+      return aaaa
+    })) 
+  }
+  
+  response.json({
+    selectedOption: "Active",
+    collabs: collabs,
+    diasDisponibles_Totales: diasDisponibles_Totales,
+    abscences,
+  });
+};
 
 exports.get_collab_data = async (req, res) => {
   try {
@@ -167,6 +237,7 @@ exports.get_collab_data = async (req, res) => {
 
     const [collabResult] = await Colaborador.fetchCollabById(id);
     const [equipoResult] = await Equipo.fetchEquipoById(id);    
+
 
     res.json({
       colaborador: collabResult[0],

@@ -1,5 +1,7 @@
 <script>
 
+    console.log("entro a consult follow ups logic");
+
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
@@ -23,7 +25,6 @@ function get_progress_color(data, fecha) {
     
 }
 function get_average_progress(data, fecha) {
-    console.log(data)
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
     .map(metricaObj => metricaObj.valor_metrica);
@@ -47,20 +48,31 @@ function TableFollowUps(data) {
         <table class="table is-fullwidth"">
             <tbody>`;
 
-
     data.fechasAgendadas.forEach((fecha, idx) => { 
         const indicadorAverage = get_average_progress(data, fecha);       
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
-        table_content += `<td class="fixed-width"> Date: ${fecha.fechaAgendada}</td>`;  // Columna de fecha
+            table_content += `<td style="text-align: left; width: 10px;">
+                <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
+                </td>`;
+
+    function formatDate(dateString) {
+        const [day, month, year] = dateString.split('-');
+                const fullYear = '20' + year;
+        return `${day.padStart(2, '0')}/${month.padStart(2, '0')}/${fullYear}`;
+    }
+
+    const formattedDate = formatDate(fecha.fechaAgendada);
+
+        table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
+        console.log(fecha.fechaAgendada);             
+  // Columna de fecha
         table_content += `<td class='is-flex is-align-items-center'>
-                            <p style="width: 4rem">${indicadorAverage}%</p>
+                            <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
+                            <p style="margin-right: 0.5rem; width: auto;">${indicadorAverage}%</p>
                             <div style="width: 20rem;">
                                 <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
                             </div>
                         </td>`
-        table_content += `<td style="text-align: right; width: 10px;">
-                        <i class="bi bi-caret-down-fill toggle-icon"></i>
-                        </td>`;
         table_content += `</tr>`;
 
         // Fila adicional oculta por defecto
@@ -102,7 +114,8 @@ function TableFollowUps(data) {
                                     <!-- Tercera columna -->
                                     <div class="column is-one-fifth">
                                         Notes
-                                        <textarea class="custom-textarea"></textarea>
+                                        <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
+                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>
@@ -161,21 +174,52 @@ function TableFollowUps(data) {
         });
     });
 
-    // Manejo de filas adicionales
+document.querySelectorAll('.question-container').forEach(questionContainer => {
+    const responseText = questionContainer.querySelector(".response-text");
+    const icon = questionContainer.querySelector(".toggle-icon");
+
+    // Inicialmente las respuestas están ocultas y las flechas hacia la derecha
+    responseText.classList.remove("show");
+    icon.classList.remove("bi-caret-down-fill");
+    icon.classList.add("bi-caret-right-fill");
+});
+
+// Manejo de filas adicionales (mostrar u ocultar la fila mayor y sus respuestas)
 document.querySelectorAll('.fecha-row').forEach(row => {
     row.addEventListener('click', () => {
         const idx = row.getAttribute('data-index');
         const additionalRow = document.getElementById(`additional-row-${idx}`);
-    
+        const caret = document.getElementById(`caret-${idx}`);
+        const questionContainers = additionalRow?.querySelectorAll('.question-container'); // Si la fila adicional existe
+
         if (additionalRow) {
             const currentDisplay = additionalRow.style.display;
             if (currentDisplay === "none" || currentDisplay === "") {
                 additionalRow.style.display = "table-row";  
+                caret.classList.remove("bi-caret-right-fill");
+                caret.classList.add("bi-caret-down-fill");
+
+                // Cuando la fila mayor se abre, las preguntas deben permanecer como están, sin cerrarse
+                questionContainers?.forEach(questionContainer => {
+                    const responseText = questionContainer.querySelector(".response-text");
+                    const icon = questionContainer.querySelector(".toggle-icon");
+
+                    // No modificamos el estado de las respuestas ni las flechas aquí
+                });
+
             } else {
                 additionalRow.style.display = "none"; 
-                const questionContainers = additionalRow.querySelectorAll('.response-text');
-                questionContainers.forEach(responseText => {
-                    responseText.classList.remove('show'); 
+                caret.classList.remove("bi-caret-down-fill");
+                caret.classList.add("bi-caret-right-fill");
+
+                // Si la fila mayor se cierra, cerramos todas las respuestas y las flechas apuntan hacia la derecha
+                questionContainers?.forEach(questionContainer => {
+                    const responseText = questionContainer.querySelector(".response-text");
+                    const icon = questionContainer.querySelector(".toggle-icon");
+
+                    responseText.classList.remove("show"); // Ocultar las respuestas
+                    icon.classList.remove("bi-caret-down-fill");
+                    icon.classList.add("bi-caret-right-fill"); // Flecha hacia la derecha
                 });
             }
         } else {
@@ -184,23 +228,36 @@ document.querySelectorAll('.fecha-row').forEach(row => {
     });
 });
 
-    // Manejo de preguntas (mostrar u ocultar respuestas)
-    document.querySelectorAll('.toggle-question').forEach(question => {
-        question.addEventListener('click', (event) => {
-            const questionContainer = event.target.closest(".question-container");
-            const responseText = questionContainer.querySelector(".response-text");
+// Manejo de preguntas (mostrar u ocultar respuestas al hacer clic)
+document.querySelectorAll('.toggle-question').forEach(question => {
+    question.addEventListener('click', (event) => {
+        const questionContainer = event.target.closest(".question-container");
+        const responseText = questionContainer.querySelector(".response-text");
+        const icon = questionContainer.querySelector(".toggle-icon");
 
-            if (responseText) {
-                responseText.classList.toggle("show");
+        if (responseText) {
+            // Mostrar u ocultar la respuesta
+            responseText.classList.toggle("show");
+
+            // Cambiar la flecha de acuerdo al estado de la respuesta
+            if (responseText.classList.contains("show")) {
+                icon.classList.remove("bi-caret-right-fill");
+                icon.classList.add("bi-caret-down-fill"); // Flecha hacia abajo
             } else {
-                console.error("No se encontró el texto de respuesta");
+                icon.classList.remove("bi-caret-down-fill");
+                icon.classList.add("bi-caret-right-fill"); // Flecha hacia la derecha
             }
-        });
+        } else {
+            console.error("No se encontró el texto de respuesta");
+        }
     });
+});
+
 }
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = ( ) => {
+    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML
@@ -213,11 +270,10 @@ const get_info_FU = ( ) => {
     })
     .then(response => {
         return response.json()})
-    .then(data => {        
+    .then(data => {
         TableFollowUps(data)
 
     })
     .catch(e => console.log(e))
 }
-
 </script>

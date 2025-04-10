@@ -1,0 +1,38 @@
+<script>
+    function openAddEventPopup()     {
+        const popup = document.getElementById("add-event-pop-up");
+        const overlay = document.getElementById("popup-overlay");
+        if (overlay) overlay.style.display = "flex";
+        if (popup) {
+            popup.style.display = "flex";
+        }
+    }
+
+    function closePopupEvent() {
+        const addEventPopup = document.getElementById("add-event-pop-up");
+        const detailsPopup = document.getElementById("event-details-popup");
+        const overlay = document.getElementById("popup-overlay");
+        if (overlay) overlay.style.display = "none";
+        if (addEventPopup) addEventPopup.style.display = "none";
+        if (detailsPopup) detailsPopup.style.display = "none";
+    }
+
+    function validateDate() {
+        const startDate = document.getElementById("startDate").value;
+        const endDate = document.getElementById("endDate").value;
+        const dateError = document.getElementById("error-message");
+        const submitButton = document.querySelector("button[type='submit']");   
+        const start = new Date(startDate);
+        const end = new Date(endDate);
+
+        if(start > end) {
+            dateError.style.display = "block";
+            submitButton.disabled = true;
+            
+        } else {
+            dateError.style.display = "none";
+            submitButton.disabled = false;
+        }
+    }
+
+</script>

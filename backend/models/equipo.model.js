@@ -12,11 +12,29 @@ module.exports = class Equipo {
         }
 
     static fetchEquipoById(id) {
-        return db.execute(
-        `SELECT id_rol, id_departamento FROM equipo WHERE id_colaborador = ?`,
+        return db.execute(`
+        SELECT * FROM equipo eq
+        INNER JOIN departamento d 
+        ON eq.id_departamento = d.id_departamento
+        INNER JOIN departamento_empresa de
+        ON de.id_departamento = d.id_departamento
+        INNER JOIN empresa e
+        ON e.id_empresa = de.id_empresa
+        WHERE id_colaborador = ? `,
         [id]
         );
     }
+
+    static fetchRolByEmail(email) {
+        return db.execute(`
+            SELECT r.id_rol
+            FROM equipo e
+            JOIN colaborador c ON c.id_colaborador = e.id_colaborador
+            JOIN rol r ON r.id_rol = e.id_rol
+            WHERE c.email = ?
+        `, [email]);
+    }
+    
 
     updateById(id_colaborador) {
         return db.execute(

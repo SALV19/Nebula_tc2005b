@@ -40,15 +40,11 @@ BEGIN
     END IF;
 END //
 
-DELIMITER ;
+DELIMITER ; 
 
+CALL update_abscence_request(56, 'Vacaciones', '', '', '', '2025-05-1,2025-05-02,2025-05-03');
 
-CALL update_abscence_request(1, '2025-01-01,2025-01-02,2025-01-03,2025-01-04');
-
-SELECT * 
-FROM solicitudes_falta s
-INNER JOIN dias_solicitados d
-ON s.id_solicitud_falta = d.id_solicitud_falta
-WHERE s.id_solicitud_falta = 78;
-DESCRIBE solicitudes_falta;
-
+SELECT * FROM solicitudes_falta sf
+INNER JOIN dias_solicitados ds
+ON ds.id_solicitud_falta = sf.id_solicitud_falta
+WHERE sf.id_solicitud_falta = 56;
