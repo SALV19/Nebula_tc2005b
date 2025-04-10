@@ -1,10 +1,19 @@
 <%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-
-<input type="hidden" id="_csrf" value=<%= csrfToken %></input>
+<input type="hidden" id="_csrf" value=<%= csrfToken %>/>
 
 <div class="columns">
+  <% if (permissions_error <= 0 ) {%>
+    <script>
+      console.log("Entro al if")
+      Swal.fire({
+        title: "Colaborator not registered",
+        html: `<p>Please get in contact with Human Resources to fix this</p>`,
+        icon: "error",
+      })
+    </script>
+  <% } %>
   <div class="is-three-quarters">
     
     <aside class="pop-up-d" style="display: none;" id="pop-up">
