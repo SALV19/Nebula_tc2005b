@@ -96,7 +96,7 @@ exports.get_home = async (request, response) => {
             diasDisponibles,
             diasTotales,
             error,
-            permissions_error: request.permissions.length,
+            permissions_error: request.session.permissions.length,
             permissions: request.session.permissions,
             total_absences: absences.length,
             csrfToken: request.csrfToken(),
