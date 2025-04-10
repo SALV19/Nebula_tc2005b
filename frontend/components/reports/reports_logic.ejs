@@ -1,0 +1,33 @@
+<script src="tom-select.complete.js"></script>
+<script>
+    var expanded = false;
+
+    function showCheckboxes(value) {
+        var checkboxes = document.getElementById(value);
+        if (!expanded) {
+            checkboxes.style.display = "block";
+            expanded = true;
+        } else {
+            checkboxes.style.display = "none";
+            expanded = false;
+        }
+    }
+    
+    function fetchData() {
+        const csrf = document.querySelector('#_csrf').value        
+        fetch('/reports', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+            },
+            body: JSON.stringify({
+                message: "Prueba metodo post"
+            })
+        })
+        .then((response) => response.json())
+        .then(data => console.log(data))
+        .catch(error => console.error("ERROR: ", error))
+    }
+
+</script>
