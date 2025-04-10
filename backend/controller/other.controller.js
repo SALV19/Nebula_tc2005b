@@ -18,8 +18,8 @@ exports.get_permissions = async (request, response, next) => {
 
   const email = request.session.email ?? request.user.profile.emails[0].value;
   if (request.user) {
-    console.log(request.user);
-    console.log(request.user.user.contrasena.length);
+    // console.log(request.user);
+    // console.log(request.user.user.contrasena.length);
     request.session.email = request.user.profile.emails[0].value;
     if (request.user.user?.id_colaborador) {
       request.session.id_colaborador = request.user.user.id_colaborador
