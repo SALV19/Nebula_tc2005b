@@ -337,8 +337,8 @@ module.exports = class Colaborador {
     }
   }
 
-  static async fetchEmails() {
-    return db.execute(`SELECT email FROM colaborador`);
+  static async fetchEmails(id_colaborador) {
+    return db.execute(`SELECT email FROM colaborador WHERE email != ?`, [id_colaborador]);
   }
 
   static async fetchCollabs(email, offset, filter = null) {
