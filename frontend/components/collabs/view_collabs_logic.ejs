@@ -37,7 +37,8 @@
                                   <p class='mb-4'>${d.telefono}</p>
                                   <p class='mb-4'>${d.email}</p>
                                   <p class='mb-4'>${d.tipo_rol}</p>
-                                  <p class='mb-4'>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
+                                  <p class='mb-4'>${d.modalidad == 1 ? 'In Person' : 
+                                    d.modalidad == 2 ? 'Online' : 'Hybrid'}</p>
                                   <p class='mb-2'>${d.fechaNacimiento.split("T")[0]}</p>
                               </div>
                               <div class="column my-2">

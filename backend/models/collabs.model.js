@@ -72,7 +72,7 @@ module.exports = class Colaborador {
   }
   
   static fetchEmail(id_colaborador) {
-    return db.execute(`SELECT email FROM COLABORADOR WHERE id_colaborador = ?`, [id_colaborador]);
+    return db.execute(`SELECT email FROM colaborador WHERE id_colaborador = ?`, [id_colaborador]);
   }
 
   static fetchAllColabMod() {
