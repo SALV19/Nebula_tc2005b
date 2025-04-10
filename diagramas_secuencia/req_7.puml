@@ -19,6 +19,8 @@ activate HController
 HController -->> GoogleApi : calendar.calendarList.list()
 deactivate HController
 
+note right of GoogleApi :  const calendarListResponse = await calendar.calendarList.list(); \nconst calendars = calendarListResponse.data.items;\n let eventos = [];\n\n for (const cal of calendars) {\n const calendarId = cal.id;\nconst eventsResponse = await calendar.events.list({\ncalendarId,\n singleEvents: true,\n orderBy: 'startTime'\n});\n const eventosDelCalendario = eventsResponse.data.items.map(event => ({\n title: event.summary,\n  start: event.start.dateTime || event.start.date,\n end: event.end?.dateTime || event.end?.date,\n backgroundColor: cal.backgroundColor,\nborderColor : cal.backgroundColor,\ndisplay: 'block',\n color: '#FFFF',\ndescription: event.description,\n}));\neventos = eventos.concat(eventosDelCalendario);\n}
+
 activate GoogleApi
 GoogleApi -->> HController : eventos
 deactivate GoogleApi
