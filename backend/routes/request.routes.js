@@ -16,8 +16,4 @@ router.post('/', request_controller.update_estado);
 
 
 
-router.post('/', request_controller.update_estado);
-
-
-
 module.exports = router;

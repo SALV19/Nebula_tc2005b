@@ -98,6 +98,7 @@
 
   // Injects the HTML content for the vacation counters
   function createContent(data) {
+    console.log("createContent")
     const info = document.querySelector("#counter_box");
     const content = `
     <div id="vacationCountersWrapper">
@@ -288,6 +289,7 @@
     Ensures dynamic validation and UI update based on current form state.
      */
     function eventListeners(data){
+      console.log("eventListeners")
       
       // On change: request type
       requestType.addEventListener("change", () => {

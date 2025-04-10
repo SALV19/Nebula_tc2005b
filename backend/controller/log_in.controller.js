@@ -7,6 +7,7 @@ let status = {
 
 exports.get_log_in = (request, response) => {
   response.clearCookie('email');
+  status.error = null;
   delete request.user;
   response.render("log_in", {
     ...status, 
