@@ -18,6 +18,7 @@ let settings = {
 };
 
 exports.get_FollowUp = (request, response) => {
+  request.session.errorMessage = '';
   response.render("followUp", {
     selectedOption: 'collab',
     permissions: request.session.permissions,
@@ -155,15 +156,6 @@ exports.post_meeting = (request, response, next) => {
   }
 
   const repeating = request.body.repeating;
-  if (repeating && repeating !== 'no') {
-    const occurrencesField = `${repeating}Occurrences`;
-    const occurrences = request.body[occurrencesField];
-    
-    if (!occurrences || isNaN(occurrences) || occurrences < 1) {
-      validationErrors[occurrencesField] = 'Please enter a valid number of occurrences';
-      hasErrors = true;
-    }
-  }
   
   
   if (hasErrors) {
@@ -197,6 +189,9 @@ exports.post_meeting = (request, response, next) => {
   }
   if(repeating == 'year') {
     occurrences = request.body.yearOccurrences;
+  }
+  if(repeating == 'no') {
+    occurrences = 0;
   }
 
   Collaborator.fetchEmail(id_colaborador)
