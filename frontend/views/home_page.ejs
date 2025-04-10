@@ -3,8 +3,9 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <input type="hidden" id="_csrf" value=<%= csrfToken %>/>
 
-<div class="columns">
+    <div class="columns m-0">
   <% if (permissions_error <= 0 ) {%>
+
     <script>
       console.log("Entro al if")
       Swal.fire({
@@ -14,8 +15,8 @@
       })
     </script>
   <% } %>
-  <div class="is-three-quarters">
-    
+
+  <div class="is-three-quarters pt-6">    
     <aside class="pop-up-d" style="display: none;" id="pop-up">
       <div class="pop-up-content-d">              
         <button onclick="closePopup()" class="button-close">
@@ -37,10 +38,12 @@
       let eventos = <%- eventos %>; 
     </script>
     <% if (eventos) { %>
+      <% if (permissions.includes('add_event')) {%> 
       <div style="display: flex;">
         <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
         <%- include('includes/_addEvent_form.ejs') %>
         </div>
+      <% } %> 
       <%- include('../components/calendar/calendar.ejs') %> 
       <%- include ('../components/home/add_event_logic.ejs') %>
 
