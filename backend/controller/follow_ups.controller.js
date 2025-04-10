@@ -367,12 +367,12 @@ exports.get_followUps_info = (request, response, next) => {
 
   const idColaborador = request.session.id_colaborador;
 
-  console.log("entro a get follow ups info");
+  // console.log("entro a get follow ups info");
 
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
 
-      console.log("entro al primer then");
+      // console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
       const notes = evalInfo.map(n => n.notas)      
       const fechasAgendadas = evalInfo.map(evaluacion => {
@@ -396,7 +396,7 @@ exports.get_followUps_info = (request, response, next) => {
         const metricas = metrics;
         const indicadores = indicators;
 
-        console.log("entro al segundo then");
+        // console.log("entro al segundo then");
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 

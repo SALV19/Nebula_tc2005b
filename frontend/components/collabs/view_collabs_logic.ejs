@@ -14,7 +14,10 @@
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
       table_content += `<tr id='collab' key='${idx}'>`;
-      table_content += `<td>${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td>
+                          <i class="bi bi-caret-right-fill mr-4" id='caret-${idx}'></i>
+                          ${d.nombre} ${d.apellidos}
+                          </td>`
       table_content += `<td>${d.puesto}</td>`
       table_content += `<td>${d.nombre_departamento} </td>`
       table_content += `<td>${d.nombre_empresa} </td>`
@@ -72,10 +75,17 @@
     entries.forEach((node, idx) => {
       node.addEventListener('click', (v) => {
         const additionalRow = document.getElementById(`additional-row-${idx}`)
+        const caret = document.querySelector(`#caret-${idx}`)
+
         if (additionalRow.style.display === "none") {
           additionalRow.style.display = "table-row";
+          caret.classList.add('bi-caret-down-fill')
+          caret.classList.remove('bi-caret-right-fill')
         } else {
           additionalRow.style.display = "none";
+
+          caret.classList.remove('bi-caret-down-fill')
+          caret.classList.add('bi-caret-right-fill')
         }
       })
     })
