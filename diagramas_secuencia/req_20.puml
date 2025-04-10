@@ -1,46 +1,30 @@
-@startuml Prueba
-autonumber
-actor Collaborator
-boundary general.route.js as gRoutes
-boundary home_page.ejs as homeView
-control home.controller.js as homeController
-entity request.model as absModel
-database nebula as neb
+@startuml Diseño_Ausencias 
+autonumber 
+actor Collaborator 
+boundary general.route.js as gRoutes 
+boundary home_page.ejs as homeView 
+control home.controller.js as homeController 
+entity requests.model.js as requestsModel 
+database nebula as DB 
 
-activate Collaborator
-Collaborator -> gRoutes : GET/
-deactivate Collaborator
+Collaborator -> gRoutes : GET / 
 
-activate gRoutes
-gRoutes -> homeController: get_home()
-deactivate gRoutes
-
-activate homeController
-homeController ->> absModel: get_home_total_abs()
-
-activate absModel
-absModel ->> neb: (SELECT * FROM solicitudesFalta)>\n <(SELECT * FROM dias_solicitud)
-
-activate neb
-neb-->> absModel: [status, type, fistDate, lastDate]
-deactivate neb
-
-absModel -->> homeController: [{stats, type, fistDate, lastDate}]
-homeController -> homeController: calculate_abs()
-deactivate absModel
-
-homeController -->> homeView: response
-
-deactivate homeController
-
-
-
-activate homeView
-homeView -> Collaborator: html
-deactivate homeView
-
-activate Collaborator
-deactivate Collaborator
-
-
+activate gRoutes 
+gRoutes -> homeController : get_home() 
+deactivate gRoutes 
+activate homeController 
+homeController ->> requestsModel : fetchDaysApproved(request.session.email) 
+activate requestsModel 
+requestsModel ->> DB : `SELECT ds.fecha \n FROM solicitudes_falta sf \n INNER JOIN dias_solicitados ds \n ON sf.id_solicitud_falta = ds.id_solicitud_falta \n INNER JOIN colaborador c \n ON c.id_colaborador = sf.id_colaborador \n WHERE c.email = ? AND sf.estado = 1; \n `, [email]) 
+activate DB 
+DB -->> requestsModel : [fechas aprobadas] 
+deactivate DB 
+requestsModel -->> homeController : [fechas aprobadas] 
+deactivate requestsModel 
+homeController -->> homeView :  response.render("home_page", { \n total_absences: absences.length,}) 
+deactivate homeController 
+activate homeView 
+homeView --> Collaborator : HTML 
+deactivate homeView 
+activate Collaborator 
 @enduml
