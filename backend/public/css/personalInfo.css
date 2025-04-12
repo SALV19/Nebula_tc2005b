@@ -1,0 +1,23 @@
+
+
+.column{
+    margin-top: 5rem;
+    margin-left: 7%;
+}
+
+.is-rounded{
+    border: red;
+    border-width: 0.7rem;
+}
+
+.custom-box {
+    padding: 1%;
+    padding-left: 3%;
+    width: 80%;
+    margin-bottom: 3%;
+    margin-top: 1%;
+    background-color: #3f3f3f !important;
+    color: white !important;
+    border-radius: 20px !important;
+}
+

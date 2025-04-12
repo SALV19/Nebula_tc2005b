@@ -1,19 +1,27 @@
-<link
-      rel="stylesheet"
-      href="https://cdn.jsdelivr.net/npm/bulma@1.0.2/css/bulma.min.css"
-    />
-<main>
-  <button class="button is-danger" onclick="logout()">Log out</button>
+<%- include('../components/nav_bar.ejs') %>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+<link rel="stylesheet" href="/css/personalInfo.css" />
 
-</main>
-<script>
-  function logout() {
-    fetch('/log_in/logout', {
-      method: "GET"
-    })
-    .then(response => {
-      window.location.href = '/log_in'
-    })
-  }
-</script>
+<input type="hidden" id="_csrf" value=<%= csrfToken %>/>
 
+<div class="columns ">
+  <div class="column is-4 ">
+    <figure class="image " style="width: 80%; margin: 0 auto;">
+      <img class="is-rounded" style="width: 100%; height: auto; " src= <%= foto %> />
+    </figure>
+  </div>  
+  <div class="column">
+    <label class="is-size-6 styling">Full Name:</label>
+    <div class="custom-box"> <%= fullName %> </div>
+    <label class="is-size-6 styling">Email:</label>
+    <div class="custom-box"> <%= email %> </div>
+    <label class="is-size-6 styling">Rol: </label>
+    <div class="custom-box"> <%= rol %> </div>
+    <label class="is-size-6 styling">Location:</label>
+    <div class="custom-box"> <%= ubicacion %> </div>
+    <label class="is-size-6 styling">Job Position:</label>
+    <div class="custom-box"> <%= puesto %> </div>
+    <label class="is-size-6 styling">Department:</label>
+    <div class="custom-box"> <%= departamento %> </div>
+  </div>
+</div>
