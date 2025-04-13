@@ -151,7 +151,6 @@
   function createCalendarElement(id) {
     return `<div class="cal-modal-container is-flex is-justify-content-center mb-2">
               <div class="cal-modal">
-                <h3>UPCOMING EVENTS</h3>
                 <div id="calendar-${id}">
                   <div class="placeholder"></div>
                   <div class="calendar-events">
@@ -207,6 +206,7 @@
                               <div class="column">
                                 <p><strong>Reason: </strong></p>
                                 <p class='custom-textarea' id="descripcion-${d.id_solicitud_falta}">${d.descripcion}</p>
+                                ${d.evidencia ? `<a class="button is-link is-light mt-4" target="_balnk" href="${d.evidencia}"><i class="bi bi-file-earmark-text"></i> Evidence</a>` : ``}
                               </div>
                               <div class="column">
                                   <p><strong>Location:</strong> <p id="ubicacion-${d.id_solicitud_falta}">${d.ubicacion}</p>
@@ -329,7 +329,7 @@
                               <div class="column ">
                                 <p><strong>Reason: </strong></p>
                                 <p class='custom-textarea'>${d.descripcion}</p>
-                                ${d.evidencia ? `<a class="button is-link is-light" href="${d.evidencia}"><i class="bi bi-link-45deg"></i> Evidence</a>` : ``}
+                                ${d.evidencia ? `<a class="button is-link is-light mt-4" target="_balnk" href="${d.evidencia}"><i class="bi bi-file-earmark-text"></i> Evidence</a>` : ``}
                               </div>
                               <div class="column">
                                 <p><strong class='has-event'>Location: </strong>${d.ubicacion}</p>

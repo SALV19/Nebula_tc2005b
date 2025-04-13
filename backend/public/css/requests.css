@@ -255,7 +255,7 @@ textarea{
     text-align: left;
 }
 .my_event {
-    background-color: red;
+    color: white !important;
 }
 .status {
     display: inline-block; /* Para que no ocupe todo el ancho */
@@ -282,4 +282,42 @@ textarea{
 
 .ml-6, .mx-6 {
     margin-left: 5.5rem !important;
+}
+
+.flatpickr-calendar {
+    background-color: #454545 !important;
+    border-color: transparent !important;
+}
+.flatpickr-day {
+    color: #B5B5B5 !important;
+}
+.prevMonthDay, .nextMonthDay {
+    color: #121212 !important;
+}
+.selected {
+    color: white !important;
+}
+
+.my_event {
+    color: white !important;
+}
+
+.flatpickr-monthDropdown-months, .numInput  {
+    border: none !important;
+    color: white !important;
+}
+
+.flatpickr-monthDropdown-months option {
+    background-color: #242424 !important;
+}
+
+.numInput::-webkit-outer-spin-button,
+.numInput::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* Firefox */
+.numInput[type=number] {
+  -moz-appearance: textfield !important;
 }
