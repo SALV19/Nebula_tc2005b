@@ -1,0 +1,55 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/table.css">
+<link rel="stylesheet" href="/css/followUps.css">
+<main class="hero column">
+  <input type="hidden" id="_csrf" value="<%= csrfToken %>">
+
+  <section class="hero-body">
+    <div class="container is-widescreen">
+      <div class="columns has-text-centered overhead is-vcentered offset">
+        <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
+        <% if (permissions?.includes('register_followUp') || permissions?.includes('register_meeting')) { %>
+          <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
+          <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p> 
+        <% } %>
+        <br><br>
+      </div>   
+    </div> 
+    <hr/>
+    <div id="content-section">
+      <%- include ('../components/follow_up/consult_follow_ups_logic.ejs') %>
+      <%- include ('../components/follow_up/register_follow_up_notes.ejs') %>
+    </div>
+    <%- include ('../components/follow_up/register_follow_up_logic.ejs') %>
+</main>
+
+<%- include('includes/_footer.ejs') %>
+
+<script>
+  
+  function showAddForm() {
+    // Determinar qué formulario mostrar según la pestaña actual
+    const selectedOption = '<%= selectedOption %>';
+    
+    if (selectedOption === 'meetings') {
+      // Mostrar formulario para agregar reuniones
+      const meetingPopup = document.getElementById('meeting-popup');
+      if (meetingPopup) {
+        meetingPopup.style.display = 'flex';
+      }
+    } else if (selectedOption === 'collaborator') {
+      // Mostrar formulario para agregar colaboradores
+      const collabPopup = document.getElementById('collab-popup');
+      if (collabPopup) {
+        collabPopup.style.display = 'flex';
+      }
+    } else if (selectedOption === 'register'){
+      // Mostrar formulario para registro
+      const registerPopup = document.getElementById('register-popup');
+      if (registerPopup) {
+        registerPopup.style.display = 'flex';
+      }
+    }
+  }
+</script>
+

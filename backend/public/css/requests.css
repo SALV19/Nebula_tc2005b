@@ -1,0 +1,323 @@
+
+/*Pop-Up Modal Styling*/
+.cancelButton {
+    position: absolute; 
+    right: 3vw; 
+    top: 3vh; 
+    cursor: pointer;
+}
+
+.container-scroll{
+    width: 84vw;
+    height:75vh;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    border: none;
+}
+
+.container-scroll::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.container-scroll::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.container-scroll::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.container-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+.custom-textarea {
+    resize: none;
+    width: 100%; 
+    height: auto;
+    max-height: 30rem;
+    overflow-y: auto;
+    
+    background-color: #242424; 
+    color: #ffffff; 
+    
+    border: 1px solid #747474;
+    border-radius: 10px; 
+    
+    padding: 10px; 
+    
+    font-size: 1rem; 
+    font-family: Arial, sans-serif; 
+    
+    outline: none; 
+}
+
+td {
+    line-height: 1.8rem;
+    text-align: center;
+
+}
+
+.pop-up {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw; 
+    height: 100vh; 
+    background-color: rgba(0, 0, 0, 0.3); 
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999; 
+}
+
+.pop-up-content {
+    background-color: #242424;
+    padding: 2vw;
+    padding-top: 5vh;
+    border-radius: 5px;
+    width: 30vw;
+    height: auto; 
+    overflow-y: auto; 
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.pop-up-content::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.pop-up-content::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.pop-up-content::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+.pop-up-content::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+#errorPopup .pop-up-content {
+    max-width: 30vw;     
+    max-height: 50vh;   
+    overflow-y: auto;    
+    padding: 2vh 2vw;
+    border-radius: 10px;
+}
+
+.cell {
+    display: flex;
+    flex-direction: column; 
+    align-items: flex-start; 
+    gap: 0; 
+    margin: 2vh;
+}
+
+.buttons {
+    position: relative;
+    width: 100%;
+    display: flex; 
+    justify-content: flex-end; 
+}
+
+.button.is-save {
+    background-color: #59A250; 
+    color: #fff; 
+    border: none; 
+    margin-top: 1vh;
+}
+
+/*FORMATO FORM*/
+.subtitleForm {
+    font-size: 2vh; 
+    display: flex;
+    margin-bottom: 0; 
+    padding-bottom: 0.4vh; 
+    align-items: center;
+    gap: 0.8vw; 
+    width: 100%;
+}
+
+/* Utility*/
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0;
+    background: transparent;
+    font-size: 2vh; 
+    color: #747474;
+    margin-bottom: 2vh; 
+}
+
+.input-container {
+    width: 100%; 
+    margin-top: 0; 
+}
+
+/*Counter and Error Section*/
+.error {
+    color: rgb(255, 138, 138);
+    display: none;
+    font-size: 1.4vh;
+    margin-top: 0.1vh; 
+    margin-bottom: 0.4vh; 
+    text-align: left; 
+}
+
+.validity-message {
+    font-size: 1.8vh;  
+    margin-top: 1vh;
+    margin-bottom: 1vh;
+}
+
+.validity-message.error {
+    color: #ff6b6b;  
+}
+
+.validity-message.success {
+    color: #3ec1d3; 
+}
+
+#daysCounter {
+    text-align: center;
+    width: 100%;
+}
+
+/*pop up confirm*/
+.swal2-confirm.btn-ok {
+    background-color: #59A250; 
+    color: #fff;
+    border: none;
+}
+
+.swal2-confirm.btn-ok:hover {
+    background-color: #6f916b; 
+}
+
+textarea{
+    resize:none;
+}
+
+/*Vacation Counters*/
+.vacation-counters-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 1.5vh;
+    margin-bottom: 2vh;
+    text-align: center;
+}
+
+.vacation-counter-box {
+    flex: 1;
+    padding: 0 1vw;
+}
+
+.vacation-count {
+    font-size: 3vh;
+    font-weight: bold;
+    color: #ffffff;
+}
+
+.vacation-label {
+    font-size: 1.6vh;
+    color: #9e9e9e;
+}
+
+.vacation-warning {
+    font-size: 1.8vh;
+    font-weight: 500;
+    max-width: 90%;
+    margin: 0 auto;
+}
+
+/* Date Columns*/
+.date-columns {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vw; 
+    width: 100%;     
+    margin: 0;        
+    padding: 0;         
+}
+
+.input-wrapper {
+    flex: 1; 
+    display: flex;
+    flex-direction: column;
+}
+.dateLine {
+    text-align: left;
+}
+.my_event {
+    color: white !important;
+}
+.status {
+    display: inline-block; /* Para que no ocupe todo el ancho */
+    padding: 0rem;
+    font-size: 0.9rem;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+}
+
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+}
+.mesaage-approved{
+    font-size: bold;
+}
+
+.has-background {
+    background-color: #454545;  
+}
+
+.ml-6, .mx-6 {
+    margin-left: 5.5rem !important;
+}
+
+.flatpickr-calendar {
+    background-color: #454545 !important;
+    border-color: transparent !important;
+}
+.flatpickr-day {
+    color: #B5B5B5 !important;
+}
+.prevMonthDay, .nextMonthDay {
+    color: #121212 !important;
+}
+.selected {
+    color: white !important;
+}
+
+.my_event {
+    color: white !important;
+}
+
+.flatpickr-monthDropdown-months, .numInput  {
+    border: none !important;
+    color: white !important;
+}
+
+.flatpickr-monthDropdown-months option {
+    background-color: #242424 !important;
+}
+
+.numInput::-webkit-outer-spin-button,
+.numInput::-webkit-inner-spin-button {
+  -webkit-appearance: none !important;
+  margin: 0 !important;
+}
+
+/* Firefox */
+.numInput[type=number] {
+  -moz-appearance: textfield !important;
+}

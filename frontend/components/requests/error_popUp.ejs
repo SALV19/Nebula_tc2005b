@@ -1,0 +1,18 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    const error = <%- JSON.stringify(errorRequest || null) %>;
+
+    if (error) {
+      Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        text: "Something went wrong!<br>Try again later",
+      });
+
+      // Clear the session so it doesn't log out again
+      history.replaceState({}, document.title, window.location.pathname);
+    }
+  });
+</script>

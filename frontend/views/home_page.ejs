@@ -1,1 +1,81 @@
 <%- include('../components/nav_bar.ejs') %>
+<link rel="stylesheet" href="/css/home.css" />
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<input type="hidden" id="_csrf" value=<%= csrfToken %>/>
+
+    <div class="columns m-0">
+  <% if (permissions_error <= 0 ) {%>
+
+    <script>
+      console.log("Entro al if")
+      Swal.fire({
+        title: "Colaborator not registered",
+        html: `<p>Please get in contact with Human Resources to fix this</p>`,
+        icon: "error",
+      })
+    </script>
+  <% } %>
+
+  <div class="is-three-quarters pt-6">    
+    <aside class="pop-up-d" style="display: none;" id="pop-up">
+      <div class="pop-up-content-d">              
+        <button onclick="closePopup()" class="button-close">
+          <i class="bi bi-x"></i>
+        </button>
+        <div class="column-container">
+          <div class="column2">
+            <div id="color-calendar" class="calendar-color-box"></div>
+            <h2 id="event-title" class="title-event"></h2>
+          </div>                  
+        </div>
+        <p class="text-event"><strong>Date: </strong><span id="event-date"></span></p>
+        <p class="text-event"><strong>Start Hour: </strong><span id="event-hour-start"></span></p>
+        <p class="text-event"><strong>End Hour: </strong><span id="event-hour-end"></span></p>
+        <p class="text-event"><strong>Details: </strong> <span id="event-details"></span></p>
+      </div>
+    </aside>
+    <script>
+      let eventos = <%- eventos %>; 
+    </script>
+    <% if (eventos) { %>
+      <% if (permissions.includes('add_event')) {%> 
+      <div style="display: flex;">
+        <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
+        <%- include('includes/_addEvent_form.ejs') %>
+        </div>
+      <% } %> 
+      <%- include('../components/calendar/calendar.ejs') %> 
+      <%- include ('../components/home/add_event_logic.ejs') %>
+
+    <% } else { %>
+      <div class="is-three-quarters center-log">
+        <br>
+        <label class="is-size-6 styling " for="collaborators">Google login access is required</label>
+        <br>
+        <br>
+        <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px; margin-left: 1rem;" 
+          href="/log_in/auth/google">
+          <span class="icon mr-2" style="margin-right: 8px;">
+            <img src="/icons/google.webp" class="image is-24x24" />
+          </span>
+          <span>Log in with Google</span>
+        </a>
+      </div>
+    <% } %>
+    </div>
+
+  <div class="column column-counter">
+    <%- include('../components/vacations_left.ejs') %>
+    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+    <% } %>
+  </div>
+  <div class="column column-counters align-counter">
+    <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+    <% } %>
+  </div>
+</div>
+
+<%- include('includes/_footer.ejs') %>

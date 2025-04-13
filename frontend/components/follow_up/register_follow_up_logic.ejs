@@ -1,0 +1,668 @@
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>  
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+      get_info_FU()
+    })
+    // Si get_info necesita el texto del botón, puedes modificarla para recibirlo como parámetro
+    function get_register(data) {
+      const contentContainer = document.getElementById("content-section");
+      let content = " ";
+      content += ` 
+      <div class="container-scroll">
+        <form action="/follow_ups/Register/save" method="POST" id="form_method">
+          <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+          <div class="column-container">
+              <section class='column'>
+              <div name="nombre">
+                  <label class="styling" for="collaborators">Employee</label>
+                  <select id="collaborators" class="line-input text-style" name="id_colaborador">
+                  <option value="default" disabled selected>Select Collaborator</option>
+      `
+      if (data.colaboradores.length > 0) {
+        for (let i = 0; i < data.colaboradores.length; i++) {
+
+      content += `<option value="${data.colaboradores[i].id_colaborador}"> `
+
+      content += data.colaboradores[i].nombre + " " + data.colaboradores[i].apellidos
+
+      content += `</option>`
+
+        }
+      } else {
+        content += `<option disabled> No hay colaboradores disponibles </option>`
+      }
+      content += `</select>
+            <p id="errorMessage" class="text-hidden"> Select a collaborator </p>
+        </div>  `
+      
+      content += `
+      <div>
+        <label class="is-size-6 styling">Date</label>
+        <input class="dateLine" type="date" id="filter_end" name="fechaAgendada" value="${new Date().toISOString().split('T')[0]}">
+        <p id="dateError" class="text-hidden"> Select a valid date </p>
+      </div>
+
+      <div id="questions-container"> 
+      ` 
+      for(let i = 0; i < data.questions.length; i++) {
+        content += `
+         `
+            if (i === 0){
+            content += `
+              <div class="question-container">
+                <p class="line-questions icon-close">
+                  <span>
+                    ${data.questions[i].pregunta}
+                    </span>
+                      <i class="bi bi-caret-right-fill" id="icon-${i}"> </i>
+                    </p>
+              
+                  <!-- Campo oculto para enviar el ID de la pregunta -->
+                  <input type="hidden" class="show-question-container" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="show-question-container" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+            `
+            } else if (i > 0) {
+            content +=  `
+            <div class="question-container">
+                  <p class="line-questions toggle-icon">
+                  <span>
+                      ${data.questions[i].pregunta}
+                  </span>
+                  <i class="bi bi-caret-down-fill" id="icon-${i}""></i>
+                  </p>
+
+                  <!-- Campo oculto para enviar el ID  la pregunta -->
+                  <input type="hidden" name="id_pregunta" value="${data.questions[i].id_pregunta}">
+
+                
+                  <!-- Campo de entrada para la respuesta -->
+                  <textarea class="hidden-content"  id="lenghtVal" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+                  <p class="text-length"> TEXT </p>
+            `
+            }
+            content += `
+        </div>
+            ` 
+      }
+      content += `
+      </div>
+      </section>
+
+      <section class='column'>
+          <div class="radar-container">
+              <canvas class="canvas" id="myRadarChart"></canvas>
+          </div>
+
+          <div>
+      `
+      for(let i = 0; i < data.indicator.length; i++) {
+        content += `
+          <div class="container ">
+                <div class="progress-container">
+                    <p class="progress-text"> ${data.indicator[i].indicador} </p>
+                    <i class="bi bi-info-circle elementBar"></i>
+                </div>
+                <p class="hidden-message showElement dropdown-content" style="display: none;"> 
+                    How does the employee feel about their ${data.indicator[i].indicador} ?<br>
+                    0 = unsatisfied | 5 = satisfied
+                </p>
+                
+                <input type="hidden" name="id_indicador" value="${ data.indicator[i].id_indicador}">
+                <input class="progress-bar" name="valor_metrica" type="range" min="0" max="5" value="0">
+            </div>
+            
+            <div class="numbers-container">
+                <p class="numbers">
+                    0
+                </p>
+                <p class="numbers">
+                    1
+                </p>
+                <p class="numbers">
+                    2
+                </p>
+                <p class="numbers">
+                    3
+                </p>
+                <p class="numbers">
+                    4
+                </p>
+                <p class="numbers">
+                    5
+                </p>
+            </div>
+        `
+      }    
+      content += `
+            </div>
+          </div>
+
+          <div class="button-container">
+              <button id="submitButton" class="approve-button">Submit</button>
+          </div>
+        </form>
+      </div>
+      `    
+      contentContainer.innerHTML = content;
+
+      logicRegister();
+
+    }
+
+
+    function logicRegister () {
+      
+      document.querySelectorAll(".toggle-icon, .icon-close").forEach((toggleIcon) => {
+          toggleIcon.addEventListener("click", (event) => {
+              const questionContainer = event.target.closest(".question-container");
+              const textArea = questionContainer.querySelector("textarea"); // Encuentra el textarea del contenedor
+              const caret = questionContainer.querySelector("i"); // Encuentra el icono
+
+              if (textArea) {
+                  textArea.classList.toggle("hidden-content"); // Alterna la visibilidad
+                  textArea.classList.toggle("show-question-container"); // Alterna la clase de visibilidad
+              }
+
+              // Cambiar el icono entre down y right
+              if (caret.classList.contains('bi-caret-down-fill')) {
+                  caret.classList.remove('bi-caret-down-fill');
+                  caret.classList.add('bi-caret-right-fill');
+              } else {
+                  caret.classList.remove('bi-caret-right-fill');
+                  caret.classList.add('bi-caret-down-fill');
+              }
+          });
+      });
+      
+      const progressBars = document.querySelectorAll(".progress-bar");
+      const progressTexts = document.querySelectorAll(".progress-text");
+      const questions = document.querySelectorAll("line-questions");
+      const questionsAnswer = document.querySelectorAll("show-question-container");
+
+      const indicatorLabels = [];
+      for (let i = 0; i < progressTexts.length; i++){
+        indicatorLabels.push(progressTexts[i].textContent.trim());
+      }
+
+      let indicatorValues = new Array(indicatorLabels.length).fill(0);
+
+          const ctx = document.getElementById("myRadarChart")
+          ctx.getContext("2d");
+          const radar = new Chart(ctx, { 
+            type: 'radar',
+            data: {
+              labels: indicatorLabels,
+              datasets: [{
+                data: indicatorValues,
+                backgroundColor: "#B7A5E6",
+                borderColor: "#EEEEEE",
+                borderWidth: 1,
+              }]
+            },
+            options: {
+              plugins: {
+                legend: {
+                  display: false // Hide the legend
+                }
+              },
+              scales: {
+                r: {
+                  backgroundColor: "#FFFF",
+                  hoverBackgroundColor: "#767574",
+                  angleLines: { display: true },
+                  suggestedMin: 0,
+                  suggestedMax: 5,
+                  ticks: {
+                    stepSize: 1,  // Ensures steps of 1
+                    beginAtZero: true
+                  },
+                  pointLabels: {  
+                    color: "#FFFF",  // Changes the label color
+                    font: {
+                      size: 15,
+                      weight: "italic"
+                    }
+                  }
+                }
+              }
+            } 
+          });
+          
+          function updateChart(){
+            radar.data.datasets[0].data = indicatorValues;
+            radar.update();
+          };
+
+          function updateValues(){
+            for (let i = 0; i < progressBars.length; i++){
+              indicatorValues[i] = parseInt(progressBars[i].value); 
+            }
+            updateChart(); 
+          };
+
+          for(let i = 0; i < progressBars.length ; i++){
+            progressBars[i].addEventListener('input',updateValues);
+          };
+
+          //Show info message for progress bars
+        const triggerElement = document.querySelectorAll(".elementBar");
+        const targetElement = document.querySelectorAll(".showElement");
+        triggerElement.forEach((trigger, index) => {
+          trigger.addEventListener("mouseover", () => {
+            targetElement[index].style.display = "block";
+          })
+
+          trigger.addEventListener("mouseout" , () => {
+            targetElement[index].style.display = "none";
+          })
+        })
+
+        
+
+
+        // VALIDATE COLLAB AND DATE
+        let collaboratorSelect = document.getElementById("collaborators");
+        let errorMessage = document.getElementById("errorMessage");
+        let submitButton = document.getElementById("submitButton");
+        let selectDate = document.getElementById("filter_end");
+        let lengthV = document.getElementById("lenghtVal");
+
+        let today = new Date(); 
+        today.setDate(today.getDate());  
+
+        let currentDate = today.toISOString().split('T')[0]; 
+        
+
+         // VALIDATE COLLAB
+        collaboratorSelect.addEventListener("change", function(){
+          if (collaboratorSelect.value != "default"){
+            errorMessage.classList.remove("show");
+          } else {
+            errorMessage.classList.add("show");
+          };
+        });
+
+        submitButton.addEventListener("click", function (event) {
+          event.preventDefault(); 
+
+          if (collaboratorSelect.value === "default"){
+              event.preventDefault();
+              errorMessage.classList.add("show");
+              Swal.fire({
+                title: "Incomplete Form",
+                text: "Please fill out all required fields before submitting.",
+                icon: "error",
+                confirmButtonColor: "#d33",
+                confirmButtonText: "OK"
+              });
+            } else {
+              errorMessage.classList.remove("show");
+              Swal.fire({
+                title: "Are you sure?",
+                text: `Do you want to register this evaluation?`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: `#59A250`,
+                cancelButtonColor: "#7066E0",
+                confirmButtonText: "Yes, update it!"
+              }).then((result) => {
+                  if (result.isConfirmed) { 
+                    try {
+                        document.getElementById("form_method").submit();
+                    } catch (error) { 
+                        console.log(error);
+                        Swal.fire({
+                            title: "Problem",
+                            text: `There was an error saving the evaluation`,
+                            icon: "error",
+                            confirmButtonColor: `#59A250`,
+                            confirmButtonText: "OK",  
+                        });
+                    }
+                  } 
+              })
+            }
+          });
+    }
+
+    
+    const get_info_register = () => {
+      const csrf = document.getElementById('_csrf').value
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML
+
+      fetch(`/follow_ups/${route}`, {
+        method: 'GET',
+      })
+      .then(response => {
+        return response.json()
+      })
+      .then(data => {
+        get_register(data);
+      })
+      .catch(e => console.error("error", e));
+    }
+
+    function get_meeting() {
+      const csrf = document.getElementById('_csrf').value;
+      const selected_option = document.querySelector('.selected');
+      const contentContainer = document.getElementById("content-section");
+      fetch('/follow_ups/meeting')  
+        .then(response => {
+          console.log("Respuesta HTML recibida:", response.status);
+          return response.text();
+        })
+          .then(html => {
+            console.log("HTML recibido, actualizando contenido");
+            contentContainer.innerHTML = html;
+            const repeatingDropdown = document.getElementById("repeating");
+            if (repeatingDropdown) {
+              repeatingDropdown.addEventListener("change", function() {
+                let id = this.value;
+                console.log("Seleccionado:", id);
+                let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
+                
+                blocks.forEach(block => {
+                  let element = document.getElementById(block);
+                  if (element) {
+                    element.style.display = "none";
+                    const input = element.querySelector('input[type="number"]');
+                    if (input) {
+                      input.disabled = true;  
+                    }
+                  }
+                });
+
+                if (id !== "no") {
+                  let selectedBlock = document.getElementById(`${id}Block`);
+                  if (selectedBlock) {
+                    selectedBlock.style.display = "block";
+                    const input = selectedBlock.querySelector('input[type="number"]');
+                    if (input) {
+                      input.disabled = false;
+                    }
+                  } else {
+                    console.error("No se encontró el bloque para:", id);
+                  }
+                }
+              });
+              }
+
+            const meetingForm = document.querySelector("form");
+            if (meetingForm) {
+              meetingForm.addEventListener("submit", function(event) {
+                let formValid = true;
+                // Validate collaborator
+                const collaboratorSelect = document.getElementById("collaborators");
+                const errorMessage = document.getElementById("errorMessage");
+                
+                if (collaboratorSelect && collaboratorSelect.value === "default") {
+                  if (errorMessage) {
+                    errorMessage.classList.add("show");
+                  }
+                  formValid = false;
+                } else {
+                  if (errorMessage) {
+                    errorMessage.classList.remove("show");
+                  }
+                }
+                
+                // Validate date
+                const dateInput = document.querySelector('input[name="fechaAgendada"]');
+                const dateError = document.getElementById("dateError");
+                console.log("dateInput: ", dateInput.value);
+                
+                if (dateInput) {
+                  if (!dateInput.value) {
+                    if (dateError) {
+                      dateError.textContent = "Select a date";
+                      dateError.classList.add("show");
+                    }
+                    formValid = false;
+                  } else {
+                    const today = new Date();
+                    
+                    const todayFormatted = today.toISOString().split('T')[0];
+                    
+                    console.log("today: ", today);
+                    console.log("todatFormatted: ", todayFormatted );
+                    
+                    if (dateInput.value < todayFormatted) {
+                      dateError.classList.add("show");
+                      formValid = false;
+                    } else {
+                      // Date is today or in the future
+                      dateError.classList.remove("show");
+                    }
+                  }
+                }
+                
+                // Validate times
+                const startTimeInput = document.querySelector('input[name="startTime"]');
+                const endTimeInput = document.querySelector('input[name="endTime"]');
+                
+                // Validate start time
+                if (startTimeInput) {
+                  const startTimeError = document.getElementById("startTimeError") || 
+                                      createErrorElement("startTimeError", startTimeInput.parentNode.parentNode);
+                  
+                  if (!startTimeInput.value) {
+                    startTimeError.textContent = "Select start time";
+                    startTimeError.classList.add("show");
+                    formValid = false;
+                  } else {
+                    startTimeError.classList.remove("show");
+                  }
+                }
+                
+                // Validate end time
+                if (endTimeInput) {
+                  const endTimeError = document.getElementById("endTimeError") || 
+                                    createErrorElement("endTimeError", endTimeInput.parentNode.parentNode);
+                  
+                  if (!endTimeInput.value) {
+                    endTimeError.textContent = "Select end time";
+                    endTimeError.classList.add("show");
+                    formValid = false;
+                  } else if (startTimeInput && startTimeInput.value && 
+                            startTimeInput.value >= endTimeInput.value) {
+                    endTimeError.textContent = "End time must be after start time";
+                    endTimeError.classList.add("show");
+                    formValid = false;
+                  } else {  
+                    endTimeError.classList.remove("show");
+                  }
+                }
+                
+                // If form is not valid, prevent submission
+                if (!formValid) {
+                  event.preventDefault();
+                  
+                  // Add a simple error message at the top if not already present
+                  let errorSummary = document.getElementById("error-summary");
+                  if (!errorSummary) {
+                    errorSummary = document.createElement("p");
+                    errorSummary.id = "error-summary";
+                    errorSummary.className = "form-error-message";
+                    errorSummary.textContent = "Please fix the errors highlighted below.";
+                    
+                    // Insert at the beginning of the form
+                    meetingForm.insertBefore(errorSummary, meetingForm.firstChild);
+                  }
+                  
+                  // Scroll to the top of the form to see the error summary
+                  window.scrollTo(0, meetingForm.offsetTop);
+                } else {
+                  event.preventDefault(); 
+
+                  Swal.fire({
+                    title: 'Confirm Meeting',
+                    text: 'Are you sure you want to schedule this meeting?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, schedule it!',
+                    cancelButtonText: 'Cancel',
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                      return fetch(meetingForm.action, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                          'X-CSRF-TOKEN': csrf 
+                        },
+                        body: new URLSearchParams(new FormData(meetingForm)).toString()
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error(response.statusText);
+                        }
+                        return response.json(); 
+                      })
+                      .catch(error => {
+                        Swal.showValidationMessage(
+                          `Request failed: ${error}`
+                        );
+                      });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  if (result.value && result.value.success) {
+                    Toast.fire({
+                        title: 'Success!',
+                        text: result.value.message || 'Meeting scheduled successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                      window.location.href = '/follow_ups?selectedOption=Meetings';
+                    });
+                  } else if (result.value && result.value.error) {
+                    Toast.fire({
+                      title: 'Error!',
+                      text: result.value.message || 'Failed to schedule meeting.',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  } else {
+                    Swal.fire({
+                      title: 'Something went wrong!',
+                      text: 'The server did not provide a clear success or error message.',
+                      icon: 'warning',
+                      confirmButtonText: 'OK'
+                    });
+                  }
+                }
+              });
+                  
+              }
+                
+              });
+            }
+              
+            const googleLogin = document.querySelector('.section-container') !== null;
+              
+            if (googleLogin) {
+                console.log("Usuario autenticado, cargando eventos...");
+                return fetch('/follow_ups/meeting/events');
+              } else {
+                console.log("Usuario no autenticado, no se cargarán eventos");
+                return Promise.resolve(null);
+              }
+          }).then(response => {
+              if (response) {
+                return response.json();
+              } else {
+                return [];
+              }
+            })
+            .then(eventos => {
+              console.log("Eventos recibidos:", eventos);
+              
+              const calendarEl = document.getElementById('calendar');
+              if (calendarEl) {
+                console.log("Inicializando calendario con", eventos.length, "eventos");
+                
+                const calendar = new FullCalendar.Calendar(calendarEl, {
+                  initialView: 'dayGridMonth',
+                  themeSystem: 'bootstrap5', 
+                  height: 'auto',
+                  aspectRatio: 1.6,
+                  headerToolbar: {
+                    left: 'prev',
+                    center: 'title',
+                    right: 'next'
+                  },
+                  events: eventos,
+                  moreLinkText: 'more',
+                  moreLinkClick: 'popover',
+                  dayMaxEvents: 2,
+                  height: 600,
+                  dayHeaderFormat: { weekday: 'short' },
+                  
+                });
+                
+                calendar.render();
+                console.log("Calendario renderizado");
+              } else {
+                console.log("Elemento calendar no encontrado o usuario no autenticado");
+              }
+            })
+            .catch(error => {
+              console.error('Error al cargar vista o eventos:', error);
+              contentContainer.innerHTML = '<p>Error al cargar las reuniones. Por favor, intente de nuevo.</p>';
+            });
+        }
+
+      window.closePopup = function() {
+        const popup = document.getElementById('pop-up');
+        popup.style.display = 'none';
+      }
+
+      function createErrorElement(id, parentElement) {
+        const element = document.createElement("p");
+        element.id = id;
+        element.className = "text-hidden";
+        parentElement.appendChild(element);
+        return element;
+      }
+ 
+    
+
+    document.querySelectorAll(".option").forEach(option => {
+      option.addEventListener("click", (event) => {
+        // Eliminar la clase 'selected' de todos
+        document.querySelectorAll(".option").forEach(el => el.classList.remove("selected"));
+
+        // Agregar la clase 'selected' al botón clickeado
+        option.classList.add("selected");
+
+        // Obtener y mostrar el contenido del botón
+        const buttonText = option.textContent.trim();
+
+        if (option.innerHTML == 'Register'){
+          get_info_register();
+        } else if (option.innerHTML == 'Collaborators'){
+          get_info_FU();
+        } else if(option.innerHTML == 'Meetings') {
+          get_meeting();
+        }
+
+      });
+    });
+</script>

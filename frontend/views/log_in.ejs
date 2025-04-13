@@ -1,29 +1,103 @@
 <%- include('../views/includes/_header.ejs') %>
-<form action="/log_in" method="POST">
-    <div class="field">
-        <p class="control has-icons-left has-icons-right">
-          <input class="input" type="email" placeholder="Email" name="username">
-          <span class="icon is-small is-left">
-            <i class="fas fa-envelope"></i>
-          </span>
-          <span class="icon is-small is-right">
-            <i class="fas fa-check"></i>
-          </span>
-        </p>
+<%- include('../components/log_in.ejs') %>
+<link rel="stylesheet" href="/css/login.css" />
+<div class="hero is-fullheight is-flex is-flex-col is-justify-content-center">
+  <div class="">
+    <div class="container">
+      <div class="columns is-centered">
+        <div
+          class="column is-5-tablet is-4-desktop is-3-widescreen is-flex is-justify-content-center is-align-items-center is-flex-direction-column"
+        >
+          <img class="image column" src="/img/nebula.png" />
+          <form action="/log_in" method="POST" class="">
+            <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+            <div class="field">
+              <label for="" class="label">Email</label>
+              <div class="control has-icons-left">
+                <% if (error == "user_not_found") {%>
+                <input
+                  type="email"
+                  placeholder="e.g. bobsmith@gmail.com"
+                  class="input is-danger"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <span class="icon is-small is-left is-error">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <p class="help is-danger">User not found</p>
+                <% } else { %>
+                <input
+                  type="email"
+                  placeholder="e.g. bobsmith@gmail.com"
+                  class="input"
+                  id="email"
+                  name="email"
+                  required
+                />
+                <span class="icon is-small is-left is-error">
+                  <i class="bi bi-envelope"></i>
+                </span>
+                <%}%>
+              </div>
+            </div>
+            <div class="field">
+              <label for="" class="label">Password</label>
+              <% if (error == "wrong_password") {%>
+              <div class="control has-icons-left">
+                <input
+                  type="password"
+                  placeholder="*******"
+                  class="input is-danger"
+                  id="password"
+                  name="password"
+                  required
+                />
+                <span class="icon is-small is-left">
+                  <i class="bi bi-shield-lock"></i>
+                </span>
+                <p class="help is-danger">Password incorrect</p>
+              </div>
+              <%} else {%>
+              <div class="control has-icons-left">
+                <input
+                  type="password"
+                  placeholder="*******"
+                  class="input"
+                  id="password"
+                  name="password"
+                  required
+                />
+                <span class="icon is-small is-left">
+                  <i class="bi bi-shield-lock"></i>
+                </span>
+              </div>
+              <%}%>
+            </div>
+            <hr />
+            <div class="control has-icons-left">
+              <a class="button is-white is-fullwidth" href="/log_in/auth/google"
+                >Log in with Google</a
+              >
+              <span class="icon is-small is-left">
+                <img src="/icons/google.webp" class="image is-24x24" />
+              </span>
+            </div>
+
+            <div class="field is-flex is-justify-content-center">
+              <button type="submit" class="button is-half nebula-login">
+                Log In
+              </button>
+            </div>
+          </form>
+
+          <div class="field is-flex is-justify-content-center" style="margin-top: 20px;">
+            <a href="/log_in/forgot_password" class="is-size-7 has-text-white is-underlined">Forgot your password?</a>
+          </div>
+
+        </div>
       </div>
-      <div class="field">
-        <p class="control has-icons-left">
-          <input class="input" type="password" placeholder="Password" name="password">
-          <span class="icon is-small is-left">
-            <i class="fas fa-lock"></i>
-          </span>
-        </p>
-      </div>
-      <div class="field">
-        <p class="control">
-          <button class="button is-success">
-            Login
-          </button>
-        </p>
-      </div>
-</form>
+    </div>
+  </div>
+</div>

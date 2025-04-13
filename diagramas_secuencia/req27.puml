@@ -1,0 +1,39 @@
+@startuml REQ_27 SuperAdmin registra aprobación de falta
+autonumber
+actor SuperAdmin as S
+boundary general.routes.js as gr
+boundary requests.routes.js as SRoute
+control requests.controller.js as SController
+entity requests.model.js as SModel
+database Nebula as db
+
+' ---- APROBAR SOLICITUD ----
+activate S
+S -->> gr : fetch('requests' )
+
+activate gr
+gr -> SRoute : (' /Requests/update ')
+deactivate gr 
+
+
+activate SRoute
+SRoute -> SController : update_estado()
+deactivate SRoute
+
+activate SController 
+SController ->> SModel : save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador)
+
+activate SModel
+SModel ->> db : `UPDATE solicitudes_falta SET estado = ?, colabAprobador = ? \nWHERE id_solicitud_falta = ?`,[estado, colabAprobador, id_solicitud_falta]
+activate db
+db -->> SModel : estado
+deactivate db
+
+SModel -->> SController : estado
+deactivate SModel
+
+SController -->> S : res json
+deactivate SController
+
+deactivate S
+@enduml

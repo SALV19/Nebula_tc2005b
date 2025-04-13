@@ -1,0 +1,62 @@
+<%- include('../components/nav_bar.ejs') %> 
+<link rel="stylesheet" href="/css/table.css">
+<link rel="stylesheet" href="/css/collabs.css">
+<main class="hero column">
+    <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+    <section class="hero-body ml-6">
+        <div class="container is-widescreen">
+        <div class="columns has-text-centered overhead is-vcentered offset">
+            <p class="option <%= selectedOption === 'active' ? 'selected' : ''%>">Active</p>
+            <p class="option <%= selectedOption === 'inactive' ? 'selected' : ''%>">Inactive</p>
+            <% if (permissions?.includes('view_faults')) {%>
+                <p class="option = selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
+                <div class="column is-narrow is-offset-9">
+            <% } else {%>
+            <div class="column is-narrow is-offset-8">
+            <% } %>
+            <div class="is-flex " style="height: 25px;">
+                <i class="bi bi-plus-lg ml-4 subtitle is-clickable" onclick="addCollab()"></i>
+                <div class="search-bar ml-2">
+                    <input type="text" class="search-input is-size-6" onkeydown="searchParam(this.value)">
+                    <i class="bi bi-search mr-2 is-clickable" style="margin-top: -10px;"></i>
+                </div>
+            </div>
+            <%- include('includes/_addCollabs_form.ejs') %>
+            </div>
+        </div>
+        </div>
+        <hr/>
+        <%- include ('../components/collabs/consult_collabs_table.ejs')%>
+        <div class="is-flex is-justify-content-flex-end	my_buttons">
+            <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
+            <input type="number" value="1" class="pagination" id="pagination"/>
+            <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
+        </div>
+        <%- include('../components/collabs/update_collab.ejs') %>
+        <%- include ('../components/collabs/view_collabs_logic.ejs') %>
+        <%- include ('../components/collabs/add_collabs_logic.ejs') %>
+        <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
+        <%- include('./includes/_modifyCollabs_form.ejs') %>
+        <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
+    </section>
+</main>
+
+<%- include('includes/_footer.ejs') %>
+
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<script>
+    const queryString = window.location.search;
+    const urlParams = new URLSearchParams(queryString);
+    const error = urlParams.get('error');
+    const message = urlParams.get('message');
+    console.log(message)
+
+    if (error) {
+        Swal.fire({
+        icon: "error",
+        title: "Oops...",
+        html: `${message ? 'There is already a user with this email' : 'Something went wrong!<br>Try again later'}`,
+        });
+    }
+</script>

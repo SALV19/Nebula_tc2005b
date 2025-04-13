@@ -1,0 +1,86 @@
+@startuml REQ-12
+autonumber
+actor collab
+boundary general.route.js as GeneralRoutes
+boundary followUp.route.js as followUpsRoutes
+boundary follow_ups.ejs as followUpsViews
+control follow_ups.controller.js as followUpsController
+entity Periodic_eval.model as evalModel
+entity Indicators.model as IndiModel
+entity Metric_indicators.model as IndiMetricModel
+entity Questions_answers.model as AnsModel
+database Nebula as nebula
+
+activate collab
+collab -> GeneralRoutes: GET/follow_ups
+deactivate collab
+activate GeneralRoutes
+
+GeneralRoutes -> followUpsRoutes: followUp_routes
+deactivate GeneralRoutes
+activate followUpsRoutes
+
+followUpsRoutes -> followUpsController: get_followUps_info(request, response)
+deactivate followUpsRoutes
+activate followUpsController
+
+followUpsController -> followUpsViews: render(followUps.ejs)
+deactivate followUpsController
+activate followUpsViews
+
+followUpsViews->collab: HTML
+deactivate followUpsViews
+activate collab
+
+collab ->> GeneralRoutes: fetch(/follow_ups/collaborators)
+activate GeneralRoutes
+
+GeneralRoutes -> followUpsRoutes: followUp_routes
+deactivate GeneralRoutes
+activate followUpsRoutes
+
+followUpsRoutes -> followUpsController: get_followUps_info(request, response)
+deactivate followUpsRoutes
+activate followUpsController
+
+followUpsController ->> evalModel: fetchAllInfo([idColaborador]), fetchAllQuestions()
+activate evalModel
+evalModel ->> nebula: execute(SELECT id_evaluacion, fechaAgendada FROM evaluaciones_de_seguimiento \n WHERE id_colaborador = ? ORDER BY fechaAgendada DESC`,idColaborador)
+activate nebula
+nebula -->> evalModel: id_evaluacion, fechaAgendada, pregunta
+deactivate nebula
+evalModel -->> followUpsController: id_evaluacion, fechaAgendada, pregunta
+deactivate evalModel
+
+followUpsController ->> IndiModel: fetchAllindicators()
+activate IndiModel
+IndiModel ->> nebula: execute(SELECT * FROM indicador)
+activate nebula
+nebula -->> IndiModel: indicadores
+deactivate nebula
+IndiModel -->> followUpsController: indicadores
+deactivate IndiModel
+
+followUpsController ->> IndiMetricModel: fetchAll(id_evaluacion)
+activate IndiMetricModel
+IndiMetricModel ->> nebula: execute(SELECT id_evaluacion, id_indicador, valor_metrica \n FROM metrica_indicadores WHERE id_evaluacion \n IN (${placeholders})`, id_evaluacion)
+activate nebula
+nebula -->> IndiMetricModel: metricas
+deactivate nebula
+IndiMetricModel -->> followUpsController: metricas
+deactivate IndiMetricModel
+
+followUpsController ->> AnsModel: fetchAnswers(id_pregunta, id_evaluacion)
+activate AnsModel
+AnsModel ->> nebula: execute(SELECT id_pregunta, id_evaluacion, respuesta \n FROM respuestas_pregunta \n WHERE id_pregunta IN (${placeholdersPreguntas}) \n AND id_evaluacion IN (${placeholdersEvaluaciones}))
+activate nebula
+nebula -->> AnsModel: respuestas
+deactivate nebula
+AnsModel -->> followUpsController: respuestas
+deactivate AnsModel
+
+followUpsController -->> collab: response.json({selectedOption: 'Collaborators', \n fechasAgendadas, pregunta, \n respuestas, indicadores, metricas}')
+collab -> collab: TableFollowUps(data)
+deactivate followUpsController
+
+@enduml   

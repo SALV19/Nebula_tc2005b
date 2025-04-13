@@ -1,0 +1,105 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary log_in.routes as lgr
+boundary log_in.ejs as lge
+boundary home_page.ejs as h
+boundary error_401.ejs as 401
+control log_in.controller as lgc
+control other.controller as oc
+control home.controller as hc
+control contVac as cV
+entity user.model as um
+database Nebula as db
+boundary passport
+actor Google
+
+activate u
+u -> lgr : GET /log_in
+deactivate u
+
+activate lgr
+lgr -> lgc : get_login()
+deactivate lgr
+activate lgc
+lgc -> lge : render("login")
+deactivate lgc
+activate lge
+lge -> u : HTML login.ejs
+deactivate lge 
+
+activate u
+u -> lgr : GET /auth/google 
+deactivate u
+
+activate lgr
+lgr -> passport : passport.authenticate('google', \n{scope: ['email', 'profile']})
+deactivate lgr
+activate passport
+passport -> Google : Google auth
+deactivate passport
+activate Google
+Google -> u : Google auth interface
+deactivate Google
+activate u
+u -> passport : log_in info
+deactivate u
+activate passport
+passport ->> Google : passport.authenticate()
+deactivate passport
+activate Google
+Google -> lgr : /google/callback
+deactivate Google
+activate lgr
+lgr -> lgr : passport.authenticate('google', \n{successRedirect: '/success', failureRedirect: '/auth/failure'})
+alt "/success"
+  lgr -> oc : get_permissions()
+  deactivate lgr
+  activate oc
+  oc ->> um : User.getPermissions()
+  activate um
+  um ->> db : getPermissions()
+  activate db
+  db -->> um : [permissions]
+  deactivate db
+  um ->> oc : [permissions]
+  deactivate um
+  alt "registered"
+    oc -> oc : request.session.permission = [permissions]
+  else "not registered"
+    oc -> oc : request.session.permission = []
+  end
+  oc -> lgr : response.redirect('/')
+  deactivate oc
+  activate lgr 
+  lgr -> hc : get_home()
+  deactivate lgr
+  activate hc
+  hc ->> cV : contVac()
+  activate cV
+  cV -->> hc : {diasDisponibles,diasTotales, error}
+  deactivate cV
+  alt {diasDisponibles, diasTotales}
+    hc -> h : response.render('home_page.ejs') {diasDisponibles, diasTotales}
+    activate h
+  else error
+    hc -> h : response.render('home_page.ejs') {error}
+    h -> h : <%- include('../components/user_not_in_system.ejs') %>
+  deactivate hc
+  
+  h -> u : HTML
+  deactivate h
+  activate u
+else "/auth/failure"
+  activate lgr
+  lgr -> lgc : auth_fail()
+  deactivate lgr
+  activate lgc
+  lgc -> 401 : responde.render()
+  deactivate lgc
+  activate 401
+  401 -> u : HTML
+  deactivate 401
+end
+
+@enduml
