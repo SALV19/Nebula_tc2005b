@@ -123,13 +123,15 @@ exports.add_event = (request, response) => {
   endDateObject.setDate(endDateObject.getDate() + 1);
   const endDateAdjusted = endDateObject.toISOString().split('T')[0];
 
-  Collab.fetchEmails().then(data => {
+  Collab.fetchEmails(request.session.email).then(data => {
   const [rowsE, fieldDataE] = data;
     const evento = new Event(startDate, endDate, motive, type);
     console.log(rowsE);
     evento.save();
+    
     return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
   }).catch(error => {
     console.error(error);
   })
+  response.redirect('/');
 }
