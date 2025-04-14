@@ -1,40 +1,33 @@
 <link rel="stylesheet" href="/css/faults.css">
 <script>
-    function createEmpty() {
-      const table = document.querySelector('#requests_table')
-      table.innerHTML = `<tr>
-                          <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
-                        </tr>`
-    }
-
-     function createTableFaults(data) {
+    function createTableFaults(data) {
       console.log("longitud:",data.faults.length );
       console.log("Datos entrantes", data); 
       const table = document.querySelector('#requests_table')
       let table_content = `<thead>
                             <tr >
+                              <th style="background-color: #242424">  </th>
                               <th >Name</th>
                               <th >Position</th>
                               <th >Department</th>
                               <th >Company</th>
                               <th> Faults </th>
-                              <th style="background-color: #242424">  </th>
                             </tr>
                           </thead>
     <tbody >`
       // Información por cada rengrlón de la tablas
       
       if (data.faults.length <= 0){
-        table_content += `<p> No faults commited </p>`
+        table.innerHTML += `<p style="background-color:#737373; text-align:center; "> No faults commited </p>`
       } else {
           data.faults.forEach((d, idx) => {
-            table_content += `<tr id='collab' class='icon-close' key='${idx}'>`;
+            table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
+            table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
             table_content += `<td>${d.nombre} ${d.apellidos}</td>`
             table_content += `<td>${d.puesto}</td>`
             table_content += `<td>${d.nombre_departamento} </td>`
             table_content += `<td>${d.nombre_empresa} </td>`
             table_content += `<td>${d.total_faltas_colaborador} </td>`
-            table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
             table_content += '</tr>';
             // Contenido desplegable
             table_content += `<tr class="additional-row " id="additional-row-${idx}" style="display: none; ">
@@ -74,17 +67,17 @@
       table.innerHTML = table_content
       // <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
   
-      // Añade función para expandir el contenido extra
-      const entries = document.querySelectorAll('#collab')
+      const entries = document.querySelectorAll('[id^="collab-"]');
       entries.forEach((node, idx) => {
-        node.addEventListener('click', (v) => {
-          const additionalRow = document.getElementById(`additional-row-${idx}`)
-          if (additionalRow.style.display === "none") {
-            additionalRow.style.display = "table-row";
-          } else {
-            additionalRow.style.display = "none";
-          }
-        })
+        node.addEventListener('click', () => {
+          const additionalRow = document.getElementById(`additional-row-${idx}`);
+          const caret = document.getElementById(`icon-${idx}`);
+          const isHidden = additionalRow.style.display === "none";
+
+          additionalRow.style.display = isHidden ? "table-row" : "none";
+          caret.classList.toggle('bi-caret-down-fill', !isHidden);
+          caret.classList.toggle('bi-caret-right-fill', isHidden);
+        });
       })
   
     }
@@ -116,5 +109,6 @@
       })
       .catch(e => console.error(e))
     }
+
   
 </script>

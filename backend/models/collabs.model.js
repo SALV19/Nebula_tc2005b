@@ -410,7 +410,7 @@ module.exports = class Colaborador {
       )
   }
 
-  static async fectchAllFaults(){
+  static async fetchAllFaults(){
     const [faults] = await db.execute(`
       SELECT * from fa
       `)
@@ -435,8 +435,9 @@ module.exports = class Colaborador {
         SELECT c.id_colaborador
         FROM colaborador c
         WHERE c.nombre LIKE ?
+        OR c.apellidos LIKE ?
         ORDER BY c.nombre ASC
-        LIMIT 10 OFFSET ?`, [`%${filter}%`, offset]);
+        LIMIT 10 OFFSET ?`, [`%${filter}%`, `%${filter}%`, offset]);
     
       const map = ids.map(row => row.id_colaborador);
       // console.log("MAPAAA: ", map);
@@ -464,6 +465,11 @@ module.exports = class Colaborador {
         LEFT JOIN empresa em ON de.id_empresa = em.id_empresa
         INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
       WHERE c.id_colaborador IN (${placeholders})
+      AND em.id_empresa = (
+        SELECT MIN(de2.id_empresa)
+        FROM departamento_empresa de2
+        WHERE de2.id_departamento = d.id_departamento
+      )
       GROUP BY 
         c.id_colaborador,
         c.nombre,

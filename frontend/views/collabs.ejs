@@ -11,20 +11,20 @@
             <p class="option <%= selectedOption === 'inactive' ? 'selected' : '' %>">Inactive</p>
             <% if (permissions?.includes('view_faults')) { %>
                 <p class="option <%= selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
-                <div class="column is-narrow is-offset-9">
+                <div class="column is-narrow is-offset-7">
               <% } else { %>
                 <div class="column is-narrow is-offset-8">
-              <% } %>
-            <div class="is-flex " style="height: 25px;">
-                <i class="bi bi-plus-lg ml-4 subtitle is-clickable" onclick="addCollab()"></i>
-                <div class="search-bar ml-2">
-                    <input type="text" class="search-input is-size-6" onkeydown="searchParam(this.value)">
-                    <i class="bi bi-search mr-2 is-clickable" style="margin-top: -10px;"></i>
+                    <% } %>
+                    <div class="is-flex " style="height: 25px;">
+                        <i class="bi bi-plus-lg ml-4 subtitle is-clickable" onclick="addCollab()"></i>
+                        <div class="search-bar ml-2">
+                            <input type="text" class="search-input is-size-6" onkeydown="searchParam(this.value)">
+                            <i class="bi bi-search mr-2 is-clickable" style="margin-top:-10px;"></i>
+                        </div>
+                    </div>
+            <%- include('includes/_addCollabs_form.ejs') %>
                 </div>
             </div>
-            <%- include('includes/_addCollabs_form.ejs') %>
-            </div>
-        </div>
         </div>
         <hr/>
         <%- include ('../components/collabs/consult_collabs_table.ejs')%>

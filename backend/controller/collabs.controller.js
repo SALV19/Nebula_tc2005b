@@ -327,7 +327,7 @@ exports.get_faults = async (request, response) => {
   const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
 
   // Paso 3: obtiene TODAS las faltas y las asigna
-  const faults = await Colaborador.fectchAllFaults();
+  const faults = await Colaborador.fetchAllFaults();
 
   const map = {};
   rows.forEach(c => {
