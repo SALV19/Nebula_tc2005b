@@ -1,34 +1,35 @@
-@startuml Req_44
+@startuml Req_44_Download
+title Requisito 44 - Descargar archivo de falta administrativa desde Google Drive
 autonumber
 
 actor collab
 boundary collabs.route.js as collabRoute
-boundary collabs.ejs as collabsPage
 control collabs.controller.js as collabsController
 entity collab.model as collabModel
-entity fa.model as faModel
 database Nebula as nebula
-actor Google 
+collections "Google Drive API" as Google
 
-activate collab 
-collab ->> collabRoute : GET/view_collabs/downloadFA
+activate collab
+collab ->> collabRoute : GET/view_collabs/downloadFA/:id_colab
 deactivate collab
 
-activate collabRoute 
-collabRoute ->> collabsController : downloadFA(request)
+activate collabRoute
+collabRoute ->> collabsController : downloadFA(id_colab)
 deactivate collabRoute
 
 activate collabsController
-collabsController ->> Google : 
+collabsController ->> collabModel : getDriveLinkById(id_colab)
 
-activate Google
-Google -->> collabsController : 
+activate collabModel
+collabModel ->> nebula : SELECT file_url FROM faltas WHERE id_colaborador = ?
+activate nebula
+nebula -->> collabModel : file_url
+deactivate nebula
 
-deactivate Google
+collabModel -->> collabsController : return file_url
+deactivate collabModel
+collabsController ->> collab : redirect to file_url (webContentLink)
 
-collabsController -->> collab
-deactivate collabsController 
+deactivate collabsController
 activate collab
-
-
-@enduml   
+@enduml
