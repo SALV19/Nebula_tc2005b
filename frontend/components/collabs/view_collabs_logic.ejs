@@ -127,6 +127,7 @@
     const prev_button = document.querySelector("#prev-page");
     const next_button = document.querySelector("#next-page");
     const pagination_value = document.querySelector("#pagination");
+    
 
     // Cambiar de página / ver los siguientes 10 registros
     prev_button.addEventListener('click', () => {
@@ -142,31 +143,25 @@
         pagination_value.dispatchEvent(new Event('change'));
     })
     pagination_value.addEventListener('change', (v) => {
-        get_info(pagination_value.value-1)
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML;
+
+      if (route == 'Faults'){
+        get_faults_info(pagination_value.value-1);
+        return
+      }
+      get_info(pagination_value.value-1);
+      
     })
 
-    const prev_buttn = document.querySelector("#prev-page");
-    const next_buttn = document.querySelector("#next-page");
-    const pagination_val = document.querySelector("#pagination");
-
-    // Cambiar de página / ver los siguientes 10 registros
-    prev_buttn.addEventListener('click', () => {
-        pagination_val.value = 
-        pagination_val.value - 1 <= 1 ? 1 : pagination_val.value - 1
-        
-        pagination_val.dispatchEvent(new Event('change'));
-    })
-
-    next_buttn.addEventListener('click', () => {
-        pagination_val.value = Number(pagination_val.value) + 1
-        
-        pagination_val.dispatchEvent(new Event('change'));
-    })
-    pagination_val.addEventListener('change', (v) => {
-        get_faults_info(pagination_val.value-1)
-    })
   
   function searchParam(content) {
+    const selected_option = document.querySelector('.selected')
+    const route = selected_option.innerHTML;
+    if (route == 'Faults'){
+      get_faults_info(0, content);
+      return;
+    }
     get_info(0, content)
   }
   

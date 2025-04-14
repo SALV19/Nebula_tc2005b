@@ -316,41 +316,43 @@ exports.update_collab = async (request, response) => {
 };
 
 exports.get_faults = async (request, response) => {
-  // console.log("Offset: ", request.body.offset);
   const offset = request.body.offset * 10;
+  
+  const filter = request.body.filter;
+  console.log("Filtro", filter);
+  // Paso 1: obtiene los IDs con paginación
+  const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
 
-  const rows = await Colaborador.fetchFaults(offset);
-  console.log("Faults: ", rows);
+  // Paso 2: obtiene los datos de esos colaboradores
+  const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
 
-  const collabMap = {};
+  // Paso 3: obtiene TODAS las faltas y las asigna
+  const faults = await Colaborador.fectchAllFaults();
 
-  rows.forEach(row => {
-    const id = row.id_colaborador;
-    if (!collabMap[id]){
-      collabMap[id] = {
-        id_colaborador : row.id_colaborador,
-        nombre: row.nombre,
-        apellidos : row.apellidos,
-        puesto: row.puesto,
-        nombre_departamento: row.nombre_departamento,
-        nombre_empresa: row.nombre_empresa,
-        total_faltas : row.total_faltas_colaborador,
-        faltas: [],
-      }
-    }
-    collabMap[id].faltas.push({
-      id_fa: row.id_fa,
-      motivo: row.motivo,
-      fecha: row.fecha,
-    });
+  const map = {};
+  rows.forEach(c => {
+    map[c.id_colaborador] = {
+      ...c,
+      faltas: [],
+    };
   });
 
-  const collabs = Object.values(collabMap);
-  console.log('faltas mapa:', collabs);
+  faults.forEach(f => {
+    if (map[f.id_colaborador]) {
+      map[f.id_colaborador].faltas.push({
+        id_fa: f.id_fa,
+        motivo: f.motivo,
+        fecha: f.fecha
+      });
+    }
+  });
+
+  const resultado = Object.values(map);
 
   response.json({
     selectedOption: 'Faults',
     permissions: request.session.permissions,
-    faults : collabs,
+    faults : resultado,
   });
 }
+

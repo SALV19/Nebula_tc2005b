@@ -19,3 +19,7 @@
 .has-background .column {
     background-color: #454545; 
 }
+h1{
+    font-weight: bold;
+    padding-left: 1rem;
+}

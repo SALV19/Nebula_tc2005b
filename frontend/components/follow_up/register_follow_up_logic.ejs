@@ -56,7 +56,7 @@
                   <span>
                     ${data.questions[i].pregunta}
                     </span>
-                      <i class="bi bi-caret-right-fill" id="icon-${i}"> </i>
+                      <i class="bi bi-caret-down-fill" id="icon-${i}"> </i>
                     </p>
               
                   <!-- Campo oculto para enviar el ID de la pregunta -->
@@ -73,7 +73,7 @@
                   <span>
                       ${data.questions[i].pregunta}
                   </span>
-                  <i class="bi bi-caret-down-fill" id="icon-${i}""></i>
+                  <i class="bi bi-caret-right-fill" id="icon-${i}""></i>
                   </p>
 
                   <!-- Campo oculto para enviar el ID  la pregunta -->
@@ -205,21 +205,29 @@
               }]
             },
             options: {
-              plugins: {
+              backgroundColor: '#454545',
+              plugins: {   
                 legend: {
                   display: false // Hide the legend
                 }
               },
               scales: {
                 r: {
-                  backgroundColor: "#FFFF",
-                  hoverBackgroundColor: "#767574",
-                  angleLines: { display: true },
+                  backgroundColor: "#454545",
+                  hoverBackgroundColor: "#FFFFF",
+                  angleLines: { 
+                    display: false,
+                 },
+                 grid: {
+                    color: "#EEEEEE" 
+                  },
                   suggestedMin: 0,
                   suggestedMax: 5,
                   ticks: {
-                    stepSize: 1,  // Ensures steps of 1
-                    beginAtZero: true
+                    color: '#EEEEEE',
+                    backdropColor: '#454545',
+                    stepSize: 1,  
+                    beginAtZero: true,
                   },
                   pointLabels: {  
                     color: "#FFFF",  // Changes the label color

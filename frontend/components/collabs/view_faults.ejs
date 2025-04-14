@@ -1,19 +1,15 @@
 <link rel="stylesheet" href="/css/faults.css">
 <script>
+    function createEmpty() {
+      const table = document.querySelector('#requests_table')
+      table.innerHTML = `<tr>
+                          <div class="is-fullwidth is-flex is-justify-content-center">No Data</div>
+                        </tr>`
+    }
+
      function createTableFaults(data) {
       console.log("longitud:",data.faults.length );
-      console.log("Datos entrantes", data);
-      for (let i = 0; i < data.faults.length; i++) {
-            const colaborador = data.faults[i];
-            
-            // Ahora iteramos sobre las faltas de este colaborador
-            for (let j = 0; j < colaborador.faltas.length; j++) {
-                const falta = colaborador.faltas[j];
-                
-                console.log("Motivo de la falta:", falta.motivo);
-                console.log("Fecha de la falta:", falta.fecha);
-            }
-        }  
+      console.log("Datos entrantes", data); 
       const table = document.querySelector('#requests_table')
       let table_content = `<thead>
                             <tr >
@@ -37,7 +33,7 @@
             table_content += `<td>${d.puesto}</td>`
             table_content += `<td>${d.nombre_departamento} </td>`
             table_content += `<td>${d.nombre_empresa} </td>`
-            table_content += `<td>${d.total_faltas} </td>`
+            table_content += `<td>${d.total_faltas_colaborador} </td>`
             table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
             table_content += '</tr>';
             // Contenido desplegable
@@ -45,22 +41,21 @@
                                 <td colspan='6'>
                                     <div class="has-background columns" style="padding: 1rem;">
                                         <div class="column">
-                                            <p>Date</p>
+                                            <h1>Date</h1>
                                             <hr class="hr-table"/>`
                                            
-                                            if (d.faltas && d.faltas.length > 0) {
-                                              d.faltas.forEach((falta) => {
-                                                const date = new Date(falta.fecha);
-                                                table_content += `<p class="container-text">${date.toLocaleDateString()}</p>`;
-                                              });
-                                            } else {
-                                              table_content += `<p class="container-text">No hay registros de faltas</p>`;
-                                            }                                    
+            if (d.faltas && d.faltas.length > 0) {
+              d.faltas.forEach((falta) => {
+                const date = new Date(falta.fecha);
+                table_content += `<p class="container-text">${date.toLocaleDateString()}</p>`;
+              });
+            } else {
+              table_content += `<p class="container-text">No hay registros de faltas</p>`;
+            }                                    
 
-                      table_content += `</div>
-
-                        <div class="column is-four-fifths">
-                            <p>Motive</p>
+            table_content += `</div>
+                      <div class="column is-four-fifths">
+                            <h1>Motive</h1>
                             <hr class="hr-table"/>`
                             if (d.faltas && d.faltas.length > 0) {
                               d.faltas.forEach((falta) => {
@@ -73,7 +68,6 @@
                     </div>
                 </td>
               </tr>`;
-                              
           })
       }
       table_content += '</tbody>'
@@ -95,7 +89,7 @@
   
     }
     // Consulta a db para la información de solicitudes
-    const get_faults_info = (pagination=0) => {
+    const get_faults_info = (pagination=0, filter=null) => {
       const csrf = document.getElementById('_csrf').value
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML;
@@ -108,38 +102,19 @@
           },
         body: JSON.stringify({
           offset: pagination,
+          filter: filter,
         }),
       })
       .then(response => response.json())
       .then(data => {
-        createTableFaults(data)
+        if (data.faults.length === 0 && pagination > 0) {
+          // Si no hay datos y no estamos en la primera página, retrocede una página
+          get_faults_info(pagination - 1);
+        } else {
+          createTableFaults(data);
+        }
       })
       .catch(e => console.error(e))
     }
-
-    const prev_butt = document.querySelector("#prev-page");
-    const next_butt = document.querySelector("#next-page");
-    const pagination_v = document.querySelector("#pagination");
-
-    // Cambiar de página / ver los siguientes 10 registros
-    prev_butt.addEventListener('click', () => {
-      console.log("Entro al boton antes");
-        pagination_v.value = 
-        pagination_v.value - 1 <= 1 ? 1 : pagination_v.value - 1
-        
-        pagination_v.dispatchEvent(new Event('change'));
-    })
-
-    next_butt.addEventListener('click', () => {
-      console.log("Entro al boton después");
-
-        pagination_v.value = Number(pagination_v.value) + 1
-        
-        pagination_v.dispatchEvent(new Event('change'));
-    })
-    pagination_v.addEventListener('change', (v) => {
-        get_info(pagination_v.value-1)
-    })
- 
   
 </script>

@@ -410,42 +410,73 @@ module.exports = class Colaborador {
       )
   }
 
-  static async fetchFaults(offset){
-    // console.log("Offsets: ", offset);
-    const sql = await db.execute(`SELECT  
-      f.id_fa,  
-      f.id_colaborador,  
-      f.motivo, 
-      f.fecha,  
-      c.nombre, 
-      c.apellidos, 
-      c.puesto, 
-      d.nombre_departamento,  
-      em.nombre_empresa,
-      (
-        SELECT COUNT(*) 
-        FROM fa f2 
-        WHERE f2.id_colaborador = f.id_colaborador
-      ) AS total_faltas_colaborador
-    FROM 
-      fa f
-      LEFT JOIN colaborador c ON f.id_colaborador = c.id_colaborador
-      LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
-      LEFT JOIN departamento d ON e.id_departamento = d.id_departamento
-      LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
-      LEFT JOIN empresa em ON de.id_empresa = em.id_empresa
-    WHERE 
-      em.id_empresa = (
-        SELECT MIN(de2.id_empresa)
-        FROM departamento_empresa de2
-        WHERE de2.id_departamento = d.id_departamento
-      )
-    ORDER BY c.nombre ASC
-    LIMIT 8 OFFSET ?`, [offset]);
-
-
-    return sql[0];
+  static async fectchAllFaults(){
+    const [faults] = await db.execute(`
+      SELECT * from fa
+      `)
+    
+      // console.log("faltas : ", faults);
+      return faults;
   }
+
+  static async fetchPaginatedCollabIds(offset, filter=null) {
+    if(!filter){
+      const [ids] = await db.execute(`
+        SELECT c.id_colaborador
+        FROM colaborador c
+        ORDER BY c.nombre ASC
+        LIMIT 10 OFFSET ?`, [offset]);
+    
+      const map = ids.map(row => row.id_colaborador);
+      // console.log("MAPAAA: ", map);
+      return map;
+    } else {
+      const [ids] = await db.execute(`
+        SELECT c.id_colaborador
+        FROM colaborador c
+        WHERE c.nombre LIKE ?
+        ORDER BY c.nombre ASC
+        LIMIT 10 OFFSET ?`, [`%${filter}%`, offset]);
+    
+      const map = ids.map(row => row.id_colaborador);
+      // console.log("MAPAAA: ", map);
+      return map;
+    }
+  }
+
+  static async fetchFaultsCollabsByIds(ids) {
+    if (ids.length === 0) return [];
+
+    const placeholders = ids.map(() => '?').join(',');
+    const [rows] = await db.execute(`
+      SELECT 
+        c.id_colaborador,
+        c.nombre,
+        c.apellidos,
+        c.puesto,
+        d.nombre_departamento,
+        em.nombre_empresa,
+        COUNT(f.id_fa) AS total_faltas_colaborador
+      FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN departamento d ON e.id_departamento = d.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON de.id_empresa = em.id_empresa
+        INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
+      WHERE c.id_colaborador IN (${placeholders})
+      GROUP BY 
+        c.id_colaborador,
+        c.nombre,
+        c.apellidos,
+        c.puesto,
+        d.nombre_departamento,
+        em.nombre_empresa
+      ORDER BY c.nombre ASC
+    `, ids);
+      console.log("Row: ", rows);
+    return rows;
+  }
+
   
 
 };
