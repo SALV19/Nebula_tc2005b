@@ -1,6 +1,8 @@
 <script>
   // Crea el contenido de la tabla para solicitudes
   function createTableCollabs(data) {
+    console.log("Datoooos: ", data);
+    console.log("longitud:",data.collabs.length );
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
                           <tr >
@@ -85,7 +87,7 @@
   const get_info = (pagination=0, filter=null) => {
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
-    const route = selected_option.innerHTML
+    const route = selected_option.innerHTML;
     fetch(`/view_collabs/${route}`, {
       method: 'POST',
       headers: {
@@ -103,16 +105,21 @@
     })
     .catch(e => console.error(e))
   }
+ 
 
-  // Permite cambiar entre pestañas
+      // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
+  console.log('options', options);
     for (let i=0; i<options.length; i++) {
         options[i].addEventListener('click', (b) => {
         options.forEach((element) => {
             element.classList.remove('selected')
         })
           options[i].classList.add('selected')
-
+          if (options[i].innerHTML == 'Faults') {
+                get_faults_info()
+                return;
+          }
           get_info()  
         })
     }
@@ -137,12 +144,34 @@
     pagination_value.addEventListener('change', (v) => {
         get_info(pagination_value.value-1)
     })
+
+    const prev_buttn = document.querySelector("#prev-page");
+    const next_buttn = document.querySelector("#next-page");
+    const pagination_val = document.querySelector("#pagination");
+
+    // Cambiar de página / ver los siguientes 10 registros
+    prev_buttn.addEventListener('click', () => {
+        pagination_val.value = 
+        pagination_val.value - 1 <= 1 ? 1 : pagination_val.value - 1
+        
+        pagination_val.dispatchEvent(new Event('change'));
+    })
+
+    next_buttn.addEventListener('click', () => {
+        pagination_val.value = Number(pagination_val.value) + 1
+        
+        pagination_val.dispatchEvent(new Event('change'));
+    })
+    pagination_val.addEventListener('change', (v) => {
+        get_faults_info(pagination_val.value-1)
+    })
   
   function searchParam(content) {
     get_info(0, content)
   }
   
   document.addEventListener("DOMContentLoaded", function() {
+    get_faults_info()
     get_info()
   })
 </script>

@@ -8,6 +8,7 @@ const Requests = require("../models/home.model");
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
+const { off } = require("../util/database");
 
 let settings = {
   selectedOption: "active",
@@ -313,3 +314,43 @@ exports.update_collab = async (request, response) => {
     response.redirect("/view_collabs?error=true");
   }
 };
+
+exports.get_faults = async (request, response) => {
+  // console.log("Offset: ", request.body.offset);
+  const offset = request.body.offset * 10;
+
+  const rows = await Colaborador.fetchFaults(offset);
+  console.log("Faults: ", rows);
+
+  const collabMap = {};
+
+  rows.forEach(row => {
+    const id = row.id_colaborador;
+    if (!collabMap[id]){
+      collabMap[id] = {
+        id_colaborador : row.id_colaborador,
+        nombre: row.nombre,
+        apellidos : row.apellidos,
+        puesto: row.puesto,
+        nombre_departamento: row.nombre_departamento,
+        nombre_empresa: row.nombre_empresa,
+        total_faltas : row.total_faltas_colaborador,
+        faltas: [],
+      }
+    }
+    collabMap[id].faltas.push({
+      id_fa: row.id_fa,
+      motivo: row.motivo,
+      fecha: row.fecha,
+    });
+  });
+
+  const collabs = Object.values(collabMap);
+  console.log('faltas mapa:', collabs);
+
+  response.json({
+    selectedOption: 'Faults',
+    permissions: request.session.permissions,
+    faults : collabs,
+  });
+}

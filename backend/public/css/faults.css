@@ -1,0 +1,21 @@
+
+.hr-table {
+    border: 0.5px solid #737373;  
+    margin-top: 7px; 
+    margin-bottom: 7px;  
+    width: 100%;  
+    height: 0.5px;
+}
+.container-text{
+    color: #FFFFFF;
+    padding: 1rem;
+}
+
+.has-background {
+    background-color: #454545;  
+    margin-top: -8px;
+}
+
+.has-background .column {
+    background-color: #454545; 
+}
