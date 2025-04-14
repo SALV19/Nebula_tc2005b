@@ -21,7 +21,7 @@
         table.innerHTML += `<p style="background-color:#737373; text-align:center; "> No faults commited </p>`
       } else {
           data.faults.forEach((d, idx) => {
-            table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
+            table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`
             table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
             table_content += `<td>${d.nombre} ${d.apellidos}</td>`
             table_content += `<td>${d.puesto}</td>`

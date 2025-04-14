@@ -6,6 +6,12 @@ const {contVac} = require("../util/contVacations")
 const {google} = require('googleapis')
 require('dotenv').config()
 
+exports.get_requests = async (request, response) => {
+  const offset = request.body.offset * 10;
+  console.log("Offset: ", offset);
+  const req = await Requests.fetchReqHome(offset);
+}
+
 exports.get_home = async (request, response) => {
   const absences = await Requests.fetchDaysApproved(request.session.email)
   .then(data => data[0])
