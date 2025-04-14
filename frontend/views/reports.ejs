@@ -77,7 +77,13 @@
             </div> 
         <hr/>
         <button class="button is-success is-rounded" onclick="fetchData()">Update</button>
+        <div class="radar-container">
+            <canvas  class="canvas-viewF" id="chart"></canvas> 
+        </div>
     </div>
+    
 </div>
+
+
 <%- include('includes/_footer.ejs') %>
 <%- include ('../components/reports/reports_logic.ejs') %>
