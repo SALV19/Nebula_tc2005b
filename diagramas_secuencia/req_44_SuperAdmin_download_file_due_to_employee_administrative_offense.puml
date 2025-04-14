@@ -1,0 +1,34 @@
+@startuml Req_44
+autonumber
+
+actor collab
+boundary collabs.route.js as collabRoute
+boundary collabs.ejs as collabsPage
+control collabs.controller.js as collabsController
+entity collab.model as collabModel
+entity fa.model as faModel
+database Nebula as nebula
+actor Google 
+
+activate collab 
+collab ->> collabRoute : GET/view_collabs/downloadFA
+deactivate collab
+
+activate collabRoute 
+collabRoute ->> collabsController : downloadFA(request)
+deactivate collabRoute
+
+activate collabsController
+collabsController ->> Google : 
+
+activate Google
+Google -->> collabsController : 
+
+deactivate Google
+
+collabsController -->> collab
+deactivate collabsController 
+activate collab
+
+
+@enduml   
