@@ -5,20 +5,20 @@ autonumber
 actor collab
 boundary collabs.route.js as collabRoute
 control collabs.controller.js as collabsController
-entity collab.model as collabModel
+entity falta.model as collabModel
 database Nebula as nebula
 collections "Google Drive API" as Google
 
 activate collab
-collab ->> collabRoute : GET /view_collabs/downloadFA/:id_colab
+collab ->> collabRoute : GET /view_collabs/downloadFA/
 deactivate collab
 
 activate collabRoute
-collabRoute ->> collabsController : downloadFA(id_colab)
+collabRoute ->> collabsController : downloadFA(id_falta)
 deactivate collabRoute
 
 activate collabsController
-collabsController ->> collabModel : getFileIdById(id_colab)
+collabsController ->> collabModel : getFileIdById(id_falta)
 
 activate collabModel
 collabModel ->> nebula : SELECT file_id FROM faltas WHERE id_colaborador = ?

@@ -12,7 +12,7 @@ collections "Google Drive API" as Google
 
 activate collab 
 collab ->> collabRoute : POST/view_collabs/uploadFA
-deactivate collab
+
 
 activate collabRoute 
 collabRoute ->> collabsController : uploadFA(request)
@@ -35,10 +35,10 @@ activate nebula
 nebula -->> collabModel :status succes
 deactivate nebula
 
-collabModel -->> collabsController
+collabModel -->> collabsController: status succes
 deactivate collabModel
 
-collabsController -->> collab 
+collabsController -->> collab : fileUrl
 deactivate collabsController 
-activate collab
+deactivate collab
 @enduml   
