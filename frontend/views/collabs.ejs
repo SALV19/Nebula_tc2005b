@@ -23,10 +23,10 @@
                 </div>
             </div>
          
-            <form action="/view_collabs/uploadFA" method="POST" enctype="multipart/form-data" id="form">
+            <form action="/view_collabs/uploadFA?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data" id="form">
                 <div class="file">
-                    <label for="imagen" class="file-label">
-                        <input type="file" class="file-input" id="imagen" name="imagen">
+                    <label for="drive_file" class="file-label">
+                        <input type="file" class="file-input" id="drive_file" name="drive_file">
                         <span class="file-cta">
                         <span class="file-label"> Escoge una imagen… </span>
                         </span>
@@ -37,18 +37,26 @@
             </form>
 
             <script>
-                const csrf = document.querySelector("#_csrf")
+                const csrf = document.querySelector("#_csrf").value
                 const form = document.querySelector("#form")
+                const file = document.querySelector("#imagen").value
+                console.log(csrf)
+                console.log(file)
+                console.log(form)
                 form.addEventListener("submit", (e) => {
-                    e.preventDefault()
-                    fetch("/view_collabs/uploadFA", {
-                        method: 'POST',
-                        headers: {
-                                'Content-Type': 'application/json',
-                                'csrf-token': csrf
-                            },
-                    })
+                    // e.preventDefault()S
                 })
+                //     fetch("/view_collabs/uploadFA", {
+                //         method: 'POST',
+                //         headers: {
+                //                 'Content-Type': 'application/json',
+                //                 'csrf-token': csrf
+                //             },
+                //         body: {
+
+                //         }
+                //     })
+                // })
 
             </script>
             

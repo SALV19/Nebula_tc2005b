@@ -320,45 +320,43 @@ exports.update_collab = async (request, response) => {
 exports.uploadFA = async (request, response)=> {
   console.log("Llego a la funcion upload")
 
-  // const googleLogin = request.user?.accessToken ? 1 : 0;
-
-  // if (googleLogin == 1) {
-  //   const oauth2Client = new google.auth.OAuth2(
-  //     process.env.GOOGLE_CLIENT_ID, 
-  //     process.env.GOOGLE_CLIENT_SECRET, 
-  //     'http://localhost:3000/log_in/success'
-  //   );
-    
-  //   oauth2Client.setCredentials({
-  //     access_token: request.user.accessToken
-  //   });
-
-  //   const service = google.drive({version: 'v3', auth: oauth2Client});
-  //   const requestBody = {
-  //     name: 'photo.jpg',
-  //     fields: 'id',
-  //   };
-  //   const media = {
-  //     mimeType: 'image/jpeg',
-  //     body: fs.createReadStream('files/photo.jpg'),
-  //   };
-  //   try {
-  //     const file = await service.files.create({
-  //       requestBody,
-  //       media: media,
-  //     });
-  //     console.log('File Id:', file.data.id);
-  //     return file.data.id;
-  //   } catch (err) {
-  //     // TODO(developer) - Handle error
-  //     throw err;
-  //   }
-  // }
-
-  // // Get credentials and build service
-  // // TODO (developer) - Use appropriate auth mechanism for your app
-
-
   const { file } = request;
-console.log(file)
+  const my_file = file
+  console.log(my_file)
+
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  if (googleLogin == 1) {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID, 
+      process.env.GOOGLE_CLIENT_SECRET, 
+      'http://localhost:3000/log_in/success'
+    );
+    
+    oauth2Client.setCredentials({
+      access_token: request.user.accessToken
+    });
+
+    const service = google.drive({version: 'v3', auth: oauth2Client});
+    const requestBody = {
+      name: "id_FA" + my_file.originalname,
+      fields: 'id, name, webViewLink, mimeType',
+    };
+    const media = {
+      mimeType: 'application/pdf',
+      body: fs.createReadStream(my_file.path),
+    };
+    try {
+      const file = await service.files.create({
+        requestBody,
+        media: media,
+      });
+      console.log('File Id:', file.data);
+      return file.data;
+    } catch (err) {
+      // TODO(developer) - Handle error
+      throw err;
+    }
+  }
+
 }
