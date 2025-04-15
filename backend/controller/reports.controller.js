@@ -10,20 +10,24 @@ exports.get_reports = async(request, response) => {
 
   const [empresa] = await Empresa.fetchAllEmp()
   
-  const departamentosNested = await Promise.all(
+  const departamento = await Promise.all(
     empresa.map(async (e) => {
       return await Departamento.fetch(e.id_empresa);
     })
-  );
+  ); 
+  const depa = departamentos_empresas.reduce((a, v) => {
+    if (!a[Object.keys(v)[0]]) {
+      return {...a, [Object.keys(v)[0]]: Object.values(v)[0]}
+    }
+    return {...a, [Object.keys(v)[0]]: [...a[Object.keys(v)[0]], Object.values(v)[0]]}
+  }, {})
   
-  const departamento = departamentosNested;
 
-  // console.log("DP: ", departamentosNested)
     response.render("reports",{
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
       collabs,
-      departamento,
+      depa,
       empresa,
     });
   };
@@ -36,7 +40,6 @@ exports.get_general_report = async (request, response) => {
   let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, '2025-01-01', '2025-05-01')
   
   empresas_validaciones = empresas_validaciones.reduce((a, v) => {
-    console.log(v)
     return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
   }, {})
   console.log(empresas_validaciones);

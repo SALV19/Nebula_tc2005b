@@ -6,7 +6,7 @@
         <input type="hidden" id="_csrf" value=<%= csrfToken %>>
             <form>
                 <div class="multiselect">
-                    <div class="selectBox" onclick="showCheckboxes('checkboxes')">
+                    <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
                         <select class="line-input">
                         <option>Company</option>
                         </select>
@@ -25,20 +25,22 @@
             
             <form>
                 <div class="multiselect">
-                    <div class="selectBox" onclick="showCheckboxes('department')">
+                    <div class="selectBox" onclick="showDepartmentCheckboxes('department')">
                         <select class="line-input">
                             <option>Department</option>
                         </select>
                         <div class="overSelect"></div>
                     </div>
                     <div id="department" class="checkboxes limit">
-                        <% for (let i = 0; i < departamento.length; i++) { %>
-                            <% for (let j = 0; j < departamento[i][0].length; j++) { %>
-                            <label for="<%= `${i}${j}` %>-department">
-                                <input type="checkbox" class="checkbox-row" id="<%= `${i}${j}` %>-department"  value="<%= departamento[i][0][j].nombre_departamento %>"/>
-                                    <%= departamento[i][0][j].nombre_departamento%>
-                            </label>
+                        <% for (let arr_departamentos of departamentos_empresas) {%>
+                            <% for (let departamento of Object.values(arr_departamentos)) {%>
+                                <label for="<%= Object.keys(arr_departamentos)[0] %>-company" class="checkbox-row">
+                                    <input type="checkbox"  id="<%= Object.keys(arr_departamentos)[0] %>-company" value="<%= departamento %>"/>
+                                        <%= departamento %>
+                                </label>
+                                <%# console.log(departamento) %>
                             <% } %>
+                            
                         <% } %>
                     </div>
                 </div>

@@ -76,16 +76,28 @@
     });
     }
     
-    var expanded = false;
-
-    function showCheckboxes(value) {
+    function showComapnyCheckboxes(value) {
         var checkboxes = document.getElementById(value);
-        if (!expanded) {
-            checkboxes.style.display = "block";
-            expanded = true;
-        } else {
+        if (checkboxes.style.display == "block") {
             checkboxes.style.display = "none";
-            expanded = false;
+        } else {
+            checkboxes.style.display = "block";
+        }
+    }
+    function showDepartmentCheckboxes(value) {
+        const companies = document.querySelectorAll("[id$=-company")
+        const company_values = Array.prototype.reduce.call(companies, (acc, c) => {
+            if (c.checked) {
+                acc.push(c.value)
+            }
+            return acc
+        }, [])
+
+        var checkboxes = document.getElementById(value);
+        if (checkboxes.style.display == "block") {
+            checkboxes.style.display = "none";
+        } else {
+            checkboxes.style.display = "block";
         }
     }
     
