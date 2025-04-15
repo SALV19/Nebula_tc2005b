@@ -69,8 +69,6 @@ body{
     position: absolute;
     top:0;
     left: 0;
-    justify-content: center;
-    align-items: center;
     z-index: 9999; 
     margin-top: 18rem;
     margin-left: 20rem;
@@ -223,7 +221,8 @@ body{
     padding: 0 1rem;
     align-items: center;
     font-size: 1.5rem; 
-    /* gap:20rem !important; */
+    width: 24rem;
+    margin-top: -1rem;
 }
 .container-box {
     display: flex;
@@ -234,6 +233,9 @@ body{
     align-items: center;
     justify-content: center;
     width: 100%;
+}
+.container-t{
+    margin-top: -3rem;
 }
 .requests{
     background-color: transparent;
@@ -274,8 +276,13 @@ p{
 }
 .is-three-quarters{
     padding-left:9rem;
-    padding-top: 5rem;
+    padding-top: 3rem;
     padding-right: 3rem;
     font-size: small;
+}
+.column-counter{
+    justify-content: center; 
+    align-items: center; 
+    margin-top: -6rem;
 }
   

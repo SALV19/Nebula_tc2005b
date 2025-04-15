@@ -5,7 +5,6 @@
 <input type="hidden" id="_csrf" value="<%= csrfToken %>">
 <div class="columns">
   <div class="is-three-quarters">
-    
     <aside class="pop-up-d" style="display: none;" id="pop-up">
       <div class="pop-up-content-d">              
         <button onclick="closePopup()" class="button-close">
@@ -51,15 +50,15 @@
     <% } %>
     </div>
 
-    <div class="columns is-multiline" style="justify-content: center; align-items: center;">
-      <div class="column is-half column-counter">
+    <div class="columns is-multiline column-counter">
+      <div class="column is-half ">
         <%- include('../components/vacations_left.ejs') %>
         <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
           <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
         <% } %>
       </div>
     
-      <div class="column is-half column-counters align-counter">
+      <div class="column is-half ">
         <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
         <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
           <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
