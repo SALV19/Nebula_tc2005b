@@ -3,7 +3,6 @@
         console.log("entro al table");
         const table = document.querySelector('#requests_table');
 
-        // Encabezado con dos columnas: Fecha y Estado
         let table_content = `
             <caption style="background-color: #DBDBDB; color: #252525; padding:0.5rem;"> Requests </caption>
             <thead>
@@ -15,67 +14,107 @@
             <tbody>
         `;
 
-        // Recorrer los datos y añadir las filas
-        data.faults.forEach((d, idx) => {
+        if (data.faults.length === 0) {
+            // Mostrar una fila con mensaje
             table_content += `
-                <tr id='fault-${idx}' key='${idx}' style="background-color:#242424;">
-                    <td> ${new Date(d.fecha).toLocaleDateString('es-MX', {
-                        day: '2-digit',
-                        month: '2-digit',
-                        year: 'numeric'
-                    }).replace(/\//g, ' / ')}</td>
-            `
-            if (d.estado == 0) {
-                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
-                </tr>`
-            } else if (d.estado == 0.5) {
-                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
-                <td>`        
-            }
-            else if (d.estado == 1) {
-                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
-                <td class="back"></td>
-                </tr>`
-            }
-            else if (d.estado == 2) {
-                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
-                <td class="back"></td>
-                </tr>`
-                    ;
-                }});
+                <tr>
+                    <td colspan="2" style="text-align:center; padding:1rem;">No more requests</td>
+                </tr>
+            `;
+        } else {
+            data.faults.forEach((d, idx) => {
+                table_content += `
+                    <tr id='fault-${idx}' key='${idx}' style="background-color:#242424;">
+                        <td>${new Date(d.fecha).toLocaleDateString('es-MX', {
+                            day: '2-digit',
+                            month: '2-digit',
+                            year: 'numeric'
+                        }).replace(/\//g, ' / ')}</td>
+                `;
+
+                if (d.estado == 0) {
+                    table_content += `
+                        <td style="background-color:#242424;">
+                            <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p>
+                        </td>
+                    </tr>`;
+                } else if (d.estado == 0.5) {
+                    table_content += `
+                        <td style="background-color:#242424;">
+                            <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p>
+                        </td>
+                    </tr>`;
+                } else if (d.estado == 1) {
+                    table_content += `
+                        <td style="background-color:#242424;">
+                            <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p>
+                        </td>
+                    </tr>`;
+                } else if (d.estado == 2) {
+                    table_content += `
+                        <td style="background-color:#242424;">
+                            <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p>
+                        </td>
+                    </tr>`;
+                }
+            });
+        }
 
         table_content += `</tbody>`;
         table.innerHTML = table_content;
     }
 
 
+
     // Consulta a db para la información de solicitudes
-    const get_info = (pagination=0) => {
-    console.log("holaaa");
+    const get_info = (pagination = 0) => {
     const csrf = document.getElementById('_csrf').value;
-    console.log("csrf", csrf);
+    const prev_button = document.querySelector("#prev-page");
+    const next_button = document.querySelector("#next-page");
+    const pagination_value = document.querySelector("#pagination");
+
     fetch("/", {
-    method: 'POST',
-    headers: {
-            'Content-Type': 'application/json',
-            'x-csrf-token': csrf
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrf
         },
-    body: JSON.stringify({
+        body: JSON.stringify({
         offset: pagination,
-      }),
+        }),
     })
-    .then(response => {
-        console.log("Hola aqui ando");
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        console.log("Response data: ", data);
-        createTableRequests(data);
+        console.log("Data", data);
+        console.log("Data longitud: ", data.faults.length);
+        if (data.faults.length < 8 && pagination > 0 ) {
+            createTableRequests(data);
+            pagination_value.value = pagination;
+            next_button.style.visibility = "hidden";
+            prev_button.style.visibility = "visible";
+        } else if (data.faults.length < 8 && pagination === 0){
+            createTableRequests(data);
+            pagination_value.value = pagination;
+            next_button.style.visibility = "hidden";
+            prev_button.style.visibility = "hidden";
+        } else if (data.faults.length === 8 && pagination === 0){
+            createTableRequests(data);
+            pagination_value.value = pagination + 1;
+            prev_button.style.visibility = "hidden";
+            next_button.style.visibility = "visible";
+        } else if (data.faults.length === 0 && pagination > 0){
+            get_info(pagination - 1);
+        } else {
+            createTableRequests(data);
+            prev_button.style.visibility = "visible";
+            next_button.style.visibility = "visible";
+            pagination_value.value = pagination + 1;
+           
+        }
     })
-    .catch(e => {
-        console.log("Error: ", e);
-        console.error(e)
-    })}
+    .catch(e => console.error(e));
+    };
+
 
         
     document.addEventListener("DOMContentLoaded", () => {

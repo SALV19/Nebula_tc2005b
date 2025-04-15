@@ -171,7 +171,9 @@ exports.post_abscence_requests = async (request, response, next) => {
   const [type, subtype] = request.body.requestType.split("|");
 
   // Default status is "pending" (0)
+  console.log("session", request.session.id_colaborador);
   let estadoSolicitud = 0;
+  let colabAprobador;
 
   try {
      // Get the collaborator's role using their email (session)
@@ -183,13 +185,17 @@ exports.post_abscence_requests = async (request, response, next) => {
       * And if is lider (id_rol = 3), automatically status = 0.5 */ 
     if (idRol === 3) {
       estadoSolicitud = 1;
+      colabAprobador = request.session.id_colaborador;
     } else if (idRol === 2) {
         estadoSolicitud = 0.5;
+        colabAprobador = null;
     } else {
         estadoSolicitud = 0;
+        colabAprobador = null;
     }
 
     console.log(estadoSolicitud)
+    console.log("colabAprovador: ", colabAprobador);
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -198,12 +204,13 @@ exports.post_abscence_requests = async (request, response, next) => {
       request.body.location,
       request.body.description,
       request.body.evidence,
-      estadoSolicitud
+      estadoSolicitud,
+      colabAprobador,
     );
+    console.log("Request_register: ", request_register);
 
     // Save the main request record to the database
-    
-    const result = await request_register.save(estadoSolicitud);
+    const result = await request_register.save(estadoSolicitud, colabAprobador);
     // Optional: simulate an error here if you want to test
     // throw new Error("Simulated server error");
 

@@ -1,5 +1,5 @@
 body{
-    background-color: #242424;
+    background-color: #454545;
 }
 .column-container{
     display: flex;
@@ -215,10 +215,9 @@ body{
     font-weight: 600; 
 }
   
-
-.align-counter{
-    align-self: flex-start; 
-    margin-bottom: -1px
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
 .my_buttons {
     padding: 0 1rem;
@@ -273,5 +272,10 @@ p{
     text-align: center;
     padding: 0.2rem !important;
 }
-
+.is-three-quarters{
+    padding-left:9rem;
+    padding-top: 5rem;
+    padding-right: 3rem;
+    font-size: small;
+}
   

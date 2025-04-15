@@ -121,7 +121,6 @@
       .then(response => response.json())
       .then(data => {
         if (data.faults.length === 0 && pagination > 0) {
-          // Si no hay datos y no estamos en la primera página, retrocede una página
           get_faults_info(pagination - 1);
         } else {
           createTableFaults(data);
