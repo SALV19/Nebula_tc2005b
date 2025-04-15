@@ -317,17 +317,19 @@ exports.update_collab = async (request, response) => {
 
 exports.get_faults = async (request, response) => {
   const offset = request.body.offset * 10;
+  console.log("Offsets: ", offset);
   
   const filter = request.body.filter;
   console.log("Filtro", filter);
-  // Paso 1: obtiene los IDs con paginación
+
   const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
 
-  // Paso 2: obtiene los datos de esos colaboradores
   const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
 
-  // Paso 3: obtiene TODAS las faltas y las asigna
   const faults = await Colaborador.fetchAllFaults();
+
+  console.log("Total IDs obtenidos:", ids.length); 
+  console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
 
   const map = {};
   rows.forEach(c => {

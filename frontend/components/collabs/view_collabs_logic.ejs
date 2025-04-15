@@ -17,11 +17,11 @@
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
       table_content += `<tr id='collab-${idx}' key='${idx}'>`
-      table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
-      table_content += `<td>${d.nombre} ${d.apellidos}</td>`
-      table_content += `<td>${d.puesto}</td>`
-      table_content += `<td>${d.nombre_departamento} </td>`
-      table_content += `<td>${d.nombre_empresa} </td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
       table_content += '</tr>';
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">

@@ -415,35 +415,38 @@ module.exports = class Colaborador {
       SELECT * from fa
       `)
     
-      // console.log("faltas : ", faults);
+      console.log("faltas : ", faults);
       return faults;
   }
 
-  static async fetchPaginatedCollabIds(offset, filter=null) {
-    if(!filter){
+  static async fetchPaginatedCollabIds(offset, filter = null) {
+    if (!filter?.length > 0) {
       const [ids] = await db.execute(`
-        SELECT c.id_colaborador
+        SELECT DISTINCT c.id_colaborador
         FROM colaborador c
+        INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
         ORDER BY c.nombre ASC
         LIMIT 10 OFFSET ?`, [offset]);
-    
+  
       const map = ids.map(row => row.id_colaborador);
-      // console.log("MAPAAA: ", map);
+      console.log("MAPAAA 1: ", map);
       return map;
     } else {
       const [ids] = await db.execute(`
-        SELECT c.id_colaborador
+        SELECT DISTINCT c.id_colaborador
         FROM colaborador c
+        INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
         WHERE c.nombre LIKE ?
         OR c.apellidos LIKE ?
         ORDER BY c.nombre ASC
         LIMIT 10 OFFSET ?`, [`%${filter}%`, `%${filter}%`, offset]);
-    
+  
       const map = ids.map(row => row.id_colaborador);
-      // console.log("MAPAAA: ", map);
+      console.log("MAPAAA 2: ", map);
       return map;
     }
   }
+  
 
   static async fetchFaultsCollabsByIds(ids) {
     if (ids.length === 0) return [];
@@ -482,7 +485,5 @@ module.exports = class Colaborador {
       console.log("Row: ", rows);
     return rows;
   }
-
-  
 
 };

@@ -22,15 +22,15 @@
       } else {
           data.faults.forEach((d, idx) => {
             table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`
-            table_content += `<td><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
-            table_content += `<td>${d.nombre} ${d.apellidos}</td>`
-            table_content += `<td>${d.puesto}</td>`
-            table_content += `<td>${d.nombre_departamento} </td>`
-            table_content += `<td>${d.nombre_empresa} </td>`
-            table_content += `<td>${d.total_faltas_colaborador} </td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
+            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador} </td>`
             table_content += '</tr>';
             // Contenido desplegable
-            table_content += `<tr class="additional-row " id="additional-row-${idx}" style="display: none; ">
+            table_content += `<tr class="additional-row " id="additional-row-${idx}" style="display: none;">
                                 <td colspan='6'>
                                     <div class="has-background columns" style="padding: 1rem;">
                                         <div class="column">
@@ -47,7 +47,7 @@
             }                                    
 
             table_content += `</div>
-                      <div class="column is-four-fifths">
+                          <div class="column is-four-fifths">
                             <h1>Motive</h1>
                             <hr class="hr-table"/>`
                             if (d.faltas && d.faltas.length > 0) {
@@ -57,7 +57,11 @@
                             } else {
                               table_content += `<p class="container-text">No hay registros de faltas</p>`;
                             } 
-                        table_content += `</div>
+            table_content += `</div>
+                          <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
+                            <button class="buttons">Upload</button>
+                            <button class="button2" style="margin-top: 0.5rem;">Download</button>
+                          </div>
                     </div>
                 </td>
               </tr>`;

@@ -23,3 +23,39 @@ h1{
     font-weight: bold;
     padding-left: 1rem;
 }
+.buttons{
+    height: 2rem;
+    width: 5rem;
+    background-color: #485FC7;
+    color: #EEEEEE; 
+    font-size: small;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer;
+}
+.buttons:hover{
+    background-color: #3a4db3; 
+    color: white;   
+    font-weight: bold;          
+}
+.button2{
+    height: 2rem;
+    width: 5rem;
+    background-color: #60508F;
+    color: #EEEEEE; 
+    font-size: small;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer;
+}
+.button2:hover{
+    background-color: #524577;
+    color: white;
+    font-weight: bold;
+}
