@@ -355,14 +355,4 @@ module.exports = class Requests {
                       GROUP BY sf.id_solicitud_falta;`, [collab_id]);
   }
 
-  static async fetchReqHome(offset){
-    return db.execute(`SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, ds.fecha
-      FROM solicitudes_falta sf, dias_solicitados ds
-      WHERE sf.id_solicitud_falta = ds.id_solicitud_falta
-      ORDER BY fecha DESC
-      LIMIT 8 OFFSET ?`, [offset])
-  }
-
-  
-  
 };

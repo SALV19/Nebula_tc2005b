@@ -32,17 +32,17 @@ module.exports = class Requests {
             `, [id])
         }
     }
-
-    static async fetchRequests(id_collab, offset){
-        return db.execute(`
-            SELECT sf.id_colaborador, sf.fecha, sf.estado
-            FROM solicitudes_falta sf, dias_solicitados ds, colaborador c
-            INNER JOIN dias_solicitados ds
-                ON ds.id_solicitud_falta = sf.id_solicitud_falta
-            INNER JOIN solicitades_falta sf
-                ON sf.id_colaborador = c.id_colaborador
-            WHERE sf.id_colaborador = ?
-            LIMIT 7 OFFSET ?`, [id_collab, offset])
+    
+    static async fetchReqHome(offset) {
+        const [rows] = await db.execute(`SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, ds.fecha
+        FROM solicitudes_falta sf, dias_solicitados ds
+        WHERE sf.id_solicitud_falta = ds.id_solicitud_falta
+        ORDER BY fecha DESC
+        LIMIT 8 OFFSET ?`, [offset]);
+    
+        console.log("Requests: ", rows); // Log the result to verify
+        return rows; // Return the rows directly
     }
+
 }
 

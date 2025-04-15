@@ -3,14 +3,30 @@ const Requests = require("../models/home.model");
 const Event = require("../models/events.model");
 const Collab = require("../models/collabs.model")
 const {contVac} = require("../util/contVacations")
-const {google} = require('googleapis')
+const {google} = require('googleapis');
+const { off } = require("../util/database");
 require('dotenv').config()
 
 exports.get_requests = async (request, response) => {
-  const offset = request.body.offset * 10;
-  console.log("Offset: ", offset);
-  const req = await Requests.fetchReqHome(offset);
-}
+  try {
+    const offset = request.body.offset * 10;
+    console.log("Offset: ", offset);
+
+    // Fetching data
+    const reqData = await Requests.fetchReqHome(offset);
+    console.log("REQ DATA",reqData.length)
+    
+    response.json({
+      permissions: request.session.permissions,
+      faults: reqData,
+    });
+  } catch (error) {
+    console.log("error: ", error);
+    console.error("Error fetching requests:", error);
+    response.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 exports.get_home = async (request, response) => {
   const absences = await Requests.fetchDaysApproved(request.session.email)

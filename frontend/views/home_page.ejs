@@ -2,8 +2,7 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <%- include('../components/nav_bar.ejs') %>
-<input type="hidden" id="_csrf" value=<%= csrfToken %></input>
-
+<input type="hidden" id="_csrf" value="<%= csrfToken %>">
 <div class="columns">
   <div class="is-three-quarters">
     
@@ -52,18 +51,36 @@
     <% } %>
     </div>
 
-  <div class="column column-counter">
-    <%- include('../components/vacations_left.ejs') %>
-    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% } %>
-  </div>
-  <div class="column column-counters align-counter">
-    <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% } %>
-  </div>
+    <div class="columns is-multiline" style="justify-content: center; align-items: center;">
+      <div class="column is-half column-counter">
+        <%- include('../components/vacations_left.ejs') %>
+        <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+          <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+        <% } %>
+      </div>
+    
+      <div class="column is-half column-counters align-counter">
+        <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+        <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+          <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+        <% } %>
+      </div>
+
+      
+      <%- include ('../components/home/home_requests_logic.ejs') %>
+      <div class="column is-full container-t">
+        <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center;">
+          
+        </table>
+        <div class="is-flex is-justify-content-space-between my_buttons">
+          <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
+          <input type="number" value="1" class="pagination" id="pagination" style="display: none;"/>
+          <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
+        </div>
+      </div>
+    </div>
+    
+
 </div>
 
 <%- include('includes/_footer.ejs') %>

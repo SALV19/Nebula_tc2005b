@@ -1,0 +1,109 @@
+<script>
+    function createTableRequests(data) {
+        console.log("entro al table");
+        const table = document.querySelector('#requests_table');
+
+        // Encabezado con dos columnas: Fecha y Estado
+        let table_content = `
+            <caption style="background-color: #DBDBDB; color: #252525; padding:0.5rem;"> Requests </caption>
+            <thead>
+                <tr>
+                    <th style="display:none">Fecha</th>
+                    <th style="display:none">Estado</th>
+                </tr>
+            </thead>
+            <tbody>
+        `;
+
+        // Recorrer los datos y añadir las filas
+        data.faults.forEach((d, idx) => {
+            table_content += `
+                <tr id='fault-${idx}' key='${idx}' style="background-color:#242424;">
+                    <td> ${new Date(d.fecha).toLocaleDateString('es-MX', {
+                        day: '2-digit',
+                        month: '2-digit',
+                        year: 'numeric'
+                    }).replace(/\//g, ' / ')}</td>
+            `
+            if (d.estado == 0) {
+                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
+                </tr>`
+            } else if (d.estado == 0.5) {
+                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
+                <td>`        
+            }
+            else if (d.estado == 1) {
+                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
+                <td class="back"></td>
+                </tr>`
+            }
+            else if (d.estado == 2) {
+                table_content += `<td style="background-color:#242424;"> <p id="${d.id_solicitud_falta}" class='status has-background-danger'>Denied</p></td>
+                <td class="back"></td>
+                </tr>`
+                    ;
+                }});
+
+        table_content += `</tbody>`;
+        table.innerHTML = table_content;
+    }
+
+
+    // Consulta a db para la información de solicitudes
+    const get_info = (pagination=0) => {
+    console.log("holaaa");
+    const csrf = document.getElementById('_csrf').value;
+    console.log("csrf", csrf);
+    fetch("/", {
+    method: 'POST',
+    headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrf
+        },
+    body: JSON.stringify({
+        offset: pagination,
+      }),
+    })
+    .then(response => {
+        console.log("Hola aqui ando");
+        return response.json();
+    })
+    .then(data => {
+        console.log("Response data: ", data);
+        createTableRequests(data);
+    })
+    .catch(e => {
+        console.log("Error: ", e);
+        console.error(e)
+    })}
+
+        
+    document.addEventListener("DOMContentLoaded", () => {
+        const prev_button = document.querySelector("#prev-page");
+        const next_button = document.querySelector("#next-page");
+        const pagination_value = document.querySelector("#pagination");
+
+        if (!prev_button || !next_button || !pagination_value) {
+            console.error("Faltan botones de paginación o input");
+            return;
+        }
+
+        prev_button.addEventListener("click", () => {
+            pagination_value.value =
+            pagination_value.value - 1 <= 1 ? 1 : pagination_value.value - 1;
+            pagination_value.dispatchEvent(new Event("change"));
+        });
+
+        next_button.addEventListener("click", () => {
+            pagination_value.value = Number(pagination_value.value) + 1;
+            pagination_value.dispatchEvent(new Event("change"));
+        });
+
+        pagination_value.addEventListener("change", () => {
+            get_info(pagination_value.value - 1);
+        });
+
+        get_info();
+    });
+
+</script>

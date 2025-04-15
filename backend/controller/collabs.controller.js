@@ -317,10 +317,10 @@ exports.update_collab = async (request, response) => {
 
 exports.get_faults = async (request, response) => {
   const offset = request.body.offset * 10;
-  console.log("Offsets: ", offset);
+  // console.log("Offsets: ", offset);
   
   const filter = request.body.filter;
-  console.log("Filtro", filter);
+  // console.log("Filtro", filter);
 
   const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
 
@@ -328,8 +328,8 @@ exports.get_faults = async (request, response) => {
 
   const faults = await Colaborador.fetchAllFaults();
 
-  console.log("Total IDs obtenidos:", ids.length); 
-  console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
+  // console.log("Total IDs obtenidos:", ids.length); 
+  // console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
 
   const map = {};
   rows.forEach(c => {

@@ -415,7 +415,7 @@ module.exports = class Colaborador {
       SELECT * from fa
       `)
     
-      console.log("faltas : ", faults);
+      // console.log("faltas : ", faults);
       return faults;
   }
 
@@ -429,7 +429,7 @@ module.exports = class Colaborador {
         LIMIT 10 OFFSET ?`, [offset]);
   
       const map = ids.map(row => row.id_colaborador);
-      console.log("MAPAAA 1: ", map);
+      // console.log("MAPAAA 1: ", map);
       return map;
     } else {
       const [ids] = await db.execute(`
@@ -442,7 +442,7 @@ module.exports = class Colaborador {
         LIMIT 10 OFFSET ?`, [`%${filter}%`, `%${filter}%`, offset]);
   
       const map = ids.map(row => row.id_colaborador);
-      console.log("MAPAAA 2: ", map);
+      // console.log("MAPAAA 2: ", map);
       return map;
     }
   }
@@ -482,7 +482,7 @@ module.exports = class Colaborador {
         em.nombre_empresa
       ORDER BY c.nombre ASC
     `, ids);
-      console.log("Row: ", rows);
+      // console.log("Row: ", rows);
     return rows;
   }
 

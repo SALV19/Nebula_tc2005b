@@ -90,29 +90,6 @@ body{
     height: auto;
     width: auto;
   }
-/* .pop-up {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw; 
-    height: 100vh; 
-    background-color: rgba(0, 0, 0, 0.3); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999; 
-}
-
-.pop-up-content {
-    background-color: #242424;
-    padding: 2vw; 
-    padding-top: 5vh; 
-    border-radius: 5px;
-    width: 45vw;  
-    height: 85vh;
-    position: relative;
-    
-} */
   
 .pop-up-content-d {
     padding: 1.5rem; 
@@ -243,3 +220,58 @@ body{
     align-self: flex-start; 
     margin-bottom: -1px
 }
+.my_buttons {
+    padding: 0 1rem;
+    align-items: center;
+    font-size: 1.5rem; 
+    /* gap:20rem !important; */
+}
+.container-box {
+    display: flex;
+    background-color: #DBDBDB;
+    text-align: center;
+    color: #252525;
+    height: 2rem;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+.requests{
+    background-color: transparent;
+    color: #FFFFFF;
+    text-align: center;
+    padding-top: 0.5rem;
+}
+.table{
+    width:23rem;
+    background-color: #252525;
+}
+td{
+    background-color: #242424 !important;
+    border: none !important;
+    border-color: none !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.status {
+    display: inline-block; /* Para que no ocupe todo el ancho */
+    padding: 0rem;
+    font-size: 0.9rem;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+}
+
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+}
+p{
+    border-radius: 2rem;
+    text-align: center;
+    padding: 0.2rem !important;
+}
+
+  
