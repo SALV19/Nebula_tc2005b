@@ -32,10 +32,10 @@
                         <div class="overSelect"></div>
                     </div>
                     <div id="department" class="checkboxes limit">
-                        <% for (let arr_departamentos of departamentos_empresas) {%>
-                            <% for (let departamento of Object.values(arr_departamentos)) {%>
-                                <label for="<%= Object.keys(arr_departamentos)[0] %>-company" class="checkbox-row">
-                                    <input type="checkbox"  id="<%= Object.keys(arr_departamentos)[0] %>-company" value="<%= departamento %>"/>
+                        <% for (let empresa of Object.keys(depa)) {%>
+                            <% for (let departamento of depa[empresa]) {%>
+                                <label for="<%= `${empresa}-${departamento}` %>-company" class="checkbox-row">
+                                    <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-company" value="<%= departamento %>"/>
                                         <%= departamento %>
                                 </label>
                                 <%# console.log(departamento) %>
