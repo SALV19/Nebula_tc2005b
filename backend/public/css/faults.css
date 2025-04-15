@@ -25,7 +25,7 @@ h1{
 }
 .buttons{
     height: 2rem;
-    width: 5rem;
+    width:17rem;
     background-color: #485FC7;
     color: #EEEEEE; 
     font-size: small;
@@ -33,17 +33,18 @@ h1{
     justify-content: center;
     align-items: center;
     border: none; 
-    border-radius: 4px; 
+    border-radius: 5px; 
     cursor: pointer;
+    margin-top: -1.5rem;
 }
 .buttons:hover{
     background-color: #3a4db3; 
     color: white;   
-    font-weight: bold;          
+    /* font-weight: bold;           */
 }
 .button2{
     height: 2rem;
-    width: 5rem;
+    width: 7rem;
     background-color: #60508F;
     color: #EEEEEE; 
     font-size: small;
@@ -53,9 +54,11 @@ h1{
     border: none; 
     border-radius: 4px; 
     cursor: pointer;
+    margin-right: 2rem;
+    margin-top: -3rem;
 }
 .button2:hover{
     background-color: #524577;
     color: white;
-    font-weight: bold;
+    /* font-weight: bold; */
 }

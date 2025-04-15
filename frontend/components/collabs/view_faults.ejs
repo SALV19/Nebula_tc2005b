@@ -58,11 +58,22 @@
                               table_content += `<p class="container-text">No hay registros de faltas</p>`;
                             } 
             table_content += `</div>
-                          <div class="column is-flex is-flex-direction-column is-align-items-center is-justify-content-center">
-                            <button class="buttons">Upload</button>
-                            <button class="button2" style="margin-top: 0.5rem;">Download</button>
-                          </div>
-                    </div>
+            </div>
+              <div class="is-flex is-justify-content-flex-end is-align-items-center has-background" style="margin: -1rem;">
+                <div id="file-js-example" class="file has-name buttons">
+                  <label class="file-label">
+                    <input class="file-input" type="file" name="resume" />
+                    <span class="file-cta">
+                      <span class="file-icon">
+                        <i class="fas fa-upload"></i>
+                      </span>
+                      <span class="file-label"> Choose a file… </span>
+                    </span>
+                    <span class="file-name"> No file uploaded </span>
+                  </label>
+                </div>
+                <button class="button2" style="margin-left: 0.5rem;">Download</button>
+              </div>
                 </td>
               </tr>`;
           })
@@ -113,6 +124,15 @@
       })
       .catch(e => console.error(e))
     }
+
+    //logica de bulma para el boton de upload
+    // const fileInput = document.querySelector("#file-js-example input[type=file]");
+    // fileInput.onchange = () => {
+    //   if (fileInput.files.length > 0) {
+    //     const fileName = document.querySelector("#file-js-example .file-name");
+    //     fileName.textContent = fileInput.files[0].name;
+    //   }
+    // };
 
   
 </script>
