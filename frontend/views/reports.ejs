@@ -14,8 +14,8 @@
                     </div>
                     <div id="checkboxes" class="checkboxes limit">
                         <% for (let i = 0; i < empresa.length; i++) { %>
-                            <label for="<%= i %>-empresa" class="checkbox-row">
-                                <input type="checkbox"  id="<%= i %>-empresa" value="<%= empresa[i].nombre_empresa %>"/>
+                            <label for="<%= i %>-company" class="checkbox-row">
+                                <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>"/>
                                     <%= empresa[i].nombre_empresa%>
                             </label>
                         <% } %>
@@ -34,8 +34,8 @@
                     <div id="department" class="checkboxes limit">
                         <% for (let i = 0; i < departamento.length; i++) { %>
                             <% for (let j = 0; j < departamento[i][0].length; j++) { %>
-                            <label for="<% i %>">
-                                <input type="checkbox" class="checkbox-row" id="<% i %>"  value="<%= departamento[i].nombre_departamento %>"/>
+                            <label for="<%= `${i}${j}` %>-department">
+                                <input type="checkbox" class="checkbox-row" id="<%= `${i}${j}` %>-department"  value="<%= departamento[i][0][j].nombre_departamento %>"/>
                                     <%= departamento[i][0][j].nombre_departamento%>
                             </label>
                             <% } %>
@@ -54,8 +54,8 @@
                     </div>
                     <div id="collaborator" class="checkboxes limit">
                         <% for (let i = 0; i < collabs.length; i++) { %>
-                            <label for="<% i %>">
-                            <input type="checkbox" class="checkbox-row" id="<% i %>"  value="<%= collabs[i].id_colaborador %>"/>
+                            <label for="<%= i %>-collab">
+                            <input type="checkbox" class="checkbox-row" id="<%= i %>-collab"  value="<%= collabs[i].id_colaborador %>"/>
                                 <%= collabs[i].nombre + " " + collabs[i].apellidos%></option>
                             </label>
                         <% } %>
@@ -64,7 +64,7 @@
             </form>
           
             <div class="column is-one-fifth multiselect limit">
-                <select class="line-input" name="department" id="department_reports">
+                <select class="line-input" name="department" id="periodic_select">
                     <option value="" disabled selected>Period</option>
                     <option value="1">Monthly</option>
                     <option value="3">Trimester</option>

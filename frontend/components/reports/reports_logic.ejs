@@ -1,6 +1,81 @@
 <script src="tom-select.complete.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 <script>
+    function createChart(data) {
+        const ctx = document.getElementById(`chart`).getContext("2d");
+
+    console.log(data)
+    const empresas = Object.keys(data);
+    const indicatorLabels = Object.keys(data[empresas[0]]);
+    const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
+    const datas= [];
+    let j=0;
+    let k=2;
+    for(let i of empresas) {
+        datas.push({
+                label: i,
+                data: Object.values(data[i]),
+                borderColor: colores[j],
+                borderWidth: 3,
+                backgroundColor: colores[j]+"00",
+            });
+        j = j+1;
+        k = k+3;
+    }
+    console.log(datas);
+
+    new Chart(ctx, { 
+        type: 'radar',
+        data: {
+            labels: indicatorLabels,
+            datasets: datas, 
+        },
+        options: {
+            plugins: {
+                legend: {
+                    display: true,
+                    position:'right',
+                    labels: {
+                        padding: 30, 
+                        color: "#FFFFFF", 
+                        usePointStyle: true,
+                        textAlign: 'center',
+                        
+                    }
+                }
+            },
+            scales: {
+                r: {
+                    backgroundColor: "#454545",
+                    hoverBackgroundColor: "#767574",
+                    angleLines: { 
+                        display: false,
+                    },
+                    grid: {
+                        color: "#747474" 
+                    },
+                    suggestedMin: 0,
+                    suggestedMax: 5,
+                    ticks: {
+                        stepSize: 1, 
+                        beginAtZero: true,
+                        color: "#EEEEEE",
+                        backdropColor: "#454545" , 
+                    },
+                    pointLabels: {  
+                        padding:20,
+                        color: "#FFFFFF", 
+                        font: {
+                            size: 13,
+                            weight: "italic"
+                        }
+                    }
+                }
+            }
+        } 
+    });
+    }
+    
     var expanded = false;
 
     function showCheckboxes(value) {
@@ -15,6 +90,32 @@
     }
     
     function fetchData() {
+        const companies = document.querySelectorAll("[id$=-company")
+        const department = document.querySelectorAll("[id$=-department]")
+        const collab = document.querySelectorAll("[id$=-collab]")
+        const periodicity = document.querySelector("#periodic_select")
+        
+        const company_values = Array.prototype.reduce.call(companies, (acc, c) => {
+            if (c.checked) {
+                acc.push(c.value)
+            }
+            return acc
+        }, [])
+        const department_values = Array.prototype.reduce.call(department, (acc, d) => {
+            if (d.checked) {
+                acc.push(d.value)
+            }
+            return acc
+        }, [])
+        const collabs_values = Array.prototype.reduce.call(collab, (acc, c) => {
+            if (c.checked) {
+                acc.push(c.value)
+            }
+            return acc
+        }, [])
+
+
+
         const csrf = document.querySelector('#_csrf').value        
         fetch('/reports', {
             method: 'POST',
@@ -23,83 +124,16 @@
             'csrf-token': csrf
             },
             body: JSON.stringify({
-                message: "Prueba metodo post"
+                message: "Prueba metodo post",
+                company_values,
+                department_values,
+                collabs_values,
             })
         })
         .then((response) => response.json())
         .then(data => {
-            const ctx = document.getElementById(`chart`).getContext("2d");
-
-            console.log(data)
-            const empresas = Object.keys(data);
-            const indicatorLabels = Object.keys(data[empresas[0]]);
-            const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
-            const datas= [];
-            let j=0;
-            let k=2;
-            for(let i of empresas) {
-                datas.push({
-                        label: i,
-                        data: Object.values(data[i]),
-                        borderColor: colores[j],
-                        borderWidth: 3,
-                        backgroundColor: colores[j]+"00",
-                    });
-                j = j+1;
-                k = k+3;
-            }
-            console.log(datas);
-
-            new Chart(ctx, { 
-                type: 'radar',
-                data: {
-                    labels: indicatorLabels,
-                    datasets: datas, 
-                },
-                options: {
-                    plugins: {
-                        legend: {
-                            display: true,
-                            position:'right',
-                            labels: {
-                                padding: 30, 
-                                color: "#FFFFFF", 
-                                usePointStyle: true,
-                                textAlign: 'center',
-                                
-                            }
-                        }
-                    },
-                    scales: {
-                        r: {
-                            backgroundColor: "#454545",
-                            hoverBackgroundColor: "#767574",
-                            angleLines: { 
-                                display: false,
-                            },
-                            grid: {
-                                color: "#747474" 
-                            },
-                            suggestedMin: 0,
-                            suggestedMax: 5,
-                            ticks: {
-                                stepSize: 1, 
-                                beginAtZero: true,
-                                color: "#EEEEEE",
-                                backdropColor: "#454545" , 
-                            },
-                            pointLabels: {  
-                                padding:20,
-                                color: "#FFFFFF", 
-                                font: {
-                                    size: 13,
-                                    weight: "italic"
-                                }
-                            }
-                        }
-                    }
-                } 
-            });
+            // Create chart with data
+            // createChart(data)
         })
         .catch(error => console.error("ERROR: ", error))
     }
