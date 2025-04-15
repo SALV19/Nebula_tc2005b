@@ -34,8 +34,8 @@
                     <div id="department" class="checkboxes limit">
                         <% for (let empresa of Object.keys(depa)) {%>
                             <% for (let departamento of depa[empresa]) {%>
-                                <label for="<%= `${empresa}-${departamento}` %>-company" class="checkbox-row">
-                                    <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-company" value="<%= departamento %>"/>
+                                <label for="<%= `${empresa}-${departamento}` %>-department" class="checkbox-row">
+                                    <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-department" value="<%= departamento %>"/>
                                         <%= departamento %>
                                 </label>
                                 <%# console.log(departamento) %>
