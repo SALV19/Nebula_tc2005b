@@ -48,7 +48,7 @@ exports.get_home = async (request, response) => {
     for (const cal of calendars) {
       const calendarId = cal.id;
 
-      console.log("color ", cal.backgroundColor);
+      //console.log("color ", cal.backgroundColor);
       // calendarMap[calendarId] = colors[calendarId];
 
       const eventsResponse = await calendar.events.list({
