@@ -4,6 +4,9 @@ const Empresa = require("../models/empresa.model");
 const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 const Requests = require("../models/home.model");
+const fs = require('fs');
+
+const {google} = require('googleapis');
 
 const {contVac} = require('../util/contVacations')
 
@@ -315,33 +318,47 @@ exports.update_collab = async (request, response) => {
 };
 
 exports.uploadFA = async (request, response)=> {
-  const fs = require('fs');
-  const {GoogleAuth} = require('google-auth-library');
-  const {google} = require('googleapis');
+  console.log("Llego a la funcion upload")
 
-  // Get credentials and build service
-  // TODO (developer) - Use appropriate auth mechanism for your app
-  const auth = new GoogleAuth({
-    scopes: 'https://www.googleapis.com/auth/drive',
-  });
-  const service = google.drive({version: 'v3', auth});
-  const requestBody = {
-    name: 'photo.jpg',
-    fields: 'id',
-  };
-  const media = {
-    mimeType: 'image/jpeg',
-    body: fs.createReadStream('files/photo.jpg'),
-  };
-  try {
-    const file = await service.files.create({
-      requestBody,
-      media: media,
-    });
-    console.log('File Id:', file.data.id);
-    return file.data.id;
-  } catch (err) {
-    // TODO(developer) - Handle error
-    throw err;
-  }
+  // const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  // if (googleLogin == 1) {
+  //   const oauth2Client = new google.auth.OAuth2(
+  //     process.env.GOOGLE_CLIENT_ID, 
+  //     process.env.GOOGLE_CLIENT_SECRET, 
+  //     'http://localhost:3000/log_in/success'
+  //   );
+    
+  //   oauth2Client.setCredentials({
+  //     access_token: request.user.accessToken
+  //   });
+
+  //   const service = google.drive({version: 'v3', auth: oauth2Client});
+  //   const requestBody = {
+  //     name: 'photo.jpg',
+  //     fields: 'id',
+  //   };
+  //   const media = {
+  //     mimeType: 'image/jpeg',
+  //     body: fs.createReadStream('files/photo.jpg'),
+  //   };
+  //   try {
+  //     const file = await service.files.create({
+  //       requestBody,
+  //       media: media,
+  //     });
+  //     console.log('File Id:', file.data.id);
+  //     return file.data.id;
+  //   } catch (err) {
+  //     // TODO(developer) - Handle error
+  //     throw err;
+  //   }
+  // }
+
+  // // Get credentials and build service
+  // // TODO (developer) - Use appropriate auth mechanism for your app
+
+
+  const { file } = request;
+console.log(file)
 }
