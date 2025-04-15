@@ -2,7 +2,16 @@
 
 .column{
     margin-top: 5rem;
-    margin-left: 7%;
+    margin-left: 5%;
+    margin-right: 5%
+}
+
+.left-k{
+    margin-left:7%;
+}
+
+.right-k{
+    margin-right:5%;
 }
 
 .is-rounded{
@@ -13,11 +22,20 @@
 .custom-box {
     padding: 1%;
     padding-left: 3%;
-    width: 80%;
     margin-bottom: 3%;
     margin-top: 1%;
     background-color: #3f3f3f !important;
     color: white !important;
     border-radius: 20px !important;
+}
+
+.button.is-danger{
+    background-color: #B8453E;
+    color:#FFFFFF;
+    border-radius: 20px;
+}
+
+.has-text-danger-k{
+    color: #B8453E;
 }
 

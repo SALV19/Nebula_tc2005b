@@ -44,5 +44,8 @@ module.exports = class Requests {
             WHERE sf.id_colaborador = ?
             LIMIT 7 OFFSET ?`, [id_collab, offset])
     }
+    static async fetchAdmsFaults(id_colaborador){
+        return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
+    }
 }
 

@@ -6,22 +6,23 @@ const Requests = require("../models/home.model");
 
 exports.get_personal_info = async (request, response) => {
 
-  console.log(request.user.user.id_colaborador);
   const absences = await Requests.fetchDaysApproved(request.session.email)
   .then(data => data[0])
   .catch(e => {
     console.error("Error fetching approved absences:", e);
     return [];
   });
-
-  console.log("ausencias, ", absences.length);
+  const faults = await Requests.fetchAdmsFaults(request.session.id_colaborador)
+  .then(data => data[0])
+  .catch(e => {
+    console.error("Error fetching administrative faults:");
+    return [];
+  }) 
 
   contVac(request)
   .then(({diasDisponibles,diasTotales, error}) =>{
     Collaborator.fetchPersonalInfo(request.user.user.id_colaborador)
     .then(data => {
-      console.log("diasDisponobles: ", diasDisponibles);
-      console.log("diasTotales; ", diasTotales);
       const [rowsC, fieldData] = data;
 
       const fullName = rowsC[0].nombre +' ' + rowsC[0].apellidos;
@@ -31,10 +32,9 @@ exports.get_personal_info = async (request, response) => {
       if(link.length < 10) {
         if(request.user) {
           link = request.user.profile._json.picture;
-        }
+        } 
       }
 
-      console.log(rowsC[0]);
 
       response.render("personal_info", {
         permissions: request.session.permissions,
@@ -42,6 +42,7 @@ exports.get_personal_info = async (request, response) => {
         diasDisponibles,
         diasTotales,
         error,
+        faults: faults.length,
         total_absences: absences.length,
         fullName: fullName, 
         email: rowsC[0].email, 
