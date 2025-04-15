@@ -1,4 +1,4 @@
-<link rel="stylesheet" href="/css/faults.css">
+<link rel="stylesheet" href="/css/faults.css"></link>
 <script>
     function createTableFaults(data) {
       console.log("longitud:",data.faults.length );
@@ -20,64 +20,69 @@
       if (data.faults.length <= 0){
         table.innerHTML += `<p style="background-color:#737373; text-align:center; "> No faults commited </p>`
       } else {
-          data.faults.forEach((d, idx) => {
-            table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
-            table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador} </td>`
-            table_content += '</tr>';
-            // Contenido desplegable
-            table_content += `<tr class="additional-row " id="additional-row-${idx}" style="display: none;">
-                                <td colspan='6'>
-                                    <div class="has-background columns" style="padding: 1rem;">
-                                        <div class="column">
-                                            <h1>Date</h1>
-                                            <hr class="hr-table"/>`
-                                           
-            if (d.faltas && d.faltas.length > 0) {
-              d.faltas.forEach((falta) => {
-                const date = new Date(falta.fecha);
-                table_content += `<p class="container-text">${date.toLocaleDateString()}</p>`;
-              });
-            } else {
-              table_content += `<p class="container-text">No hay registros de faltas</p>`;
-            }                                    
+        data.faults.forEach((d, idx) => {
+          table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}"></i></td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador}</td>`;
+          table_content += '</tr>';
 
-            table_content += `</div>
-                          <div class="column is-four-fifths">
-                            <h1>Motive</h1>
-                            <hr class="hr-table"/>`
-                            if (d.faltas && d.faltas.length > 0) {
-                              d.faltas.forEach((falta) => {
-                                table_content += `<p class="container-text">${falta.motivo}</p>`;
-                              });
-                            } else {
-                              table_content += `<p class="container-text">No hay registros de faltas</p>`;
-                            } 
-            table_content += `</div>
-            </div>
-              <div class="is-flex is-justify-content-flex-end is-align-items-center has-background" style="margin: -1rem;">
-                <div id="file-js-example" class="file has-name buttons">
-                  <label class="file-label">
-                    <input class="file-input" type="file" name="resume" />
-                    <span class="file-cta">
-                      <span class="file-icon">
-                        <i class="fas fa-upload"></i>
-                      </span>
-                      <span class="file-label"> Choose a file… </span>
-                    </span>
-                    <span class="file-name"> No file uploaded </span>
-                  </label>
+          // Contenido desplegable
+          table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+            <td colspan='6' style='background-color:#454545;'>`;
+
+          if (d.faltas && d.faltas.length > 0) {
+            // Agregar encabezados una sola vez
+            table_content += `
+              <div class="has-background columns"">
+                <div class="column"><h1>Date</h1><hr class="hr-table"/></div>
+                <div class="column is-two-fifths"><h1>Motive</h1><hr class="hr-table"/></div>
+                <div class="column"><h1>Upload</h1><hr class="hr-table"/></div>
+                <div class="column"><h1>Download</h1><hr class="hr-table"/></div>
+              </div>`;
+
+            // Agregar las filas de faltas sin repetir encabezados
+            d.faltas.forEach((falta) => {
+              const date = new Date(falta.fecha);
+              table_content += `
+                <div class="has-background columns">
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <p class="container-text">${date.toLocaleDateString()}</p>
+                  </div>
+                  <div class="column is-two-fifths" style="margin-top:-1.2rem;">
+                    <p class="container-text">${falta.motivo}</p>
+                  </div>
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <div class="file buttons">
+                      <label class="file-label">
+                        <input class="file-input" type="file" name="resume" id="${falta.id_fa}" />
+                        <span class="file-cta">
+                          <span class="file-icon"><i class="fas fa-upload"></i></span>
+                          <span class="file-label">Choose a file…</span>
+                        </span>
+                      </label>
+                    </div>
+                  </div>
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <button class="button2" id="${falta.id_fa}">Download</button>
+                  </div>
+                </div>`;
+            });
+          } else {
+            table_content += `
+              <div class="has-background columns">
+                <div class="column">
+                  <p class="container-text">No hay registros de faltas</p>
                 </div>
-                <button class="button2" style="margin-left: 0.5rem;">Download</button>
-              </div>
-                </td>
-              </tr>`;
-          })
-      }
+              </div>`;
+          }
+
+          table_content += `</td></tr>`;
+        });
+
       table_content += '</tbody>'
       table.innerHTML = table_content
       // <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
@@ -95,7 +100,7 @@
         });
       })
   
-    }
+    }}
     // Consulta a db para la información de solicitudes
     const get_faults_info = (pagination=0, filter=null) => {
       const csrf = document.getElementById('_csrf').value
