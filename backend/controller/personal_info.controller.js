@@ -21,7 +21,7 @@ exports.get_personal_info = async (request, response) => {
 
   contVac(request)
   .then(({diasDisponibles,diasTotales, error}) =>{
-    Collaborator.fetchPersonalInfo(request.user.user.id_colaborador)
+    Collaborator.fetchPersonalInfo(request.session.id_colaborador)
     .then(data => {
       const [rowsC, fieldData] = data;
 
@@ -32,9 +32,12 @@ exports.get_personal_info = async (request, response) => {
       if(link.length < 10) {
         if(request.user) {
           link = request.user.profile._json.picture;
-        } 
+        } else {
+          link = '/img/profile_image.png';
+        }
       }
 
+      console.log(link);
 
       response.render("personal_info", {
         permissions: request.session.permissions,

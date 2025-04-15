@@ -5,22 +5,30 @@
 <input type="hidden" id="_csrf" value=<%= csrfToken %>/>
 
 <div class="columns ">
-  <div class="column left-k is-4 ">
-    <figure class="image " style="width: 80%; margin: 0 auto;">
-      <img class="is-rounded" style="width: 80%; height: auto; " src= <%= foto %> />
-    </figure>
-    <div class='flex-centered'>
-      <p class='has-text-danger-k is-size-1'><%= `${faults}` %></p>
-      <p class='has-text-centered has-text-danger-k is-size-7'>Faults<br>commited</p>
+  <div class="column left-k is-4 has-text-centered">
+    <div class="is-flex is-justify-content-center is-align-items-center" >
+      <figure class="image" style="width: 90%; padding: 10%;">
+        <img class="is-rounded" style=" height: auto;" src=<%= foto %>  />
+      </figure>
     </div>
-    <div class='flex-centered'>
-      <p class="is-size-1 has-text-white"><%= `${diasDisponibles} / ${diasTotales}` %></p>
-      <p class='has-text-centered is-size-7'>Days of<br>vacations Left</p>
-    </div>
-    <div class='flex-centered'>
-      <p class="is-size-1 has-text-white"><%= `${total_absences}` %></p>
-      <p class='has-text-centered is-size-7'>Current<br>abscences</p>
-    </div>
+    
+    <table class="table is-narrow is-fullwidth has-text-centered" >
+      <tr>
+        <td>
+          <p class='has-text-danger-k is-size-1'><%= `${faults}` %></p>
+          <p class='has-text-centered has-text-danger-k is-size-7'>Faults<br>commited</p>
+        </td>
+        <td>
+          <p class=" has-text-white is-size-1"><%= `${diasDisponibles} / ${diasTotales}` %></p>
+          <p class='has-text-centered is-size-7'>Days of<br>vacations Left</p>
+        </td>
+        <td>
+          <p class=" has-text-white is-size-1"><%= `${total_absences}` %></p>
+          <p class='has-text-centered is-size-7'>Current<br>abscences</p>
+        </td>
+      </tr>
+    </table>
+   
   </div>  
   <div class="column right-k">
     <label class="is-size-6 styling">Full Name:</label>
