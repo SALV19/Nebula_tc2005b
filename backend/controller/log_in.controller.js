@@ -9,6 +9,7 @@ exports.get_log_in = (request, response) => {
   response.clearCookie('email');
   status.error = null;
   delete request.user;
+  delete request.session.email;
   response.render("log_in", {
     ...status, 
     csrfToken: request.csrfToken(),
@@ -25,8 +26,8 @@ exports.post_log_in = async (request, response) => {
 
   if (user_info[0].length) {
     if(await first_login(password, user_info[0][0].contrasena)) {
-      console.log("viene de usuario y contraseña");
-      console.log(" ");
+      //console.log("viene de usuario y contraseña");
+      //console.log(" ");
       request.session.email = request.body.email;
       request.session.firstLogin = true;
       request.session.sourceRoute = "initial";

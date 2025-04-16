@@ -17,8 +17,8 @@
         if (data.value == 1) {
             content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`;
         } else if (data.value == 2) {
-            content += `<p class="headingVac" style="text-align: center;"> Trimester </p>`;
-        } else if (data.value == 3) {
+            content += `<p class="headingVac" style="text-align: center;"> Trimesteral </p>`;
+        } else if (data.val == 3) {
             content += `<p class="headingVac" style="text-align: center;"> Semestral </p>`;
         } else {
             content += `<p class="headingVac" style="text-align: center;"> Annually </p>`;
@@ -28,20 +28,20 @@
                     <div class="metric-wrapper">
                         <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG hiring rate</p>
                         <i class="bi bi-caret-down-fill is-clickable size-icon" id="hiring-rate-icon"></i>
-                        <div class="hr-container control" id="HRoptions" style="display: none;"> 
+                        <div class="hr-container control" id="HRoptions"> 
                             <div>
                                 <label class="radio">
                                     <input type="radio" name="answerHR" value="1"/> Monthly
-                                </label>
+                                </label><br>
                                 <label class="radio">
                                     <input type="radio" name="answerHR" value="2"/> Trimestral
-                                </label>
+                                </label><br>
                                 <label class="radio">
                                     <input type="radio" name="answerHR" value="3"/> Semestral
-                                </label>
+                                </label><br>
                                 <label class="radio">
                                     <input type="radio" name="answerHR" value="4"/> Annually
-                                </label>
+                                </label><br>
                                 <button class="hr-button"> SAVE </button>
                             </div>
                         </div>
@@ -54,7 +54,10 @@
 
         const icon = document.getElementById("hiring-rate-icon");
         icon.addEventListener("click", () => {
+            console.log("ENtro");
             const hRoption = document.getElementById("HRoptions");
+            console.log("Lol2: ", hRoption);
+
             hRoption.style.display = hRoption.style.display === "block" ? "none" : "block";
         });
 
@@ -99,7 +102,5 @@
         });
     };
 
-    document.addEventListener("DOMContentLoaded", () => {
-        get_hiring();
-    });
+
 </script>

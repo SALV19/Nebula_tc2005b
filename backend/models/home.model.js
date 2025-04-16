@@ -32,17 +32,66 @@ module.exports = class Requests {
             `, [id])
         }
     }
+    
+    static async fetchReqHome(offset) {
+        const [rows] = await db.execute(`SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, ds.fecha
+        FROM solicitudes_falta sf, dias_solicitados ds
+        WHERE sf.id_solicitud_falta = ds.id_solicitud_falta
+        ORDER BY fecha DESC
+        LIMIT 8 OFFSET ?`, [offset]);
+    
+        return rows; // Return the rows directly
+    }
 
-    static async fetchRequests(id_collab, offset){
-        return db.execute(`
-            SELECT sf.id_colaborador, sf.fecha, sf.estado
-            FROM solicitudes_falta sf, dias_solicitados ds, colaborador c
-            INNER JOIN dias_solicitados ds
+    static async fetchTeamRequests(email, offset) {
+        console.log("Email",email);
+        console.log("offset",offset);
+        const [rows] = await db.execute(
+            `SELECT  c.email, c.nombre, c.apellidos, sf.*, ds.fecha
+                FROM solicitudes_falta sf
+                JOIN dias_solicitados ds
                 ON ds.id_solicitud_falta = sf.id_solicitud_falta
-            INNER JOIN solicitades_falta sf
-                ON sf.id_colaborador = c.id_colaborador
+                JOIN colaborador c
+                ON c.id_colaborador = sf.id_colaborador
+                JOIN equipo e 
+                ON e.id_colaborador = c.id_colaborador
+                JOIN departamento d
+                ON d.id_departamento = e.id_departamento
+                WHERE d.nombre_departamento = (
+                    SELECT nombre_departamento
+                    FROM colaborador c
+                    INNER JOIN equipo e
+                    ON c.id_colaborador = e.id_colaborador
+                    INNER JOIN departamento d
+                    ON d.id_departamento = e.id_departamento
+                    WHERE c.email = ?
+                )
+                AND e.id_rol = 1
+                AND c.email != ?
+                GROUP BY sf.id_solicitud_falta
+                ORDER BY sf.estado ASC, ds.fecha ASC
+                LIMIT 8 OFFSET ?`, [email, email, offset]);
+        return rows;
+    }
+
+    static async fetchByLoggedColab(offset, id_colaborador) {
+        const [rows] = await db.execute(
+          `SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, MIN(ds.fecha) AS fecha
+            FROM solicitudes_falta sf
+            JOIN dias_solicitados ds
+            ON sf.id_solicitud_falta = ds.id_solicitud_falta
             WHERE sf.id_colaborador = ?
-            LIMIT 7 OFFSET ?`, [id_collab, offset])
+            GROUP BY sf.id_solicitud_falta
+            ORDER BY fecha DESC
+            LIMIT 8 OFFSET ?
+            `,
+          [id_colaborador, offset]
+        );
+        console.log("Rows: ", rows);
+        return rows;
+    }
+    static async fetchAdmsFaults(id_colaborador){
+        return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
     }
 
     static async metricMonth(){
@@ -59,7 +108,6 @@ module.exports = class Requests {
                     AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
             ) * 100 AS indice_rotacion;
         `)
-        console.log("month: ", month[0]);
         return month[0];
     }
     static async metricTrimester(){
@@ -77,7 +125,6 @@ module.exports = class Requests {
                     AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))
                 ) * 100 AS indice_rotacion;
             `)
-            console.log("trimester: ", trimester[0]);
         return trimester[0];
     }
 
@@ -96,7 +143,6 @@ module.exports = class Requests {
                 AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))
             ) * 100 AS indice_rotacion;
         `)        
-        console.log("semester: ", semester[0]);
         return semester[0];                                      
     }
     static async metricAnually(){
@@ -114,7 +160,6 @@ module.exports = class Requests {
                 AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))
             ) * 100 AS indice_rotacion;
         `)
-        console.log("Anual: ", anual[0]);
         return anual[0];
     }
 
@@ -131,7 +176,6 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        console.log("HR month: ", month[0]);
         return month[0];
     }
     static async hRateT(){
@@ -147,7 +191,6 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        console.log("HR tri: ", trimester[0]);
         return trimester[0];
     }
     static async hRateS(){
@@ -163,7 +206,6 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        console.log("HR tri: ", semester[0]);
         return semester[0];
     }
     static async hRateY(){
@@ -179,7 +221,6 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        console.log("HR tri: ", year[0]);
         return year[0];
     }
 }

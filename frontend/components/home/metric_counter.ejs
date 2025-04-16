@@ -14,7 +14,7 @@
                 if(data.val == 1){
                     content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
                 } else if (data.val == 2){
-                    content += `<p class="hadingVac" style="text-align: center;"> Trimester </p>`
+                    content += `<p class="hadingVac" style="text-align: center;"> Trimesteral </p>`
                 } else if (data.val == 3){
                     content += `<p class="hadingVac" style="text-align: center;"> Semestral </p>`
                 } else {
@@ -23,25 +23,26 @@
                 content += `<div>
                     <div class="metric-wrapper">
                         <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG metric rotation</p>
-                        <i class="bi bi-caret-down-fill is-clickable size-icon" id="periodicity"></i>
-                        <div class="options-container control" id="options"> 
+                        <i class="bi bi-caret-down-fill is-clickable size-icon" id="metric-rate-icon"></i>
+                        <div class="options-container control" id="metric_options"> 
                             <div>
-                                <label class="radio" >
+                                <label class="radio text-size" >
                                     <input type="radio" name="answer" value="1"/>
                                     Monthly
                                 </label>
-                                <label class="radio" >
+                                <br>
+                                <label class="radio text-size" >
                                     <input type="radio" name="answer" value="2"/>
                                     Trimestral
-                                </label>
-                                <label class="radio" >
+                                </label><br>
+                                <label class="radio text-size">
                                     <input type="radio" name="answer" value="3" />
                                     Semestral
-                                </label>
-                                <label class="radio" >
+                                </label><br>
+                                <label class="radio text-size" >
                                     <input type="radio" name="answer" value="4"/>
                                     Annually
-                                </label>
+                                </label><br>
                                 <button class="approve-button"> SAVE </button>
                             </div>
                         </div>
@@ -53,12 +54,14 @@
         // Inserta el contenido en un contenedor del DOM
         document.getElementById('metric-rotation-counter').innerHTML = content;
 
-        const icon = document.getElementById("periodicity");
+        const icon = document.getElementById("metric-rate-icon");
         icon.addEventListener("click", () => {
-            const option = document.getElementById("options");
+            console.log("Salio");
+            const option = document.getElementById("metric_options");
+            console.log("Lol1: ", option);
             option.style.display = option.style.display === "block" ? "none" : "block";
         });
-        const radios = document.querySelectorAll("input[type='radio']");
+        const radios = document.querySelectorAll("input[name='answer']");
         radios.forEach(radio => {
             radio.addEventListener("input", () => {
                 console.log("Valor seleccionado:", radio.value);
@@ -68,12 +71,12 @@
         if (saveButton) {
             saveButton.addEventListener("click", (e) => {
                 e.preventDefault();
-                get_info(); // llama al POST
+                get_Metric();
             });
         }
     }
 
-    const get_info = () => {
+    const get_Metric = () => {
     const csrf = document.getElementById('_csrf').value;
     console.log("CSRF: ", csrf);
     const selectedRadio = document.querySelector("input[name='answer']:checked");
@@ -105,7 +108,9 @@
 
 
     document.addEventListener("DOMContentLoaded", (e) => {
-        get_info();
+        get_Metric();
+        get_hiring();
+        
     })
 
 </script>
