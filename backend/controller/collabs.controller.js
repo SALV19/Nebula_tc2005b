@@ -372,6 +372,7 @@ exports.uploadFA = async (request, response)=> {
       // Respuesta al frontend
       
       // Construye el enlace de visualización manualmente
+      const id_fa = request.body.id_fa;
       const fileId = fileUploaded.data.id;
       const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
 
@@ -379,6 +380,8 @@ exports.uploadFA = async (request, response)=> {
       console.log('File ID:', fileId);
       console.log('Link:', fileLink);
     
+      await FaltaAdministrativa.updateLink(id_fa, fileLink);
+
       return response.json({
         success: true,
         fileId: fileId,
