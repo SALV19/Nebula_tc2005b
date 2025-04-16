@@ -224,7 +224,54 @@ body{
     width: 24rem;
     margin-top: -1rem;
 }
+.align-counter{
+    align-self: flex-start; 
+    margin-bottom: -1px
+}
+.metric-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: justify;
+}
 
+.size-icon{
+    font-size: 20px;
+}
+.options-container,
+.hr-container{
+    background-color: #747474;
+    z-index: 9999;
+    width: 10rem;
+    height: 8rem;
+    border-radius: 6px;
+    padding: 1rem;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    margin-left: -9.5rem;
+    margin-top: 1.5rem;
+    display: none; 
+    color: #EEEEEE;
+    text-align: left !important;
+    font-size: x-small !important;
+}
+.approve-button,
+.hr-button {
+    background-color: #59A250;
+    color: white;
+    width: 4rem;              
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 0.4rem auto 0 auto;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size:  x-small;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
 .requests{
     background-color: transparent;
     color: #FFFFFF;
@@ -275,7 +322,8 @@ p{
     align-items: center; 
     margin-top: 4rem;
 }
-.container-t{
-    margin-top: -1rem;
+
+.text-size{
+    font-size: x-small;
 }
   

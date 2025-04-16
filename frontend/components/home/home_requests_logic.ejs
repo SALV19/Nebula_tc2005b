@@ -67,7 +67,7 @@
 
 
     // Consulta a db para la información de solicitudes
-    const get_info = (pagination = 0) => {
+    const get_request = (pagination = 0) => {
     const csrf = document.getElementById('_csrf').value;
     const prev_button = document.querySelector("#prev-page");
     const next_button = document.querySelector("#next-page");
@@ -85,31 +85,23 @@
     })
     .then(response => response.json())
     .then(data => {
-        console.log("Data", data);
-        console.log("Data longitud: ", data.faults.length);
         createTableRequests(data);
-        console.log("Pagination1: ", pagination)
         if (data.faults.length < 8 && pagination > 0 ) {
-            console.log("Pagination2: ", pagination)
             next_button.style.visibility = "hidden";
             prev_button.style.visibility = "visible";
         } else if (data.faults.length < 8 && pagination === 0){
-            console.log("Pagination 3: ", pagination)
             pagination_value.value = pagination;
             next_button.style.visibility = "hidden";
             prev_button.style.visibility = "hidden";
         } else if (data.faults.length === 8 && pagination === 0){
-            console.log("Paginatio4n: ", pagination)
             pagination_value.value = pagination + 1;
             prev_button.style.visibility = "hidden";
             next_button.style.visibility = "visible";
         } else if (data.faults.length === 0 && pagination > 0){
-            console.log("Pagination5: ", pagination)
             pagination_value.value = pagination;
             next_button.style.visibility = "hidden";
             prev_button.style.visibility = "visible";
         } else {
-            console.log("Pagination6: ", pagination)
             prev_button.style.visibility = "visible";
             next_button.style.visibility = "visible";
             pagination_value.value = pagination + 1;
@@ -143,10 +135,11 @@
         });
 
         pagination_value.addEventListener("change", () => {
-            get_info(Number(pagination_value.value - 1));
+            get_request(Number(pagination_value.value - 1));
         });
-
-        get_info();
+        
+        get_request();
+        
     });
 
 </script>

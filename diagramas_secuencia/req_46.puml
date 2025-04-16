@@ -1,0 +1,42 @@
+@startuml Metric_rotation
+autonumber
+actor Usuario as u
+boundary general.routes.js as gr
+boundary home.routes.js as hr
+boundary metric_rotation_counter.ejs as mrc
+control home.controller.js as hc
+entity home.model.js as hm
+database Nebula as db
+
+activate u
+u -->> gr : fetch ('/')
+
+activate gr
+gr --> hr : ('/metric')
+deactivate gr 
+
+activate hr
+hr --> hc : get_metrics( )
+deactivate hr 
+
+activate hc
+hc -->> hm : get_metrics( )
+
+activate hm
+hm --> db :SELECT \n  ( \n  (SELECT COUNT(*) FROM colaborador c \n  WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE \n AND fechaSalida IS NOT NULL)\n  / \n(SELECT COUNT(*)  FROM colaborador c \n WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH \n AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))\n ) * 100 AS indice_rotacion;
+
+
+activate db
+db --> hm : rows
+deactivate db 
+
+hm -->> hc : rows
+
+deactivate hm
+
+hc -->> u : response json(rows)
+
+deactivate hc 
+
+
+deactivate u 
