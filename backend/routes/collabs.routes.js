@@ -16,5 +16,6 @@ router.post('/get_collab_data', collabs_controller.get_collab_data);
 router.post('/update_collab', collabs_controller.update_collab);
 router.post('/uploadFA', upload.single("drive_file"), collabs_controller.uploadFA)
 
+router.post('/Faults', collabs_controller.get_faults);
 
 module.exports = router;

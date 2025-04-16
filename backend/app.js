@@ -62,4 +62,3 @@ app.use(other_controllers.get_404);
 app.listen(3000, () => {
   console.log("App started in: http://localhost:3000");
 });
-

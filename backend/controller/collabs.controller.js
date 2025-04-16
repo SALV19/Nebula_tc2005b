@@ -5,12 +5,14 @@ const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 const Requests = require("../models/home.model");
 const fs = require('fs');
+const FaltaAdministrativa = require("../models/fa.model")
 
 const {google} = require('googleapis');
 
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
+const { off } = require("../util/database");
 
 let settings = {
   selectedOption: "active",
@@ -346,9 +348,9 @@ exports.uploadFA = async (request, response)=> {
     });
 
     const drive = google.drive({version: 'v3', auth: oauth2Client});
-  
+    const id_fa = request.body.id_fa;
     // Nombre para evitar duplicados
-    const fileName = `id_FA_${Date.now()}_${my_file.originalname}`; 
+    const fileName = `${id_fa}_${Date.now()}_${my_file.originalname}`; 
 
     const requestBody = {
       name: fileName,  
@@ -372,13 +374,12 @@ exports.uploadFA = async (request, response)=> {
       // Respuesta al frontend
       
       // Construye el enlace de visualización manualmente
-      const id_fa = request.body.id_fa;
       const fileId = fileUploaded.data.id;
       const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
 
       // Respuesta al frontend
-      console.log('File ID:', fileId);
-      console.log('Link:', fileLink);
+      // console.log('File ID:', fileId);
+      // console.log('Link:', fileLink);
     
       await FaltaAdministrativa.updateLink(id_fa, fileLink);
 
@@ -398,3 +399,46 @@ exports.uploadFA = async (request, response)=> {
       return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
   }
 };
+exports.get_faults = async (request, response) => {
+  const offset = request.body.offset * 10;
+  // console.log("Offsets: ", offset);
+  
+  const filter = request.body.filter;
+  // console.log("Filtro", filter);
+
+  const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
+
+  const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
+
+  const faults = await Colaborador.fetchAllFaults();
+
+  // console.log("Total IDs obtenidos:", ids.length); 
+  // console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
+
+  const map = {};
+  rows.forEach(c => {
+    map[c.id_colaborador] = {
+      ...c,
+      faltas: [],
+    };
+  });
+
+  faults.forEach(f => {
+    if (map[f.id_colaborador]) {
+      map[f.id_colaborador].faltas.push({
+        id_fa: f.id_fa,
+        motivo: f.motivo,
+        fecha: f.fecha
+      });
+    }
+  });
+
+  const resultado = Object.values(map);
+
+  response.json({
+    selectedOption: 'Faults',
+    permissions: request.session.permissions,
+    faults : resultado,
+  });
+}
+

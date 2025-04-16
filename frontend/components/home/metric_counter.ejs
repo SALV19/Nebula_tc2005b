@@ -1,0 +1,117 @@
+<script>
+    function createCounter(data){
+        console.log("Data: ", data);
+        console.log(data.counter);
+        const indiceRotacion = parseFloat(data.counter[0].indice_rotacion).toFixed(2);
+        console.log("Índice de rotación formateado:", indiceRotacion);
+        let content = " ";
+        content += `
+        <input type="hidden" id="_csrf" value="<%= csrfToken %>">
+        <div class="level">
+            <div class="level-item has-text-centered">
+            <div>
+                <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>`
+                if(data.val == 1){
+                    content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
+                } else if (data.val == 2){
+                    content += `<p class="hadingVac" style="text-align: center;"> Trimesteral </p>`
+                } else if (data.val == 3){
+                    content += `<p class="hadingVac" style="text-align: center;"> Semestral </p>`
+                } else {
+                    content += `<p class="hadingVac" style="text-align: center;"> Annually </p>`
+                }
+                content += `<div>
+                    <div class="metric-wrapper">
+                        <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG metric rotation</p>
+                        <i class="bi bi-caret-down-fill is-clickable size-icon" id="metric-rate-icon"></i>
+                        <div class="options-container control" id="metric_options"> 
+                            <div>
+                                <label class="radio text-size" >
+                                    <input type="radio" name="answer" value="1"/>
+                                    Monthly
+                                </label>
+                                <br>
+                                <label class="radio text-size" >
+                                    <input type="radio" name="answer" value="2"/>
+                                    Trimestral
+                                </label><br>
+                                <label class="radio text-size">
+                                    <input type="radio" name="answer" value="3" />
+                                    Semestral
+                                </label><br>
+                                <label class="radio text-size" >
+                                    <input type="radio" name="answer" value="4"/>
+                                    Annually
+                                </label><br>
+                                <button class="approve-button"> SAVE </button>
+                            </div>
+                        </div>
+                </div>
+            </div>
+            </div>
+        </div>
+        `
+        // Inserta el contenido en un contenedor del DOM
+        document.getElementById('metric-rotation-counter').innerHTML = content;
+
+        const icon = document.getElementById("metric-rate-icon");
+        icon.addEventListener("click", () => {
+            console.log("Salio");
+            const option = document.getElementById("metric_options");
+            console.log("Lol1: ", option);
+            option.style.display = option.style.display === "block" ? "none" : "block";
+        });
+        const radios = document.querySelectorAll("input[name='answer']");
+        radios.forEach(radio => {
+            radio.addEventListener("input", () => {
+                console.log("Valor seleccionado:", radio.value);
+            });
+        });
+        const saveButton = document.querySelector(".approve-button");
+        if (saveButton) {
+            saveButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                get_Metric();
+            });
+        }
+    }
+
+    const get_Metric = () => {
+    const csrf = document.getElementById('_csrf').value;
+    console.log("CSRF: ", csrf);
+    const selectedRadio = document.querySelector("input[name='answer']:checked");
+    const value = selectedRadio ? selectedRadio.value : null;
+
+    fetch('/metric', {
+        method: 'POST',
+        headers: {
+        'Content-Type': 'application/json',
+        'x-csrf-token': csrf
+        },
+        body: JSON.stringify({
+            valor: value,
+        }),
+    })
+    .then(response => {
+        console.log("Entro al response", response);
+        return response.json()
+    })
+    .then(data => {
+        console.log("Entro al data", data);
+        createCounter(data);
+    })
+    .catch(e => {
+        console.log("Entro al error", e);
+        console.error(e)
+    });
+    };
+
+
+    document.addEventListener("DOMContentLoaded", (e) => {
+        get_Metric();
+        get_hiring();
+        
+    })
+
+</script>
+  
