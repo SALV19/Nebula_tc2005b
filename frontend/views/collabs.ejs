@@ -21,7 +21,7 @@
                     <i class="bi bi-search mr-2 is-clickable" style="margin-top: -10px;"></i>
                 </div>
             </div>
-         
+        
             <form action="/view_collabs/uploadFA?_csrf=<%=csrfToken%>" method="POST" enctype="multipart/form-data" id="form">
                 <div class="file">
                     <label for="drive_file" class="file-label">
@@ -32,34 +32,11 @@
                     </label>
                 </div>
                 <br><br>
-                <input class="button is-info" type="submit" value="upload file">
+                <div class="field mt-4">
+                    <input class="button is-info" type="submit" value="Upload File">
+                </div>
             </form>
-
-            <script>
-                const csrf = document.querySelector("#_csrf").value
-                const form = document.querySelector("#form")
-                const file = document.querySelector("#imagen").value
-                console.log(csrf)
-                console.log(file)
-                console.log(form)
-                form.addEventListener("submit", (e) => {
-                    // e.preventDefault()S
-                })
-                //     fetch("/view_collabs/uploadFA", {
-                //         method: 'POST',
-                //         headers: {
-                //                 'Content-Type': 'application/json',
-                //                 'csrf-token': csrf
-                //             },
-                //         body: {
-
-                //         }
-                //     })
-                // })
-
-            </script>
-            
-
+            <%- include('../components/collabs/uploadFA.ejs') %>
             <%- include('includes/_addCollabs_form.ejs') %>
             </div>
         </div>

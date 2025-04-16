@@ -322,6 +322,13 @@ exports.uploadFA = async (request, response)=> {
 
   const { file } = request;
   const my_file = file
+
+  //Validar tipo de archivo
+  const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowedTypes.includes(my_file.mimetype)) {
+    return response.status(400).json({ success: false, message: 'Solo se permiten archivos PDF o DOCX' });
+  }
+
   console.log(my_file)
 
   const googleLogin = request.user?.accessToken ? 1 : 0;
@@ -330,33 +337,61 @@ exports.uploadFA = async (request, response)=> {
     const oauth2Client = new google.auth.OAuth2(
       process.env.GOOGLE_CLIENT_ID, 
       process.env.GOOGLE_CLIENT_SECRET, 
-      'http://localhost:3000/log_in/success'
+      process.env.REDIRECT
+      // 'http://localhost:3000/log_in/success'
     );
     
     oauth2Client.setCredentials({
-      access_token: request.user.accessToken
+      access_token: request.user.accessToken 
     });
 
-    const service = google.drive({version: 'v3', auth: oauth2Client});
+    const drive = google.drive({version: 'v3', auth: oauth2Client});
+  
+    // Nombre para evitar duplicados
+    const fileName = `id_FA_${Date.now()}_${my_file.originalname}`; 
+
     const requestBody = {
-      name: "id_FA" + my_file.originalname,
+      name: fileName,  
       fields: 'id, name, webViewLink, mimeType',
     };
+
     const media = {
-      mimeType: 'application/pdf',
+      mimeType: my_file.mimetype,
       body: fs.createReadStream(my_file.path),
     };
+
     try {
-      const file = await service.files.create({
+      const fileUploaded = await drive.files.create({
         requestBody,
         media: media,
       });
-      console.log('File Id:', file.data);
-      return file.data;
-    } catch (err) {
-      // TODO(developer) - Handle error
-      throw err;
-    }
-  }
 
-}
+      //Borra el archivo Temporal
+      fs.unlinkSync(my_file.path);
+
+      // Respuesta al frontend
+      
+      // ✅ Construye el enlace de visualización manualmente
+      const fileId = fileUploaded.data.id;
+      const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+
+      // Respuesta al frontend
+      console.log('File ID:', fileId);
+      console.log('Link:', fileLink);
+    
+      return response.json({
+        success: true,
+        fileId: fileId,
+        name: fileUploaded.data.name,
+        mimeType: fileUploaded.data.mimeType,
+        viewLink: fileLink,
+      });
+      // return file.data;
+    } catch (err) {
+      console.error("Error al subir a Drive:", err);
+      return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+    }
+  } else {
+      return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
+  }
+};
