@@ -56,55 +56,6 @@ exports.get_requests = async (request, response) => {
   });
 };
 
-exports.get_vacations = async (request, response) => {
-  const offset = request.body.offset * 10;
-  const filter = request.body.filter;
-  const [abscences] = await Requests.fetchVacations(
-    request.session.id_colaborador,
-    offset,
-    filter
-  )
-    .then((data) => data)
-    .catch((e) => console.error(e));
-
-  const acceptance_colab = await Promise.all(abscences.map((e) => {
-    if (!e.colabAprobador){
-      return 0;
-    } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
-  }))
-
-  response.json({
-    selectedOption: "vacations",
-    abscences,
-    collab: acceptance_colab,
-  });
-};
-exports.get_abscences = async (request, response) => {
-  const offset = request.body.offset * 10;
-  const filter = request.body.filter;
-  const [abscences] = await Requests.fetchAbscences(
-    request.session.id_colaborador,
-    offset,
-    filter
-  )
-    .then((data) => data)
-    .catch((e) => console.error(e));
-
-  const acceptance_colab = await Promise.all(abscences.map((e) => {
-    if (!e.colabAprobador){
-      return 0;
-    } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
-  }))
-
-  response.json({
-    selectedOption: "abscences",
-    abscences,
-    collab: acceptance_colab
-  });
-};
-
 exports.showPopUp = async (request, response) => {
   try {
     const email = request.session.email;
@@ -138,7 +89,55 @@ exports.showPopUp = async (request, response) => {
   }
 };
 
+exports.get_vacations = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const [abscences] = await Requests.fetchVacations(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
 
+  const acceptance_colab = await Promise.all(abscences.map((e) => {
+    if (!e.colabAprobador){
+      return 0;
+    } 
+    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+  }))
+
+  response.json({
+    selectedOption: "vacations",
+    abscences,
+    collab: acceptance_colab,
+  });
+};
+
+exports.get_abscences = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  const [abscences] = await Requests.fetchAbscences(
+    request.session.id_colaborador,
+    offset,
+    filter
+  )
+    .then((data) => data)
+    .catch((e) => console.error(e));
+
+  const acceptance_colab = await Promise.all(abscences.map((e) => {
+    if (!e.colabAprobador){
+      return 0;
+    } 
+    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+  }))
+
+  response.json({
+    selectedOption: "abscences",
+    abscences,
+    collab: acceptance_colab
+  });
+};
 
 exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
@@ -257,6 +256,13 @@ exports.update_request = async (request, response) => {
   // console.log(request_update)
   await request_update.update()
 
-  // Always redirect to the main requests page
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length,
+  };
   response.redirect("/requests");
 }

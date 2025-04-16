@@ -1,10 +1,23 @@
+<%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<input type="hidden" id="_csrf" value="<%= csrfToken %>">
 
 <%- include('../components/nav_bar.ejs') %>
-<input type="hidden" id="_csrf" value="<%= csrfToken %>">
 <div class="columns">
-  <div class="is-three-quarters">
+  <% if (permissions_error <= 0 ) {%>
+
+    <script>
+      console.log("Entro al if")
+      Swal.fire({
+        title: "Colaborator not registered",
+        html: `<p>Please get in contact with Human Resources to fix this</p>`,
+        icon: "error",
+      })
+    </script>
+  <% } %>
+
+  <div class="is-three-quarters pt-6">    
     <aside class="pop-up-d" style="display: none;" id="pop-up">
       <div class="pop-up-content-d">              
         <button onclick="closePopup()" class="button-close">
@@ -26,10 +39,12 @@
       let eventos = <%- eventos %>; 
     </script>
     <% if (eventos) { %>
+      <% if (permissions.includes('add_event')) {%> 
       <div style="display: flex;">
         <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
         <%- include('includes/_addEvent_form.ejs') %>
         </div>
+      <% } %> 
       <%- include('../components/calendar/calendar.ejs') %> 
       <%- include ('../components/home/add_event_logic.ejs') %>
 

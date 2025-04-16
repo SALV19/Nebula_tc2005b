@@ -4,7 +4,8 @@
         const table = document.querySelector('#requests_table');
 
         let table_content = `
-            <caption style="background-color: #DBDBDB; color: #252525; padding:0.5rem;"> Requests </caption>
+        <input type="hidden" id="_csrf" value="<%= csrfToken %>">
+            <caption style="background-color: #DBDBDB; color: #252525; padding:0.5rem; font-size:medium;"> Requests </caption>
             <thead>
                 <tr>
                     <th style="display:none">Fecha</th>

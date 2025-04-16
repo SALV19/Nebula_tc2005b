@@ -18,6 +18,7 @@ let settings = {
 };
 
 exports.get_FollowUp = (request, response) => {
+  request.session.errorMessage = '';
   response.render("followUp", {
     selectedOption: 'collab',
     permissions: request.session.permissions,
@@ -76,6 +77,10 @@ exports.post_follow_ups = (req, res) => {
 exports.get_meeting = (request, response, next) => {  
   settings.selectedOption = 'Meetings';
   const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  if(googleLogin == 0) {
+    response.cookie("come_from", 1, {maxAge: 360000, httpOnly: true});
+  }
 
   const validationErrors = request.session.validationErrors || {};
   const formData = request.session.formData || {};
@@ -151,15 +156,6 @@ exports.post_meeting = (request, response, next) => {
   }
 
   const repeating = request.body.repeating;
-  if (repeating && repeating !== 'no') {
-    const occurrencesField = `${repeating}Occurrences`;
-    const occurrences = request.body[occurrencesField];
-    
-    if (!occurrences || isNaN(occurrences) || occurrences < 1) {
-      validationErrors[occurrencesField] = 'Please enter a valid number of occurrences';
-      hasErrors = true;
-    }
-  }
   
   
   if (hasErrors) {
@@ -193,6 +189,9 @@ exports.post_meeting = (request, response, next) => {
   }
   if(repeating == 'year') {
     occurrences = request.body.yearOccurrences;
+  }
+  if(repeating == 'no') {
+    occurrences = 0;
   }
 
   Collaborator.fetchEmail(id_colaborador)
@@ -246,11 +245,11 @@ exports.post_meeting = (request, response, next) => {
           if (telefono) {
             await sendWhatsapp.sendMeetingNotification(nombre, summary, formattedDate, formattedTime, telefono);
           }
-          response.redirect('/follow_ups');
+          return response.json({ success: true, message: 'Meeting scheduled successfully!' });
         })
         .catch(err => {
           console.error("Error enviando notificación de reunión:", err);
-          response.redirect('/follow_ups');
+          return response.status(500).json({ success: false, message: 'Failed to schedule the meeting.' });
         });
         
         
@@ -367,12 +366,12 @@ exports.get_followUps_info = (request, response, next) => {
 
   const idColaborador = request.session.id_colaborador;
 
-  console.log("entro a get follow ups info");
+  // console.log("entro a get follow ups info");
 
   Evaluation.fetchAllInfo([idColaborador])
     .then(([evalInfo]) => {
 
-      console.log("entro al primer then");
+      // console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
       const notes = evalInfo.map(n => n.notas)      
       const fechasAgendadas = evalInfo.map(evaluacion => {
@@ -396,7 +395,7 @@ exports.get_followUps_info = (request, response, next) => {
         const metricas = metrics;
         const indicadores = indicators;
 
-        console.log("entro al segundo then");
+        // console.log("entro al segundo then");
 
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 

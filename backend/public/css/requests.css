@@ -35,6 +35,9 @@
 .custom-textarea {
     resize: none;
     width: 100%; 
+    height: auto;
+    max-height: 30rem;
+    overflow-y: auto;
     
     background-color: #242424; 
     color: #ffffff; 
@@ -43,7 +46,6 @@
     border-radius: 10px; 
     
     padding: 10px; 
-    padding-bottom: -3rem;
     
     font-size: 1rem; 
     font-family: Arial, sans-serif; 
@@ -274,3 +276,10 @@ textarea{
     font-size: bold;
 }
 
+.has-background {
+    background-color: #454545;  
+}
+
+.ml-6, .mx-6 {
+    margin-left: 5.5rem !important;
+}

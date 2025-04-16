@@ -68,8 +68,8 @@ exports.get_home = async (request, response) => {
     }
     
     const tokenInfo = await oauth2Client.getTokenInfo(request.user.accessToken);
-    console.log("Token Scopes:", tokenInfo.scopes);
-    console.log("expire date", tokenInfo.expiry_date);
+    // console.log("Token Scopes:", tokenInfo.scopes);
+    // console.log("expire date", tokenInfo.expiry_date);
 
     const calendar = google.calendar({version: 'v3', auth: oauth2Client})
     calendar.calendarList.list({}, (err, res) => {
@@ -91,7 +91,7 @@ exports.get_home = async (request, response) => {
     for (const cal of calendars) {
       const calendarId = cal.id;
 
-      console.log("color ", cal.backgroundColor);
+      //console.log("color ", cal.backgroundColor);
       // calendarMap[calendarId] = colors[calendarId];
 
       const eventsResponse = await calendar.events.list({
@@ -122,10 +122,11 @@ exports.get_home = async (request, response) => {
           diasDisponibles,
           diasTotales,
           error,
+          permissions_error: request.session.permissions.length,
           permissions: request.session.permissions,
           total_absences: absences.length,
           csrfToken: request.csrfToken(),
-          eventos: JSON.stringify(eventos),
+          eventos: JSON.stringify(eventos),          
         })
       })
       .catch(error => {console.error(error)}) 
@@ -134,10 +135,12 @@ exports.get_home = async (request, response) => {
         .then(({diasDisponibles,diasTotales, error}) => {
           // console.log("eventos: ", eventos);
           // console.log('Permisos: ', request.session.permissions);
+          response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
           response.render("home_page", {
             diasDisponibles,
             diasTotales,
             error,
+            permissions_error: request.session.permissions.length,
             permissions: request.session.permissions,
             total_absences: absences.length,
             csrfToken: request.csrfToken(),
@@ -163,13 +166,15 @@ exports.add_event = (request, response) => {
   endDateObject.setDate(endDateObject.getDate() + 1);
   const endDateAdjusted = endDateObject.toISOString().split('T')[0];
 
-  Collab.fetchEmails().then(data => {
+  Collab.fetchEmails(request.session.email).then(data => {
   const [rowsE, fieldDataE] = data;
     const evento = new Event(startDate, endDate, motive, type);
     console.log(rowsE);
     evento.save();
+    
     return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
   }).catch(error => {
     console.error(error);
   })
+  response.redirect('/');
 }

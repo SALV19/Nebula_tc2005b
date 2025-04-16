@@ -245,7 +245,7 @@ td{
 .status {
     display: inline-block; 
     padding: 0rem;
-    font-size: 0.9rem;
+    font-size: 13px;
     color: white;
     border-radius: 5px;
     width: 7rem;
@@ -256,6 +256,7 @@ td{
     text-align: center;
     width: 7rem;
     display: inline-block; 
+    font-size: 13px;
 }
 
 p{
@@ -273,5 +274,8 @@ p{
     justify-content: center; 
     align-items: center; 
     margin-top: 4rem;
+}
+.container-t{
+    margin-top: -1rem;
 }
   

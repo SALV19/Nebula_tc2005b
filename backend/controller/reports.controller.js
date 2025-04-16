@@ -1,4 +1,7 @@
 exports.get_reports = (request, response) => {
-    response.render("home_page");
+    response.render("reports", {
+      permissions: request.session.permissions,
+      csrfToken: request.csrfToken(),
+    });
   };
   

@@ -92,5 +92,8 @@ module.exports = class Requests {
         console.log("Rows: ", rows);
         return rows;
     }
+    static async fetchAdmsFaults(id_colaborador){
+        return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
+    }
 }
 

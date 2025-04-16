@@ -72,7 +72,7 @@ module.exports = class Colaborador {
   }
   
   static fetchEmail(id_colaborador) {
-    return db.execute(`SELECT email FROM COLABORADOR WHERE id_colaborador = ?`, [id_colaborador]);
+    return db.execute(`SELECT email FROM colaborador WHERE id_colaborador = ?`, [id_colaborador]);
   }
 
   static fetchAllColabMod() {
@@ -103,7 +103,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -135,7 +135,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -172,7 +172,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -195,7 +195,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -223,7 +223,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -255,7 +255,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -292,7 +292,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -316,7 +316,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(fa.id_fa) AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -337,8 +337,17 @@ module.exports = class Colaborador {
     }
   }
 
-  static async fetchEmails() {
-    return db.execute(`SELECT email FROM colaborador`);
+  static async fetchEmails(id_colaborador) {
+    return db.execute(`SELECT email FROM colaborador WHERE email != ?`, [id_colaborador]);
+  }
+
+  static async fetchPersonalInfo(id_colaborador) {
+    return db.execute(`SELECT c.nombre, c.apellidos, r.tipo_rol, c.ubicacion, c.puesto, d.nombre_departamento, c.email, c.foto  
+                        FROM colaborador as c, rol as r, departamento as d, equipo as e
+                        WHERE c.id_colaborador = e.id_colaborador
+                        AND e.id_rol = r.id_rol
+                        AND e.id_departamento = d.id_departamento 
+                        AND c.id_colaborador = ?` , [id_colaborador]);
   }
 
   static async fetchCollabs(email, offset, filter = null) {
