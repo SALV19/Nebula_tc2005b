@@ -13,7 +13,7 @@ module.exports = class FaltaAdministrativa {
   // UPDATE del campo `Link` para una falta existente
   static updateLink(id_fa, link) {
     return db.execute(
-      `UPDATE fa SET Link = ? WHERE id_fa = ?`,
+      `UPDATE fa SET link = ? WHERE id_fa = ?`,
       [link, id_fa]
     );
   }

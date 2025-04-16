@@ -42,6 +42,7 @@
 
             // Agregar las filas de faltas sin repetir encabezados
             d.faltas.forEach((falta) => {
+              console.log(falta)
               const date = new Date(falta.fecha);
               table_content += `
                 <div class="has-background columns">
@@ -65,7 +66,7 @@
                     </form>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <button class="button2" id="${falta.id_fa}">Download</button>
+                    <a class="button2" id="${falta.id_fa}" href= "${falta.link}" target="_blank" >Download</a>
                   </div>
                 </div>`;
             });

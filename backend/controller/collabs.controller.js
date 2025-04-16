@@ -428,7 +428,8 @@ exports.get_faults = async (request, response) => {
       map[f.id_colaborador].faltas.push({
         id_fa: f.id_fa,
         motivo: f.motivo,
-        fecha: f.fecha
+        fecha: f.fecha,
+        link: f.link
       });
     }
   });
