@@ -1,27 +1,35 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-<form id="faultForm" method="POST" onsubmit="verify()"> 
+<form id="faultForm" onsubmit="return verify(event)"> 
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
         <aside id="fault-pop-up" class="pop-up" style="display: none;">
             <div class="pop-up-content">
                 <i class="bi bi-x-lg cancelButton" onclick="closeFaultPopup()"></i>
-                <div class="fixed-grid">
-                  <div class="grid has-2-cols has-text-white">
-                    <p class="cell centered">Asistants: </p>
-                      <input type="text" class="line-input cell" id="asistants" placeholder="John Doe,Jane Doe" required>
-                    <p class="cell">Absent: </p>
-                      <select name="absent" id="absent" class="line-input cell dropdown centered" required>
-                        <option value="null" disabled selected>Select an option</option>
-                      </select>
+                  <div class="is-flex is-flex-direction-column	mb-6">
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class="centered">Asistants: </p>
+                        <input type="text" name="asistants" class="line-input has-text-light" id="asistants" placeholder="John Doe,Jane Doe" required>
+                    </div>
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class="">Absent: </p>
+                        <select name="absent" id="absent" class="line-input dropdown centered" required>
+                          <option value="null" disabled selected>Select an option</option>
+                        </select>
+                    </div>
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class=" centered">Date: </p>
+                        <input type="date" name="date" class="line-input has-text-light white-calendar" id="date" required>
+                    </div>
                   </div>
-                </div>
-                <div class="fixed-grid mb-6 move-up">
-                  <div class="grid has-3-cols has-text-white">
-                    <p class="cell centered">Consequences: </p>
-                      <textarea name="consequences" class="line-input cell is-col-span-2" id="consequences" required></textarea>
-                    <p class="cell centered">Decision: </p>
-                      <textarea name="decisions" class="line-input cell is-col-span-2" id="decisions" required></textarea>
+                <div class="mb-4 move-up">
+                  <div class="has-text-white">
+                    <p class="has-text-left">Description: </p>
+                      <textarea name="description" class="line-input is-col-span-2 has-text-light" id="description" required placeholder="Description..."></textarea>
+                    <p class="has-text-left">Consequences: </p>
+                      <textarea name="consequences" class="line-input is-col-span-2 has-text-light" id="consequences" required placeholder="Consequences..."></textarea>
+                    <p class="has-text-left">Decision: </p>
+                      <textarea name="decisions" class="line-input is-col-span-2 has-text-light" id="decisions" required placeholder="Decision..."></textarea>
                   </div>
                 </div>
                 
@@ -31,22 +39,59 @@
         </aside>
 </form>
 <script>
-  function verify() {
+  function verify(e) {
+    e.preventDefault()
+    const date = document.querySelector("#date").value
+    const asistants = document.querySelector("#asistants").value
+    const absent = document.querySelector("#absent").value
+    const description = document.querySelector("#description").value
+    const consequences = document.querySelector("#consequences").value
+    const decisions = document.querySelector("#decisions").value
+    
     Swal.fire({
       title: "Are you sure you want to add this fault?",
       text: "You won't be able to revert this!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#3085d6",
-      cancelButtonColor: "#d33",
-      confirmButtonText: "Yes, delete it!"
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "Yes, register fault!"
     }).then((result) => {
       if (result.isConfirmed) {
-        Swal.fire({
-          title: "Deleted!",
-          text: "Your file has been deleted.",
-          icon: "success"
-        });
+        fetch('/view_collabs/register_fault?_csrf=<%=csrfToken%>', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            asistants,
+            absent,
+            date,
+            description,
+            consequences,
+            decisions
+          })
+        })
+        .then(response => {
+          console.log(response)
+          return
+        })
+        .then(data => {
+          closeFaultPopup()
+          console.log(data)
+          // Swal.fire({
+          // icon: "success",
+          // title: "Uploaded successfully",
+          // html: `
+          //     <p><b>Name:</b> ${data.name}</p>
+          //     <br>
+          //     <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
+          //     🔗 Ver archivo en Drive
+          //     </a>
+          //     `,
+          // });
+        })
+        .catch()
       }
     });
 

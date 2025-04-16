@@ -9,6 +9,8 @@
   }
 
   function addFault() {
+    const date = document.querySelector("#date")
+    date.valueAsDate = new Date()
     const popup = document.getElementById("fault-pop-up");
     if (popup) {
       popup.style.display = "flex";

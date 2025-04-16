@@ -4,11 +4,16 @@ const Empresa = require("../models/empresa.model");
 const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 const Requests = require("../models/home.model");
+const fs = require('fs');
+const FaltaAdministrativa = require("../models/fa.model")
+const path = require('path')
+const pdf = require("html-pdf")
+
+const {google} = require('googleapis');
 
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
-const { off } = require("../util/database");
 
 let settings = {
   selectedOption: "active",
@@ -94,7 +99,6 @@ exports.post_collab = (request, response) => {
         throw new Error("No se encontró el colaborador insertado.");
       const idcolab = rows[0].id_colaborador;
 
-      console.log("ID DEPT0",request.body.id_departamento)
       const new_equipo = new Equipo(
         request.body.id_departamento,
         request.body.id_rol
@@ -315,6 +319,82 @@ exports.update_collab = async (request, response) => {
   }
 };
 
+exports.uploadFA = async (request, response)=> {
+  const { file } = request;
+  const my_file = file
+
+  //Validar tipo de archivo
+  const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowedTypes.includes(my_file.mimetype)) {
+    return response.status(400).json({ success: false, message: 'Solo se permiten archivos PDF o DOCX' });
+  }
+
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  if (googleLogin == 1) {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID, 
+      process.env.GOOGLE_CLIENT_SECRET, 
+      process.env.REDIRECT
+      // 'http://localhost:3000/log_in/success'
+    );
+    
+    oauth2Client.setCredentials({
+      access_token: request.user.accessToken 
+    });
+
+    const drive = google.drive({version: 'v3', auth: oauth2Client});
+    const id_fa = request.body.id_fa;
+    // Nombre para evitar duplicados
+    const fileName = `${id_fa}_${Date.now()}_${my_file.originalname}`; 
+
+    const requestBody = {
+      name: fileName,  
+      fields: 'id, name, webViewLink, mimeType',
+    };
+
+    const media = {
+      mimeType: my_file.mimetype,
+      body: fs.createReadStream(my_file.path),
+    };
+
+    try {
+      const fileUploaded = await drive.files.create({
+        requestBody,
+        media: media,
+      });
+
+      //Borra el archivo Temporal
+      fs.unlinkSync(my_file.path);
+
+      // Respuesta al frontend
+      
+      // Construye el enlace de visualización manualmente
+      const fileId = fileUploaded.data.id;
+      const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+
+      // Respuesta al frontend
+      // console.log('File ID:', fileId);
+      // console.log('Link:', fileLink);
+    
+      await FaltaAdministrativa.updateLink(id_fa, fileLink);
+
+      return response.json({
+        success: true,
+        fileId: fileId,
+        name: fileUploaded.data.name,
+        mimeType: fileUploaded.data.mimeType,
+        viewLink: fileLink,
+      });
+      // return file.data;
+    } catch (err) {
+      console.error("Error al subir a Drive:", err);
+      return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+    }
+  } else {
+      return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
+  }
+};
 exports.get_faults = async (request, response) => {
   const offset = request.body.offset * 10;
   // console.log("Offsets: ", offset);
@@ -344,7 +424,8 @@ exports.get_faults = async (request, response) => {
       map[f.id_colaborador].faltas.push({
         id_fa: f.id_fa,
         motivo: f.motivo,
-        fecha: f.fecha
+        fecha: f.fecha,
+        link: f.link
       });
     }
   });
@@ -365,4 +446,57 @@ exports.get_collabs_name = async (request, response) => {
         colaboradores
       })
     })
+}
+
+exports.register_fault = async (request, response) => {
+  
+  const [[collab]] = await Colaborador.fetchCollabById(request.body.absent)
+  const name = collab.nombre + " " + collab.apellidos;
+
+  const imgPath = path.join(__dirname, "../public/img/nuclea.png");
+  const imgBase64 = fs.readFileSync(imgPath, "base64");
+
+
+  response.render('template_fautl', {
+    nuclea_img: `data:image/png;base64,${imgBase64}`,
+    date: request.body.date,
+    nombre_participantes: request.body.asistants,
+    nombre_colaboradores: name,
+    motivo: request.body.description,
+    consecuencias: request.body.consequences,
+    desición: request.body.decisions
+  }, 
+  (err, data) => {
+    if (err) {
+      console.log(err)
+      response.send(err);
+    } else {
+      let options = {
+          "height": "11.25in",
+          "width": "8.5in",
+          "header": {
+              "height": "20mm"
+          },
+          "footer": {
+              "height": "20mm",
+          },
+        };
+        pdf.create(data, options).toFile("report.pdf", function (err, data) {
+            if (err) {
+                response.send(err);
+            } else {
+                response.send("File created successfully");
+            }
+        });
+    }
+  })
+  return
+  const link = "hhgojf";
+  const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, link)
+  fault.save().then(
+    
+    // response.json({name: "Santi"})
+  )
+
+  
 }
