@@ -59,8 +59,63 @@ module.exports = class Requests {
                     AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
             ) * 100 AS indice_rotacion;
         `)
-        console.log("month: ", month);
-        return month;
+        console.log("month: ", month[0]);
+        return month[0];
+    }
+    static async metricTrimester(){
+        const trimester = await db.execute(`
+            SELECT 
+                ( 
+                    (SELECT COUNT(*) 
+                    FROM colaborador c 
+                    WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
+                    AND fechaSalida IS NOT NULL)
+                / 
+                    (SELECT COUNT(*) 
+                    FROM colaborador c 
+                    WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
+                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))
+                ) * 100 AS indice_rotacion;
+            `)
+            console.log("trimester: ", trimester[0]);
+        return trimester[0];
+    }
+
+    static async metricSemester(){
+        const semester = await db.execute(`
+            SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
+                AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 6 MONTH 
+                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)        
+        console.log("semester: ", semester[0]);
+        return semester[0];                                      
+    }
+    static async metricAnually(){
+        const anual = await db.execute(`
+            SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
+                AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 12 MONTH 
+                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)
+        console.log("Anual: ", anual[0]);
+        return anual[0];
     }
 }
 

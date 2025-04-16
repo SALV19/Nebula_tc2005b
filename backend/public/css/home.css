@@ -272,13 +272,13 @@ body{
     background-color: #59A250;
     color: white;
     width: 4rem;              
-    height: 2rem;
+    height: 1.5rem;
     border-radius: 0.5rem;
     margin: 0.4rem auto 0 auto;  
     display: flex;
     align-items: center;
     justify-content: center;
-    font-size: 0.75rem;
+    font-size:  x-small;
     font-weight: bold;
     cursor: pointer;
     border: none;

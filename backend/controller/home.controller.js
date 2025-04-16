@@ -110,6 +110,7 @@ exports.get_home = async (request, response) => {
 };
 
 exports.add_event = (request, response) => {
+  console.log("Entro aqui");
   const motive = request.body.motive;
   const type = request.body.type;
   const startDate = request.body.startDate;
@@ -137,10 +138,24 @@ exports.add_event = (request, response) => {
 }
 
 exports.get_metric = async (request, response) => {
+  console.log("get_metric called with:", request.body.valor);
+  let val = request.body.valor;
+  let counter;
+  console.log('lol');
 
-  
+  if (val == 1){
+    counter = await Requests.metricMonth();
+  } else if (val == 2){
+    counter = await Requests.metricTrimester();
+  } else if(val == 3){
+    counter = await Requests.metricSemester();
+  } else {
+    counter = await Requests.metricAnually();
+  }
 
+  console.log("counter: ", counter);
   response.json({
     permissions: request.session.permissions,
+    counter,
   });
 }

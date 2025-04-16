@@ -1,7 +1,8 @@
 <%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<input type="hidden" id="_csrf" value=<%= csrfToken %>/>
+<input type="hidden" id="_csrf" value="<%= csrfToken %>">
+
 
     <div class="columns m-0">
   <% if (permissions_error <= 0 ) {%>

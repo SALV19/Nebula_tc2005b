@@ -1,12 +1,16 @@
 <script>
     function createCounter(data){
+        console.log("Data: ", data);
+        console.log(data.counter);
+        const indiceRotacion = parseFloat(data.counter[0].indice_rotacion).toFixed(2);
+        console.log("Índice de rotación formateado:", indiceRotacion);
         let content = " ";
         content += `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
         <div class="level">
             <div class="level-item has-text-centered">
             <div>
-                <h1 class="is-size-1 has-text-white"> 100% </h1>
+                <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>
                 <div>
                     <div class="metric-wrapper">
                         <p class="headingVac">AVG metric rotation</p>
@@ -29,7 +33,7 @@
                                     <input type="radio" name="answer" value="4"/>
                                     Yearly
                                 </label>
-                                <button class="button approve-button">SAVE</button>
+                                <button class="approve-button"> SAVE </button>
                             </div>
                         </div>
                 </div>
@@ -51,6 +55,13 @@
                 console.log("Valor seleccionado:", radio.value);
             });
         });
+        const saveButton = document.querySelector(".approve-button");
+        if (saveButton) {
+            saveButton.addEventListener("click", (e) => {
+                e.preventDefault();
+                get_info(); // llama al POST
+            });
+        }
     }
 
     const get_info = () => {
@@ -59,28 +70,33 @@
     const selectedRadio = document.querySelector("input[name='answer']:checked");
     const value = selectedRadio ? selectedRadio.value : null;
 
-    fetch("/metric", {
+    fetch('/metric', {
         method: 'POST',
         headers: {
         'Content-Type': 'application/json',
         'x-csrf-token': csrf
         },
         body: JSON.stringify({
-        valor: value,
+            valor: value,
         }),
     })
-    .then(response => response.json())
+    .then(response => {
+        console.log("Entro al response", response);
+        return response.json()
+    })
     .then(data => {
+        console.log("Entro al data", data);
         createCounter(data);
     })
-    .catch(e => console.error(e));
+    .catch(e => {
+        console.log("Entro al error", e);
+        console.error(e)
+    });
     };
 
 
     document.addEventListener("DOMContentLoaded", (e) => {
-        // if (e.target.matches(".approve-button")) {
-            get_info();
-        // }
+        get_info();
     })
 
 </script>
