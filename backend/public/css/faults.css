@@ -58,3 +58,10 @@ h1{
     /* font-weight: bold; */
 }
 
+.is-green {
+    background-color: rgb(72, 199, 142) !important; 
+}
+
+.fixed-width {
+    max-width: 6rem !important;
+}
