@@ -123,6 +123,13 @@
             element.classList.remove('selected')
         })
           options[i].classList.add('selected')
+          const add_btn = document.querySelector("#add_btn")
+          if (options[i].innerHTML == "Faults") {
+            add_btn.setAttribute("onclick", "addFault()") 
+          }
+          else {
+            add_btn.setAttribute("onclick", "addCollab()")
+          }
 
           get_info()  
         })

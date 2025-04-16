@@ -169,3 +169,29 @@ select option[disabled] {
 .ml-6, .mx-6 {
     margin-left: 5.5rem !important;
 }
+
+textarea{
+    resize:none;
+}
+
+p, input, textarea {
+    height: 100%;
+}
+
+textarea::-webkit-scrollbar {
+    width: 0.0;
+}
+textarea::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}

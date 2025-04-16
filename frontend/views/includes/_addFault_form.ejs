@@ -1,0 +1,39 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+
+<form id="faultForm" action="/view_collabs/add_fault" method="POST"> 
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+        <aside id="fault-pop-up" class="pop-up" style="display: none;">
+            <div class="pop-up-content">
+                <i class="bi bi-x-lg cancelButton" onclick="closeFaultPopup()"></i>
+                <div class="p-4 columns">
+                  <div class="column is-flex is-flex-direction-column is-justify-content-space-between has-text-white">
+                    <p>Asistants: </p>
+                    <p>Absent: </p>
+                    <p>Consequences: </p>
+                    <p>Decision: </p>
+                  </div>
+                  <div class="column is-flex is-flex-direction-column is-justify-content-space-between">
+                    <input type="text" class="line-input" id="asistants" placeholder="John Doe,Jane Doe">
+                    <select name="absent" id="absent" class="line-input dropdown">
+                      <%# for (let i of collabs) {%>
+                        
+                      <%# } %>
+                    </select>
+                    <textarea name="consequences" class="line-input" id="consequences" value="">
+
+                    </textarea>
+                    <textarea name="decisions" class="line-input" id="decisions" value="">
+
+                    </textarea>
+                  </div>
+                </div>
+            </div>
+            <button onclick="verify()">Submit Fault</button>  
+        </aside>
+</form>
+<script>
+  function verify() {
+    
+  }
+</script>
