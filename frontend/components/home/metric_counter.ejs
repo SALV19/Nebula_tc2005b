@@ -10,8 +10,17 @@
         <div class="level">
             <div class="level-item has-text-centered">
             <div>
-                <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>
-                <div>
+                <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>`
+                if(data.val == 1){
+                    content += `<p class="headingVac"> Monthly </p>`
+                } else if (data.val == 2){
+                    content += `<p class="hadingVac"> Trimester </p>`
+                } else if (data.val == 3){
+                    content += `<p class="hadingVac"> Semestral </p>`
+                } else {
+                    content += `<p class="hadingVac"> Annually </p>`
+                }
+                content += `<div>
                     <div class="metric-wrapper">
                         <p class="headingVac">AVG metric rotation</p>
                         <i class="bi bi-caret-down-fill is-clickable size-icon" id="periodicity"></i>
@@ -31,7 +40,7 @@
                                 </label>
                                 <label class="radio" >
                                     <input type="radio" name="answer" value="4"/>
-                                    Yearly
+                                    Annually
                                 </label>
                                 <button class="approve-button"> SAVE </button>
                             </div>

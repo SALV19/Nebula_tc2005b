@@ -154,8 +154,10 @@ exports.get_metric = async (request, response) => {
   }
 
   console.log("counter: ", counter);
+  console.log("Val:", val);
   response.json({
     permissions: request.session.permissions,
     counter,
+    val,
   });
 }
