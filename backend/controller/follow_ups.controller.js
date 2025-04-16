@@ -380,9 +380,12 @@ exports.get_followUps_info = (request, response, next) => {
         return {
           id_evaluacion: evaluacion.id_evaluacion, 
           fechaAgendada: `${day}-${month}-${year}`,
-          notes: notes
+          notes: notes,
+          nombre: evaluacion.nombre,
+          apellidos: evaluacion.apellidos
         };
       });
+
       return Promise.all([
         Evaluation.fetchAllQuestions(),
         Indicators_metrics.fetchAll(id_evaluacion),

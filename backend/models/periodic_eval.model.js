@@ -47,7 +47,7 @@ module.exports = class Evaluation {
     }
 
     static fetchAll() {
-        return db.execute(`SELECT id_evaluacion, fechaAgendada, notas FROM evaluaciones_de_seguimiento 
-                            ORDER BY fechaAgendada DESC`);
+        return db.execute(`SELECT id_evaluacion, fechaAgendada, notas, nombre, apellidos FROM evaluaciones_de_seguimiento es, colaborador c  WHERE c.id_colaborador = es.id_colaborador
+                            ORDER BY c.nombre ASC, fechaAgendada DESC `);
     }
 }
