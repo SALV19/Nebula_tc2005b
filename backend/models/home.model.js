@@ -117,5 +117,70 @@ module.exports = class Requests {
         console.log("Anual: ", anual[0]);
         return anual[0];
     }
+
+    static async hRateM(){
+        const month = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        console.log("HR month: ", month[0]);
+        return month[0];
+    }
+    static async hRateT(){
+        const trimester = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        console.log("HR tri: ", trimester[0]);
+        return trimester[0];
+    }
+    static async hRateS(){
+        const semester = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        console.log("HR tri: ", semester[0]);
+        return semester[0];
+    }
+    static async hRateY(){
+        const year = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        console.log("HR tri: ", year[0]);
+        return year[0];
+    }
 }
 

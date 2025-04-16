@@ -161,3 +161,28 @@ exports.get_metric = async (request, response) => {
     val,
   });
 }
+
+exports.get_hiring = async (request, response) => {
+  console.log("get_hiring called with:", request.body.hiring_rate);
+  let value = request.body.hiring_rate;
+  let counter;
+  console.log('lol');
+
+  if (value == 1){
+    counter = await Requests.hRateM();
+  } else if (value == 2){
+    counter = await Requests.hRateT();
+  } else if(value == 3){
+    counter = await Requests.hRateS();
+  } else {
+    counter = await Requests.hRateY();
+  }
+
+  console.log("counter: ", counter);
+  console.log("Val:", value);
+  response.json({
+    permissions: request.session.permissions,
+    counter,
+    value,
+  });
+}

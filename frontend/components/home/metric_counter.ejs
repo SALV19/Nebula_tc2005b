@@ -12,17 +12,17 @@
             <div>
                 <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>`
                 if(data.val == 1){
-                    content += `<p class="headingVac"> Monthly </p>`
+                    content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
                 } else if (data.val == 2){
-                    content += `<p class="hadingVac"> Trimester </p>`
+                    content += `<p class="hadingVac" style="text-align: center;"> Trimester </p>`
                 } else if (data.val == 3){
-                    content += `<p class="hadingVac"> Semestral </p>`
+                    content += `<p class="hadingVac" style="text-align: center;"> Semestral </p>`
                 } else {
-                    content += `<p class="hadingVac"> Annually </p>`
+                    content += `<p class="hadingVac" style="text-align: center;"> Annually </p>`
                 }
                 content += `<div>
                     <div class="metric-wrapper">
-                        <p class="headingVac">AVG metric rotation</p>
+                        <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG metric rotation</p>
                         <i class="bi bi-caret-down-fill is-clickable size-icon" id="periodicity"></i>
                         <div class="options-container control" id="options"> 
                             <div>
