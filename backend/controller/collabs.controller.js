@@ -4,6 +4,10 @@ const Empresa = require("../models/empresa.model");
 const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 const Requests = require("../models/home.model");
+const fs = require('fs');
+const FaltaAdministrativa = require("../models/fa.model")
+
+const {google} = require('googleapis');
 
 const {contVac} = require('../util/contVacations')
 
@@ -315,6 +319,86 @@ exports.update_collab = async (request, response) => {
   }
 };
 
+exports.uploadFA = async (request, response)=> {
+  console.log("Llego a la funcion upload")
+
+  const { file } = request;
+  const my_file = file
+
+  //Validar tipo de archivo
+  const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowedTypes.includes(my_file.mimetype)) {
+    return response.status(400).json({ success: false, message: 'Solo se permiten archivos PDF o DOCX' });
+  }
+
+  console.log(my_file)
+
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  if (googleLogin == 1) {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID, 
+      process.env.GOOGLE_CLIENT_SECRET, 
+      process.env.REDIRECT
+      // 'http://localhost:3000/log_in/success'
+    );
+    
+    oauth2Client.setCredentials({
+      access_token: request.user.accessToken 
+    });
+
+    const drive = google.drive({version: 'v3', auth: oauth2Client});
+    const id_fa = request.body.id_fa;
+    // Nombre para evitar duplicados
+    const fileName = `${id_fa}_${Date.now()}_${my_file.originalname}`; 
+
+    const requestBody = {
+      name: fileName,  
+      fields: 'id, name, webViewLink, mimeType',
+    };
+
+    const media = {
+      mimeType: my_file.mimetype,
+      body: fs.createReadStream(my_file.path),
+    };
+
+    try {
+      const fileUploaded = await drive.files.create({
+        requestBody,
+        media: media,
+      });
+
+      //Borra el archivo Temporal
+      fs.unlinkSync(my_file.path);
+
+      // Respuesta al frontend
+      
+      // Construye el enlace de visualización manualmente
+      const fileId = fileUploaded.data.id;
+      const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+
+      // Respuesta al frontend
+      // console.log('File ID:', fileId);
+      // console.log('Link:', fileLink);
+    
+      await FaltaAdministrativa.updateLink(id_fa, fileLink);
+
+      return response.json({
+        success: true,
+        fileId: fileId,
+        name: fileUploaded.data.name,
+        mimeType: fileUploaded.data.mimeType,
+        viewLink: fileLink,
+      });
+      // return file.data;
+    } catch (err) {
+      console.error("Error al subir a Drive:", err);
+      return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+    }
+  } else {
+      return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
+  }
+};
 exports.get_faults = async (request, response) => {
   const offset = request.body.offset * 10;
   // console.log("Offsets: ", offset);
@@ -344,7 +428,8 @@ exports.get_faults = async (request, response) => {
       map[f.id_colaborador].faltas.push({
         id_fa: f.id_fa,
         motivo: f.motivo,
-        fecha: f.fecha
+        fecha: f.fecha,
+        link: f.link
       });
     }
   });

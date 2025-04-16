@@ -3,7 +3,7 @@
 <link rel="stylesheet" href="/css/collabs.css">
 
 <main class="hero column">
-    <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+    <input type="hidden" name="_csrf" id="_csrf" value="<%= csrfToken %>" />
     <section class="hero-body ml-6">
         <div class="container is-widescreen">
         <div class="columns has-text-centered overhead is-vcentered offset">
@@ -25,6 +25,11 @@
             <%- include('includes/_addCollabs_form.ejs') %>
                 </div>
             </div>
+        
+            
+            <%- include('includes/_addCollabs_form.ejs') %>
+            </div>
+        </div>
         </div>
         <hr/>
         <%- include ('../components/collabs/consult_collabs_table.ejs')%>
@@ -40,6 +45,7 @@
         <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
         <%- include('./includes/_modifyCollabs_form.ejs') %>
         <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
+        <%- include('../components/collabs/uploadFA.ejs') %>
     </section>
 </main>
 
