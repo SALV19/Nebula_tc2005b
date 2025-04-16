@@ -86,25 +86,29 @@
     .then(data => {
         console.log("Data", data);
         console.log("Data longitud: ", data.faults.length);
+        createTableRequests(data);
+        console.log("Pagination1: ", pagination)
         if (data.faults.length < 8 && pagination > 0 ) {
-            createTableRequests(data);
-            pagination_value.value = pagination;
+            console.log("Pagination2: ", pagination)
             next_button.style.visibility = "hidden";
             prev_button.style.visibility = "visible";
         } else if (data.faults.length < 8 && pagination === 0){
-            createTableRequests(data);
+            console.log("Pagination 3: ", pagination)
             pagination_value.value = pagination;
             next_button.style.visibility = "hidden";
             prev_button.style.visibility = "hidden";
         } else if (data.faults.length === 8 && pagination === 0){
-            createTableRequests(data);
+            console.log("Paginatio4n: ", pagination)
             pagination_value.value = pagination + 1;
             prev_button.style.visibility = "hidden";
             next_button.style.visibility = "visible";
         } else if (data.faults.length === 0 && pagination > 0){
-            get_info(pagination - 1);
+            console.log("Pagination5: ", pagination)
+            pagination_value.value = pagination;
+            next_button.style.visibility = "hidden";
+            prev_button.style.visibility = "visible";
         } else {
-            createTableRequests(data);
+            console.log("Pagination6: ", pagination)
             prev_button.style.visibility = "visible";
             next_button.style.visibility = "visible";
             pagination_value.value = pagination + 1;
@@ -138,7 +142,7 @@
         });
 
         pagination_value.addEventListener("change", () => {
-            get_info(pagination_value.value - 1);
+            get_info(Number(pagination_value.value - 1));
         });
 
         get_info();
