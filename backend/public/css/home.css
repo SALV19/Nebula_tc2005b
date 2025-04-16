@@ -224,24 +224,12 @@ body{
     width: 24rem;
     margin-top: -1rem;
 }
-.container-box {
-    display: flex;
-    background-color: #DBDBDB;
-    text-align: center;
-    color: #252525;
-    height: 2rem;
-    align-items: center;
-    justify-content: center;
-    width: 100%;
-}
-.container-t{
-    margin-top: -3rem;
-}
+
 .requests{
     background-color: transparent;
     color: #FFFFFF;
     text-align: center;
-    padding-top: 0.5rem;
+    padding-top: 1rem;
 }
 .table{
     width:23rem;
@@ -255,7 +243,7 @@ td{
     vertical-align: middle !important;
 }
 .status {
-    display: inline-block; /* Para que no ocupe todo el ancho */
+    display: inline-block; 
     padding: 0rem;
     font-size: 0.9rem;
     color: white;
@@ -269,6 +257,7 @@ td{
     width: 7rem;
     display: inline-block; 
 }
+
 p{
     border-radius: 2rem;
     text-align: center;
@@ -280,9 +269,9 @@ p{
     padding-right: 3rem;
     font-size: small;
 }
-.column-counter{
+.is-half{
     justify-content: center; 
     align-items: center; 
-    margin-top: -6rem;
+    margin-top: 4rem;
 }
   
