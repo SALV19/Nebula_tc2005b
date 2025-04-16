@@ -8,6 +8,7 @@ const Requests = require("../models/home.model");
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
+const { off } = require("../util/database");
 
 let settings = {
   selectedOption: "active",
@@ -313,3 +314,47 @@ exports.update_collab = async (request, response) => {
     response.redirect("/view_collabs?error=true");
   }
 };
+
+exports.get_faults = async (request, response) => {
+  const offset = request.body.offset * 10;
+  // console.log("Offsets: ", offset);
+  
+  const filter = request.body.filter;
+  // console.log("Filtro", filter);
+
+  const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
+
+  const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
+
+  const faults = await Colaborador.fetchAllFaults();
+
+  // console.log("Total IDs obtenidos:", ids.length); 
+  // console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
+
+  const map = {};
+  rows.forEach(c => {
+    map[c.id_colaborador] = {
+      ...c,
+      faltas: [],
+    };
+  });
+
+  faults.forEach(f => {
+    if (map[f.id_colaborador]) {
+      map[f.id_colaborador].faltas.push({
+        id_fa: f.id_fa,
+        motivo: f.motivo,
+        fecha: f.fecha
+      });
+    }
+  });
+
+  const resultado = Object.values(map);
+
+  response.json({
+    selectedOption: 'Faults',
+    permissions: request.session.permissions,
+    faults : resultado,
+  });
+}
+

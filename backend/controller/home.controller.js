@@ -1,10 +1,53 @@
 const { color } = require("chart.js/helpers");
 const Requests = require("../models/home.model");
 const Event = require("../models/events.model");
-const Collab = require("../models/collabs.model")
-const {contVac} = require("../util/contVacations")
-const {google} = require('googleapis')
-require('dotenv').config()
+const Collab = require("../models/collabs.model");
+const Equipo = require("../models/equipo.model");
+const {contVac} = require("../util/contVacations");
+const {google} = require('googleapis');
+const { off } = require("../util/database");
+require('dotenv').config();
+
+exports.get_requests = async (request, response) => {
+  try {
+    const offset = request.body.offset * 8;
+    console.log("Offset: ", offset);
+
+    const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
+    const idRol = rolData[0]?.id_rol;
+    console.log(idRol);
+
+    console.log("email:",request.session.email);
+    console.log("Id_colaborador: ", request.session.id_colaborador);
+
+     /**If the role is SuperAdmin (id_rol = 3), automatically approve 
+      * And if is lider (id_rol = 3), automatically status = 0.5 */ 
+     let reqData;
+
+    if (idRol === 3) {
+      console.log("entro al 3");
+      reqData = await Requests.fetchReqHome(offset);
+    } else if (idRol === 2) {
+      console.log("Entro al 2");
+      reqData = await Requests.fetchTeamRequests(request.session.email,offset);
+    } else {
+      console.log("Entro al 1");
+      reqData = await Requests.fetchByLoggedColab(offset,request.session.id_colaborador);
+    }
+
+    console.log("REQ DATA",reqData.length)    
+    
+    response.json({
+      permissions: request.session.permissions,
+      faults: reqData,
+    });
+  } catch (error) {
+    console.log("error: ", error);
+    console.error("Error fetching requests:", error);
+    response.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
 
 exports.get_home = async (request, response) => {
   const absences = await Requests.fetchDaysApproved(request.session.email)

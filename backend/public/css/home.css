@@ -1,5 +1,5 @@
 body{
-    background-color: #242424;
+    background-color: #454545;
 }
 .column-container{
     display: flex;
@@ -69,8 +69,6 @@ body{
     position: absolute;
     top:0;
     left: 0;
-    justify-content: center;
-    align-items: center;
     z-index: 9999; 
     margin-top: 18rem;
     margin-left: 20rem;
@@ -90,29 +88,6 @@ body{
     height: auto;
     width: auto;
   }
-/* .pop-up {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw; 
-    height: 100vh; 
-    background-color: rgba(0, 0, 0, 0.3); 
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    z-index: 999; 
-}
-
-.pop-up-content {
-    background-color: #242424;
-    padding: 2vw; 
-    padding-top: 5vh; 
-    border-radius: 5px;
-    width: 45vw;  
-    height: 85vh;
-    position: relative;
-    
-} */
   
 .pop-up-content-d {
     padding: 1.5rem; 
@@ -238,8 +213,69 @@ body{
     font-weight: 600; 
 }
   
-
-.align-counter{
-    align-self: flex-start; 
-    margin-bottom: -1px
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
 }
+.my_buttons {
+    padding: 0 1rem;
+    align-items: center;
+    font-size: 1.5rem; 
+    width: 24rem;
+    margin-top: -1rem;
+}
+
+.requests{
+    background-color: transparent;
+    color: #FFFFFF;
+    text-align: center;
+    padding-top: 1rem;
+}
+.table{
+    width:23rem;
+    background-color: #252525;
+}
+td{
+    background-color: #242424 !important;
+    border: none !important;
+    border-color: none !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.status {
+    display: inline-block; 
+    padding: 0rem;
+    font-size: 13px;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+}
+
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+    font-size: 13px;
+}
+
+p{
+    border-radius: 2rem;
+    text-align: center;
+    padding: 0.2rem !important;
+}
+.is-three-quarters{
+    padding-left:9rem;
+    padding-top: 3rem;
+    padding-right: 3rem;
+    font-size: small;
+}
+.is-half{
+    justify-content: center; 
+    align-items: center; 
+    margin-top: 4rem;
+}
+.container-t{
+    margin-top: -1rem;
+}
+  
