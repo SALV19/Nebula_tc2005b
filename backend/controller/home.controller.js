@@ -135,3 +135,12 @@ exports.add_event = (request, response) => {
   })
   response.redirect('/');
 }
+
+exports.get_metric = async (request, response) => {
+
+  
+
+  response.json({
+    permissions: request.session.permissions,
+  });
+}

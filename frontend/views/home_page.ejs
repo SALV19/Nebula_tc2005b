@@ -64,18 +64,25 @@
     <% } %>
     </div>
 
-  <div class="column column-counter">
+  <div class="column column-counter ">
     <%- include('../components/vacations_left.ejs') %>
+    
     <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
+      <%- include('../components/home/metric_counter.ejs') %>
+      <p id="metric-rotation-counter">
+
+      </p>
+
+      
+
     <% } %>
   </div>
   <div class="column column-counters align-counter">
     <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
     <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% } %>
+      <% } %>
+    </div>
   </div>
-</div>
-
+      
 <%- include('includes/_footer.ejs') %>

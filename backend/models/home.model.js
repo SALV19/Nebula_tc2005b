@@ -44,5 +44,23 @@ module.exports = class Requests {
             WHERE sf.id_colaborador = ?
             LIMIT 7 OFFSET ?`, [id_collab, offset])
     }
+
+    static async metricMonth(){
+        const month = await db.execute(`SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
+                    AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
+                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)
+        console.log("month: ", month);
+        return month;
+    }
 }
 
