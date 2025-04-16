@@ -57,6 +57,5 @@ module.exports = class User {
                                           WHERE c.email = ?)
                                           AND c.email <> ?;
                                           `, [email, email]);
-    return colaboradores;
   }
 };

@@ -1,39 +1,54 @@
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
-
-<form id="faultForm" action="/view_collabs/add_fault" method="POST"> 
+<form id="faultForm" method="POST" onsubmit="verify()"> 
     <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
         <aside id="fault-pop-up" class="pop-up" style="display: none;">
             <div class="pop-up-content">
                 <i class="bi bi-x-lg cancelButton" onclick="closeFaultPopup()"></i>
-                <div class="p-4 columns">
-                  <div class="column is-flex is-flex-direction-column is-justify-content-space-between has-text-white">
-                    <p>Asistants: </p>
-                    <p>Absent: </p>
-                    <p>Consequences: </p>
-                    <p>Decision: </p>
-                  </div>
-                  <div class="column is-flex is-flex-direction-column is-justify-content-space-between">
-                    <input type="text" class="line-input" id="asistants" placeholder="John Doe,Jane Doe">
-                    <select name="absent" id="absent" class="line-input dropdown">
-                      <%# for (let i of collabs) {%>
-                        
-                      <%# } %>
-                    </select>
-                    <textarea name="consequences" class="line-input" id="consequences" value="">
-
-                    </textarea>
-                    <textarea name="decisions" class="line-input" id="decisions" value="">
-
-                    </textarea>
+                <div class="fixed-grid">
+                  <div class="grid has-2-cols has-text-white">
+                    <p class="cell centered">Asistants: </p>
+                      <input type="text" class="line-input cell" id="asistants" placeholder="John Doe,Jane Doe" required>
+                    <p class="cell">Absent: </p>
+                      <select name="absent" id="absent" class="line-input cell dropdown centered" required>
+                        <option value="null" disabled selected>Select an option</option>
+                      </select>
                   </div>
                 </div>
+                <div class="fixed-grid mb-6 move-up">
+                  <div class="grid has-3-cols has-text-white">
+                    <p class="cell centered">Consequences: </p>
+                      <textarea name="consequences" class="line-input cell is-col-span-2" id="consequences" required></textarea>
+                    <p class="cell centered">Decision: </p>
+                      <textarea name="decisions" class="line-input cell is-col-span-2" id="decisions" required></textarea>
+                  </div>
+                </div>
+                
+                <button class="button is-danger has-text-white" type="submit">Submit Fault</button>  
             </div>
-            <button onclick="verify()">Submit Fault</button>  
+            
         </aside>
 </form>
 <script>
   function verify() {
-    
+    Swal.fire({
+      title: "Are you sure you want to add this fault?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#3085d6",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "Yes, delete it!"
+    }).then((result) => {
+      if (result.isConfirmed) {
+        Swal.fire({
+          title: "Deleted!",
+          text: "Your file has been deleted.",
+          icon: "success"
+        });
+      }
+    });
+
   }
 </script>

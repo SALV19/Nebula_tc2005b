@@ -1,6 +1,7 @@
 <%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
 <link rel="stylesheet" href="/css/collabs.css">
+
 <main class="hero column">
     <input type="hidden" id="_csrf" value=<%= csrfToken %>>
     <section class="hero-body ml-6">
@@ -36,6 +37,7 @@
         <%- include('../components/collabs/update_collab.ejs') %>
         <%- include ('../components/collabs/view_collabs_logic.ejs') %>
         <%- include ('../components/collabs/add_fault_logic.ejs') %>
+        <%- include ('../components/collabs/view_faults.ejs') %>
         <%- include ('../components/collabs/add_collabs_logic.ejs') %>
         <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
         <%- include('./includes/_modifyCollabs_form.ejs') %>
@@ -48,6 +50,11 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
+    const selectedOption = '<%= selectedOption %>';
+
+    // const options = document.querySelectorAll(".option");
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const error = urlParams.get('error');
