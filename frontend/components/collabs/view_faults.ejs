@@ -66,7 +66,7 @@
                     </form>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <a class="button2" id="${falta.id_fa}" href= "${falta.link}" target="_blank" >Download</a>
+                    <a class="button2" id="download_${falta.id_fa}" href= "${falta.link}" target="_blank" >Download</a>
                   </div>
                 </div>`;
             });
@@ -159,6 +159,9 @@
           const result = await response.json();
 
           if (result.success) {
+
+            document.querySelector(`#download_${result.name.split("_")[0]}`).setAttribute("href",result.viewLink)
+
               Swal.fire({
               icon: "success",
               title: "Uploaded successfully",
