@@ -1,6 +1,6 @@
 <script>
 
-    console.log("entro a consult follow ups logic");
+    // console.log("entro a consult follow ups logic");
 
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
@@ -260,8 +260,9 @@ const get_info_FU = ( ) => {
     console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
-    const route = selected_option.innerHTML
+    const route = selected_option.getAttribute('data-route');
     fetch(`/follow_ups/${route}`, {
+    
     method: 'GET',
     headers: {
             'Content-Type': 'application/json',

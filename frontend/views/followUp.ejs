@@ -7,7 +7,9 @@
   <section class="hero-body">
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
-        <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
+        <p class="option <%= selectedOption === 'collaborator' ? 'selected' : ''%>" data-route="collaborator">
+          <%= permissions?.includes('consult_followUps') ? 'Collaborators' : 'Follow-ups' %>
+        </p>
         <% if (permissions?.includes('register_followUp') || permissions?.includes('register_meeting')) { %>
           <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
           <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p> 
@@ -27,29 +29,29 @@
 
 <script>
   
-  function showAddForm() {
-    // Determinar qué formulario mostrar según la pestaña actual
-    const selectedOption = '<%= selectedOption %>';
+  // function showAddForm() {
+  //   // Determinar qué formulario mostrar según la pestaña actual
+  //   const selectedOption = '<%= selectedOption %>';
     
-    if (selectedOption === 'meetings') {
-      // Mostrar formulario para agregar reuniones
-      const meetingPopup = document.getElementById('meeting-popup');
-      if (meetingPopup) {
-        meetingPopup.style.display = 'flex';
-      }
-    } else if (selectedOption === 'collaborator') {
-      // Mostrar formulario para agregar colaboradores
-      const collabPopup = document.getElementById('collab-popup');
-      if (collabPopup) {
-        collabPopup.style.display = 'flex';
-      }
-    } else if (selectedOption === 'register'){
-      // Mostrar formulario para registro
-      const registerPopup = document.getElementById('register-popup');
-      if (registerPopup) {
-        registerPopup.style.display = 'flex';
-      }
-    }
-  }
+  //   if (selectedOption === 'meetings') {
+  //     // Mostrar formulario para agregar reuniones
+  //     const meetingPopup = document.getElementById('meeting-popup');
+  //     if (meetingPopup) {
+  //       meetingPopup.style.display = 'flex';
+  //     }
+  //   } else if (selectedOption === 'collaborator') {
+  //     // Mostrar formulario para agregar colaboradores
+  //     const collabPopup = document.getElementById('collab-popup');
+  //     if (collabPopup) {
+  //       collabPopup.style.display = 'flex';
+  //     }
+  //   } else if (selectedOption === 'register'){
+  //     // Mostrar formulario para registro
+  //     const registerPopup = document.getElementById('register-popup');
+  //     if (registerPopup) {
+  //       registerPopup.style.display = 'flex';
+  //     }
+  //   }
+  // }
 </script>
 
