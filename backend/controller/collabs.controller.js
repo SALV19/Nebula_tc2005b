@@ -371,7 +371,7 @@ exports.uploadFA = async (request, response)=> {
 
       // Respuesta al frontend
       
-      // ✅ Construye el enlace de visualización manualmente
+      // Construye el enlace de visualización manualmente
       const fileId = fileUploaded.data.id;
       const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
 

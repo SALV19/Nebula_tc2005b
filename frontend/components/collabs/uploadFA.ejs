@@ -22,12 +22,16 @@
         if (result.success) {
             Swal.fire({
             icon: "success",
-            title: "Archivo subido correctamente",
+            title: "Uploaded successfully",
             html: `
-                <p><strong>Nombre:</strong> ${result.name}</p>
-                <p><strong>Tipo:</strong> ${result.mimeType}</p>
-                <p><strong>ID:</strong> ${result.fileId}</p>
-            `,
+                <p><b>Name:</b> ${result.name}</p>
+                <p><b>Type:</b> ${result.mimeType}</p>
+                <p><b>ID:</b> ${result.fileId}</p>
+                <br>
+                <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
+                🔗 Ver archivo en Drive
+                </a>
+                `,
             });
             form.reset(); // Limpia el formulario
         } else {
