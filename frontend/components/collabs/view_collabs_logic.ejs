@@ -59,8 +59,11 @@
                                   ? '' 
                                   : `<% if (permissions?.includes('consult_all_collabs')) {%>
                                     <div class='is-flex is-justify-content-center '}>
-                                      <button class='button is-link is-rounded is-small is-size-7' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
-                                    </div>
+                                      <button class='button is-link is-rounded is-small is-size-7 vc' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
+                                      <% if (permissions?.includes('delete_collab')) {%>
+                                      <button class='button is-danger is-rounded is-small is-size-7 vc' onclick="delete_button('${d.id_colaborador}')">DELETE</button>
+                                      <% } %>
+                                      </div>
                                     <% } %>`
                                     }
                               </div>

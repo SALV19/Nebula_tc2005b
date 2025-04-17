@@ -564,3 +564,23 @@ exports.register_fault = async (request, response) => {
 exports.download = (request, response) => {
   response.download(path.join(__dirname, '../../report.pdf'), request.query.filename + ".pdf")
 }
+exports.delete_Collab = async (request, response) => {
+  try {
+    const id_colaborador = request.body.valor;
+    const result = await Colaborador.deleteCollab(id_colaborador);
+
+    response.json({
+      success: true,
+      message: `Colaborador eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar colaborador:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar colaborador.' 
+    })
+  }
+}
+
