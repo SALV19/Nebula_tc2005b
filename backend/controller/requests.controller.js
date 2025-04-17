@@ -65,7 +65,9 @@ exports.showPopUp = async (request, response) => {
     const [holidaysData] = await Events.fetchEvents();
     const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
     const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
-
+    const [colabData] = await Collab.fetchCollabById(request.session.id_colaborador);
+    
+    const fechaIngreso = colabData[0].fechaIngreso;
     const approvedDays = approvedVacations.length;
     const pendingDays = pendingVacations.length;
 
@@ -80,6 +82,7 @@ exports.showPopUp = async (request, response) => {
       pendingDays,
       diasTotales,
       remainingDays,
+      fechaIngreso
     });
   } catch (e) {
     console.error("Error en showPopUp:", e);

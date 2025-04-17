@@ -17,7 +17,6 @@ exports.get_permissions = async (request, response, next) => {
     } else {
       response.redirect('/');
     }
-    
     return;
   }
 
