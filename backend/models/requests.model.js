@@ -1,38 +1,40 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor(colab_email, type, dates, location, reason, evidence, request_id) {
+  constructor(colab_email, type, dates, location, reason, evidence, request_id, approvement_collab) {
     this.colab_email = colab_email;
     this.type = type;
     this.dates = dates;
     this.location = location;
     this.reason = reason;
     this.evidence = evidence;
-    this.request_id = request_id
+    this.request_id = request_id;
+    this.approve_collab = approvement_collab;
   }
   static postConstructor(colab_email, type, dates, location, reason, evidence) {
     return new Requests(colab_email, type, dates, location, reason, evidence, null)
   }
   static updateConstructor(colab_email, type, dates, location, reason, evidence, request_id) {
-    return new Requests(colab_email, type, dates, location, reason, evidence, request_id)
+    return new Requests(colab_email, type, dates, location, reason, evidence, request_id, null)
   }
 
   // Save the main request
-  save(estado) {
+  save(estado, colab) {
     return db.execute(
-      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
+      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia, colabAprobador) 
         VALUES((
           SELECT id_colaborador 
           FROM colaborador 
           WHERE email = ?
-        ), ?, ?, ?, ?, ?)`,
+        ), ?, ?, ?, ?, ?, ?)`,
       [
         this.colab_email,
         estado,
         this.type,
         this.reason,
         this.location,
-        this.evidence
+        this.evidence,
+        colab,
       ]
     );
   }
@@ -105,22 +107,6 @@ module.exports = class Requests {
       JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
       WHERE c.email = ? AND sf.estado < 1 AND sf.tipo_falta = 'Vacation'
     `, [email]);
-  }
-
-  static async fetchTeamRequests(email, offset, filter = null) {
-    if (!filter) {
-      return db.execute(
-        `SELECT ds.fecha
-                          FROM solicitudes_falta sf
-                          INNER JOIN dias_solicitados ds
-                            ON sf.id_solicitud_falta = ds.id_solicitud_falta
-                          INNER JOIN colaborador c
-                            ON c.id_colaborador = sf.id_colaborador
-                          WHERE c.email = ? AND sf.estado = 0;
-                        `,
-        [email]
-      );
-    }
   }
 
   // Get approved vacation days
@@ -229,7 +215,7 @@ module.exports = class Requests {
     }
   }
   static async fetchAllRequests(offset, filter = null) {
-      if (!filter?.length > 0) {
+    if (!filter) {
       return db.execute(
         `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                         FROM solicitudes_falta sf
@@ -247,6 +233,7 @@ module.exports = class Requests {
         [offset || 0]
       );
     } else {
+      console.log("filtro")
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds
@@ -292,7 +279,6 @@ module.exports = class Requests {
 
   static async fetchRequests(email, offset, filter = null) {
     if (email) {
-      console.log("Team requests")
       return Requests.fetchTeamRequests(email, offset, filter ? filter : null);
     } else {
       return Requests.fetchAllRequests(offset, filter);
@@ -333,28 +319,83 @@ module.exports = class Requests {
   }
 
   static fetchVacations(collab_id, offset, filter = null) {
-    return db.execute(`SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+    let query = `SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                       FROM solicitudes_falta sf
                       INNER JOIN colaborador c
                         ON c.id_colaborador = sf.id_colaborador
                       INNER JOIN dias_solicitados ds
                         ON sf.id_solicitud_falta = ds.id_solicitud_falta
                       WHERE sf.tipo_falta = 'Vacation'
-                      AND sf.id_colaborador = ?
-                      GROUP BY sf.id_solicitud_falta;`, [collab_id]);
+                      AND sf.id_colaborador = ? \n`
+      if (filter?.pending) {
+        query += `AND sf.estado = 0 `;
+        if (filter?.accepted) {
+          query += `OR sf.estado = 1 `;
+        }
+        if (filter?.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter?.accepted) {
+        query += `AND sf.estado = 1 `;
+        if (filter?.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter?.denied) {
+        query += `AND sf.estado = 2 `;
+      }
+      query += "\nGROUP BY sf.id_solicitud_falta \n";
+      if (filter?.start_date) {
+        query += `HAVING MIN(ds.fecha) >= '${filter.start_date}' `;
+        if (filter.end_date) {
+          query += `AND MAX(ds.fecha) <= '${filter.end_date}' `;
+        }
+      } else if (filter?.end_date) {
+        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `;
+      }
+      query += `ORDER BY sf.estado ASC, ds.fecha ASC
+                LIMIT 10 OFFSET ?`;
+
+      return db.execute(query, [collab_id, offset]);
+      
   }
   static fetchAbscences(collab_id, offset, filter = null) {
-    return db.execute(`SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
+    let query = `SELECT sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                       FROM solicitudes_falta sf
                       INNER JOIN colaborador c
                         ON c.id_colaborador = sf.id_colaborador
                       INNER JOIN dias_solicitados ds
                         ON sf.id_solicitud_falta = ds.id_solicitud_falta
                       WHERE sf.tipo_falta <> 'Vacation'
-                      AND sf.id_colaborador = ?
-                      GROUP BY sf.id_solicitud_falta;`, [collab_id]);
+                      AND sf.id_colaborador = ? \n`
+      if (filter?.pending) {
+        query += `AND sf.estado = 0 `;
+        if (filter?.accepted) {
+          query += `OR sf.estado = 1 `;
+        }
+        if (filter?.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter?.accepted) {
+        query += `AND sf.estado = 1 `;
+        if (filter?.denied) {
+          query += `OR sf.estado = 2 `;
+        }
+      } else if (filter?.denied) {
+        query += `AND sf.estado = 2 `;
+      }
+      query += "\nGROUP BY sf.id_solicitud_falta \n";
+      if (filter?.start_date) {
+        query += `HAVING MIN(ds.fecha) >= '${filter.start_date}' `;
+        if (filter.end_date) {
+          query += `AND MAX(ds.fecha) <= '${filter.end_date}' `;
+        }
+      } else if (filter?.end_date) {
+        query += `HAVING MAX(ds.fecha) > '${filter.start_date}' `;
+      }
+      query += `ORDER BY sf.estado ASC, ds.fecha ASC
+                LIMIT 10 OFFSET ?`;
+
+      return db.execute(query, [collab_id, offset]);
   }
 
-  
-  
 };

@@ -4,6 +4,7 @@
     const table = document.querySelector('#requests_table')
     let table_content = `<thead>
                           <tr >
+                            <th style="background-color: #242424">  </th>
                             <th >Name</th>
                             <th >Position</th>
                             <th >Department</th>
@@ -13,14 +14,12 @@
   <tbody >`
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
-      table_content += `<tr id='collab' key='${idx}'>`;
-      table_content += `<td>
-                          <i class="bi bi-caret-right-fill mr-4" id='caret-${idx}'></i>
-                          ${d.nombre} ${d.apellidos}
-                          </td>`
-      table_content += `<td>${d.puesto}</td>`
-      table_content += `<td>${d.nombre_departamento} </td>`
-      table_content += `<td>${d.nombre_empresa} </td>`
+      table_content += `<tr id='collab-${idx}' key='${idx}'>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}""></i></td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
+      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
       table_content += '</tr>';
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
@@ -37,13 +36,14 @@
                                   <p class='mb-4'>${d.telefono}</p>
                                   <p class='mb-4'>${d.email}</p>
                                   <p class='mb-4'>${d.tipo_rol}</p>
-                                  <p class='mb-4'>${d.modalidad == 1 ? 'Presencial' : 'Remoto'}</p>
+                                  <p class='mb-4'>${d.modalidad == 1 ? 'In Person' : 
+                                    d.modalidad == 2 ? 'Online' : 'Hybrid'}</p>
                                   <p class='mb-2'>${d.fechaNacimiento.split("T")[0]}</p>
                               </div>
                               <div class="column my-2">
                                 <div class='is-flex is-justify-content-space-around	mb-4'>
                                   <div class='flex-centered'>
-                                    <p class='has-text-danger  is-size-1'>0${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-danger  is-size-1'>${d.FaltasAdministrativas}</p>
                                     <p class='has-text-centered is-size-7'>Faults<br>commited</p>
                                   </div>
                                   <div class='flex-centered'>
@@ -57,9 +57,14 @@
                                 </div>
                                 ${d.estado <= 0 
                                   ? '' 
-                                  : `<div class='is-flex is-justify-content-center '}>
-                                      <button class='button is-link is-rounded is-small is-size-7' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
-                                    </div>`
+                                  : `<% if (permissions?.includes('consult_all_collabs')) {%>
+                                    <div class='is-flex is-justify-content-center '}>
+                                      <button class='button is-link is-rounded is-small is-size-7 vc' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
+                                      <% if (permissions?.includes('delete_collab')) {%>
+                                      <button class='button is-danger is-rounded is-small is-size-7 vc' onclick="delete_button('${d.id_colaborador}')">DELETE</button>
+                                      <% } %>
+                                      </div>
+                                    <% } %>`
                                     }
                               </div>
                             </div>
@@ -71,31 +76,25 @@
     // <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
 
     // Añade función para expandir el contenido extra
-    const entries = document.querySelectorAll('#collab')
-    entries.forEach((node, idx) => {
-      node.addEventListener('click', (v) => {
-        const additionalRow = document.getElementById(`additional-row-${idx}`)
-        const caret = document.querySelector(`#caret-${idx}`)
+    const entries = document.querySelectorAll('[id^="collab-"]');
+      entries.forEach((node, idx) => {
+        node.addEventListener('click', () => {
+          const additionalRow = document.getElementById(`additional-row-${idx}`);
+          const caret = document.getElementById(`icon-${idx}`);
+          const isHidden = additionalRow.style.display === "none";
 
-        if (additionalRow.style.display === "none") {
-          additionalRow.style.display = "table-row";
-          caret.classList.add('bi-caret-down-fill')
-          caret.classList.remove('bi-caret-right-fill')
-        } else {
-          additionalRow.style.display = "none";
-
-          caret.classList.remove('bi-caret-down-fill')
-          caret.classList.add('bi-caret-right-fill')
-        }
+          additionalRow.style.display = isHidden ? "table-row" : "none";
+          caret.classList.toggle('bi-caret-down-fill', !isHidden);
+          caret.classList.toggle('bi-caret-right-fill', isHidden);
+        });
       })
-    })
 
   }
   // Consulta a db para la información de solicitudes
   const get_info = (pagination=0, filter=null) => {
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
-    const route = selected_option.innerHTML
+    const route = selected_option.innerHTML;
     fetch(`/view_collabs/${route}`, {
       method: 'POST',
       headers: {
@@ -113,8 +112,9 @@
     })
     .catch(e => console.error(e))
   }
+ 
 
-  // Permite cambiar entre pestañas
+      // Permite cambiar entre pestañas
   const options = document.querySelectorAll(".option")
     for (let i=0; i<options.length; i++) {
         options[i].addEventListener('click', (b) => {
@@ -122,7 +122,18 @@
             element.classList.remove('selected')
         })
           options[i].classList.add('selected')
+          const add_btn = document.querySelector("#add_btn")
+          if (options[i].innerHTML == "Faults") {
+            add_btn.setAttribute("onclick", "addFault()") 
+          }
+          else {
+            add_btn.setAttribute("onclick", "addCollab()")
+          }
 
+          if (options[i].innerHTML == 'Faults') {
+                get_faults_info()
+                return;
+          }
           get_info()  
         })
     }
@@ -130,6 +141,7 @@
     const prev_button = document.querySelector("#prev-page");
     const next_button = document.querySelector("#next-page");
     const pagination_value = document.querySelector("#pagination");
+    
 
     // Cambiar de página / ver los siguientes 10 registros
     prev_button.addEventListener('click', () => {
@@ -145,14 +157,30 @@
         pagination_value.dispatchEvent(new Event('change'));
     })
     pagination_value.addEventListener('change', (v) => {
-        get_info(pagination_value.value-1)
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML;
+
+      if (route == 'Faults'){
+        get_faults_info(pagination_value.value-1);
+        return
+      }
+      get_info(pagination_value.value-1);
+      
     })
+
   
   function searchParam(content) {
+    const selected_option = document.querySelector('.selected')
+    const route = selected_option.innerHTML;
+    if (route == 'Faults'){
+      get_faults_info(0, content);
+      return;
+    }
     get_info(0, content)
   }
   
   document.addEventListener("DOMContentLoaded", function() {
+    // get_faults_info()
     get_info()
   })
 </script>

@@ -255,6 +255,7 @@
     text-align: center;
     margin-top: 0.5vw;
     font-weight: bold;
+    font-size: small;
 }
 
 .text-hidden.show {
@@ -388,4 +389,35 @@
 }
 .success {
     background-color: #48C78E;
+}
+.hidden-message{
+    font-size: small;
+}
+.button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 3rem;
+    margin-top: auto;
+}
+.button-style{
+    margin-top: 1.5rem;
+    width: 6rem;
+    height: 2rem;
+    font-size: small;
+    background-color: #B8453E;
+    color: #EEEEEE;
+    border-radius: 0.5rem;
+}
+.button-style-s{
+    width:6rem;
+    height: 2rem;
+    font-size: small;
+    background-color:#59A250;
+    color:#EEEEEE;
+    border-radius: 0.5rem;
+}
+.button-style:hover{
+    background-color: #d04e47;
 }

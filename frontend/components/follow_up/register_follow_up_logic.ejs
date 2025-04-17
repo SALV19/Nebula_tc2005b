@@ -56,7 +56,7 @@
                   <span>
                     ${data.questions[i].pregunta}
                     </span>
-                      <i class="bi bi-caret-right-fill" id="icon-${i}"> </i>
+                      <i class="bi bi-caret-down-fill" id="icon-${i}"> </i>
                     </p>
               
                   <!-- Campo oculto para enviar el ID de la pregunta -->
@@ -73,7 +73,7 @@
                   <span>
                       ${data.questions[i].pregunta}
                   </span>
-                  <i class="bi bi-caret-down-fill" id="icon-${i}""></i>
+                  <i class="bi bi-caret-right-fill" id="icon-${i}""></i>
                   </p>
 
                   <!-- Campo oculto para enviar el ID  la pregunta -->
@@ -205,21 +205,29 @@
               }]
             },
             options: {
-              plugins: {
+              backgroundColor: '#454545',
+              plugins: {   
                 legend: {
                   display: false // Hide the legend
                 }
               },
               scales: {
                 r: {
-                  backgroundColor: "#FFFF",
-                  hoverBackgroundColor: "#767574",
-                  angleLines: { display: true },
+                  backgroundColor: "#454545",
+                  hoverBackgroundColor: "#FFFFF",
+                  angleLines: { 
+                    display: false,
+                 },
+                 grid: {
+                    color: "#EEEEEE" 
+                  },
                   suggestedMin: 0,
                   suggestedMax: 5,
                   ticks: {
-                    stepSize: 1,  // Ensures steps of 1
-                    beginAtZero: true
+                    color: '#EEEEEE',
+                    backdropColor: '#454545',
+                    stepSize: 1,  
+                    beginAtZero: true,
                   },
                   pointLabels: {  
                     color: "#FFFF",  // Changes the label color
@@ -360,7 +368,6 @@
           .then(html => {
             console.log("HTML recibido, actualizando contenido");
             contentContainer.innerHTML = html;
-            
             const repeatingDropdown = document.getElementById("repeating");
             if (repeatingDropdown) {
               repeatingDropdown.addEventListener("change", function() {
@@ -501,19 +508,77 @@
                 } else {
                   event.preventDefault(); 
 
-                Swal.fire({
-                  title: 'Confirm Meeting',
-                  text: 'Are you sure you want to schedule this meeting?',
-                  icon: 'question',
-                  showCancelButton: true,
-                  confirmButtonText: 'Yes, schedule it',
-                  cancelButtonText: 'Cancel'
-                }).then((result) => {
-                  if (result.isConfirmed) {
-                    meetingForm.submit();
+                  Swal.fire({
+                    title: 'Confirm Meeting',
+                    text: 'Are you sure you want to schedule this meeting?',
+                    icon: 'question',
+                    showCancelButton: true,
+                    confirmButtonText: 'Yes, schedule it!',
+                    cancelButtonText: 'Cancel',
+                    showLoaderOnConfirm: true,
+                    preConfirm: () => {
+                      return fetch(meetingForm.action, {
+                        method: 'POST',
+                        headers: {
+                          'Content-Type': 'application/x-www-form-urlencoded',
+                          'X-CSRF-TOKEN': csrf 
+                        },
+                        body: new URLSearchParams(new FormData(meetingForm)).toString()
+                      })
+                      .then(response => {
+                        if (!response.ok) {
+                          throw new Error(response.statusText);
+                        }
+                        return response.json(); 
+                      })
+                      .catch(error => {
+                        Swal.showValidationMessage(
+                          `Request failed: ${error}`
+                        );
+                      });
+                    },
+                    allowOutsideClick: () => !Swal.isLoading()
+              }).then((result) => {
+                if (result.isConfirmed) {
+                  const Toast = Swal.mixin({
+                    toast: true,
+                    position: "top-end",
+                    showConfirmButton: false,
+                    timer: 3000,
+                    timerProgressBar: true,
+                    didOpen: (toast) => {
+                      toast.onmouseenter = Swal.stopTimer;
+                      toast.onmouseleave = Swal.resumeTimer;
+                    }
+                  });
+                  if (result.value && result.value.success) {
+                    Toast.fire({
+                        title: 'Success!',
+                        text: result.value.message || 'Meeting scheduled successfully!',
+                        icon: 'success',
+                        confirmButtonText: 'OK'
+                    }).then(() => {
+                      window.location.href = '/follow_ups?selectedOption=Meetings';
+                    });
+                  } else if (result.value && result.value.error) {
+                    Toast.fire({
+                      title: 'Error!',
+                      text: result.value.message || 'Failed to schedule meeting.',
+                      icon: 'error',
+                      confirmButtonText: 'OK'
+                    });
+                  } else {
+                    Swal.fire({
+                      title: 'Something went wrong!',
+                      text: 'The server did not provide a clear success or error message.',
+                      icon: 'warning',
+                      confirmButtonText: 'OK'
+                    });
                   }
-                });
                 }
+              });
+                  
+              }
                 
               });
             }
@@ -584,9 +649,8 @@
         parentElement.appendChild(element);
         return element;
       }
- 
-    
 
+    
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
@@ -598,14 +662,13 @@
         // Obtener y mostrar el contenido del botón
         const buttonText = option.textContent.trim();
 
-        if (option.innerHTML == 'Register'){
+        if (buttonText === 'Register'){
           get_info_register();
-        } else if (option.innerHTML == 'Collaborators'){
+        } else if (buttonText === 'Collaborators' || buttonText === 'Follow-ups'){
           get_info_FU();
-        } else if(option.innerHTML == 'Meetings') {
+        } else if(buttonText === 'Meetings') {
           get_meeting();
         }
-
       });
     });
 </script>

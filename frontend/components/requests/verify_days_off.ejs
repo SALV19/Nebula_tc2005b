@@ -222,6 +222,7 @@
     const daysCounterText = document.getElementById("daysCounterText");
     const vacationCountersWrapper = document.getElementById("vacationCountersWrapper");
     
+
     // Check if the elements exist
     if (!openBtn || !closeBtn || !requestPopup || !requestType || !startDate ||!evidenceContainer|| !daysCounter || !daysCounterText) {
         console.error("Error: The pop-up elements were not found.");
@@ -247,6 +248,24 @@
         pending_requests = data.pending_requests
         createContent(data)
         requestPopup.style.display = "flex";
+
+        //Aquí agregas el cálculo y el setAttribute
+        const fechaIngreso = new Date(data.fechaIngreso); 
+        const hoy = new Date();
+
+        let lastAniv = new Date(fechaIngreso);
+        lastAniv.setFullYear(hoy.getFullYear());
+
+        if (lastAniv > hoy) {
+          lastAniv.setFullYear(lastAniv.getFullYear() - 1);
+        }
+
+        const maxDate = new Date(lastAniv);
+        maxDate.setMonth(maxDate.getMonth() + 18); // Año y medio
+
+        document.getElementById("startDate").setAttribute("max", maxDate.toISOString().split("T")[0]);
+        document.getElementById("endDate").setAttribute("max", maxDate.toISOString().split("T")[0]);
+
 
         eventListeners(data)
         updateDaysCounter(data);
@@ -288,6 +307,7 @@
     Ensures dynamic validation and UI update based on current form state.
      */
     function eventListeners(data){
+      console.log("eventListeners")
       
       // On change: request type
       requestType.addEventListener("change", () => {
@@ -331,6 +351,11 @@
         } else {
           const startDateObj = new Date(start);
           const endDateObj = new Date(end);
+
+          const fechaFin = new Date(end);
+          if (fechaFin > maxDate) {
+            errors.push("You can only request days up to 1.5 years after your entry date.");
+          }
 
           if (startDateObj > endDateObj) {
             errors.push("The start date cannot be later than the end date.");

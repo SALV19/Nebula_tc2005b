@@ -1,19 +1,30 @@
 <%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+<input type="hidden" id="_csrf" value="<%= csrfToken %>">
 
-<input type="hidden" id="_csrf" value=<%= csrfToken %></input>
-
+<%- include('../components/nav_bar.ejs') %>
 <div class="columns">
-  <div class="is-three-quarters">
-    
+  <% if (permissions_error <= 0 ) {%>
+
+    <script>
+      console.log("Entro al if")
+      Swal.fire({
+        title: "Colaborator not registered",
+        html: `<p>Please get in contact with Human Resources to fix this</p>`,
+        icon: "error",
+      })
+    </script>
+  <% } %>
+
+  <div class="is-three-quarters pt-6">    
     <aside class="pop-up-d" style="display: none;" id="pop-up">
       <div class="pop-up-content-d">              
         <button onclick="closePopup()" class="button-close">
           <i class="bi bi-x"></i>
         </button>
         <div class="column-container">
-          <div class="column2">
+          <div >
             <div id="color-calendar" class="calendar-color-box"></div>
             <h2 id="event-title" class="title-event"></h2>
           </div>                  
@@ -28,17 +39,19 @@
       let eventos = <%- eventos %>; 
     </script>
     <% if (eventos) { %>
+      <% if (permissions.includes('add_event')) {%> 
       <div style="display: flex;">
         <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
         <%- include('includes/_addEvent_form.ejs') %>
         </div>
+      <% } %> 
       <%- include('../components/calendar/calendar.ejs') %> 
       <%- include ('../components/home/add_event_logic.ejs') %>
 
     <% } else { %>
       <div class="is-three-quarters center-log">
         <br>
-        <label class="is-size-6 styling " for="collaborators">Google login access is required</label>
+        <label class="is-size-6 styling" for="collaborators">Google login access is required</label>
         <br>
         <br>
         <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px; margin-left: 1rem;" 
@@ -52,18 +65,46 @@
     <% } %>
     </div>
 
-  <div class="column column-counter">
-    <%- include('../components/vacations_left.ejs') %>
-    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+  
+  <div class="columns is-multiline column-counter">
+    <div class="column is-half ">
+      <%- include ('../components/home/home_requests_logic.ejs') %>
+      <%- include('../components/vacations_left.ejs') %>
+      
+      <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+        <%- include('../components/home/metric_counter.ejs') %>
+        <p id="metric-rotation-counter">
+
+        </p>
+
+        
+
+      <% } %>
+    </div>
+  
+    <div class="column is-half ">
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% } %>
+      <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
+        <%- include('../components/home/hiring_rate.ejs') %>
+        <p id="hiring-rate-container">
+  
+        </p>
+      <% } %>
+    </div>
+
+    <div class="column is-full container-t">
+        <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center;">
+          
+        </table>
+      <div class="is-flex is-justify-content-space-between my_buttons">
+        <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
+        <input type="number" value="1" class="pagination" id="pagination" style="display: none;"/>
+        <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>
+      </div>
+    </div>
   </div>
-  <div class="column column-counters align-counter">
-    <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-      <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
-    <% } %>
-  </div>
+
 </div>
 
+      
 <%- include('includes/_footer.ejs') %>

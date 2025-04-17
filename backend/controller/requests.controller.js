@@ -56,6 +56,42 @@ exports.get_requests = async (request, response) => {
   });
 };
 
+exports.showPopUp = async (request, response) => {
+  try {
+    const email = request.session.email;
+
+    const [allRequestsData] = await Requests.fetchDaysApproved(email);
+    const [allPendingRequests] = await Requests.fetchDaysPending(email);
+    const [holidaysData] = await Events.fetchEvents();
+    const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
+    const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
+    const [colabData] = await Collab.fetchCollabById(request.session.id_colaborador);
+    
+    const fechaIngreso = colabData[0].fechaIngreso;
+    const approvedDays = approvedVacations.length;
+    const pendingDays = pendingVacations.length;
+
+    const { diasTotales } = await contVac(request);
+    const remainingDays = diasTotales - approvedDays - pendingDays;
+
+    response.json({
+      all_requests: allRequestsData,
+      pending_requests: allPendingRequests,
+      holidays: holidaysData,
+      approvedDays,
+      pendingDays,
+      diasTotales,
+      remainingDays,
+      fechaIngreso
+    });
+  } catch (e) {
+    console.error("Error en showPopUp:", e);
+    response.status(500).json({ 
+      error: "Error fetching data for pop-up"
+    });
+  }
+};
+
 exports.get_vacations = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
@@ -80,6 +116,7 @@ exports.get_vacations = async (request, response) => {
     collab: acceptance_colab,
   });
 };
+
 exports.get_abscences = async (request, response) => {
   const offset = request.body.offset * 10;
   const filter = request.body.filter;
@@ -104,41 +141,6 @@ exports.get_abscences = async (request, response) => {
     collab: acceptance_colab
   });
 };
-
-exports.showPopUp = async (request, response) => {
-  try {
-    const email = request.session.email;
-
-    const [allRequestsData] = await Requests.fetchDaysApproved(email);
-    const [allPendingRequests] = await Requests.fetchDaysPending(email);
-    const [holidaysData] = await Events.fetchEvents();
-    const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
-    const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
-
-    const approvedDays = approvedVacations.length;
-    const pendingDays = pendingVacations.length;
-
-    const { diasTotales } = await contVac(request);
-    const remainingDays = diasTotales - approvedDays - pendingDays;
-
-    response.json({
-      all_requests: allRequestsData,
-      pending_requests: allPendingRequests,
-      holidays: holidaysData,
-      approvedDays,
-      pendingDays,
-      diasTotales,
-      remainingDays,
-    });
-  } catch (e) {
-    console.error("Error en showPopUp:", e);
-    response.status(500).json({ 
-      error: "Error fetching data for pop-up"
-    });
-  }
-};
-
-
 
 exports.get_collabs_requests = async (request, response) => {
   const offset = request.body.offset * 10;
@@ -171,7 +173,9 @@ exports.post_abscence_requests = async (request, response, next) => {
   const [type, subtype] = request.body.requestType.split("|");
 
   // Default status is "pending" (0)
+  console.log("session", request.session.id_colaborador);
   let estadoSolicitud = 0;
+  let colabAprobador;
 
   try {
      // Get the collaborator's role using their email (session)
@@ -183,13 +187,17 @@ exports.post_abscence_requests = async (request, response, next) => {
       * And if is lider (id_rol = 3), automatically status = 0.5 */ 
     if (idRol === 3) {
       estadoSolicitud = 1;
+      colabAprobador = request.session.id_colaborador;
     } else if (idRol === 2) {
         estadoSolicitud = 0.5;
+        colabAprobador = null;
     } else {
         estadoSolicitud = 0;
+        colabAprobador = null;
     }
 
     console.log(estadoSolicitud)
+    console.log("colabAprovador: ", colabAprobador);
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -198,12 +206,13 @@ exports.post_abscence_requests = async (request, response, next) => {
       request.body.location,
       request.body.description,
       request.body.evidence,
-      estadoSolicitud
+      estadoSolicitud,
+      colabAprobador,
     );
+    console.log("Request_register: ", request_register);
 
     // Save the main request record to the database
-    
-    const result = await request_register.save(estadoSolicitud);
+    const result = await request_register.save(estadoSolicitud, colabAprobador);
     // Optional: simulate an error here if you want to test
     // throw new Error("Simulated server error");
 
@@ -250,6 +259,13 @@ exports.update_request = async (request, response) => {
   // console.log(request_update)
   await request_update.update()
 
-  // Always redirect to the main requests page
+  request.session.successRequest = {
+    startDate: daysOff[0],
+    endDate: daysOff[daysOff.length - 1],
+    location: request.body.location,
+    description: request.body.description,
+    evidence: request.body.evidence,
+    totalDays: daysOff.length,
+  };
   response.redirect("/requests");
 }
