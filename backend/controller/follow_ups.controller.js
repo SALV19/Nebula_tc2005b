@@ -11,16 +11,14 @@ const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
 const Eval_Questions = require('../models/eval_questions.model');
 
-
-
 let settings = {
-  selectedOption: 'collab',
+  selectedOption: 'collaborator',
 };
 
 exports.get_FollowUp = (request, response) => {
   request.session.errorMessage = '';
   response.render("followUp", {
-    selectedOption: 'collab',
+    selectedOption: 'collaborator',
     permissions: request.session.permissions,
     csrfToken : request.csrfToken(),
   })
@@ -359,21 +357,21 @@ exports.get_meeting_events = (request, response) => {
   }
 };
 
-
 exports.get_followUps_info = (request, response, next) => {
-  
-  settings.selectedOption = 'Collaborators';
+  console.log("entro al controlador")
+  settings.selectedOption = 'collaborators';
 
   const idColaborador = request.session.id_colaborador;
+  const hasConsultPermission = request.session.permissions.includes('consult_followUps');
+  const selectedOption = hasConsultPermission ? 'collaborator' : 'followUps';
 
-  // console.log("entro a get follow ups info");
+  // Si tiene permiso, obtener todos los follow-ups; de lo contrario, solo los del colaborador
+  const fetchInfo = hasConsultPermission ? Evaluation.fetchAll() : Evaluation.fetchAllInfo([idColaborador]);
 
-  Evaluation.fetchAllInfo([idColaborador])
+  fetchInfo
     .then(([evalInfo]) => {
-
-      // console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
-      const notes = evalInfo.map(n => n.notas)      
+      const notes = evalInfo.map(n => n.notas);
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -381,8 +379,10 @@ exports.get_followUps_info = (request, response, next) => {
         const day = fecha.getDate().toString().padStart(2, '0');
         return {
           id_evaluacion: evaluacion.id_evaluacion, 
-          fechaAgendada: `${year}-${month}-${day}`,
-          notes: notes
+          fechaAgendada: `${day}-${month}-${year}`,
+          notes: notes,
+          nombre: evaluacion.nombre,
+          apellidos: evaluacion.apellidos
         };
       });
 
@@ -395,20 +395,20 @@ exports.get_followUps_info = (request, response, next) => {
         const metricas = metrics;
         const indicadores = indicators;
 
-        // console.log("entro al segundo then");
-
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
+        console.log("selectedOption que se está enviando:", selectedOption);
         response.json({
-          selectedOption: 'Collaborators',
+          selectedOption,
           fechasAgendadas,
           pregunta,
           respuestas,  
           indicadores,
-          metricas
+          metricas,
+          permissions: request.session.permissions
         });
-      })
+      });
     })
     .catch(error => {
       response.status(500).send("Error al obtener información");

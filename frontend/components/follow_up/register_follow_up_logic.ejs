@@ -649,9 +649,8 @@
         parentElement.appendChild(element);
         return element;
       }
- 
-    
 
+    
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
@@ -663,14 +662,13 @@
         // Obtener y mostrar el contenido del botón
         const buttonText = option.textContent.trim();
 
-        if (option.innerHTML == 'Register'){
+        if (buttonText === 'Register'){
           get_info_register();
-        } else if (option.innerHTML == 'Collaborators'){
+        } else if (buttonText === 'Collaborators' || buttonText === 'Follow-ups'){
           get_info_FU();
-        } else if(option.innerHTML == 'Meetings') {
+        } else if(buttonText === 'Meetings') {
           get_meeting();
         }
-
       });
     });
 </script>

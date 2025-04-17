@@ -1,6 +1,6 @@
 <script>
 
-    console.log("entro a consult follow ups logic");
+    // console.log("entro a consult follow ups logic");
 
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
@@ -63,8 +63,13 @@ function TableFollowUps(data) {
 
     const formattedDate = formatDate(fecha.fechaAgendada);
 
+    if (data.permissions?.includes('consult_followUps')) {
+            const completeName = fecha.nombre + ' ' + fecha.apellidos;
+            table_content += `<td class="fixed-width"> ${completeName}</td>`;
+        }
+
         table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
-        console.log(fecha.fechaAgendada);             
+        // console.log(fecha.fechaAgendada);             
   // Columna de fecha
         table_content += `<td class='is-flex is-align-items-center'>
                             <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
@@ -77,7 +82,7 @@ function TableFollowUps(data) {
 
         // Fila adicional oculta por defecto
         table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
-                            <td colspan="3" class="has-background">
+                            <td colspan="4" class="has-background">
                                 <div class="columns">
                                     <!-- Primera columna -->
                                     <div class="column">
@@ -145,6 +150,7 @@ function TableFollowUps(data) {
                 }]
             },
             options: {
+                backgroundColor: '#454545',
                 plugins: {
                     legend: {
                         display: false
@@ -152,14 +158,21 @@ function TableFollowUps(data) {
                 },
                 scales: {
                     r: {
-                        backgroundColor: "#FFFF",
-                        hoverBackgroundColor: "#767574",
-                        angleLines: { display: true },
+                        backgroundColor: "#454545",
+                        hoverBackgroundColor: "#FFFFF",
+                        angleLines: { 
+                            display: false,
+                        },
+                        grid: {
+                            color: "#EEEEEE" 
+                        },
                         suggestedMin: 0,
                         suggestedMax: 5,
                         ticks: {
-                            stepSize: 1, 
-                            beginAtZero: true
+                            color: '#EEEEEE',
+                            backdropColor: '#454545',
+                            stepSize: 1,  
+                            beginAtZero: true,
                         },
                         pointLabels: {  
                             color: "#FFFF", 
@@ -260,8 +273,9 @@ const get_info_FU = ( ) => {
     console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
-    const route = selected_option.innerHTML
+    const route = selected_option.getAttribute('data-route');
     fetch(`/follow_ups/${route}`, {
+    
     method: 'GET',
     headers: {
             'Content-Type': 'application/json',
