@@ -106,10 +106,9 @@
 }
 
 .buttons {
-    position: relative;
     width: 100%;
     display: flex; 
-    justify-content: flex-end; 
+    justify-content: center; 
 }
 
 .button.is-save {
@@ -179,7 +178,7 @@ textarea{
     resize:none;
 }
 
-p, input, textarea {
+input, textarea {
     height: 100%;
 }
 
