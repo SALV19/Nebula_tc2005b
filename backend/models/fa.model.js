@@ -9,7 +9,7 @@ module.exports = class FaltaAdministrativa {
   }
 
   save() {
-    return db.execute(`INSERT INTO fa
+    return db.execute(`INSERT INTO fa(id_colaborador, motivo, fecha, link)
                     VALUES(?, ?, ?, ?)`, [this.id_colaborador, this.motivo, this.fecha, this.link])
   }
 

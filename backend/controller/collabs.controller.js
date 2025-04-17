@@ -481,22 +481,85 @@ exports.register_fault = async (request, response) => {
               "height": "20mm",
           },
         };
-        pdf.create(data, options).toFile("report.pdf", function (err, data) {
-            if (err) {
-                response.send(err);
+        pdf.create(data, options).toFile("report.pdf", async function (err, data) {
+          if (err) {
+            console.log(err)
+            response.send(err);
+          } else {
+            const googleLogin = request.user?.accessToken ? 1 : 0;
+            const my_file = fs.readFileSync(data.filename)
+            
+            if (googleLogin == 1) {
+              const oauth2Client = new google.auth.OAuth2(
+                process.env.GOOGLE_CLIENT_ID, 
+                process.env.GOOGLE_CLIENT_SECRET, 
+                process.env.REDIRECT
+                // 'http://localhost:3000/log_in/success'
+              );
+                
+              oauth2Client.setCredentials({
+                access_token: request.user.accessToken 
+              });
+              const drive = google.drive({version: 'v3', auth: oauth2Client});
+                
+              const fileName = `${Date.now()}_FA`; 
+
+              const requestBody = {
+                name: fileName,  
+                fields: 'id, name, webViewLink, mimeType',
+              };
+              const media = {
+                mimeType: my_file.mimetype,
+                body: fs.createReadStream(data.filename),
+              };
+
+              try {
+                const fileUploaded = await drive.files.create({
+                  requestBody,
+                  media: media,
+                });
+
+                //Borra el archivo Temporal
+                fs.unlinkSync(data.filename);
+
+                // Respuesta al frontend
+                
+                // Construye el enlace de visualización manualmente
+                const fileId = fileUploaded.data.id;
+                const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+              
+                const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, fileLink)
+                fault.save()
+
+                return response.json({
+                  success: true,
+                  name: fileUploaded.data.name,
+                  viewLink: fileLink,
+                });
+                // return file.data;
+              } catch (err) {
+                console.error("Error al subir a Drive:", err);
+                return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+              }
             } else {
-                response.send("File created successfully");
+              console.log("Google sign in error")
+              const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
+              fault.save()
+
+                return response.json({
+                    success: true,
+                    name: null,
+                    viewLink: null,
+                  });
+              
+            }
+            response.send("File created successfully");
             }
         });
     }
   })
   return
-  const link = "hhgojf";
-  const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, link)
-  fault.save().then(
-    
-    // response.json({name: "Santi"})
-  )
+  
 
   
 }

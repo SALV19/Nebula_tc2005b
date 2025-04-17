@@ -93,3 +93,7 @@ h1{
 textarea {
     height: 3rem;
 }
+
+.swal-height {
+    height: 70vh;
+}
