@@ -17,6 +17,7 @@ router.get("/reports", permissions_middleware.view_reports, reports_routes.get_r
 router.use("/requests", permissions_middleware.general_permissions, request_routes);
 router.get("/", home_routes.get_home);
 router.post("/addEvent", permissions_middleware.general_permissions, home_routes.add_event);
+router.post("/deleteEvent", permissions_middleware.general_permissions, home_routes.delete_event);
 
 
 module.exports = router;

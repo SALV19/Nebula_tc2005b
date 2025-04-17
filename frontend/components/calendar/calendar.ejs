@@ -1,10 +1,11 @@
 <link rel="stylesheet" href="/css/calendar.css" />
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
   <div id='calendar' class="calendar"></div>
 </body>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script>
+  let eventoSeleccionado = null;  
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
@@ -27,7 +28,10 @@
         // Mostrar el pop-up
         const popup = document.getElementById('pop-up');
         if (popup) {
+          console.log(info.event);
           const endDate = info.event.end;
+
+          eventoSeleccionado = info.event;
 
           // Opciones para formato en español
           const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
@@ -58,5 +62,58 @@
     const popup = document.getElementById('pop-up');
     popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
   }
+
+  function deleteEvent(eventId, calendarId) {
+    const csrfToken = document.getElementById('_csrf').value;
+    console.log('Token que estoy mandando:', csrfToken);
+    fetch('/deleteEvent', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'CSRF-Token': csrfToken,
+      },
+      body: JSON.stringify({ eventId, calendarId })
+    })
+    .then(response => {
+      const popup = document.getElementById('pop-up');
+      popup.style.display = 'none';
+      if (response.ok) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+
+        Toast.fire({
+          icon: 'success',
+          title: 'Successfully deleted event'
+        });
+
+        setTimeout(() => {
+          window.location.href = '/'; 
+        }, 2000);
+      } else {
+        return response.text().then(text => {
+          throw new Error(text);
+        });
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.message || 'The event could not be deleted',
+      });
+    });
+  }
+
+
+
 </script>
 

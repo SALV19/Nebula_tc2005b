@@ -38,6 +38,7 @@ exports.get_home = async (request, response) => {
       const calendars = res.data.items;
     })
 
+
     const { data } = await calendar.calendarList.list();
 
     const calendarListResponse = await calendar.calendarList.list();
@@ -54,10 +55,12 @@ exports.get_home = async (request, response) => {
       const eventsResponse = await calendar.events.list({
         calendarId,
         singleEvents: true,
-        orderBy: 'startTime'
+        orderBy: 'startTime',
       });
 
       const eventosDelCalendario = eventsResponse.data.items.map(event => ({
+        id: event.id,
+        calendarId: calendarId, 
         title: event.summary,
         start: event.start.dateTime || event.start.date,
         end: event.end?.dateTime || event.end?.date,
@@ -69,11 +72,9 @@ exports.get_home = async (request, response) => {
       }));
       eventos = eventos.concat(eventosDelCalendario);
     }
-    // console.log('Eventos obtenidos:', eventos);
     
     contVac(request)
       .then(({diasDisponibles,diasTotales, error}) => {
-        // console.log("eventos: ", eventos);
         // console.log('Permisos: ', request.session.permissions);
         response.render("home_page", {
           diasDisponibles,
@@ -90,7 +91,6 @@ exports.get_home = async (request, response) => {
   } else {
     contVac(request)
         .then(({diasDisponibles,diasTotales, error}) => {
-          // console.log("eventos: ", eventos);
           // console.log('Permisos: ', request.session.permissions);
           response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
           response.render("home_page", {
@@ -126,7 +126,6 @@ exports.add_event = (request, response) => {
   Collab.fetchEmails(request.session.email).then(data => {
   const [rowsE, fieldDataE] = data;
     const evento = new Event(startDate, endDate, motive, type);
-    console.log(rowsE);
     evento.save();
     
     return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
@@ -134,4 +133,19 @@ exports.add_event = (request, response) => {
     console.error(error);
   })
   response.redirect('/');
+}
+
+exports.delete_event = (request, response) => {
+  console.log("entro a delete_event");
+  const { eventId, calendarId } = req.body;
+  Event.deleteEvent(eventId, calendarId, request.user.accessToken)
+    .then(() => {
+      res.status(200).send("Evento eliminado exitosamente");
+    })
+    .catch((error) => {
+      console.error("Error al eliminar evento:", error);
+      res.status(500).send("Error al eliminar evento");
+    });
+
+    response.redirect('/');
 }
