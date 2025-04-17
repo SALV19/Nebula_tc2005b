@@ -1,0 +1,39 @@
+@startuml Delete_Evalutaion
+autonumber
+actor Super_Admin as s
+boundary general.routes.js as gr
+boundary followUp.routes.js as fr
+boundary consult_follow_ups_logic.ejs as cf
+control follow_ups.controller.js as cc
+entity eval_questions.model.js as em
+database Nebula as db
+
+activate s
+
+s -->> gr : fetch ('/follow_ups)
+
+activate gr 
+gr -->> fr : fetch ('/deleteEval')
+deactivate gr 
+
+activate fr
+fr -->> cc : post_delete_eval
+deactivate fr 
+
+activate cc
+cc -->> em : deleteEval(id_eval)
+
+activate em
+em -->> db : DELETE e, mi, rp FROM evaluaciones_de_seguimiento e\n JOIN metrica_indicadores mi ON e.id_evaluacion = mi.id_evaluacion\n JOIN respuestas_pregunta rp ON e.id_evaluacion = rp.id_evaluacion\n WHERE e.id_evaluacion = ?;\n `, [id_eval]
+
+activate db
+db -->> em : result
+deactivate db 
+
+em -->> cc : result
+deactivate em  
+
+cc --> s : response.json({ success: true,\v message: `Evaluación con ID ${id_eval} eliminada correctamente.`,  result,} )
+deactivate cc
+
+deactivate s 
