@@ -255,6 +255,7 @@
     text-align: center;
     margin-top: 0.5vw;
     font-weight: bold;
+    font-size: small;
 }
 
 .text-hidden.show {
@@ -388,4 +389,7 @@
 }
 .success {
     background-color: #48C78E;
+}
+.hidden-message{
+    font-size: small;
 }

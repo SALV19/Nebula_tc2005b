@@ -1,0 +1,44 @@
+@startuml Req_44 
+title Requisito 44 - Subir archivo de falta administrativa a Google Drive
+autonumber
+
+actor collab
+boundary collabs.route.js as collabRoute
+control collabs.controller.js as collabsController
+entity collab.model as collabModel
+entity fa.model as faModel
+database Nebula as nebula
+collections "Google Drive API" as Google
+
+activate collab 
+collab ->> collabRoute : POST/view_collabs/uploadFA
+
+
+activate collabRoute 
+collabRoute ->> collabsController : uploadFA(request)
+deactivate collabRoute
+
+activate collabsController
+collabsController ->> Google : uploadFileToDrive(file)
+
+activate Google
+Google -->> collabsController : fileUrl (respuesta del upload)
+
+deactivate Google
+
+collabsController ->> collabModel : UpdateDriveLink(id_colab, fileUrl)
+
+activate collabModel 
+collabModel ->> nebula : SQL Update 
+
+activate nebula 
+nebula -->> collabModel :status succes
+deactivate nebula
+
+collabModel -->> collabsController: status succes
+deactivate collabModel
+
+collabsController -->> collab : fileUrl
+deactivate collabsController 
+deactivate collab
+@enduml   

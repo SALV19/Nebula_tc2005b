@@ -1,38 +1,40 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor(colab_email, type, dates, location, reason, evidence, request_id) {
+  constructor(colab_email, type, dates, location, reason, evidence, request_id, approvement_collab) {
     this.colab_email = colab_email;
     this.type = type;
     this.dates = dates;
     this.location = location;
     this.reason = reason;
     this.evidence = evidence;
-    this.request_id = request_id
+    this.request_id = request_id;
+    this.approve_collab = approvement_collab;
   }
   static postConstructor(colab_email, type, dates, location, reason, evidence) {
     return new Requests(colab_email, type, dates, location, reason, evidence, null)
   }
   static updateConstructor(colab_email, type, dates, location, reason, evidence, request_id) {
-    return new Requests(colab_email, type, dates, location, reason, evidence, request_id)
+    return new Requests(colab_email, type, dates, location, reason, evidence, request_id, null)
   }
 
   // Save the main request
-  save(estado) {
+  save(estado, colab) {
     return db.execute(
-      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
+      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia, colabAprobador) 
         VALUES((
           SELECT id_colaborador 
           FROM colaborador 
           WHERE email = ?
-        ), ?, ?, ?, ?, ?)`,
+        ), ?, ?, ?, ?, ?, ?)`,
       [
         this.colab_email,
         estado,
         this.type,
         this.reason,
         this.location,
-        this.evidence
+        this.evidence,
+        colab,
       ]
     );
   }
@@ -396,6 +398,4 @@ module.exports = class Requests {
       return db.execute(query, [collab_id, offset]);
   }
 
-  
-  
 };

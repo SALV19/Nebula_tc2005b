@@ -1,13 +1,17 @@
 <%- include('../components/nav_bar.ejs') %> 
 <link rel="stylesheet" href="/css/table.css">
 <link rel="stylesheet" href="/css/collabs.css">
+
 <main class="hero column">
-    <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+    <input type="hidden" name="_csrf" id="_csrf" value="<%= csrfToken %>" />
     <section class="hero-body ml-6">
         <div class="container is-widescreen">
         <div class="columns has-text-centered overhead is-vcentered offset">
             <p class="option <%= selectedOption === 'active' ? 'selected' : ''%>">Active</p>
+            <% if (permissions?.includes('consult_all_collabs')) {%>
             <p class="option <%= selectedOption === 'inactive' ? 'selected' : ''%>">Inactive</p>
+            <% } %>
+
             <% if (permissions?.includes('view_faults')) {%>
                 <p class="option = selectedOption === 'faults' ? 'selected' : '' %>">Faults</p>
                 <div class="column is-narrow is-offset-9">
@@ -15,13 +19,15 @@
             <div class="column is-narrow is-offset-8">
             <% } %>
             <div class="is-flex " style="height: 25px;">
-                <i class="bi bi-plus-lg ml-4 subtitle is-clickable" onclick="addCollab()"></i>
+                <% if (permissions?.includes('consult_all_collabs')) {%>
+                    <i class="bi bi-plus-lg ml-4 subtitle is-clickable" onclick="addCollab()"></i>
+                    <% } %>
                 <div class="search-bar ml-2">
                     <input type="text" class="search-input is-size-6" onkeydown="searchParam(this.value)">
                     <i class="bi bi-search mr-2 is-clickable" style="margin-top: -10px;"></i>
                 </div>
-            </div>
-            <%- include('includes/_addCollabs_form.ejs') %>
+            </div>      
+              <%- include('includes/_addCollabs_form.ejs') %>
             </div>
         </div>
         </div>
@@ -34,10 +40,12 @@
         </div>
         <%- include('../components/collabs/update_collab.ejs') %>
         <%- include ('../components/collabs/view_collabs_logic.ejs') %>
+        <%- include ('../components/collabs/view_faults.ejs') %>
         <%- include ('../components/collabs/add_collabs_logic.ejs') %>
         <%- include ('../components/collabs/confirm_popUps_logic.ejs') %>
         <%- include('./includes/_modifyCollabs_form.ejs') %>
         <%- include('../components/collabs/confirmUpdate_popUps_logic') %>
+        <%- include('../components/collabs/uploadFA.ejs') %>
     </section>
 </main>
 
@@ -46,6 +54,13 @@
 <script src="//cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
 <script>
+
+    const selectedOption = '<%= selectedOption %>';
+    console.log("Selected option:", selectedOption);
+
+    const options = document.querySelectorAll(".option");
+    console.log("ops:", options);
+
     const queryString = window.location.search;
     const urlParams = new URLSearchParams(queryString);
     const error = urlParams.get('error');

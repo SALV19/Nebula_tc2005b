@@ -1,0 +1,192 @@
+<link rel="stylesheet" href="/css/faults.css"></link>
+<script>
+    function createTableFaults(data) {
+      console.log("longitud:",data.faults.length );      
+      const table = document.querySelector('#requests_table')
+      let table_content = `<thead>
+                            <tr >
+                              <th style="background-color: #242424">  </th>
+                              <th >Name</th>
+                              <th >Position</th>
+                              <th >Department</th>
+                              <th >Company</th>
+                              <th> Faults </th>
+                            </tr>
+                          </thead>
+    <tbody >`
+      // Información por cada rengrlón de la tablas
+      
+        data.faults.forEach((d, idx) => {
+          table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}"></i></td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa}</td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador}</td>`;
+          table_content += '</tr>';
+
+          // Contenido desplegable
+          table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
+            <td colspan='6' style='background-color:#454545;'>`;
+
+          if (d.faltas && d.faltas.length > 0) {
+            // Agregar encabezados una sola vez
+            table_content += `
+              <div class="has-background columns"">
+                <div class="column"><h1>Date</h1><hr class="hr-table"/></div>
+                <div class="column is-two-fifths"><h1>Motive</h1><hr class="hr-table"/></div>
+                <div class="column"><h1>Upload</h1><hr class="hr-table"/></div>
+                <div class="column"><h1>Download</h1><hr class="hr-table"/></div>
+              </div>`;
+
+            // Agregar las filas de faltas sin repetir encabezados
+            d.faltas.forEach((falta) => {
+              console.log(falta)
+              const date = new Date(falta.fecha);
+              table_content += `
+                <div class="has-background columns">
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <p class="container-text">${date.toLocaleDateString()}</p>
+                  </div>
+                  <div class="column is-two-fifths" style="margin-top:-1.2rem;">
+                    <p class="container-text">${falta.motivo}</p>
+                  </div>
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <form class="file buttons" onsubmit="return validate_FA_form(event, this)">
+                      <label class="file-label">
+                        <input type="hidden" value="${falta.id_fa}" name="id_fa" id="id_fa" />
+                        <input class="file-input" type="file" name="drive_file" id="${falta.id_fa}" onchange="update(this)" required />
+                        <span class="file-cta">
+                          <span class="file-icon"><i class="fas fa-upload"></i></span>
+                          <span class="file-label fixed-width" id="file_name">Choose a file…</span>
+                          </span>
+                        </label>
+                        <button class="file-cta ml-2 button is-green has-text-white is-fullheight" style="display: none;" id="submit_btn"><i class="bi bi-check2"></i></button>
+                    </form>
+                  </div>
+                  <div class="column" style="margin-top:-1.2rem;">
+                    <a class="button2" id="download_${falta.id_fa}" href= "${falta.link}" target="_blank" >Download</a>
+                  </div>
+                </div>`;
+            });
+          } else {
+            table_content += `
+              <div class="has-background columns">
+                <div class="column">
+                  <p class="container-text">No hay registros de faltas</p>
+                </div>
+              </div>`;
+          }
+
+          table_content += `</td></tr>`;
+        });
+
+      table_content += '</tbody>'
+      table.innerHTML = table_content
+      // <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
+  
+      const entries = document.querySelectorAll('[id^="collab-"]');
+      entries.forEach((node, idx) => {
+        node.addEventListener('click', () => {
+          const additionalRow = document.getElementById(`additional-row-${idx}`);
+          const caret = document.getElementById(`icon-${idx}`);
+          const isHidden = additionalRow.style.display === "none";
+
+          additionalRow.style.display = isHidden ? "table-row" : "none";
+          caret.classList.toggle('bi-caret-down-fill', !isHidden);
+          caret.classList.toggle('bi-caret-right-fill', isHidden);
+        });
+      })
+  
+    }
+    // Consulta a db para la información de solicitudes
+    const get_faults_info = (pagination=0, filter=null) => {
+      const csrf = document.getElementById('_csrf').value
+      const selected_option = document.querySelector('.selected')
+      const route = selected_option.innerHTML;
+      fetch(`/view_collabs/${route}`, {
+        method: 'POST',
+        headers: {
+              'Content-Type': 'application/json',
+              'csrf-token': csrf
+          },
+        body: JSON.stringify({
+          offset: pagination,
+          filter: filter,
+        }),
+      })
+      .then(response => response.json())
+      .then(data => {
+        if (data.faults.length === 0 && pagination > 0) {
+          get_faults_info(pagination - 1);
+        } else {
+          createTableFaults(data);
+        }
+      })
+      .catch(e => console.error(e))
+    }
+
+    function update(element) {
+      const file_button = document.querySelector("#file_name")
+      const submit_button = document.querySelector("#submit_btn")
+
+      file_button.innerHTML = element.value.split("\\").at(-1)
+      submit_button.removeAttribute("style")
+      // console.log(element.value)
+    }
+
+    //logica de bulma para el boton de upload
+    // const fileInput = document.querySelector("#file-js-example input[type=file]");
+    // fileInput.onchange = () => {
+    //   if (fileInput.files.length > 0) {
+    //     const fileName = document.querySelector("#file-js-example .file-name");
+    //     fileName.textContent = fileInput.files[0].name;
+    //   }
+    // };
+
+// <form class="file buttons" action="/view_collabs/uploadFA?_csrf=<%#csrfToken%>" method="POST" enctype="multipart/form-data" id="form" onsubmit="return validate_FA_form(event)">
+    async function validate_FA_form(e, form) {
+      e.preventDefault(); // Evita el reload de la página
+      const formData = new FormData(form)
+      try {
+          const response = await fetch("/view_collabs/uploadFA?_csrf=<%=csrfToken%>", {
+              method: "POST",
+              enctype: "multipart/form-data",
+              body: formData,
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+
+            document.querySelector(`#download_${result.name.split("_")[0]}`).setAttribute("href",result.viewLink)
+
+              Swal.fire({
+              icon: "success",
+              title: "Uploaded successfully",
+              html: `
+                  <p><b>Name:</b> ${result.name}</p>
+                  <br>
+                  <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
+                  🔗 Ver archivo en Drive
+                  </a>
+                  `,
+              });
+              form.reset(); // Limpia el formulario
+          } else {
+              Swal.fire({
+              icon: "error",
+              title: "Error al subir archivo",
+              text: result.message || "Hubo un error inesperado.",
+              });
+          }
+      } catch (error) {
+          Swal.fire({
+              icon: "error",
+              title: "Fallo en el servidor",
+              text: error.message,
+          });
+          }
+    }
+</script>
