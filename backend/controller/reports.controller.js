@@ -45,8 +45,7 @@ exports.get_reports = async(request, response) => {
     });
   };
 
-exports.get_general_report = async (request, response) => {
-  //console.log(request.body)
+async function general_report() {
   const [rows, fieldData] = await Empresa.fetchAllEmp();
   const empresas = rows.map(r => r.nombre_empresa)
 
@@ -55,9 +54,35 @@ exports.get_general_report = async (request, response) => {
   empresas_validaciones = empresas_validaciones.reduce((a, v) => {
     return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
   }, {})
-  console.log(empresas_validaciones);
+  
+  return empresas_validaciones
+}
+
+async function company_reports(companies) {
+  let [empresas_validaciones, _] = await Reports.fetchCompany(companies, '2025-01-01', '2025-05-01')
+    empresas_validaciones = empresas_validaciones.reduce((a, v) => {
+      return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
+    }, {})
+  return empresas_validaciones
+}
+
+exports.get_general_report = async (request, response) => {
+  if (request.body.company_values.length == 0) {
+    const empresas_validaciones = await general_report()
+    
+    response.status(200).json(empresas_validaciones)
+  }
+  else if (request.body.department_values.length == 0) {
+    const empresas_validaciones = await company_reports(request.body.company_values)
+
+    response.status(200).json(empresas_validaciones)
+  }
+  else if (request.body.collabs_values.length == 0) {
+    console.log(request.body.department_values)
+
+    response.status(200).json({message: "All good"})
+  }
 
 
-  response.status(200).json(empresas_validaciones)
 }
 
