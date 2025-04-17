@@ -82,7 +82,7 @@
         })
         .then(data => {
           closeFaultPopup()
-          if (data.viewLink) {
+          if (data.type == "drive") {
             Swal.fire({
               icon: "success",
               title: "Uploaded successfully",
@@ -105,7 +105,7 @@
               <div class="is-flex is-flex-direction-column is-justify-content-center	is-align-content-center	">
                     <span><b>Name:</b> ${data.name}</span>
                     <div style="widht: 100%; display: flex; justify-content: center;" class="mt-2">
-                      <a href="#" target="_blank" class="button is-link is-light">
+                      <a href="${data.viewLink}" target="_blank" class="button is-link is-light">
                         <i class="bi bi-download"></i> Download File
                       </a>
                     </div>

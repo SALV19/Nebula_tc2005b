@@ -489,6 +489,8 @@ exports.register_fault = async (request, response) => {
             const googleLogin = request.user?.accessToken ? 1 : 0;
             const my_file = fs.readFileSync(data.filename)
             
+            const fileName = `${Date.now()}_FA`; 
+
             if (googleLogin == 1) {
               const oauth2Client = new google.auth.OAuth2(
                 process.env.GOOGLE_CLIENT_ID, 
@@ -501,8 +503,6 @@ exports.register_fault = async (request, response) => {
                 access_token: request.user.accessToken 
               });
               const drive = google.drive({version: 'v3', auth: oauth2Client});
-                
-              const fileName = `${Date.now()}_FA`; 
 
               const requestBody = {
                 name: fileName,  
@@ -533,6 +533,7 @@ exports.register_fault = async (request, response) => {
 
                 return response.json({
                   success: true,
+                  type: "drive",
                   name: fileUploaded.data.name,
                   viewLink: fileLink,
                 });
@@ -542,24 +543,24 @@ exports.register_fault = async (request, response) => {
                 return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
               }
             } else {
-              console.log("Google sign in error")
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
               fault.save()
 
                 return response.json({
                     success: true,
-                    name: null,
-                    viewLink: null,
+                    type: "pdf",
+                    name: fileName,
+                    viewLink: `/view_collabs/download?filename=${fileName}`,
                   });
               
             }
-            response.send("File created successfully");
             }
         });
     }
   })
-  return
-  
+  return  
+}
 
-  
+exports.download = (request, response) => {
+  response.download(path.join(__dirname, '../../report.pdf'), request.query.filename + ".pdf")
 }

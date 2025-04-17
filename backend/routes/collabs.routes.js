@@ -15,6 +15,7 @@ router.post('/Inactive', collabs_controller.get_inactive)
 router.post('/get_collab_data', collabs_controller.get_collab_data);
 router.post('/update_collab', collabs_controller.update_collab);
 router.post('/register_fault', collabs_controller.register_fault)
+router.get('/download', collabs_controller.download)
 router.post('/uploadFA', upload.single("drive_file"), collabs_controller.uploadFA)
 
 router.post('/Faults', collabs_controller.get_faults);
