@@ -399,7 +399,9 @@ exports.get_followUps_info = (request, response, next) => {
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
         console.log("selectedOption que se está enviando:", selectedOption);
+        console.log("ID_EVAL: ", id_evaluacion);
         response.json({
+          id_evaluacion,
           selectedOption,
           fechasAgendadas,
           pregunta,
@@ -438,4 +440,24 @@ exports.create_note = async (request, response) => {
 
 
 
+}
+
+exports.post_delete_eval = async (request, response) => {
+  try {
+    const id_eval = request.body.valor;
+    const result = await Eval_Questions.deleteEval(id_eval);
+
+    response.json({
+      success: true,
+      message: `Evaluación con ID ${id_eval} eliminada correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar evaluación:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar evaluación.' 
+    })
+  }
 }
