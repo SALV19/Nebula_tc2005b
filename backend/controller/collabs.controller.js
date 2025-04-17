@@ -443,3 +443,23 @@ exports.get_faults = async (request, response) => {
   });
 }
 
+exports.delete_Collab = async (request, response) => {
+  try {
+    const id_colaborador = request.body.valor;
+    const result = await Colaborador.deleteCollab(id_colaborador);
+
+    response.json({
+      success: true,
+      message: `Colaborador eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar colaborador:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar colaborador.' 
+    })
+  }
+}
+
