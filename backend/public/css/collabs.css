@@ -100,6 +100,11 @@
     margin-top: 0; 
 }
 
+.vc{
+    margin:3%;
+    color:#EEEEEE;
+}
+
 .buttons {
     position: relative;
     width: 100%;

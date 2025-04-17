@@ -495,4 +495,12 @@ module.exports = class Colaborador {
     return rows;
   }
 
+  static async deleteCollab(id_colaborador){
+    const result = await db.execute(`
+        UPDATE colaborador
+        SET estado = 0
+        WHERE id_colaborador = ?
+    `, [id_colaborador]);
+    return result
+}
 };
