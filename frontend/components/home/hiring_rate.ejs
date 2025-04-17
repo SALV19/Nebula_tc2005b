@@ -1,11 +1,6 @@
 <script>
-    console.log("lolol");
-
     function createHR(data) {
-        console.log("Data: ", data);
-        console.log(data.counter);
         const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(2);
-        console.log("Índice de rotación formateado:", indiceRotacion);
 
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
@@ -54,9 +49,7 @@
 
         const icon = document.getElementById("hiring-rate-icon");
         icon.addEventListener("click", () => {
-            console.log("ENtro");
             const hRoption = document.getElementById("HRoptions");
-            console.log("Lol2: ", hRoption);
 
             hRoption.style.display = hRoption.style.display === "block" ? "none" : "block";
         });

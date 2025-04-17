@@ -54,6 +54,15 @@ const general_routes = require("./routes/general.routes");
 const other_controllers = require("./controller/other.controller");
 
 app.use("/log_in", login_routes);
+// app.use("/fault_pdf", (req, res, next) => {
+//   res.render("template_fautl", {
+//     nombre_participantes: "Una cosa",
+//     nombre_colaboradores: "Una cosa",
+//     motivo: "Una cosa",
+//     consecuencias: "Una cosa",
+//     desición: "Una cosa",
+//   })
+// })
 app.use("/", auth_middleware, general_routes);
 
 app.use(other_controllers.get_404);

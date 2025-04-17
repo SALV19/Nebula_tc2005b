@@ -1,0 +1,9 @@
+.flex-between {
+  display: flex;
+  justify-content: space-between;
+}
+#date {
+  font-family: 'Montserrat';
+  margin: auto 0;
+  font-size: small;
+}

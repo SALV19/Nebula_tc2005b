@@ -58,10 +58,42 @@ h1{
     /* font-weight: bold; */
 }
 
+.centered {
+    display: flex;
+    justify-content: center;
+    /* align-items: center; */
+}
+
+.pop-up-content {
+    background-color: #242424;
+    padding: 2vw; 
+    padding-top: 5vh; 
+    border-radius: 5px;
+    width: 45vw;  
+    height: auto; /* Optional to limit total height */
+    overflow-y: auto; /*To be able to scroll if the content is too large*/
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+.move-up {
+    margin-top: -2rem;
+}
 .is-green {
     background-color: rgb(72, 199, 142) !important; 
 }
 
 .fixed-width {
     max-width: 6rem !important;
+}
+
+.white-calendar::-webkit-calendar-picker-indicator {
+    background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="16" height="15" viewBox="0 0 24 24"><path fill="%23bbbbbb" d="M20 3h-1V1h-2v2H7V1H5v2H4c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 18H4V8h16v13z"/></svg>');
+}
+textarea {
+    height: 3rem;
+}
+
+.swal-height {
+    height: 70vh;
 }

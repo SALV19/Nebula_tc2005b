@@ -494,6 +494,12 @@ module.exports = class Colaborador {
       // console.log("Row: ", rows);
     return rows;
   }
+  static fetchCollabsName(email) {
+    return db.execute(`SELECT nombre, apellidos, id_colaborador
+                      FROM colaborador
+                      WHERE email <> ?
+        `, [email])
+  }
 
   static async deleteCollab(id_colaborador){
     const result = await db.execute(`

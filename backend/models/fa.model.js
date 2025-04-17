@@ -1,6 +1,4 @@
-const bodyParser = require('body-parser');
 const db = require('../util/database');
-const { google } = require('googleapis');
 
 module.exports = class FaltaAdministrativa {
   constructor(id_colaborador, motivo, fecha, link = null) {
@@ -8,6 +6,11 @@ module.exports = class FaltaAdministrativa {
     this.motivo = motivo;
     this.fecha = fecha;
     this.link = link;
+  }
+
+  save() {
+    return db.execute(`INSERT INTO fa(id_colaborador, motivo, fecha, link)
+                    VALUES(?, ?, ?, ?)`, [this.id_colaborador, this.motivo, this.fecha, this.link])
   }
 
   // UPDATE del campo `Link` para una falta existente

@@ -122,6 +122,14 @@
             element.classList.remove('selected')
         })
           options[i].classList.add('selected')
+          const add_btn = document.querySelector("#add_btn")
+          if (options[i].innerHTML == "Faults") {
+            add_btn.setAttribute("onclick", "addFault()") 
+          }
+          else {
+            add_btn.setAttribute("onclick", "addCollab()")
+          }
+
           if (options[i].innerHTML == 'Faults') {
                 get_faults_info()
                 return;
@@ -172,7 +180,7 @@
   }
   
   document.addEventListener("DOMContentLoaded", function() {
-    get_faults_info()
+    // get_faults_info()
     get_info()
   })
 </script>

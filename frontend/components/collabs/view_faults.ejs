@@ -1,7 +1,6 @@
 <link rel="stylesheet" href="/css/faults.css"></link>
 <script>
     function createTableFaults(data) {
-      console.log("longitud:",data.faults.length );      
       const table = document.querySelector('#requests_table')
       let table_content = `<thead>
                             <tr >
@@ -118,7 +117,7 @@
       })
       .then(response => response.json())
       .then(data => {
-        if (data.faults.length === 0 && pagination > 0) {
+        if (data.faults?.length === 0 && pagination > 0) {
           get_faults_info(pagination - 1);
         } else {
           createTableFaults(data);
@@ -145,7 +144,6 @@
     //   }
     // };
 
-// <form class="file buttons" action="/view_collabs/uploadFA?_csrf=<%#csrfToken%>" method="POST" enctype="multipart/form-data" id="form" onsubmit="return validate_FA_form(event)">
     async function validate_FA_form(e, form) {
       e.preventDefault(); // Evita el reload de la página
       const formData = new FormData(form)

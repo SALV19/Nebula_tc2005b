@@ -1,0 +1,123 @@
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+<form id="faultForm" onsubmit="return verify(event)"> 
+    <input type="hidden" name="_csrf" value="<%= csrfToken %>" >
+        <aside id="fault-pop-up" class="pop-up" style="display: none;">
+            <div class="pop-up-content">
+                <i class="bi bi-x-lg cancelButton" onclick="closeFaultPopup()"></i>
+                  <div class="is-flex is-flex-direction-column	mb-6">
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class="centered">Asistants: </p>
+                        <input type="text" name="asistants" class="line-input has-text-light" id="asistants" placeholder="John Doe,Jane Doe" required>
+                    </div>
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class="">Absent: </p>
+                        <select name="absent" id="absent" class="line-input dropdown centered" required>
+                          <option value="null" disabled selected>Select an option</option>
+                        </select>
+                    </div>
+                    <div class="is-flex">
+                      <p style="width: 8rem;" class=" centered">Date: </p>
+                        <input type="date" name="date" class="line-input has-text-light white-calendar" id="date" required>
+                    </div>
+                  </div>
+                <div class="mb-4 move-up">
+                  <div class="has-text-white">
+                    <p class="has-text-left">Description: </p>
+                      <textarea name="description" class="line-input is-col-span-2 has-text-light" id="description" required placeholder="Description..."></textarea>
+                    <p class="has-text-left">Consequences: </p>
+                      <textarea name="consequences" class="line-input is-col-span-2 has-text-light" id="consequences" required placeholder="Consequences..."></textarea>
+                    <p class="has-text-left">Decision: </p>
+                      <textarea name="decisions" class="line-input is-col-span-2 has-text-light" id="decisions" required placeholder="Decision..."></textarea>
+                  </div>
+                </div>
+                
+                <button class="button is-danger has-text-white" type="submit">Submit Fault</button>  
+            </div>
+            
+        </aside>
+</form>
+<script>
+  function verify(e) {
+    e.preventDefault()
+    const form = document.querySelector("#faultForm")
+    const date = document.querySelector("#date").value
+    const asistants = document.querySelector("#asistants").value
+    const absent = document.querySelector("#absent").value
+    const description = document.querySelector("#description").value
+    const consequences = document.querySelector("#consequences").value
+    const decisions = document.querySelector("#decisions").value
+    
+    Swal.fire({
+      title: "Are you sure you want to add this fault?",
+      text: "You won't be able to revert this!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "Yes, register fault!"
+    }).then((result) => {
+
+      if (result.isConfirmed) {
+        fetch('/view_collabs/register_fault?_csrf=<%=csrfToken%>', {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            asistants,
+            absent,
+            date,
+            description,
+            consequences,
+            decisions
+          })
+        })
+        .then(response => {
+          // if (response.status(403)) {
+          //   alert("No inicaste sesión con google")
+          // }
+          return response.json()
+        })
+        .then(data => {
+          closeFaultPopup()
+          if (data.type == "drive") {
+            Swal.fire({
+              icon: "success",
+              title: "Uploaded successfully",
+              customClass: 'swal-height',
+              html: `<div class="is-flex is-flex-direction-column is-justify-content-center	is-align-content-center	">
+                    <span><b>Name:</b> ${data.name}</span>
+                    <div style="widht: 100%; display: flex; justify-content: center;" class="mt-2">
+                      <a href="${data.viewLink}" target="_blank" class="button is-link is-light" style="width: 15rem;">
+                      <i class="bi bi-link-45deg"></i> Ver archivo en Drive
+                      </a>
+                    </div>
+              </div>
+                  `,
+            });
+          } else {
+            Swal.fire({
+            icon: "success",
+            title: "File created",
+            html: `
+              <div class="is-flex is-flex-direction-column is-justify-content-center	is-align-content-center	">
+                    <span><b>Name:</b> ${data.name}</span>
+                    <div style="widht: 100%; display: flex; justify-content: center;" class="mt-2">
+                      <a href="${data.viewLink}" target="_blank" class="button is-link is-light">
+                        <i class="bi bi-download"></i> Download File
+                      </a>
+                    </div>
+              </div>
+                `,
+            });
+          }
+          form.reset(); 
+        })
+        .catch()
+      }
+    });
+
+  }
+</script>
