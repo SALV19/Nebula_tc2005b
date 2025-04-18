@@ -292,7 +292,7 @@ td{
 .status {
     display: inline-block; 
     padding: 0rem;
-    font-size: 13px;
+    font-size: small;
     color: white;
     border-radius: 5px;
     width: 7rem;
@@ -326,4 +326,3 @@ p{
 .text-size{
     font-size: x-small;
 }
-  

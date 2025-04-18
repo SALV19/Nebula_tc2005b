@@ -24,7 +24,7 @@
           <i class="bi bi-x"></i>
         </button>
         <div class="column-container">
-          <div class="is-flex is-align-items-center mb-2">
+          <div>
             <div id="color-calendar" class="calendar-color-box"></div>
             <h2 id="event-title" class="title-event"></h2>
           </div>                  
@@ -69,7 +69,7 @@
 
   
   <div class="columns is-multiline column-counter">
-    <div class="column is-half ">
+    <div class="column is-half margin-counter">
       <%- include ('../components/home/home_requests_logic.ejs') %>
       <%- include('../components/vacations_left.ejs') %>
       
@@ -78,13 +78,10 @@
         <p id="metric-rotation-counter">
 
         </p>
-
-        
-
       <% } %>
     </div>
   
-    <div class="column is-half ">
+    <div class="column is-half margin-counter">
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
       <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
         <%- include('../components/home/hiring_rate.ejs') %>
