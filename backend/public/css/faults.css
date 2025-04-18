@@ -1,4 +1,3 @@
-
 .hr-table {
     border: 0.5px solid #737373;  
     margin-top: 7px; 
@@ -84,7 +83,7 @@ h1{
 }
 
 .fixed-width {
-    max-width: 6rem !important;
+    max-width: 5rem !important;
 }
 
 .white-calendar::-webkit-calendar-picker-indicator {
@@ -96,4 +95,12 @@ h1{
 
 .swal-height {
     height: 70vh;
+}
+
+.disable_link {
+    background-color: rgb(51, 46, 66);
+    cursor:default;
+}
+.disable_link:hover {
+    background-color: rgb(51, 46, 66);
 }
