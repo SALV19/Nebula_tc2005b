@@ -66,9 +66,14 @@ async function company_reports(companies) {
   return empresas_validaciones
 }
 
+// Returns an object in form 
+// { Companies: 
+//    { Department: 
+//        { Indicator: value }
+//    }
+// }
 async function department_reports(companies, departments) {
   let [departamento_validaciones, _] = await Reports.fetchDepartments(companies, departments, '2025-01-01', '2025-05-01')
-  // console.log(departamento_validaciones)
   departamento_validaciones = departamento_validaciones.reduce((a, v) => {
     if (!Object.keys(a).includes(v.nombre_empresa)) {
       return {...a, [v.nombre_empresa]: {
