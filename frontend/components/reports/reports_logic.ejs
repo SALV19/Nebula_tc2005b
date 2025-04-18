@@ -88,6 +88,13 @@
             checkboxes.style.display = "block";
         }
     }
+
+    function hideComapnyCheckboxes(value) {
+        var checkboxes = document.getElementById(value);
+        checkboxes.style.display = "none";
+
+    }
+
     function showDepartmentCheckboxes(value) {
         const companies = document.querySelectorAll("[id$=-company")
         console.log("que hay dentro de compamies",companies)
@@ -122,20 +129,6 @@
 
         console.log("Departamentos correctos:", deptsCorrectos);
     
-
-
-        // const deptsCorrectos = company_values.some(departamento => {
-        //     for (let a of nodept){
-        //         if (a.id.startsWith(departamento)){
-        //             console.log("deberia dar un arreglo",a)
-        //             return a 
-        //         }
-        //     }
-        // })
-
-        // console.log(deptsCorrectos)
-        
-        // Email
 
         var checkboxes = document.getElementById(value);
         if (checkboxes.style.display == "block") {

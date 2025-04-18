@@ -5,7 +5,7 @@
     <div class="container-reports">
         <input type="hidden" id="_csrf" value=<%= csrfToken %>>
             <form>
-                <div class="multiselect">
+                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('checkboxes')" >
                     <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
                         <select class="line-input">
                         <option>Company</option>
@@ -24,7 +24,7 @@
             </form>
             
             <form>
-                <div class="multiselect">
+                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('department')">
                     <div class="selectBox" onclick="showDepartmentCheckboxes('department')">
                         <select class="line-input">
                             <option>Department</option>
@@ -47,7 +47,7 @@
             </form>
 
             <form>
-                <div class="multiselect">
+                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('collaborator')">
                     <div class="selectBox" onclick="showCheckboxes('collaborator')">
                         <select class="line-input">
                             <option>Collaborator</option>
@@ -64,7 +64,7 @@
                     </div>
                 </div>
             </form>
-          
+        
             <div class="column is-one-fifth multiselect limit">
                 <select class="line-input" name="department" id="periodic_select">
                     <option value="" disabled selected>Period</option>
