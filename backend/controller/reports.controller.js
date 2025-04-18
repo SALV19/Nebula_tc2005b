@@ -66,6 +66,42 @@ async function company_reports(companies) {
   return empresas_validaciones
 }
 
+async function department_reports(companies, departments) {
+  let [departamento_validaciones, _] = await Reports.fetchDepartments(companies, departments, '2025-01-01', '2025-05-01')
+  // console.log(departamento_validaciones)
+  departamento_validaciones = departamento_validaciones.reduce((a, v) => {
+    if (!Object.keys(a).includes(v.nombre_empresa)) {
+      return {...a, [v.nombre_empresa]: {
+        [v.nombre_departamento]: {
+          [v.indicador]: v.average
+          }
+        }
+      }
+    }
+    else if (!Object.keys(a[v.nombre_empresa]).includes(v.nombre_departamento)) {
+      return {...a, [v.nombre_empresa]: {
+                ...a[v.nombre_empresa], 
+                [v.nombre_departamento]: {
+                    [v.indicador]: v.average
+                  }
+                }
+              }
+    }
+
+    return {...a, [v.nombre_empresa]: {
+                ...a[v.nombre_empresa], 
+                [v.nombre_departamento]: {
+                  ...a[v.nombre_empresa][v.nombre_departamento], 
+                  [v.indicador]: v.average
+                }
+              }
+            }
+  }, {})
+
+  return departamento_validaciones
+  
+}
+
 exports.get_general_report = async (request, response) => {
   if (request.body.company_values.length == 0) {
     const empresas_validaciones = await general_report()
@@ -78,9 +114,10 @@ exports.get_general_report = async (request, response) => {
     response.status(200).json(empresas_validaciones)
   }
   else if (request.body.collabs_values.length == 0) {
-    console.log(request.body.department_values)
-
-    response.status(200).json({message: "All good"})
+    const departamentos_validaciones = await department_reports(request.body.company_values, request.body.department_values)
+    console.log(departamentos_validaciones)
+    
+    response.status(200).json({empresas_validaciones: departamentos_validaciones})
   }
 
 
