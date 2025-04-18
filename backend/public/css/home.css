@@ -122,7 +122,7 @@ body{
     width: 25px;
     height: 20px;
     display: inline-block;
-    vertical-align: middle;
+    vertical-align: left;
     border-radius: 0.3rem;
     margin-right: 1rem;
 }
@@ -292,7 +292,7 @@ td{
 .status {
     display: inline-block; 
     padding: 0rem;
-    font-size: 13px;
+    font-size: small;
     color: white;
     border-radius: 5px;
     width: 7rem;
@@ -326,4 +326,3 @@ p{
 .text-size{
     font-size: x-small;
 }
-  
