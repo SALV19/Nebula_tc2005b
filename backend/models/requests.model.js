@@ -398,4 +398,11 @@ module.exports = class Requests {
       return db.execute(query, [collab_id, offset]);
   }
 
+  static async deleteRequest(id_request){
+    const result = await db.execute(`
+        DELETE FROM solicitudes_falta WHERE id_solicitud_falta = ?
+    `, [id_request]);
+    return result
+  }
+
 };

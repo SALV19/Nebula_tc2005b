@@ -64,6 +64,9 @@
     align-items: center;
     gap: 0.8vw; 
 }
+#modality {
+    margin-top: .5rem;
+}
 
 .line-input {
     border: none;
@@ -105,10 +108,10 @@
     color:#EEEEEE;
 }
 
-.buttons {
+.my_buttons {
     width: 100%;
-    display: flex; 
-    justify-content: center; 
+    display: flex;
+    justify-content: end;
 }
 
 .button.is-save {
@@ -178,9 +181,6 @@ textarea{
     resize:none;
 }
 
-input, textarea {
-    height: 100%;
-}
 
 textarea::-webkit-scrollbar {
     width: 0.0;
