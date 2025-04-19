@@ -78,12 +78,26 @@
                 <i class="bi bi-download is-size-4 is-clickable"></i>
             </div> 
         <hr/>
-        <button class="button is-success is-rounded" onclick="fetchData()">Update</button>
+
+        <div class="positionRight">
+            <button class="button is-success is-rounded" onclick="fetchData()">Update</button>
+        </div>
+
+        <div>
+            <label class="subtitle">Title</label>
+            <input type="text" placeholder="Insert title" class="line-inputT">
+
+            <div id="report-info" class="report-info">
+                <!-- Aquí se actualizará el texto -->
+            </div>
+        </div>
+
+        
+
         <div class="radar-container">
             <canvas  class="canvas-viewF" id="chart"></canvas> 
         </div>
     </div>
-    
 </div>
 
 

@@ -35,7 +35,7 @@ exports.get_reports = async(request, response) => {
     return {...a, [Object.keys(v)[0]]: [...a[Object.keys(v)[0]], Object.values(v)[0]]}
   }, {})
   
-
+  // console.log("depa", depa)
     response.render("reports",{
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -124,7 +124,5 @@ exports.get_general_report = async (request, response) => {
     
     response.status(200).json({empresas_validaciones: departamentos_validaciones})
   }
-
-
 }
 

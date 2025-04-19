@@ -114,4 +114,36 @@ label:hover, label:active{
     max-height: 80vh;
     width: 100%; 
     height: auto;
+    /* position: relative;
+    justify-content: center;  */
+}
+
+.line-inputT {
+    border: none;
+    border-bottom: 0.04rem solid #fff; 
+    outline: none;
+    width: 20rem;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: #747474;
+    margin-left: 2vh; 
+}
+
+.subtitle {
+    font-size: 2vh; 
+}
+
+.positionRight{
+    position: relative;
+    width: 95%;
+    display: flex; 
+    justify-content: flex-end; 
+}
+
+.report-info {
+    font-size: 2vh;
+    color: #EEEEEE;
+    margin-top: 2vh;
+    margin-left: 1vh;
 }
