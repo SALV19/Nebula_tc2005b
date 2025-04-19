@@ -269,3 +269,23 @@ exports.update_request = async (request, response) => {
   };
   response.redirect("/requests");
 }
+
+exports.delete_request = async (request, response) => {
+  try {
+    const id_request = request.body.valor;
+    const result = await Requests.deleteRequest(id_request);
+
+    response.json({
+      success: true,
+      message: `Solicitud eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar solicitud:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar solicitud.' 
+    })
+  }
+}

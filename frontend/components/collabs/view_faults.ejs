@@ -17,7 +17,7 @@
       
         data.faults.forEach((d, idx) => {
           table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-down-fill" id="icon-${idx}"></i></td>`;
+          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}"></i></td>`;
           table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`;
           table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`;
           table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento}</td>`;
@@ -58,14 +58,14 @@
                         <input class="file-input" type="file" name="drive_file" id="${falta.id_fa}" onchange="update(this)" required />
                         <span class="file-cta">
                           <span class="file-icon"><i class="fas fa-upload"></i></span>
-                          <span class="file-label fixed-width" id="file_name">Choose a file…</span>
+                          <span class="file-label fixed-width" id="file_name_${falta.id_fa}">Choose a file…</span>
                           </span>
                         </label>
-                        <button class="file-cta ml-2 button is-green has-text-white is-fullheight" style="display: none;" id="submit_btn"><i class="bi bi-check2"></i></button>
+                        <button class="file-cta ml-2 button is-green has-text-white is-fullheight" style="display: none;" id="submit_btn_${falta.id_fa}"><i class="bi bi-check2"></i></button>
                     </form>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <a class="button2" id="download_${falta.id_fa}" href= "${falta.link}" target="_blank" >Download</a>
+                    <a class="button2 ${falta.link ? '': 'disable_link'}" id="download_${falta.id_fa}" ${falta.link ? 'href= "${falta.link}" target="_blank" ': ''}>Download</a>
                   </div>
                 </div>`;
             });
@@ -93,8 +93,8 @@
           const isHidden = additionalRow.style.display === "none";
 
           additionalRow.style.display = isHidden ? "table-row" : "none";
-          caret.classList.toggle('bi-caret-down-fill', !isHidden);
-          caret.classList.toggle('bi-caret-right-fill', isHidden);
+          caret.classList.toggle('bi-caret-down-fill', isHidden);
+          caret.classList.toggle('bi-caret-right-fill', !isHidden);
         });
       })
   
@@ -127,8 +127,9 @@
     }
 
     function update(element) {
-      const file_button = document.querySelector("#file_name")
-      const submit_button = document.querySelector("#submit_btn")
+      console.log(element.id)
+      const file_button = document.querySelector(`#file_name_${element.id}`)
+      const submit_button = document.querySelector(`#submit_btn_${element.id}`)
 
       file_button.innerHTML = element.value.split("\\").at(-1)
       submit_button.removeAttribute("style")
@@ -158,7 +159,10 @@
 
           if (result.success) {
 
-            document.querySelector(`#download_${result.name.split("_")[0]}`).setAttribute("href",result.viewLink)
+            const download = document.querySelector(`#download_${result.name.split("_")[0]}`)
+            download.setAttribute("href",result.viewLink)
+            download.setAttribute("target","_blank")
+            download.classList.remove('disable_link')
 
               Swal.fire({
               icon: "success",

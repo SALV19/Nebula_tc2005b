@@ -32,7 +32,8 @@ footer {
 html,
 body,
 #app {
-  height: 105vh;
+  min-height: 105vh;
+  max-height: auto;
   background-color: #242424;
 }
 
