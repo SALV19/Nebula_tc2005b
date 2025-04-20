@@ -14,6 +14,7 @@ const {google} = require('googleapis');
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
+const argon2 = require('argon2');
 
 let settings = {
   selectedOption: "active",
@@ -92,8 +93,10 @@ exports.post_collab = (request, response) => {
     numbers: true,
   });
 
-  new_Colab
-    .save(password)
+  argon2.hash(password)
+    .then(hashedPassword => {
+      return new_Colab.save(hashedPassword);
+    })
     .then(([rows]) => {
       if (rows.length === 0)
         throw new Error("No se encontró el colaborador insertado.");
