@@ -6,7 +6,7 @@
         <aside id="fault-pop-up" class="pop-up" style="display: none;">
             <div class="pop-up-content">
                 <i class="bi bi-x-lg cancelButton" onclick="closeFaultPopup()"></i>
-                  <div class="is-flex is-flex-direction-column	mb-6">
+                  <div class="is-flex is-flex-direction-column mt-4	mb-6">
                     <div class="is-flex">
                       <p style="width: 8rem;" class="centered">Asistants: </p>
                         <input type="text" name="asistants" class="line-input has-text-light" id="asistants" placeholder="John Doe,Jane Doe" required>
@@ -14,8 +14,9 @@
                     <div class="is-flex">
                       <p style="width: 8rem;" class="">Absent: </p>
                         <select name="absent" id="absent" class="line-input dropdown centered" required>
-                          <option value="null" disabled selected>Select an option</option>
+                          <option value="" disabled selected>Select an option</option>
                         </select>
+                        <p class="hidden is-danger" id="#error_message">Please select collaborator</p>
                     </div>
                     <div class="is-flex">
                       <p style="width: 8rem;" class=" centered">Date: </p>
@@ -45,6 +46,7 @@
     const date = document.querySelector("#date").value
     const asistants = document.querySelector("#asistants").value
     const absent = document.querySelector("#absent").value
+
     const description = document.querySelector("#description").value
     const consequences = document.querySelector("#consequences").value
     const decisions = document.querySelector("#decisions").value
