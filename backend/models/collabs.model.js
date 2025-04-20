@@ -37,7 +37,7 @@ module.exports = class Colaborador {
   }
 
 
-  save(password) {
+  save(hashedPassword) {
     return db
       .execute(
         `INSERT INTO colaborador (id_colaborador, nombre, apellidos, fechaNacimiento,
@@ -50,7 +50,7 @@ module.exports = class Colaborador {
           this.telefono,
           this.puesto,
           this.email,
-          password,
+          hashedPassword,
           this.fechaIngreso,
           this.ubicacion,
           this.modalidad,
