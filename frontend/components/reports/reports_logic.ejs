@@ -26,7 +26,7 @@
         j = j+1;
         k = k+3;
     }
-    console.log("datas",datas);
+    console.log(datas);
 
     new Chart(ctx, { 
         type: 'radar',
@@ -96,42 +96,51 @@
     }
 
     function showDepartmentCheckboxes(value) {
-        const companies = document.querySelectorAll("[id$=-company")
-        console.log("que hay dentro de compamies",companies)
-        const company_values = Array.prototype.reduce.call(companies, (acc, c) => {
-            if (c.checked) {
-                acc.push(c.value)
-            }
-            return acc
-        }, [])
+        const companies = document.querySelectorAll("[id$=-company]");
+        const selectedCompanies = Array.from(companies)
+            .filter(c => c.checked)
+            .map(c => c.value);
 
-        const nodept = document.querySelectorAll("[id$=-department]")
-        console.log("que hay en nodept",nodept)
-        const deptsCorrectos = [];
+        const nodept = document.querySelectorAll("[id$=-department]");
+        const departmentMap = {};
 
-        for (let departamento of nodept){
-            departamento.parentElement.style.display = "none";
-        }
+        selectedCompanies.forEach(company => {
+            nodept.forEach(department => {
+                if (department.id.startsWith(company)) {
+                    const deptValue = department.value;
+                    if (!departmentMap[deptValue]) {
+                        departmentMap[deptValue] = [];
+                    }
+                    departmentMap[deptValue].push(company);
+                }
+            });
+        });
 
-        for (let departamento of company_values) {
-            for (let a of nodept) {
-                console.log("que hay en?",a)
-                if (a.id.startsWith(departamento)) {
-                    console.log("que hay en el if?",a)
-                    deptsCorrectos.push(a);
-                    a.parentElement.style.display = "block";
+        nodept.forEach(department => {
+            department.parentElement.style.display = "none";
+        });
+
+        for (let deptValue in departmentMap) {
+            const companiesForDept = departmentMap[deptValue];
+            if (companiesForDept.length > 1) {
+                companiesForDept.forEach(company => {
+                    const departmentElement = Array.from(nodept).find(department => department.value === deptValue && department.id.startsWith(company));
+                    if (departmentElement) {
+                        departmentElement.parentElement.style.display = "block";
+                        departmentElement.nextElementSibling.innerText = `${deptValue} - ${company}`;
+                    }
+                });
+            } else if (companiesForDept.length === 1) {
+                const departmentElement = Array.from(nodept).find(department => department.value === deptValue && department.id.startsWith(companiesForDept[0]));
+                if (departmentElement) {
+                    departmentElement.parentElement.style.display = "block";
+                    departmentElement.nextElementSibling.innerText = deptValue;
                 }
             }
         }
 
-        console.log("Departamentos correctos:", deptsCorrectos);
-
-        var checkboxes = document.getElementById(value);
-        if (checkboxes.style.display == "block") {
-            checkboxes.style.display = "none";
-        } else {
-            checkboxes.style.display = "block";
-        }
+        const checkboxes = document.getElementById(value);
+        checkboxes.style.display = "block";
     }
 
     function updateInfoText() {
@@ -150,8 +159,12 @@
         document.getElementById("report-info").innerText = summary;
     }
 
+    
     function fetchData() {
         const companies = document.querySelectorAll("[id$=-company")
+        companies.forEach(company => {
+            company.addEventListener('change', () => showDepartmentCheckboxes('department'));
+        });
         const department = document.querySelectorAll("[id$=-department]")
         const collab = document.querySelectorAll("[id$=-collab]")
         const periodicity = document.querySelector("#periodic_select")

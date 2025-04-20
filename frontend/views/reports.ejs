@@ -36,7 +36,7 @@
                             <% for (let departamento of depa[empresa]) {%>
                                 <label for="<%= `${empresa}-${departamento}` %>-department" class="checkbox-row">
                                     <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-department" value="<%= departamento %>"/>
-                                        <%= departamento %>
+                                    <span><%= departamento %></span>
                                 </label>
                                 <%# console.log(departamento) %>
                             <% } %>
