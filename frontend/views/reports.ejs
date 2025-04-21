@@ -15,7 +15,7 @@
                     <div id="checkboxes" class="checkboxes limit">
                         <% for (let i = 0; i < empresa.length; i++) { %>
                             <label for="<%= i %>-company" class="checkbox-row">
-                                <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>"/>
+                                <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>" onclick="updateOptions(this)"/>
                                     <%= empresa[i].nombre_empresa%>
                             </label>
                         <% } %>
@@ -95,7 +95,10 @@
         
 
         <div class="radar-container">
-            <canvas  class="canvas-viewF" id="chart"></canvas> 
+            <canvas  class="canvas-viewF" id="chart" ></canvas> 
+            <div class="multiple-radar-container is-flex is-flex-wrap-wrap is-fullwidth" id="chart-container">
+                
+            </div>
         </div>
     </div>
 </div>

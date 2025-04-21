@@ -1,83 +1,179 @@
 <script src="tom-select.complete.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 <script>
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
     function createChart(data) {
         const ctx = document.getElementById(`chart`).getContext("2d");
+        document.querySelector("#chart").display = "box"
         let chartStatus = Chart.getChart("chart"); 
         if (chartStatus != undefined) {
-        chartStatus.destroy();
+            chartStatus.destroy();
+            
         }
 
-    console.log("data",data)
-    const empresas = Object.keys(data);
-    const indicatorLabels = Object.keys(data[empresas[0]]);
-    const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
-    const datas= [];
-    let j=0;
-    let k=2;
-    for(let i of empresas) {
-        datas.push({
-                label: i,
-                data: Object.values(data[i]),
-                borderColor: colores[j],
-                borderWidth: 3,
-                backgroundColor: colores[j]+"00",
-            });
-        j = j+1;
-        k = k+3;
-    }
-    console.log(datas);
+        const empresas = Object.keys(data);
+        const indicatorLabels = Object.keys(data[empresas[0]]);
+        const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
+        const datas= [];
+        let j=0;
+        for(let i of empresas) {
+            datas.push({
+                    label: i,
+                    data: Object.values(data[i]),
+                    borderColor: colores[j],
+                    borderWidth: 3,
+                    backgroundColor: colores[j]+"00",
+                });
+            j = j+1;
+        }
+        console.log("createChart", datas);
 
-    new Chart(ctx, { 
-        type: 'radar',
-        data: {
-            labels: indicatorLabels,
-            datasets: datas, 
-        },
-        options: {
-            plugins: {
-                legend: {
-                    display: true,
-                    position:'right',
-                    labels: {
-                        padding: 30, 
-                        color: "#FFFFFF", 
-                        usePointStyle: true,
-                        textAlign: 'center',
-                        
-                    }
-                }
+        new Chart(ctx, { 
+            type: 'radar',
+            data: {
+                labels: indicatorLabels,
+                datasets: datas, 
             },
-            scales: {
-                r: {
-                    backgroundColor: "#454545",
-                    hoverBackgroundColor: "#767574",
-                    angleLines: { 
-                        display: false,
-                    },
-                    grid: {
-                        color: "#747474" 
-                    },
-                    suggestedMin: 0,
-                    suggestedMax: 5,
-                    ticks: {
-                        stepSize: 1, 
-                        beginAtZero: true,
-                        color: "#EEEEEE",
-                        backdropColor: "#454545" , 
-                    },
-                    pointLabels: {  
-                        padding:20,
-                        color: "#FFFFFF", 
-                        font: {
-                            size: 13,
-                            weight: "italic"
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position:'right',
+                        labels: {
+                            padding: 30, 
+                            color: "#FFFFFF", 
+                            usePointStyle: true,
+                            textAlign: 'center',
+                            
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        backgroundColor: "#454545",
+                        hoverBackgroundColor: "#767574",
+                        angleLines: { 
+                            display: false,
+                        },
+                        grid: {
+                            color: "#747474" 
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: {
+                            stepSize: 1, 
+                            beginAtZero: true,
+                            color: "#EEEEEE",
+                            backdropColor: "#454545" , 
+                        },
+                        pointLabels: {  
+                            padding:20,
+                            color: "#FFFFFF", 
+                            font: {
+                                size: 13,
+                                weight: "italic"
+                            }
                         }
                     }
                 }
+            } 
+        });
+    }
+
+    function createDepartmentsChart(data) {
+        const chartStatus = Chart.getChart("chart");
+        const canvas_element = document.querySelector("#chart")
+        console.log(canvas_element)
+        canvas_element.style.display = "none"
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+        }
+
+        const chart_container = document.getElementById('chart-container');
+
+        for (let entries of Object.keys(data)) {
+            chart_container.innerHTML += `<canvas  class="canvas-viewF" id="chart-${entries}"></canvas>`
+            
+            const ctx = document.getElementById(`chart-${entries}`).getContext("2d");
+
+            const departamentos = Object.keys(data[entries]);
+            const indicatorLabels = Object.keys(Object.values(data[entries])[0])
+            
+            const datas= [];
+            let j=0;
+
+            for(let i of departamentos) {
+                datas.push({
+                        label: i,
+                        data: Object.values(data[entries][i]),
+                        borderColor: getRandomColor(),
+                        borderWidth: 3,
+                        backgroundColor: "#000000"+"00",
+                    });
+                j = j+1;
             }
-        } 
-    });
+            console.log(entries, ": ", datas);
+            new Chart(ctx, { 
+                type: 'radar',
+                data: {
+                    labels: indicatorLabels,
+                    datasets: datas, 
+                },
+                options: {
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position:'right',
+                            labels: {
+                                padding: 30, 
+                                color: "#FFFFFF", 
+                                usePointStyle: true,
+                                textAlign: 'center',
+                                
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            backgroundColor: "#454545",
+                            hoverBackgroundColor: "#767574",
+                            angleLines: { 
+                                display: false,
+                            },
+                            grid: {
+                                color: "#747474" 
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            ticks: {
+                                stepSize: 1, 
+                                beginAtZero: true,
+                                color: "#EEEEEE",
+                                backdropColor: "#454545" , 
+                            },
+                            pointLabels: {  
+                                padding:20,
+                                color: "#FFFFFF", 
+                                font: {
+                                    size: 13,
+                                    weight: "italic"
+                                }
+                            }
+                        }
+                    }
+                } 
+            });
+        }
+
     }
     
     function showComapnyCheckboxes(value) {
@@ -141,6 +237,10 @@
 
         const checkboxes = document.getElementById(value);
         checkboxes.style.display = "block";
+    }
+    function updateOptions(element) {
+        const departmentCheckboxes = document.querySelectorAll(`[id^='${element.value}'][id$='-department']`);
+        departmentCheckboxes.forEach(dept => dept.checked = false)
     }
 
     function updateInfoText() {
@@ -210,7 +310,12 @@
         .then((response) => response.json())
         .then(data => {
             // Create chart with data
-            createChart(data)
+            if (data.type == "general") {
+                createChart(data.empresas_validaciones)
+            }
+            else if (data.type == "department") {
+                createDepartmentsChart(data.departamentos_validaciones)
+            }
             updateInfoText();
         })
         .catch(error => console.error("ERROR: ", error))

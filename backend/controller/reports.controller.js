@@ -111,18 +111,26 @@ exports.get_general_report = async (request, response) => {
   if (request.body.company_values.length == 0) {
     const empresas_validaciones = await general_report()
     
-    response.status(200).json(empresas_validaciones)
+    response.status(200).json({
+      type: "general",
+      empresas_validaciones
+    })
   }
   else if (request.body.department_values.length == 0) {
     const empresas_validaciones = await company_reports(request.body.company_values)
 
-    response.status(200).json(empresas_validaciones)
+    response.status(200).json({
+      type: "general",
+      empresas_validaciones})
   }
   else if (request.body.collabs_values.length == 0) {
     const departamentos_validaciones = await department_reports(request.body.company_values, request.body.department_values)
-    console.log(departamentos_validaciones)
+    // console.log(departamentos_validaciones)
     
-    response.status(200).json({empresas_validaciones: departamentos_validaciones})
+    response.status(200).json({
+      type: "department",
+      departamentos_validaciones
+    })
   }
 }
 
