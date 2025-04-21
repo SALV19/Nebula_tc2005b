@@ -37,10 +37,8 @@
         </div>
       </div>
     </aside>
-    <script>
-      let eventos = <%- eventos %>; 
-    </script>
-    <% if (eventos) { %>
+
+    <% if (google_outh) { %>
       <% if (permissions.includes('add_event')) {%> 
       <div style="display: flex;">
         <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
@@ -68,7 +66,7 @@
     </div>
 
   
-  <div class="columns is-multiline column-counter">
+  <div class="columns is-multiline column-counter" style="text-align: left;">
     <div class="column is-half margin-counter">
       <%- include ('../components/home/home_requests_logic.ejs') %>
       <%- include('../components/vacations_left.ejs') %>
@@ -85,14 +83,14 @@
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
       <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
         <%- include('../components/home/hiring_rate.ejs') %>
-        <p id="hiring-rate-container">
+        <p id="hiring-rate-container" style="margin-right: 3rem;">
   
         </p>
       <% } %>
     </div>
 
     <div class="column is-full container-t">
-        <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center;">
+        <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center; margin-top: 1rem;">
           
         </table>
       <div class="is-flex is-justify-content-space-between my_buttons">

@@ -17,9 +17,7 @@ body{
 .center-log{
     margin:13rem;
 }
-.columns{
-    margin-left: 5rem;
-}
+
 .is-three-quarters{
     padding-left: 8rem;
     padding-top: 5rem;
@@ -279,7 +277,7 @@ body{
     padding-top: 1rem;
 }
 .table{
-    width:23rem;
+    width:22rem;
     background-color: #252525;
 }
 td{
@@ -318,11 +316,15 @@ p{
     font-size: small;
 }
 .is-half{
-    justify-content: center; 
-    align-items: center; 
     margin-top: 4rem;
+    text-align: left;
+    margin-left: -1rem;
 }
 
 .text-size{
     font-size: x-small;
+}
+
+.counter{
+    padding-left: 1rem;
 }

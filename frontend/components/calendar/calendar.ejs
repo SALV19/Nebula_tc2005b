@@ -19,31 +19,59 @@
         center: 'title',
         right: 'dayGridMonth,timeGridWeek,timeGridDay'
       },
-      events: eventos,
+      events: function(fetchInfo, successCallback, failureCallback) {
+        const startDate = fetchInfo.startStr;
+        const endDate = fetchInfo.endStr;
+
+        fetch('/api/events', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'CSRF-Token': '<%= csrfToken %>'
+          },
+          body: JSON.stringify({
+            start: startDate,
+            end: endDate,
+          })
+        })
+        .then(response => response.json())
+        .then(data => {
+          const formattedEvents = data.map(event => ({
+            title: event.title,
+            start: event.start,
+            end: event.end,
+            backgroundColor: event.backgroundColor,
+            borderColor: event.borderColor,
+            display: 'block',
+            color: '#FFFF',
+            description: event.description,
+          }));
+          successCallback(formattedEvents);
+        })
+        .catch(err => {
+          console.error('Error fetching events:', err);
+          failureCallback(err);
+        });
+      },
+
       moreLinkText: 'more',
       dayMaxEvents: 3,
       height: 700,
       eventClick: function(info) {
-        // Mostrar el pop-up
+        
         const popup = document.getElementById('pop-up');
         if (popup) {
           const endDate = info.event.end;
 
-          // Opciones para formato en español
           const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
           const horaOptions = { hour: '2-digit', minute: '2-digit' };
-          // Mostrar el pop-up
-          popup.style.display = 'block';  // Cambiar a 'block' para mostrarlo
+          popup.style.display = 'block'; 
 
-          // Rellenar la información del pop-up con los datos del evento
           document.getElementById('color-calendar').style.backgroundColor = info.event.backgroundColor;
           document.getElementById('event-title').innerText = info.event.title;
           const startDate = info.event.start;
-          // Mostrar solo la fecha
           document.getElementById('event-date').innerText = startDate.toLocaleDateString('en-US', fechaOptions);
-          // Mostrar hora de inicio
           document.getElementById('event-hour-start').innerText = startDate.toLocaleTimeString('en-US', horaOptions);
-          // Mostrar hora de fin (si existe)
           document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
             : 'No end hour availablr';
           document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
@@ -53,10 +81,9 @@
     calendar.render();
   });
   
-  // Función para cerrar el pop-up
   function closePopup() {
     const popup = document.getElementById('pop-up');
-    popup.style.display = 'none';  // Cambiar a 'none' para ocultarlo
+    popup.style.display = 'none'; 
   }
 </script>
 
