@@ -90,55 +90,70 @@
     }
 
     function createDepartmentsChart(data) {
-        const chartStatus = Chart.getChart("chart");
-        const canvas_element = document.querySelector("#chart")
-        console.log(canvas_element)
-        canvas_element.style.display = "none"
-        if (chartStatus != undefined) {
-            chartStatus.destroy();
+        const chart_container = document.getElementById('chart-container');
+        chart_container.innerHTML = ''; 
+        
+        chart_container.style.display = 'grid';
+        chart_container.style.flexWrap = 'wrap';
+        chart_container.style.gap = '20px';
+        chart_container.style.justifyContent = 'center';
+        
+        const mainCanvas = document.querySelector("#chart");
+        if (mainCanvas) {
+            mainCanvas.style.display = "none";
         }
 
-        const chart_container = document.getElementById('chart-container');
-
-        for (let entries of Object.keys(data)) {
-            chart_container.innerHTML += `<canvas  class="canvas-viewF" id="chart-${entries}"></canvas>`
+        Object.keys(data).forEach(entries => {
+            const chartWrapper = document.createElement('div');
+            chartWrapper.style.width = '600px'; 
+            chartWrapper.style.height = '400px';
+            chartWrapper.style.position = 'relative';
             
-            const ctx = document.getElementById(`chart-${entries}`).getContext("2d");
-
+            const canvasId = `chart-${entries}`;
+            const canvas = document.createElement('canvas');
+            canvas.className = 'canvas-viewF';
+            canvas.id = canvasId;
+            
+            chartWrapper.appendChild(canvas);
+            chart_container.appendChild(chartWrapper);
+            
             const departamentos = Object.keys(data[entries]);
-            const indicatorLabels = Object.keys(Object.values(data[entries])[0])
+            const indicatorLabels = Object.keys(Object.values(data[entries])[0] || {});
             
-            const datas= [];
-            let j=0;
-
-            for(let i of departamentos) {
-                datas.push({
-                        label: i,
-                        data: Object.values(data[entries][i]),
-                        borderColor: getRandomColor(),
-                        borderWidth: 3,
-                        backgroundColor: "#000000"+"00",
-                    });
-                j = j+1;
-            }
-            console.log(entries, ": ", datas);
-            new Chart(ctx, { 
+            const datasets = departamentos.map(i => ({
+                label: i,
+                data: Object.values(data[entries][i]),
+                borderColor: getRandomColor(),
+                borderWidth: 3,
+                backgroundColor: "#00000000",
+            }));
+            
+            new Chart(canvas, { 
                 type: 'radar',
                 data: {
                     labels: indicatorLabels,
-                    datasets: datas, 
+                    datasets: datasets, 
                 },
                 options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
                     plugins: {
                         legend: {
                             display: true,
-                            position:'right',
+                            position: 'right',
                             labels: {
                                 padding: 30, 
                                 color: "#FFFFFF", 
                                 usePointStyle: true,
                                 textAlign: 'center',
-                                
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: entries, 
+                            color: "#FFFFFF",
+                            font: {
+                                size: 16
                             }
                         }
                     },
@@ -158,10 +173,10 @@
                                 stepSize: 1, 
                                 beginAtZero: true,
                                 color: "#EEEEEE",
-                                backdropColor: "#454545" , 
+                                backdropColor: "#454545", 
                             },
                             pointLabels: {  
-                                padding:20,
+                                padding: 20,
                                 color: "#FFFFFF", 
                                 font: {
                                     size: 13,
@@ -172,9 +187,8 @@
                     }
                 } 
             });
-        }
-
-    }
+        });
+    }   
     
     function showComapnyCheckboxes(value) {
         var checkboxes = document.getElementById(value);

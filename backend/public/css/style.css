@@ -7,10 +7,6 @@ body, section, table, thead, tr {
   font-family: "Montserrat", sans-serif;
   font-style: normal;
 }
-footer {
-  border: 2px solid red;
-  visibility: hidden;
-}
 body {
   height: 102vh;
 }
@@ -26,10 +22,7 @@ body {
 }
 
 footer {
-  position: absolute; 
-  top: 95%;
-  right: 0;
-  width: 100vw;
+  
 }
 
 
@@ -41,12 +34,6 @@ body,
   background-color: #242424;
 }
 
-footer {
-  position: absolute; 
-  top: 100%;
-  right: 0;
-  width: 100vw;
-}
 
 .pop-up {
   height: 100vh;

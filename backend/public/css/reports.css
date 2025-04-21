@@ -4,11 +4,16 @@ hr{
     width: 95%;
     z-index: 0;
 } 
-
+body {
+    background-color: #242424;
+    min-height: 105vh;
+    height: auto;
+}
 .container-reports{
     display: flex;
     flex-wrap: wrap;
     padding-top: 1.8rem;
+    background-color: #242424;
 }
 
 .line-input {
@@ -148,3 +153,6 @@ label:hover, label:active{
     margin-left: 1vh;
 }
 
+.multiple-radar-container {
+    width: 90vw;
+}
