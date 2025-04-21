@@ -4,70 +4,69 @@
 <div class = "hero-body">
     <div class="container-reports">
         <input type="hidden" id="_csrf" value=<%= csrfToken %>>
-            <form>
-                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('checkboxes')" >
-                    <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
-                        <select class="line-input">
-                        <option>Company</option>
-                        </select>
-                        <div class="overSelect"></div>
-                    </div>
-                    <div id="checkboxes" class="checkboxes limit">
-                        <% for (let i = 0; i < empresa.length; i++) { %>
-                            <label for="<%= i %>-company" class="checkbox-row">
-                                <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>" onclick="updateOptions(this)"/>
-                                    <%= empresa[i].nombre_empresa%>
-                            </label>
-                        <% } %>
-                    </div>
-                </div>
-            </form>
-            
-            <form>
-                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('department')">
-                    <div class="selectBox" onclick="showDepartmentCheckboxes('department')">
-                        <select class="line-input">
-                            <option>Department</option>
-                        </select>
-                        <div class="overSelect"></div>
-                    </div>
-                    <div id="department" class="checkboxes limit">
-                        <% for (let empresa of Object.keys(depa)) {%>
-                            <% for (let departamento of depa[empresa]) {%>
-                                <label for="<%= `${empresa}-${departamento}` %>-department" class="checkbox-row">
-                                    <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-department" value="<%= departamento %>"/>
-                                    <span><%= departamento %></span>
+            <div id="forms_container" class="container is-fullwidth is-flex">
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('checkboxes')" >
+                        <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
+                            <select class="line-input">
+                            <option>Company</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes" class="checkboxes limit">
+                            <% for (let i = 0; i < empresa.length; i++) { %>
+                                <label for="<%= i %>-company" class="checkbox-row">
+                                    <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>" onclick="updateOptions(this)"/>
+                                        <%= empresa[i].nombre_empresa%>
                                 </label>
-                                <%# console.log(departamento) %>
                             <% } %>
-                            
-                        <% } %>
+                        </div>
                     </div>
-                </div>
-            </form>
-
-            <form>
-                <div class="multiselect" onmouseleave="hideComapnyCheckboxes('collaborator')">
-                    <div class="selectBox" onclick="showCheckboxes('collaborator')">
-                        <select class="line-input">
-                            <option>Collaborator</option>
-                        </select>
-                        <div class="overSelect"></div>
+                </form>
+                
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('department')">
+                        <div class="selectBox" onclick="showDepartmentCheckboxes('department')">
+                            <select class="line-input">
+                                <option>Department</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="department" class="checkboxes limit">
+                            <% for (let empresa of Object.keys(depa)) {%>
+                                <% for (let departamento of depa[empresa]) {%>
+                                    <label for="<%= `${empresa}-${departamento}` %>-department" class="checkbox-row">
+                                        <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-department" value="<%= departamento %>"/>
+                                        <span><%= departamento %></span>
+                                    </label>
+                                    <%# console.log(departamento) %>
+                                <% } %>
+                
+                            <% } %>
+                        </div>
                     </div>
-                    <div id="collaborator" class="checkboxes limit">
-                        <% for (let i = 0; i < collabs.length; i++) { %>
-                            <label for="<%= i %>-collab">
-                            <input type="checkbox" class="checkbox-row" id="<%= i %>-collab"  value="<%= collabs[i].id_colaborador %>"/>
-                                <%= collabs[i].nombre + " " + collabs[i].apellidos%></option>
-                            </label>
-                        <% } %>
+                </form>
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('collaborator')">
+                        <div class="selectBox" onclick="showCheckboxes('collaborator')">
+                            <select class="line-input">
+                                <option>Collaborator</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="collaborator" class="checkboxes limit">
+                            <% for (let i = 0; i < collabs.length; i++) { %>
+                                <label for="<%= i %>-collab">
+                                <input type="checkbox" class="checkbox-row" id="<%= i %>-collab"  value="<%= collabs[i].id_colaborador %>"/>
+                                    <%= collabs[i].nombre + " " + collabs[i].apellidos%></option>
+                                </label>
+                            <% } %>
+                        </div>
                     </div>
-                </div>
-            </form>
-        
-            <div class="column is-one-fifth multiselect limit">
+                </form>
+                
+                <div class="column is-one-fifth multiselect limit">
                 <select class="line-input" name="department" id="periodic_select">
-                    <option value="" disabled selected>Period</option>
                     <option value="1">Monthly</option>
                     <option value="3">Trimester</option>
                     <option value="6" >Semester</option>
@@ -75,26 +74,29 @@
                 </select>
             </div>
             <div class="column is-1">
-                <i class="bi bi-download is-size-4 is-clickable"></i>
+                <i class="bi bi-download is-size-4 is-clickable" onclick="download_report()"></i>
             </div> 
-        <hr/>
+        </div>
+        <hr id="line"/>
 
         <div class="positionRight">
-            <button class="button is-success is-rounded" onclick="fetchData()">Update</button>
+            <button class="button is-success is-rounded" onclick="fetchData()" id="update_btn">Update</button>
         </div>
 
         <div>
-            <label class="subtitle">Title</label>
-            <input type="text" placeholder="Insert title" class="line-inputT">
+            <div id="title_input">
+                <label class="subtitle">Title</label>
+                <input type="text" placeholder="Insert title" class="line-inputT">
+            </div>
+            </fiv>
 
             <div id="report-info" class="report-info">
-                <!-- Aquí se actualizará el texto -->
             </div>
         </div>
 
         
 
-        <div class="radar-container">
+        <div class="radar-container" id="radar-container">
             <canvas  class="canvas-viewF" id="chart" ></canvas> 
             <div class="multiple-radar-container is-flex is-flex-wrap-wrap is-fullwidth" id="chart-container">
                 

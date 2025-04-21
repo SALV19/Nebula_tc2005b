@@ -11,9 +11,20 @@
     }
 
 
-    function createChart(data) {
+    function createChart(data, pdf) {
         const chart_container = document.querySelector("#chart-container")
         chart_container.innerHTML = ''
+    
+        const chartWrapper = document.querySelector("#radar-container")
+        if (chartWrapper.hasAttribute("style")) {
+            
+            chartWrapper.removeAttribute("style")
+        }
+        if (pdf) {
+            chartWrapper.style.width = '800px'; 
+            chartWrapper.style.height = '600px';
+        }
+
         const ctx = document.getElementById(`chart`).getContext("2d");
         document.querySelector("#chart").display = "box"
         let chartStatus = Chart.getChart("chart"); 
@@ -52,16 +63,15 @@
                         position:'right',
                         labels: {
                             padding: 30, 
-                            color: "#FFFFFF", 
+                            color: pdf ? "#000" : "#FFFFFF", 
                             usePointStyle: true,
                             textAlign: 'center',
-                            
                         }
                     }
                 },
                 scales: {
                     r: {
-                        backgroundColor: "#454545",
+                        backgroundColor: pdf ? "#EEE" : "#454545",
                         hoverBackgroundColor: "#767574",
                         angleLines: { 
                             display: false,
@@ -74,12 +84,12 @@
                         ticks: {
                             stepSize: 1, 
                             beginAtZero: true,
-                            color: "#EEEEEE",
-                            backdropColor: "#454545" , 
+                            color: pdf ? "#222" : "#EEEEEE",
+                            backdropColor: pdf ? "#EEE" : "#454545" , 
                         },
                         pointLabels: {  
                             padding:20,
-                            color: "#FFFFFF", 
+                            color: pdf ? "#000" : "#FFFFFF", 
                             font: {
                                 size: 13,
                                 weight: "italic"
@@ -91,7 +101,7 @@
         });
     }
 
-    function createDepartmentsChart(data) {
+    function createDepartmentsChart(data, pdf) {
         const chart_container = document.getElementById('chart-container');
         chart_container.innerHTML = ''; 
         
@@ -227,7 +237,7 @@
                 }
             });
         });
-
+        
         nodept.forEach(department => {
             department.parentElement.style.display = "none";
         });
@@ -276,12 +286,52 @@
         const selectPeriod = document.querySelector("#periodic_select");
         const periodicity = selectPeriod.options[selectPeriod.selectedIndex]?.text || "Sin periodo";
 
-        const summary = `${formattedDate} | ${selectedDepartments.join(', ') || 'Ninguno'} | ${periodicity}`;
+        const summary = `${formattedDate} | ${periodicity}`;
         document.getElementById("report-info").innerText = summary;
     }
 
+    async function download_report() {
+        const search = document.querySelector("#forms_container")
+        const bar = document.querySelector("hr")
+        const update = document.querySelector("#update_btn")
+        const title_input = document.querySelector("#title_input")
+        const nav = document.querySelector("#navbar")
+        const footer = document.querySelector("footer")
+        
+        const title = document.querySelector(".report-info")
+        title.style.margin = "0";
+        
+        await fetchData(true).then(t => {
+            console.log(t)
+            search.classList.add("hide")
+            bar.classList.add("hide")
+            update.classList.add("hide")
+            title_input.classList.add("hide")
+            nav.classList.add("hide")
+            footer.classList.add("hide")
+
+            const pdfFrame = window.frames
+            setTimeout(() => {
+                pdfFrame.focus()
+                pdfFrame.print()
+                setTimeout(() => {
+                    search.classList.remove("hide")
+                    bar.classList.remove("hide")
+                    update.classList.remove("hide")
+                    title_input.classList.remove("hide")
+                    nav.classList.remove("hide")
+                    footer.classList.remove("hide")
+
+                    title.removeAttribute("style")
+                }, 500)
+            }, 500)
+        })
+        setTimeout(() => {
+            fetchData()
+        }, 500);
+    }
     
-    function fetchData() {
+    async function fetchData(pdf = null) {
         const companies = document.querySelectorAll("[id$=-company")
         companies.forEach(company => {
             company.addEventListener('change', () => showDepartmentCheckboxes('department'));
@@ -310,7 +360,7 @@
         }, [])
 
         const csrf = document.querySelector('#_csrf').value        
-        fetch('/reports', {
+        return await fetch('/reports', {
             method: 'POST',
             headers: {
             'Content-Type': 'application/json',
@@ -328,12 +378,13 @@
         .then(data => {
             // Create chart with data
             if (data.type == "general") {
-                createChart(data.empresas_validaciones)
+                createChart(data.empresas_validaciones, pdf)
             }
             else if (data.type == "department") {
-                createDepartmentsChart(data.departamentos_validaciones)
+                createDepartmentsChart(data.departamentos_validaciones, pdf)
             }
             updateInfoText();
+            return true
         })
         .catch(error => console.error("ERROR: ", error))
     }

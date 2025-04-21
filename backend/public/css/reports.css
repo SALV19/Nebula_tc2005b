@@ -156,3 +156,16 @@ label:hover, label:active{
 .multiple-radar-container {
     width: 90vw;
 }
+
+.hide {
+    display: none;
+}
+.hide > *{
+    display: none;
+}
+
+@page { margin: 0; }
+@media print {
+    @page { margin: 0; }
+    body { margin: 1.6cm; }
+}
