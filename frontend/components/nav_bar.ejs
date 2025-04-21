@@ -34,9 +34,20 @@
       </a>
     <% } %>
   </div>
+
+  <div>
   <a href="/personal_info" class="">
     <i class="bi bi-person-fill"></i> 
     <span>Personal Info</span>
   </a>
+  <a class="">
+    <i class="bi-question-circle" onclick="openManual()"></i> 
+    <span onclick="openManual()">User Manual</span>
+    <link rel="stylesheet" href="/css/manual.css">
+  </a>
+</div>
 <% } %>
 </nav>
+
+<%- include ('../components/user_manual/popUp_manual.ejs') %>
+<%- include ('../components/user_manual/popUp_manual_logic.ejs') %>
