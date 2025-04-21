@@ -1,17 +1,17 @@
 <%- include('../components/nav_bar.ejs') %>
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
 <link rel="stylesheet" href="/css/personalInfo.css" />
 
-<input type="hidden" id="_csrf" value=<%= csrfToken %>/>
+<input type="hidden" name="_csrf" value="<%= csrfToken %>" >
 
 <div class="columns ">
   <div class="column left-k is-4 has-text-centered">
     <div class="is-flex is-justify-content-center is-align-items-center" >
       <figure class="image" style="width: 90%; padding: 10%;">
-        <img class="is-rounded" style=" height: auto;" src=<%= foto %>  />
+        <img class="is-rounded" style=" height: auto;" src='<%= foto %>'  />
       </figure>
     </div>
-    
     <table class="table is-narrow is-fullwidth has-text-centered" >
       <tr>
         <td>
@@ -20,7 +20,8 @@
         </td>
         <td>
           <p class=" has-text-white is-size-1"><%= `${diasDisponibles} / ${diasTotales}` %></p>
-          <p class='has-text-centered is-size-7'>Days of<br>vacations Left</p>
+          <p class="headingVac">Vacations<br/> left</p>
+          <p class="headingVac">Total<br/> vacations</p>
         </td>
         <td>
           <p class=" has-text-white is-size-1"><%= `${total_absences}` %></p>
@@ -62,4 +63,40 @@
       window.location.href = '/log_in'
     })
   }
+
+  document.getElementById("uploadForm").addEventListener("submit", function (e) {
+    e.preventDefault();
+
+    const form = e.target;
+    const formData = new FormData(form);
+    const csrfToken = document.querySelector('input[name="_csrf"]').value;
+
+    fetch("/personal_info/upload", {
+      method: "POST",
+      headers: {
+        "CSRF-Token": csrfToken 
+      },
+      body: formData
+    })
+    .then(res => {
+      if (!res.ok) throw new Error("Falló la subida");
+      return res.json();
+    })
+    .then(data => {
+      console.log("Imagen subida con éxito:", data);
+      Swal.fire({
+        icon: "success",
+        title: "Imagen subida",
+        text: "¡Tu imagen se ha actualizado!",
+      });
+    })
+    .catch(err => {
+      console.error("Error al subir la imagen:", err);
+      Swal.fire({
+        icon: "error",
+        title: "Error",
+        text: "No se pudo subir la imagen. Intenta de nuevo.",
+      });
+    });
+  });
 </script>

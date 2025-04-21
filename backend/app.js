@@ -6,6 +6,9 @@ const bodyParser = require("body-parser");
 const passport = require("passport");
 const cookieParser = require("cookie-parser");
 
+const ensureUploadsDir = require('./util/createUploadsDir');
+ensureUploadsDir();
+
 
 const {google} = require('googleapis')
 
@@ -38,6 +41,17 @@ app.use(
 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+const multer = require('multer');
+const fileStorage = multer.diskStorage({
+    destination: (request, file, callback) => {
+        callback(null, 'public/uploads');
+    },
+    filename: (request, file, callback) => {
+        callback(null, new Date().getMilliseconds() + file.originalname);
+    },
+});
+ 
 
 const csrf = require("csurf");
 const csrfProtection = csrf();
