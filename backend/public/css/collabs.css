@@ -181,7 +181,6 @@ textarea{
     resize:none;
 }
 
-
 textarea::-webkit-scrollbar {
     width: 0.0;
 }
