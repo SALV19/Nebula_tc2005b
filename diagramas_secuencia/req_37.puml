@@ -33,7 +33,7 @@ deactivate db
 em -->> cc : result
 deactivate em  
 
-cc --> s : response.json({ success: true,\v message: `Evaluación con ID ${id_eval} eliminada correctamente.`,  result,} )
+cc -->> s : response.json({ result } )
 deactivate cc
 
 deactivate s 
