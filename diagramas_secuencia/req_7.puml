@@ -29,7 +29,10 @@ HController --> home : response.render ("home_page", { diasDisponibles, diasTota
 deactivate HController
 
 activate home
-home -->> C : HTML calendar
+home --> C : HTML calendar
 deactivate home
+
+activate C 
+deactivate C 
 
 @enduml

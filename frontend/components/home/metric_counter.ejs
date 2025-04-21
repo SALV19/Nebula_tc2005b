@@ -89,7 +89,7 @@
             'x-csrf-token': csrf
             },
             body: JSON.stringify({
-                valor: value,
+                periodo: value,
             }),
         })
         .then(response => {
@@ -110,7 +110,6 @@
     document.addEventListener("DOMContentLoaded", (e) => {
         get_Metric();
         get_hiring();
-        
     })
 
 </script>

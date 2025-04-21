@@ -173,26 +173,26 @@ exports.add_event = (request, response) => {
 
 exports.get_metric = async (request, response) => {
   // console.log("get_metric called with:", request.body.valor);
-  let val = request.body.valor;
+  let periodo = request.body.periodo;
   let counter;
   // console.log('lol');
 
-  if (val == 1){
-    counter = await Requests.metricMonth();
-  } else if (val == 2){
-    counter = await Requests.metricTrimester();
-  } else if(val == 3){
-    counter = await Requests.metricSemester();
+  if (periodo == 1){
+    counter = await Requests.metric_month();
+  } else if (periodo == 2){
+    counter = await Requests.metric_trimester();
+  } else if(periodo == 3){
+    counter = await Requests.metric_semester();
   } else {
-    counter = await Requests.metricAnually();
+    counter = await Requests.metric_anually();
   }
 
   // console.log("counter: ", counter);
-  // console.log("Val:", val);
+  // console.log("Val:", periodo);
   response.json({
     permissions: request.session.permissions,
     counter,
-    val,
+    periodo,
   });
 }
 
@@ -203,13 +203,13 @@ exports.get_hiring = async (request, response) => {
   // console.log('lol');
 
   if (value == 1){
-    counter = await Requests.hRateM();
+    counter = await Requests.h_Rate_M();
   } else if (value == 2){
-    counter = await Requests.hRateT();
+    counter = await Requests.h_Rate_T();
   } else if(value == 3){
-    counter = await Requests.hRateS();
+    counter = await Requests.h_Rate_S();
   } else {
-    counter = await Requests.hRateY();
+    counter = await Requests.h_Rate_Y();
   }
 
   response.json({

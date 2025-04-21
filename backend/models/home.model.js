@@ -94,7 +94,7 @@ module.exports = class Requests {
         return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
     }
 
-    static async metricMonth(){
+    static async metric_month(){
         const month = await db.execute(`SELECT 
             ( 
                 (SELECT COUNT(*) 
@@ -110,7 +110,7 @@ module.exports = class Requests {
         `)
         return month[0];
     }
-    static async metricTrimester(){
+    static async metric_trimester(){
         const trimester = await db.execute(`
             SELECT 
                 ( 
@@ -128,7 +128,7 @@ module.exports = class Requests {
         return trimester[0];
     }
 
-    static async metricSemester(){
+    static async metric_semester(){
         const semester = await db.execute(`
             SELECT 
             ( 
@@ -145,7 +145,7 @@ module.exports = class Requests {
         `)        
         return semester[0];                                      
     }
-    static async metricAnually(){
+    static async metric_anually(){
         const anual = await db.execute(`
             SELECT 
             ( 
@@ -163,7 +163,7 @@ module.exports = class Requests {
         return anual[0];
     }
 
-    static async hRateM(){
+    static async h_Rate_M(){
         const month = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
@@ -178,7 +178,7 @@ module.exports = class Requests {
         `)
         return month[0];
     }
-    static async hRateT(){
+    static async h_rate_T(){
         const trimester = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
@@ -193,7 +193,7 @@ module.exports = class Requests {
         `)
         return trimester[0];
     }
-    static async hRateS(){
+    static async h_Rate_S(){
         const semester = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
@@ -208,7 +208,7 @@ module.exports = class Requests {
         `)
         return semester[0];
     }
-    static async hRateY(){
+    static async h_Rate_Y(){
         const year = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
