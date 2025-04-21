@@ -45,11 +45,12 @@ exports.get_reports = async(request, response) => {
     });
   };
 
-async function general_report() {
+async function general_report(periodicity) {
   const [rows, fieldData] = await Empresa.fetchAllEmp();
   const empresas = rows.map(r => r.nombre_empresa)
 
-  let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, '2025-01-01', '2025-05-01')
+  let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, 
+                                                  `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
   
   empresas_validaciones = empresas_validaciones.reduce((a, v) => {
     return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
@@ -58,22 +59,18 @@ async function general_report() {
   return empresas_validaciones
 }
 
-async function company_reports(companies) {
-  let [empresas_validaciones, _] = await Reports.fetchCompany(companies, '2025-01-01', '2025-05-01')
+async function company_reports(companies, periodicity) {
+  let [empresas_validaciones, _] = await Reports.fetchCompany(companies, 
+                                                  `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
     empresas_validaciones = empresas_validaciones.reduce((a, v) => {
       return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
     }, {})
   return empresas_validaciones
 }
 
-// Returns an object in form 
-// { Companies: 
-//    { Department: 
-//        { Indicator: value }
-//    }
-// }
-async function department_reports(companies, departments) {
-  let [departamento_validaciones, _] = await Reports.fetchDepartments(companies, departments, '2025-01-01', '2025-05-01')
+async function department_reports(companies, departments, periodicity) {
+  let [departamento_validaciones, _] = await Reports.fetchDepartments(companies, departments, 
+                                                  `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
   departamento_validaciones = departamento_validaciones.reduce((a, v) => {
     if (!Object.keys(a).includes(v.nombre_empresa)) {
       return {...a, [v.nombre_empresa]: {
@@ -107,9 +104,19 @@ async function department_reports(companies, departments) {
   
 }
 
+function getStartEnd(periodicity) {
+  const curr_date = new Date()
+  const target_month = new Date(curr_date.getFullYear(), curr_date.getMonth() - periodicity + 1, 0)
+  return {
+    curr_date : String(curr_date.getFullYear()) + "-" + String(curr_date.getMonth()), 
+    target_month: String(target_month.getFullYear()) + "-" + String(target_month.getMonth())
+  }
+}
+
 exports.get_general_report = async (request, response) => {
+  const periodicity = getStartEnd(request.body.periodicity ?? 1)
   if (request.body.company_values.length == 0) {
-    const empresas_validaciones = await general_report()
+    const empresas_validaciones = await general_report(periodicity)
     
     response.status(200).json({
       type: "general",
@@ -117,14 +124,15 @@ exports.get_general_report = async (request, response) => {
     })
   }
   else if (request.body.department_values.length == 0) {
-    const empresas_validaciones = await company_reports(request.body.company_values)
+    const empresas_validaciones = await company_reports(request.body.company_values, periodicity)
 
     response.status(200).json({
       type: "general",
       empresas_validaciones})
   }
   else if (request.body.collabs_values.length == 0) {
-    const departamentos_validaciones = await department_reports(request.body.company_values, request.body.department_values)
+    const departamentos_validaciones = await department_reports(request.body.company_values, 
+                                                      request.body.department_values, periodicity)
     // console.log(departamentos_validaciones)
     
     response.status(200).json({
