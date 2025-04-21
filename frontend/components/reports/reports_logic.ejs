@@ -12,6 +12,8 @@
 
 
     function createChart(data) {
+        const chart_container = document.querySelector("#chart-container")
+        chart_container.innerHTML = ''
         const ctx = document.getElementById(`chart`).getContext("2d");
         document.querySelector("#chart").display = "box"
         let chartStatus = Chart.getChart("chart"); 
@@ -153,7 +155,7 @@
                             text: entries, 
                             color: "#FFFFFF",
                             font: {
-                                size: 16
+                                size: 24
                             }
                         }
                     },
