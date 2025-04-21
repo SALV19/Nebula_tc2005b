@@ -155,7 +155,7 @@
                             position: 'right',
                             labels: {
                                 padding: 30, 
-                                color: "#FFFFFF", 
+                                color: pdf ? "#000" : "#FFFFFF", 
                                 usePointStyle: true,
                                 textAlign: 'center',
                             }
@@ -171,7 +171,7 @@
                     },
                     scales: {
                         r: {
-                            backgroundColor: "#454545",
+                            backgroundColor: pdf ? "#EEE" : "#454545",
                             hoverBackgroundColor: "#767574",
                             angleLines: { 
                                 display: false,
@@ -184,12 +184,12 @@
                             ticks: {
                                 stepSize: 1, 
                                 beginAtZero: true,
-                                color: "#EEEEEE",
-                                backdropColor: "#454545", 
+                                color: pdf ? "#222" : "#EEEEEE",
+                                backdropColor: pdf ? "#EEE" : "#454545",
                             },
                             pointLabels: {  
                                 padding: 20,
-                                color: "#FFFFFF", 
+                                color: pdf ? "#000" : "#FFFFFF",
                                 font: {
                                     size: 13,
                                     weight: "italic"
