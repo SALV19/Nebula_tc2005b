@@ -1,6 +1,6 @@
 <script>
     function createHR(data) {
-        const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(2);
+        const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(1);
 
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">

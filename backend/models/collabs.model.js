@@ -37,12 +37,12 @@ module.exports = class Colaborador {
   }
 
 
-  save(hashedPassword) {
+  save(hashedPassword, foto) {
     return db
       .execute(
         `INSERT INTO colaborador (id_colaborador, nombre, apellidos, fechaNacimiento,
-          telefono, puesto, email, contrasena, fechaIngreso, ubicacion, modalidad, curp, rfc)
-          VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+          telefono, puesto, email, contrasena, fechaIngreso, ubicacion, modalidad, foto, curp, rfc)
+          VALUES (UUID(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         [
           this.nombre,
           this.apellidos,
@@ -54,6 +54,7 @@ module.exports = class Colaborador {
           this.fechaIngreso,
           this.ubicacion,
           this.modalidad,
+          foto,
           this.curp,
           this.rfc,
         ]
