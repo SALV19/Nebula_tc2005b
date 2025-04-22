@@ -1,48 +1,104 @@
-<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
 <script>
-    let carouselInstance = {};
+    let carouselInstance = null;
 
-    function openManualByRoute() {
-    const route = window.location.pathname;
-
-    if (route === '/') {
-        openManual('pop-upCalendar', 'slider1');
-    } else if (route === '/manual/notion') {
-        openManual('pop-upRequest', 'slider2');
-    }
-}
+    const manuals = {
+        "/": [
+            {
+                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
+                text: '1. Ve a <a href="https://www.canva.com" style="color: white;">Canva</a>'
+            },
+            {
+                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
+                text: "2. Haz clic aquí"
+            },
+            {
+                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/4a96eb28-8399-477a-9567-23c6677978ea/ascreenshot.jpeg",
+                text: "3. Luego selecciona el ícono"
+            }
+        ],
+        "/requests": [
+            {
+                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
+                text: "2. Haz clic aquí"
+            },
+            {
+                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/4a96eb28-8399-477a-9567-23c6677978ea/ascreenshot.jpeg",
+                text: "3. Luego selecciona el ícono"
+            }
+        ]
+    };
 
     function openManual() {
-        const popup = document.getElementById("popupId");
-        if (popup) {
+        const popup = document.getElementById("pop-upM");
+        const wrapper = document.getElementById("slider-wrapper");
+        const path = window.location.pathname;
+
+        // if (carouselInstance) {
+        //     carouselInstance.destroy();
+        //     carouselInstance = null;
+        // }
+
+        // 🔁 Limpiar completamente el slider-wrapper
+        wrapper.innerHTML = "";
+
+        const steps = manuals[path] || [];
+
+        if (steps.length === 0) {
+            wrapper.innerHTML = "<p style='color: white;'>No hay pasos disponibles para esta ruta.</p>";
+        } else {
+            const slider = document.createElement("div");
+            slider.id = "slider";
+            slider.className = "carousel";
+
+            steps.forEach((step) => {
+                const item = document.createElement("div");
+                item.className = "carousel-item";
+                item.innerHTML = 
+                    <div class="card">
+                        <div class="card-image">
+                            <figure class="image is-16by9">
+                                <img src="${step.img}" alt="Paso" />
+                            </figure>
+                        </div>
+                        <div class="card-content">
+                            <p class="scribe-step-text">${step.text}</p>
+                        </div>
+                    </div>
+                ;
+                slider.appendChild(item);
+            });
+
+            wrapper.appendChild(slider);
+
             popup.style.display = "flex";
 
             setTimeout(() => {
-                if (!carouselInstance) {
-                    carouselInstance = bulmaCarousel.attach('#slider', {
-                        slidesToScroll: 1,
-                        slidesToShow: 1,
-                        infinite: false,
-                        autoplay: false,
-                        navigation: true,
-                        pagination: true
-                    })[0]; 
+                const instances = bulmaCarousel.attach('#slider', {
+                    slidesToScroll: 1,
+                    slidesToShow: 1,
+                    infinite: false,
+                    autoplay: false,
+                    navigation: true,
+                    pagination: true
+                });
+
+                if (instances.length > 0) {
+                    carouselInstance = instances[0];
                 }
-            }, 100); 
+            }, 50); 
         }
     }
 
     function closePopupM() {
         const popup = document.getElementById("pop-upM");
-        if (popup) {
-            popup.style.display = "none";
-        }
+        popup.style.display = "none";
 
         if (carouselInstance) {
-            carouselInstance.reset();
+            carouselInstance.destroy();
+            carouselInstance = null;
         }
+
+        const wrapper = document.getElementById("slider-wrapper");
+        wrapper.innerHTML = "";
     }
-
-    document.addEventListener('DOMContentLoaded', openManualByRoute);
-
 </script>
