@@ -36,14 +36,14 @@ else
 end
 
 activate db
-db -->> hm : counter
+db -->> hm : counter[0]
 deactivate db 
 
 hm -->> hc : counter
 
 deactivate hm
 
-hc -->> u : response.json({  permissions: request.session.permissions,  counter : counter,   periodo, });
+hc -->> u : response.json({  permissions: request.session.permissions,  percentage : counter,   periodo, });
 
 deactivate hc 
 
