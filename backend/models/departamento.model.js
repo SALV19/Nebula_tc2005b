@@ -12,7 +12,7 @@ module.exports = class Departamento {
     }
     
     static fetchByID(id_empresa){
-        return db.execute(`SELECT d.nombre_departamento, e.nombre_empresa
+        return db.execute(`SELECT d.nombre_departamento, d.id_departamento, e.nombre_empresa
                             FROM departamento d 
                             INNER JOIN departamento_empresa de 
                             ON d.id_departamento = de.id_departamento

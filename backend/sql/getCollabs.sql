@@ -58,3 +58,33 @@ SELECT i.indicador, em.nombre_empresa, AVG(m.valor_metrica) as average
 )
       AND es.fechaAgendada BETWEEN '2025-2-01' AND '2025-3-31'
       GROUP BY i.id_indicador, em.nombre_empresa;
+
+SELECT i.indicador, em.nombre_empresa, d.nombre_departamento, c.nombre, c.apellidos, AVG(m.valor_metrica) as average
+        FROM evaluaciones_de_seguimiento es
+        INNER JOIN metrica_indicadores m ON m.id_evaluacion = es.id_evaluacion
+        INNER JOIN indicador i ON i.id_indicador = m.id_indicador
+        INNER JOIN colaborador c ON es.id_colaborador = c.id_colaborador
+        INNER JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        INNER JOIN departamento d ON d.id_departamento = e.id_departamento
+        INNER JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        INNER JOIN empresa em ON em.id_empresa = de.id_empresa
+        WHERE (
+                em.nombre_empresa = 'Maya'
+                OR em.nombre_empresa = 'Moca'
+                OR em.nombre_empresa ='Nuclea'
+                OR em.nombre_empresa = 'WePage'
+                OR em.nombre_empresa = 'ZigZag'
+        )
+        AND es.fechaAgendada BETWEEN '2025-01-01' AND '2025-05-31'
+        GROUP BY i.id_indicador, em.nombre_empresa, d.nombre_departamento, c.id_colaborador;
+
+
+SELECT * FROM colaborador;
+
+SELECT c.nombre, c.apellidos, d.nombre_departamento
+FROM colaborador c
+INNER JOIN equipo e
+  ON e.id_colaborador = c.id_colaborador
+INNER JOIN departamento d
+  ON d.id_departamento = e.id_departamento
+GROUP BY c.nombre, c.apellidos, d.nombre_departamento

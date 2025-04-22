@@ -19,10 +19,13 @@ exports.get_reports = async(request, response) => {
   let departamentos_empresas = departamento.map((d) => {
     return d[0].reduce((acc, val) => {
       if (!Object.keys(acc).length) {
-        acc = {[val.nombre_empresa]: [val.nombre_departamento]}
+        acc = {[val.nombre_empresa]: [{nombre: val.nombre_departamento, id: val.id_departamento}]}
       }
       else {
-        acc = {[val.nombre_empresa]: [...acc[val.nombre_empresa], val.nombre_departamento]}
+        acc = {[val.nombre_empresa]: [...acc[val.nombre_empresa], {
+          nombre: val.nombre_departamento, 
+          id: val.id_departamento
+        }]}
       }
       return acc
     }, {})
@@ -35,7 +38,6 @@ exports.get_reports = async(request, response) => {
     return {...a, [Object.keys(v)[0]]: [...a[Object.keys(v)[0]], Object.values(v)[0]]}
   }, {})
   
-  // console.log("depa", depa)
     response.render("reports",{
       permissions: request.session.permissions,
       csrfToken: request.csrfToken(),
@@ -104,10 +106,10 @@ async function department_reports(companies, departments, periodicity) {
   
 }
 
-async function collabs_reports(companies, departments, collabs, periodicity) {
-  let [departamento_validaciones, _] = await Reports.fetchCollaborators(companies, departments, collabs,
+async function collabs_reports(collabs, periodicity) {
+  let [colaboradores_validaciones, _] = await Reports.fetchCollaborators(collabs,
                                                   `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
-  departamento_validaciones = departamento_validaciones.reduce((a, v) => {
+  colaboradores_validaciones = colaboradores_validaciones.reduce((a, v) => {
     if (!Object.keys(a).includes(v.nombre_empresa)) {
       return {...a, [v.nombre_empresa]: {
         [v.nombre_departamento]: {
@@ -152,7 +154,7 @@ async function collabs_reports(companies, departments, collabs, periodicity) {
             }
   }, {})
 
-  return departamento_validaciones
+  return colaboradores_validaciones
   
 }
 
@@ -209,3 +211,9 @@ exports.get_general_report = async (request, response) => {
   }
 }
 
+
+exports.get_collabs = async (request, response) => {
+  const [collabs] = await Colaborador.fetchDepartmentCollabs(request.body.selected);
+
+  response.json({message: "all good"})
+}

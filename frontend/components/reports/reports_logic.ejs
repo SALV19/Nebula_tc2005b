@@ -389,4 +389,35 @@
         .catch(error => console.error("ERROR: ", error))
     }
 
+    function showCollabCheckboxes() {
+        const colaboradores = document.querySelector("#collaborator")
+        colaboradores.style.display = "block"
+        
+        const csrf = document.querySelector('#_csrf').value        
+
+        const departamentos = document.querySelectorAll("[id$='-department']")
+        const selected = []
+        departamentos.forEach(dept => {
+            if (dept.checked) {
+                selected.push(dept.dataset.id)
+            }
+        })
+        const collabs = document.querySelectorAll("[id$=-collab]")
+        collabs.forEach(c => {
+            for (let i = 0; i < selected.length; i++) {
+                if (selected[i] == c.dataset.depid) {
+                    console.log(c)
+                    c.style.display = "block"
+                    continue;
+                }
+                else {
+                    c.style.display = "none"
+                }
+            }
+        })
+    }
+    // function hideComapnyCheckboxes() {
+    //     console.log("Hide checkboxes")
+    // }
+
 </script>

@@ -16,8 +16,12 @@
                         <div id="checkboxes" class="checkboxes limit">
                             <% for (let i = 0; i < empresa.length; i++) { %>
                                 <label for="<%= i %>-company" class="checkbox-row">
-                                    <input type="checkbox"  id="<%= i %>-company" value="<%= empresa[i].nombre_empresa %>" onclick="updateOptions(this)"/>
-                                        <%= empresa[i].nombre_empresa%>
+                                    <input 
+                                        type="checkbox"  
+                                        id="<%= i %>-company" 
+                                        value="<%= empresa[i].nombre_empresa %>" 
+                                        onclick="updateOptions(this)"/>
+                                            <%= empresa[i].nombre_empresa%>
                                 </label>
                             <% } %>
                         </div>
@@ -35,9 +39,13 @@
                         <div id="department" class="checkboxes limit">
                             <% for (let empresa of Object.keys(depa)) {%>
                                 <% for (let departamento of depa[empresa]) {%>
-                                    <label for="<%= `${empresa}-${departamento}` %>-department" class="checkbox-row">
-                                        <input type="checkbox"  id="<%=  `${empresa}-${departamento}` %>-department" value="<%= departamento %>"/>
-                                        <span><%= departamento %></span>
+                                    <label for="<%= `${empresa}-${departamento.nombre}` %>-department" class="checkbox-row">
+                                        <input 
+                                            type="checkbox"  
+                                            id="<%=  `${empresa}-${departamento.nombre}` %>-department" 
+                                            value="<%= departamento.nombre %>"
+                                            data-id="<%= departamento.id %>"/>
+                                        <span><%= departamento.nombre %></span>
                                     </label>
                                     <%# console.log(departamento) %>
                                 <% } %>
@@ -48,18 +56,22 @@
                 </form>
                 <form>
                     <div class="multiselect" onmouseleave="hideComapnyCheckboxes('collaborator')">
-                        <div class="selectBox" onclick="showCheckboxes('collaborator')">
+                        <div class="selectBox" onclick="showCollabCheckboxes()">
                             <select class="line-input">
                                 <option>Collaborator</option>
                             </select>
                             <div class="overSelect"></div>
                         </div>
                         <div id="collaborator" class="checkboxes limit">
-                            <% for (let i = 0; i < collabs.length; i++) { %>
-                                <label for="<%= i %>-collab">
-                                <input type="checkbox" class="checkbox-row" id="<%= i %>-collab"  value="<%= collabs[i].id_colaborador %>"/>
-                                    <%= collabs[i].nombre + " " + collabs[i].apellidos%></option>
-                                </label>
+                            <% for (let i=0; i < collabs.length; i++) {%>
+                                <label for="<%= i %>-collab" class="checkbox-row">
+                                        <input 
+                                            type="checkbox"  
+                                            id="<%= i %>-collab"  
+                                            value="<%= collabs[i].id_colaborador %>" 
+                                            data-depid="<%= collabs[i].id_departamento %>"/>
+                                            <span><%= collabs[i].nombre  %></span>
+                                        </label>
                             <% } %>
                         </div>
                     </div>
