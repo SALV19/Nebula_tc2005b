@@ -2,7 +2,8 @@
 <script>
     function createCounter(data){
         console.log("Data: ", data);
-        console.log(data.percentage);
+        const percentage = data.percentage;
+        console.log("Porcentaje: ", data.percentage[0]);
         console.log("percentage: ", percentage)
         const indiceRotacion = parseFloat(data.percentage[0].indice_rotacion).toFixed(1);
         console.log("Índice de rotación:", indiceRotacion);

@@ -149,7 +149,7 @@ exports.add_event = (request, response) => {
 }
 
 exports.get_metric = async (request, response) => {
-  console.log("get_metric called with:", request.body.periodo);
+  // console.log("get_metric called with:", request.body.periodo);
   let periodo = request.body.periodo;
   let counter;
   // console.log('lol');
@@ -168,7 +168,7 @@ exports.get_metric = async (request, response) => {
   // console.log("Val:", periodo);
   response.json({
     permissions: request.session.permissions,
-    percentage: counter,
+    percentage : counter,
     periodo,
   });
 }
