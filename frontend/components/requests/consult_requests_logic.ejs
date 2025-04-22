@@ -174,23 +174,23 @@
   <tbody >`
     // Información por cada renglón de la tabla
     data.abscences.forEach((d, idx) => {
-      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}'>`;
-      table_content += `<td class="is-flex">
+      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}' style="border-bottom: solid 1px rgb(53, 58, 70)">`;
+      table_content += `<td class="is-flex space-between" style="border: none;">
                           <i class="bi bi-caret-right-fill mr-4" id='caret-${idx}'></i>
                           <p id="start_date-${d.id_solicitud_falta}">${my_formatDate(d.start)}</p>
                         </td>`
-      table_content += `<td id="end_date-${d.id_solicitud_falta}">${my_formatDate(d.end)}</td>`
-      table_content += `<td id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
+      table_content += `<td class="space-between" id="end_date-${d.id_solicitud_falta}">${my_formatDate(d.end)}</td>`
+      table_content += `<td class="space-between" id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
       if (d.estado == 0) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-warning'>Pending...</p></td>`
       } else if (d.estado == 0.5) {
-        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>`
+        table_content += `<td class="space-between" > <p class='status half-color-button'>Pending...</p></td>`
       }
       else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-success'>Accepted</p></td>`
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-danger'>Denied</p></td>`
       }
       table_content += `<td style="display: none">
                           <input type='hidden' value='${d.ubicacion}' id="ubicacion-${d.id_solicitud_falta}"/>
