@@ -8,8 +8,9 @@
     const manuals = {
         "/": [
             {
-                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
-                text: '1. Ve a <a href="https://www.canva.com" style="color: white;">Canva</a>'
+                html: `
+            </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                `
             },
             {
                 img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
@@ -54,7 +55,7 @@
             steps.forEach((step) => {
                 const item = document.createElement("div");
                 item.className = "carousel-item";
-                item.innerHTML =`
+                item.innerHTML = step.html || `
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-16by9">

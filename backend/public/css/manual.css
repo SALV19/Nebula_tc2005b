@@ -48,5 +48,23 @@
 
 .carousel {
     display: flex !important;
-  }
-  
+}
+
+.scribe-screenshot-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.scribe-screenshot {
+    max-width: 100%;
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.scribe-step-text {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 0.5rem 0 1rem;
+}
