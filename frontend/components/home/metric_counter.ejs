@@ -2,9 +2,10 @@
 <script>
     function createCounter(data){
         console.log("Data: ", data);
-        console.log(data.counter);
-        const indiceRotacion = parseFloat(data.counter[0].indice_rotacion).toFixed(1);
-        console.log("Índice de rotación formateado:", indiceRotacion);
+        console.log(data.percentage);
+        console.log("percentage: ", percentage)
+        const indiceRotacion = parseFloat(data.percentage[0].indice_rotacion).toFixed(1);
+        console.log("Índice de rotación:", indiceRotacion);
         let content = " ";
         content += `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">

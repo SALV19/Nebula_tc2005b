@@ -36,7 +36,7 @@ else
 end
 
 activate db
-db -->> hm : counter
+db -->> hm : counter[0]
 deactivate db 
 
 hm -->> hc : counter
