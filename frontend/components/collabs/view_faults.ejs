@@ -56,16 +56,20 @@
                       <label class="file-label">
                         <input type="hidden" value="${falta.id_fa}" name="id_fa" id="id_fa" />
                         <input class="file-input" type="file" name="drive_file" id="${falta.id_fa}" onchange="update(this)" required />
-                        <span class="file-cta">
+                        <span class="file-cta ${falta.link ? 'off_btn' : ''}">
                           <span class="file-icon"><i class="fas fa-upload"></i></span>
-                          <span class="file-label fixed-width" id="file_name_${falta.id_fa}">Choose a file…</span>
+                          ${falta.link 
+                          ? '<span class="file-label fixed-width off" id="file_name_${falta.id_fa}">Overwrite...</span>'
+                          : '<span class="file-label fixed-width" id="file_name_${falta.id_fa}">Choose a file…</span>'
+                          }
+                          
                           </span>
                         </label>
-                        <button class="file-cta ml-2 button is-green has-text-white is-fullheight" style="display: none;" id="submit_btn_${falta.id_fa}"><i class="bi bi-check2"></i></button>
+                        <button class="file-cta ml-2 button is-green has-text-white is-fullheight" style="display: none;" id="submit_btn_${falta.id_fa}">Upload</button>
                     </form>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <a class="button2 ${falta.link ? '': 'disable_link'}" id="download_${falta.id_fa}" ${falta.link ? 'href= "${falta.link}" target="_blank" ': ''}>Download</a>
+                    <a class="button2 ${falta.link ? '': 'disable_link'}" id="download_${falta.id_fa}" ${falta.link ? 'href= '+falta.link+' target="_blank" ': ''}>Download</a>
                   </div>
                 </div>`;
             });
