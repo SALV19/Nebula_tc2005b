@@ -14,11 +14,11 @@
             <div class="level-item has-text-centered">
             <div>
                 <h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> ${indiceRotacion}% </h1>`
-                if(data.val == 1){
+                if(data.periodo == 1){
                     content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
-                } else if (data.val == 2){
+                } else if (data.periodo == 2){
                     content += `<p class="hadingVac" style="text-align: center;"> Trimesteral </p>`
-                } else if (data.val == 3){
+                } else if (data.periodo == 3){
                     content += `<p class="hadingVac" style="text-align: center;"> Semestral </p>`
                 } else {
                     content += `<p class="hadingVac" style="text-align: center;"> Annually </p>`
@@ -73,7 +73,7 @@
         const saveButton = document.querySelector(".approve-button");
         if (saveButton) {
             saveButton.addEventListener("click", (e) => {
-                e.preventDefault();
+                // e.preventDefault();
                 get_Metric();
             });
         }
