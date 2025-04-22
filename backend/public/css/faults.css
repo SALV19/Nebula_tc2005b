@@ -32,6 +32,7 @@ h1{
     border-radius: 5px; 
     cursor: pointer;
     margin: 1rem;
+    margin-left: 0;
 }
 .buttons:hover{
     color: white;   
@@ -79,11 +80,11 @@ h1{
     margin-top: -2rem;
 }
 .is-green {
-    background-color: rgb(72, 199, 142) !important; 
+    background-color: rgb(40, 75, 164) !important; 
 }
 
 .fixed-width {
-    max-width: 5rem !important;
+    max-width: 4rem !important;
 }
 
 .white-calendar::-webkit-calendar-picker-indicator {
@@ -104,4 +105,12 @@ h1{
 }
 .disable_link:hover {
     background-color: rgb(51, 46, 66);
+}
+
+.off_btn {
+    background-color: #24242444;
+    border: none;
+}
+.off_btn:hover {
+    background-color: #454545;
 }
