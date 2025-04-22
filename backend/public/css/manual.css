@@ -45,3 +45,8 @@
 .scribe-title, .scribe-author, .scribe-step-text {
     color: white;
 }
+
+.carousel {
+    display: flex !important;
+  }
+  

@@ -1,3 +1,7 @@
+<link rel="stylesheet" href="/css/manual.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/css/bulma-carousel.min.css">
+<script src="https://cdn.jsdelivr.net/npm/bulma-carousel@4.0.4/dist/js/bulma-carousel.min.js"></script>
+
 <script>
     let carouselInstance = null;
 
@@ -33,10 +37,7 @@
         const wrapper = document.getElementById("slider-wrapper");
         const path = window.location.pathname;
 
-        if (carouselInstance) {
-            carouselInstance.destroy();
-            carouselInstance = null;
-        }
+        
 
         wrapper.innerHTML = "";
 
@@ -46,13 +47,14 @@
             wrapper.innerHTML = "<p style='color: white;'>No hay pasos disponibles para esta ruta.</p>";
         } else {
             const slider = document.createElement("div");
-            slider.id = "slider";
+            const uniqueId = `slider-${Date.now()}`;
+            slider.id = uniqueId;
             slider.className = "carousel";
 
             steps.forEach((step) => {
                 const item = document.createElement("div");
                 item.className = "carousel-item";
-                item.innerHTML = 
+                item.innerHTML =`
                     <div class="card">
                         <div class="card-image">
                             <figure class="image is-16by9">
@@ -63,7 +65,7 @@
                             <p class="scribe-step-text">${step.text}</p>
                         </div>
                     </div>
-                ;
+                `;
                 slider.appendChild(item);
             });
 
@@ -72,7 +74,8 @@
             popup.style.display = "flex";
 
             setTimeout(() => {
-                const instances = bulmaCarousel.attach('#slider', {
+                const instances = bulmaCarousel.attach(`#${uniqueId}`, {
+                    
                     slidesToScroll: 1,
                     slidesToShow: 1,
                     infinite: false,
@@ -80,6 +83,10 @@
                     navigation: true,
                     pagination: true
                 });
+                
+                console.log('Se intentó inicializar el carrusel con ID:', uniqueId);
+
+
 
                 if (instances.length > 0) {
                     carouselInstance = instances[0];
@@ -92,10 +99,7 @@
         const popup = document.getElementById("pop-upM");
         popup.style.display = "none";
 
-        if (carouselInstance) {
-            carouselInstance.destroy();
-            carouselInstance = null;
-        }
+      
 
         const wrapper = document.getElementById("slider-wrapper");
         wrapper.innerHTML = "";
