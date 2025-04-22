@@ -71,12 +71,12 @@ module.exports = class Reports {
         INNER JOIN departamento d ON d.id_departamento = e.id_departamento
         INNER JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
         INNER JOIN empresa em ON em.id_empresa = de.id_empresa
-        WHERE (c.id_colaborador = ?`
+        WHERE (c.id_colaborador = ? \n`
       for (let i = 1; i < colaboradores.length; i++) {
-        query += `OR c.id_colaborador = ?`
+        query += `OR c.id_colaborador = ? \n`
       }
-        `) AND es.fechaAgendada BETWEEN ? AND ?
-        GROUP BY i.id_indicador, em.nombre_empresa, d.nombre_departamento, c.id_colaborador;`
+      query+=  `) AND es.fechaAgendada BETWEEN ? AND ?
+                GROUP BY i.id_indicador, em.nombre_empresa, d.nombre_departamento, c.id_colaborador;`
   
     const params = [...colaboradores, start, end];
     return db.execute(query, params);

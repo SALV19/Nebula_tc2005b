@@ -148,7 +148,9 @@ async function collabs_reports(collabs, periodicity) {
                 ...a[v.nombre_empresa], 
                 [v.nombre_departamento]: {
                   ...a[v.nombre_empresa][v.nombre_departamento], 
-                  [v.indicador]: v.average
+                  [v.nombre+" "+v.apellidos]: {
+                    [v.indicador]: v.average
+                  }
                 }
               }
             }
@@ -199,10 +201,7 @@ exports.get_general_report = async (request, response) => {
     })
   }
   else {
-    const collabs_validaciones = await collabs_reports(request.body.company_values, 
-                                                      request.body.department_values,
-                                                      request.body.collabs_values, periodicity)
-    // console.log(collabs_validaciones) 
+    const collabs_validaciones = await collabs_reports(request.body.collabs_values, periodicity)
 
     response.status(200).json({
       type: "collabs",

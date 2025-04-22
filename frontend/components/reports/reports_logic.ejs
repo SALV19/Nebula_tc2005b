@@ -200,7 +200,11 @@
                 } 
             });
         });
-    }   
+    }
+    
+    function createCollabsChart(data, pdf) {
+
+    }
     
     function showComapnyCheckboxes(value) {
         var checkboxes = document.getElementById(value);
@@ -382,6 +386,9 @@
             }
             else if (data.type == "department") {
                 createDepartmentsChart(data.departamentos_validaciones, pdf)
+            }
+            else if (data.type = "collabs") {
+                createCollabsChart(data.collabs_validaciones, pdf)
             }
             updateInfoText();
             return true
