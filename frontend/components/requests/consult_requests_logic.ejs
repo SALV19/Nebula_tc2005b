@@ -363,9 +363,6 @@
         const additionalRow = document.getElementById(`additional-row-${idx}`)
         const caret = document.querySelector(`#caret-${idx}`)
         
-        // hacer que en los botones de aceptar o rechazar no se expanda la vista
-        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase 
-        // "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
         if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
           return;
         }

@@ -97,7 +97,7 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML;
-    fetch(`/view_collabs/${route}`, {
+    return fetch(`/view_collabs/${route}`, {
       method: 'POST',
       headers: {
             'Content-Type': 'application/json',
@@ -110,7 +110,14 @@
     })
     .then(response => response.json())
     .then(data => {
-      createTableCollabs(data)
+      console.log(data.collabs?.length)
+      if (data.collabs?.length === 0 && pagination > 0) {
+          get_info(pagination - 1);
+          return 0
+        } else {
+          createTableCollabs(data)
+        }
+
     })
     .catch(e => console.error(e))
   }
@@ -158,17 +165,25 @@
         
         pagination_value.dispatchEvent(new Event('change'));
     })
-    pagination_value.addEventListener('change', (v) => {
+    pagination_value.addEventListener('change', async (v) => {
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML;
 
       if (route == 'Faults'){
-        get_faults_info(pagination_value.value-1);
+        const content = await get_faults_info(pagination_value.value-1,  null)
+        if (content <= 0) {
+          
+          pagination_value.value = pagination_value.value - 1;
+        }
         return
       }
-      get_info(pagination_value.value-1);
+      const content = await get_info(pagination_value.value-1,  null)
+      if (content <= 0) {
+        pagination_value.value = pagination_value.value - 1;
+      }
       
     })
+
 
   
   function searchParam(content) {
