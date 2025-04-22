@@ -51,7 +51,6 @@ async function general_report(periodicity) {
 
   let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, 
                                                   `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
-  
   empresas_validaciones = empresas_validaciones.reduce((a, v) => {
     return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
   }, {})
@@ -65,6 +64,7 @@ async function company_reports(companies, periodicity) {
     empresas_validaciones = empresas_validaciones.reduce((a, v) => {
       return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
     }, {})
+  
   return empresas_validaciones
 }
 
@@ -107,9 +107,12 @@ async function department_reports(companies, departments, periodicity) {
 function getStartEnd(periodicity) {
   const curr_date = new Date()
   const target_month = new Date(curr_date.getFullYear(), curr_date.getMonth() - periodicity + 1, 0)
+  
   return {
-    curr_date : String(curr_date.getFullYear()) + "-" + String(curr_date.getMonth()), 
-    target_month: String(target_month.getFullYear()) + "-" + String(target_month.getMonth())
+    curr_date : String(curr_date.getFullYear()) + "-" + (curr_date.getMonth()+1 > 10 
+        ? curr_date.getMonth()+1 : "0" + String(curr_date.getMonth()+1)), 
+    target_month: String(target_month.getFullYear()) + "-" + (target_month.getMonth()+1 > 10 
+        ? target_month.getMonth()+1 : "0" + String(target_month.getMonth()+1))
   }
 }
 
@@ -117,7 +120,7 @@ exports.get_general_report = async (request, response) => {
   const periodicity = getStartEnd(request.body.periodicity ?? 1)
   if (request.body.company_values.length == 0) {
     const empresas_validaciones = await general_report(periodicity)
-    
+
     response.status(200).json({
       type: "general",
       empresas_validaciones
