@@ -72,7 +72,7 @@
                                             type="checkbox"  
                                             id="<%= i %>-collab"  
                                             value="<%= collabs[i].id_colaborador %>" />
-                                            <span><%= collabs[i].nombre  %></span>
+                                            <span><%= collabs[i].nombre + " " + collabs[i].apellidos  %></span>
                                         </label>
                             <% } %>
                         </div>
@@ -100,7 +100,7 @@
         <div>
             <div id="title_input">
                 <label class="subtitle">Title</label>
-                <input type="text" placeholder="Insert title" class="line-inputT">
+                <input type="text" placeholder="Insert title" class="line-inputT" id="title">
             </div>
             </fiv>
 

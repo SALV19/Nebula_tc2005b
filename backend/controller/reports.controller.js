@@ -149,6 +149,7 @@ async function collabs_reports(collabs, periodicity) {
                 [v.nombre_departamento]: {
                   ...a[v.nombre_empresa][v.nombre_departamento], 
                   [v.nombre+" "+v.apellidos]: {
+                    ...a[v.nombre_empresa][v.nombre_departamento][v.nombre+" "+v.apellidos],
                     [v.indicador]: v.average
                   }
                 }
@@ -156,7 +157,6 @@ async function collabs_reports(collabs, periodicity) {
             }
   }, {})
 
-  console.log(colaboradores_validaciones)
   return colaboradores_validaciones
   
 }
@@ -194,7 +194,6 @@ exports.get_general_report = async (request, response) => {
   else if (request.body.collabs_values.length == 0) {
     const departamentos_validaciones = await department_reports(request.body.company_values, 
                                                       request.body.department_values, periodicity)
-    // console.log(departamentos_validaciones)
     
     response.status(200).json({
       type: "department",
@@ -203,7 +202,6 @@ exports.get_general_report = async (request, response) => {
   }
   else {
     const collabs_validaciones = await collabs_reports(request.body.collabs_values, periodicity)
-    console.log(collabs_validaciones)
 
     response.status(200).json({
       type: "collabs",

@@ -26,7 +26,6 @@ module.exports = class Reports {
       AND es.fechaAgendada BETWEEN ? AND ?
       GROUP BY i.id_indicador, em.nombre_empresa;`;
   
-    console.log(query, [...empresas, start, end]);
     return db.execute(query, [...empresas, start, end]);
   }
 

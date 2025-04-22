@@ -47,8 +47,7 @@
                     backgroundColor: colores[j]+"00",
                 });
             j = j+1;
-        }
-        console.log("createChart", datas);
+        }        
 
         new Chart(ctx, { 
             type: 'radar',
@@ -215,100 +214,100 @@
         if (mainCanvas) {
             mainCanvas.style.display = "none";
         }
+        let collabs_created = []
+        Object.keys(data).forEach(e => {            
+            const departamentos = Object.values(data[e])
+            // console.log(departamentos)
+            departamentos.forEach(colaboradores => {
+                // console.log(colaboradores)
+                for (let i of Object.keys(colaboradores)) {
+                    if (collabs_created.includes(i)) {
+                        return
+                    }
+                } 
 
-        console.log("cero nivel",data)
-        Object.keys(data).forEach(empresa => {
-            console.log("primer nivel",empresa)
-            Object.keys(empresa).forEach(departamentos =>{
-                console.log("segundo nivel", departamentos)
-                Object.keys(departamentos).forEach(colaboradores =>{
-                    console.log("tercer nivel",colaboradores)
-                const chartWrapper = document.createElement('div');
-                chartWrapper.style.width = '600px'; 
-                chartWrapper.style.height = '400px';
-                chartWrapper.style.position = 'relative';
+                collabs_created = [...collabs_created, ...Object.keys(colaboradores)]
                 
-                const canvasId = `chart-${colaboradores}`;
-                const canvas = document.createElement('canvas');
-                canvas.className = 'canvas-viewF';
-                canvas.id = canvasId;
-                
-                chartWrapper.appendChild(canvas);
-                chart_container.appendChild(chartWrapper);
-                
-                const departamentos = Object.keys(data[colaboradores]);
-                const indicatorLabels = Object.keys(Object.values(data[colaboradores])[0] || {});
-                
-                const datasets = departamentos.map(i => ({
-                    label: i,
-                    data: Object.values(data[colaboradores][i]),
-                    borderColor: getRandomColor(),
-                    borderWidth: 3,
-                    backgroundColor: "#00000000",
-                }));
-                
-                new Chart(canvas, { 
-                    type: 'radar',
-                    data: {
-                        labels: indicatorLabels,
-                        datasets: datasets, 
-                    },
-                    options: {
-                        responsive: true,
-                        maintainAspectRatio: false,
-                        plugins: {
-                            legend: {
-                                display: true,
-                                position: 'right',
-                                labels: {
-                                    padding: 30, 
-                                    color: pdf ? "#000" : "#FFFFFF", 
-                                    usePointStyle: true,
-                                    textAlign: 'center',
-                                }
-                            },
-                            title: {
-                                display: true,
-                                text: colaboradores, 
-                                color: "#FFFFFF",
-                                font: {
-                                    size: 24
-                                }
-                            }
+                const indicatorLabels = Object.keys(Object.values(colaboradores)[0])
+
+                Object.keys(colaboradores).forEach(collab => {
+                    const colaborador = Object.keys(colaboradores[collab])
+                    console.log(colaborador)
+                    const dataset = [{
+                                        data: Object.values(colaboradores[collab]),
+                                        borderColor: getRandomColor(),
+                                        borderWidth: 3,
+                                        backgroundColor: "#00000000",
+                                    }]
+                    // console.log(collab, ": ", dataset)
+                    const chartWrapper = document.createElement('div');
+                    chartWrapper.style.width = '600px'; 
+                    chartWrapper.style.height = '400px';
+                    chartWrapper.style.position = 'relative';
+                    
+                    const canvasId = `chart-${Math.random()}`;
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'canvas-viewF';
+                    canvas.id = canvasId;
+                    
+                    chartWrapper.appendChild(canvas);
+                    chart_container.appendChild(chartWrapper);
+
+                    new Chart(canvas, { 
+                        type: 'radar',
+                        data: {
+                            labels: indicatorLabels,
+                            datasets: dataset, 
                         },
-                        scales: {
-                            r: {
-                                backgroundColor: pdf ? "#EEE" : "#454545",
-                                hoverBackgroundColor: "#767574",
-                                angleLines: { 
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
                                     display: false,
                                 },
-                                grid: {
-                                    color: "#747474" 
-                                },
-                                suggestedMin: 0,
-                                suggestedMax: 5,
-                                ticks: {
-                                    stepSize: 1, 
-                                    beginAtZero: true,
-                                    color: pdf ? "#222" : "#EEEEEE",
-                                    backdropColor: pdf ? "#EEE" : "#454545",
-                                },
-                                pointLabels: {  
-                                    padding: 20,
-                                    color: pdf ? "#000" : "#FFFFFF",
+                                title: {
+                                    display: true,
+                                    text: collab, 
+                                    color: "#FFFFFF",
                                     font: {
-                                        size: 13,
-                                        weight: "italic"
+                                        size: 24
+                                    }
+                                },
+                            },
+                            scales: {
+                                r: {
+                                    backgroundColor: pdf ? "#EEE" : "#454545",
+                                    hoverBackgroundColor: "#767574",
+                                    angleLines: { 
+                                        display: false,
+                                    },
+                                    grid: {
+                                        color: "#747474" 
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 5,
+                                    ticks: {
+                                        stepSize: 1, 
+                                        beginAtZero: true,
+                                        color: pdf ? "#222" : "#EEEEEE",
+                                        backdropColor: pdf ? "#EEE" : "#454545",
+                                    },
+                                    pointLabels: {  
+                                        padding: 20,
+                                        color: pdf ? "#000" : "#FFFFFF",
+                                        font: {
+                                            size: 13,
+                                            weight: "italic"
+                                        }
                                     }
                                 }
                             }
-                        }
-                    } 
-                });
+                        } 
+                    });
+                })
             });
         });
-        })
     }
     
     function showComapnyCheckboxes(value) {
@@ -407,11 +406,15 @@
         const nav = document.querySelector("#navbar")
         const footer = document.querySelector("footer")
         
-        const title = document.querySelector(".report-info")
-        title.style.margin = "0";
+        const subtitle = document.querySelector(".report-info")
+        subtitle.style.margin = "0";
+
+        const title = document.querySelector("#title").value
+        const title_element = document.createElement("h1")
+        title_element.innerHTML = title
+        subtitle.parentElement.appendChild(title_element)
         
         await fetchData(true).then(t => {
-            console.log(t)
             search.classList.add("hide")
             bar.classList.add("hide")
             update.classList.add("hide")
@@ -431,7 +434,7 @@
                     nav.classList.remove("hide")
                     footer.classList.remove("hide")
 
-                    title.removeAttribute("style")
+                    subtitle.removeAttribute("style")
                 }, 500)
             }, 500)
         })
@@ -493,7 +496,6 @@
                 createDepartmentsChart(data.departamentos_validaciones, pdf)
             }
             else if (data.type = "collabs") {
-                console.log(data) 
                 createCollabsChart(data.collabs_validaciones, pdf)
             }
             updateInfoText();
