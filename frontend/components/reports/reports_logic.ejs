@@ -402,22 +402,17 @@
                 selected.push(dept.dataset.id)
             }
         })
-        const collabs = document.querySelectorAll("[id$=-collab]")
+        const collabs = document.querySelectorAll("[id$=-collab-lable]")
         collabs.forEach(c => {
-            for (let i = 0; i < selected.length; i++) {
-                if (selected[i] == c.dataset.depid) {
-                    console.log(c)
-                    c.style.display = "block"
-                    continue;
-                }
-                else {
-                    c.style.display = "none"
+            c.style.display = "none"
+            for (let id of selected) {
+                if (c.dataset.depid == id) {
+                    c.style.display ="block";
+                    continue
                 }
             }
         })
     }
-    // function hideComapnyCheckboxes() {
-    //     console.log("Hide checkboxes")
-    // }
+    
 
 </script>

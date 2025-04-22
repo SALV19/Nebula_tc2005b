@@ -64,12 +64,14 @@
                         </div>
                         <div id="collaborator" class="checkboxes limit">
                             <% for (let i=0; i < collabs.length; i++) {%>
-                                <label for="<%= i %>-collab" class="checkbox-row">
+                                <label 
+                                    for="<%= i %>-collab" class="checkbox-row" 
+                                    id="<%= i %>-collab-lable"
+                                    data-depid="<%= collabs[i].id_departamento %>">
                                         <input 
                                             type="checkbox"  
                                             id="<%= i %>-collab"  
-                                            value="<%= collabs[i].id_colaborador %>" 
-                                            data-depid="<%= collabs[i].id_departamento %>"/>
+                                            value="<%= collabs[i].id_colaborador %>" />
                                             <span><%= collabs[i].nombre  %></span>
                                         </label>
                             <% } %>
