@@ -33,12 +33,11 @@
         const wrapper = document.getElementById("slider-wrapper");
         const path = window.location.pathname;
 
-        // if (carouselInstance) {
-        //     carouselInstance.destroy();
-        //     carouselInstance = null;
-        // }
+        if (carouselInstance) {
+            carouselInstance.destroy();
+            carouselInstance = null;
+        }
 
-        // 🔁 Limpiar completamente el slider-wrapper
         wrapper.innerHTML = "";
 
         const steps = manuals[path] || [];
@@ -101,4 +100,12 @@
         const wrapper = document.getElementById("slider-wrapper");
         wrapper.innerHTML = "";
     }
+
+    window.openManual = openManual;
+    window.closePopupM = closePopupM;
+
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelector('.bi-question-circle')?.addEventListener('click', openManual);
+    });
+
 </script>
