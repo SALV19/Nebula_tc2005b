@@ -104,6 +104,59 @@ async function department_reports(companies, departments, periodicity) {
   
 }
 
+async function collabs_reports(companies, departments, collabs, periodicity) {
+  let [departamento_validaciones, _] = await Reports.fetchCollaborators(companies, departments, collabs,
+                                                  `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
+  departamento_validaciones = departamento_validaciones.reduce((a, v) => {
+    if (!Object.keys(a).includes(v.nombre_empresa)) {
+      return {...a, [v.nombre_empresa]: {
+        [v.nombre_departamento]: {
+          [v.nombre+" "+v.apellidos]: {
+              [v.indicador]: v.average
+            }
+          }
+        }
+      }
+    }
+    else if (!Object.keys(a[v.nombre_empresa]).includes(v.nombre_departamento)) {
+      return {...a, [v.nombre_empresa]: {
+                ...a[v.nombre_empresa], 
+                [v.nombre_departamento]: {
+                  [v.nombre+" "+v.apellidos]: {
+                      [v.indicador]: v.average
+                    }
+                  }
+                }
+              }
+    }
+    else if (!Object.keys(a[v.nombre_empresa][v.nombre_departamento]).includes(v.nombre+" "+v.apellidos)) {
+      return {...a, [v.nombre_empresa]: {
+                ...a[v.nombre_empresa], 
+                [v.nombre_departamento]: {
+                  ...a[v.nombre_empresa][v.nombre_departamento], 
+                  [v.nombre+" "+v.apellidos]: {
+                      [v.indicador]: v.average
+                    }
+                  }
+                }
+              }
+    }
+
+    return {...a, [v.nombre_empresa]: {
+                ...a[v.nombre_empresa], 
+                [v.nombre_departamento]: {
+                  ...a[v.nombre_empresa][v.nombre_departamento], 
+                  [v.indicador]: v.average
+                }
+              }
+            }
+  }, {})
+
+  return departamento_validaciones
+  
+}
+
+
 function getStartEnd(periodicity) {
   const curr_date = new Date()
   const target_month = new Date(curr_date.getFullYear(), curr_date.getMonth() - periodicity + 1, 0)
@@ -141,6 +194,17 @@ exports.get_general_report = async (request, response) => {
     response.status(200).json({
       type: "department",
       departamentos_validaciones
+    })
+  }
+  else {
+    const collabs_validaciones = await collabs_reports(request.body.company_values, 
+                                                      request.body.department_values,
+                                                      request.body.collabs_values, periodicity)
+    // console.log(collabs_validaciones) 
+
+    response.status(200).json({
+      type: "collabs",
+      collabs_validaciones
     })
   }
 }

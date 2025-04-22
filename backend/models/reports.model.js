@@ -59,4 +59,42 @@ module.exports = class Reports {
                         
     return db.execute(query, [...empresas, ...departamentos, start, end])
   }
+
+  static fetchCollaborators(empresas, departamentos, colaboradores, start, end) {
+    let query = `
+      SELECT i.indicador, em.nombre_empresa, d.nombre_departamento, c.nombre_colaborador, AVG(m.valor_metrica) as average
+      FROM evaluaciones_de_seguimiento es
+      INNER JOIN metrica_indicadores m ON m.id_evaluacion = es.id_evaluacion
+      INNER JOIN indicador i ON i.id_indicador = m.id_indicador
+      INNER JOIN equipo e ON e.id_colaborador = es.id_colaborador
+      INNER JOIN colaborador c ON c.id_colaborador = e.id_colaborador
+      INNER JOIN departamento d ON d.id_departamento = e.id_departamento
+      INNER JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+      INNER JOIN empresa em ON em.id_empresa = de.id_empresa
+      WHERE (em.nombre_empresa = ?`;
+  
+    for (let i = 1; i < empresas.length; i++) {
+      query += ' OR em.nombre_empresa = ?';
+    }
+  
+    query += ') AND (d.nombre_departamento = ?';
+  
+    for (let i = 1; i < departamentos.length; i++) {
+      query += ' OR d.nombre_departamento = ?';
+    }
+  
+    query += ') AND (c.nombre_colaborador = ?';
+  
+    for (let i = 1; i < colaboradores.length; i++) {
+      query += ' OR c.nombre_colaborador = ?';
+    }
+  
+    query += `) AND es.fechaAgendada BETWEEN ? AND ?
+      GROUP BY i.id_indicador, em.nombre_empresa, d.nombre_departamento, c.nombre_colaborador;`;
+  
+    const params = [...empresas, ...departamentos, ...colaboradores, start, end];
+    console.log(query, params);
+    return db.execute(query, params);
+  }
+  
 }
