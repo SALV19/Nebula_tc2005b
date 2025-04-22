@@ -1,3 +1,10 @@
+.cancelButton {
+    position: absolute; 
+    right: 3vw; 
+    top: 3vh;  
+    cursor: pointer;
+}
+
 .pop-upM {
     position: fixed;
     top: 0;
@@ -16,9 +23,21 @@
     padding: 2vw; 
     padding-top: 5vh; 
     border-radius: 5px;
-    width: 45vw;  
-    height: auto; /* Optional to limit total height */
-    overflow-y: auto; /*To be able to scroll if the content is too large*/
+    width: 60vw;  
+    height: auto;
+    overflow-y: auto;
     position: relative;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#slider {
+    overflow: hidden;
+}
+
+.card {
+    margin: 0 auto;
+}
+
+.card-image img {
+    max-width: 100%; /* Asegurarse de que la imagen no exceda el ancho de la tarjeta */
 }
