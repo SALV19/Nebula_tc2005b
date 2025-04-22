@@ -156,6 +156,7 @@ async function collabs_reports(collabs, periodicity) {
             }
   }, {})
 
+  console.log(colaboradores_validaciones)
   return colaboradores_validaciones
   
 }
@@ -202,6 +203,7 @@ exports.get_general_report = async (request, response) => {
   }
   else {
     const collabs_validaciones = await collabs_reports(request.body.collabs_values, periodicity)
+    console.log(collabs_validaciones)
 
     response.status(200).json({
       type: "collabs",

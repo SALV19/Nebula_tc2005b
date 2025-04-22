@@ -203,7 +203,112 @@
     }
     
     function createCollabsChart(data, pdf) {
+        const chart_container = document.getElementById('chart-container');
+        chart_container.innerHTML = ''; 
+        
+        chart_container.style.display = 'grid';
+        chart_container.style.flexWrap = 'wrap';
+        chart_container.style.gap = '20px';
+        chart_container.style.justifyContent = 'center';
+        
+        const mainCanvas = document.querySelector("#chart");
+        if (mainCanvas) {
+            mainCanvas.style.display = "none";
+        }
 
+        console.log("cero nivel",data)
+        Object.keys(data).forEach(empresa => {
+            console.log("primer nivel",empresa)
+            Object.keys(empresa).forEach(departamentos =>{
+                console.log("segundo nivel", departamentos)
+                Object.keys(departamentos).forEach(colaboradores =>{
+                    console.log("tercer nivel",colaboradores)
+                const chartWrapper = document.createElement('div');
+                chartWrapper.style.width = '600px'; 
+                chartWrapper.style.height = '400px';
+                chartWrapper.style.position = 'relative';
+                
+                const canvasId = `chart-${colaboradores}`;
+                const canvas = document.createElement('canvas');
+                canvas.className = 'canvas-viewF';
+                canvas.id = canvasId;
+                
+                chartWrapper.appendChild(canvas);
+                chart_container.appendChild(chartWrapper);
+                
+                const departamentos = Object.keys(data[colaboradores]);
+                const indicatorLabels = Object.keys(Object.values(data[colaboradores])[0] || {});
+                
+                const datasets = departamentos.map(i => ({
+                    label: i,
+                    data: Object.values(data[colaboradores][i]),
+                    borderColor: getRandomColor(),
+                    borderWidth: 3,
+                    backgroundColor: "#00000000",
+                }));
+                
+                new Chart(canvas, { 
+                    type: 'radar',
+                    data: {
+                        labels: indicatorLabels,
+                        datasets: datasets, 
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: true,
+                                position: 'right',
+                                labels: {
+                                    padding: 30, 
+                                    color: pdf ? "#000" : "#FFFFFF", 
+                                    usePointStyle: true,
+                                    textAlign: 'center',
+                                }
+                            },
+                            title: {
+                                display: true,
+                                text: colaboradores, 
+                                color: "#FFFFFF",
+                                font: {
+                                    size: 24
+                                }
+                            }
+                        },
+                        scales: {
+                            r: {
+                                backgroundColor: pdf ? "#EEE" : "#454545",
+                                hoverBackgroundColor: "#767574",
+                                angleLines: { 
+                                    display: false,
+                                },
+                                grid: {
+                                    color: "#747474" 
+                                },
+                                suggestedMin: 0,
+                                suggestedMax: 5,
+                                ticks: {
+                                    stepSize: 1, 
+                                    beginAtZero: true,
+                                    color: pdf ? "#222" : "#EEEEEE",
+                                    backdropColor: pdf ? "#EEE" : "#454545",
+                                },
+                                pointLabels: {  
+                                    padding: 20,
+                                    color: pdf ? "#000" : "#FFFFFF",
+                                    font: {
+                                        size: 13,
+                                        weight: "italic"
+                                    }
+                                }
+                            }
+                        }
+                    } 
+                });
+            });
+        });
+        })
     }
     
     function showComapnyCheckboxes(value) {
@@ -388,6 +493,7 @@
                 createDepartmentsChart(data.departamentos_validaciones, pdf)
             }
             else if (data.type = "collabs") {
+                console.log(data) 
                 createCollabsChart(data.collabs_validaciones, pdf)
             }
             updateInfoText();
