@@ -190,7 +190,7 @@ exports.post_abscence_requests = async (request, response, next) => {
       colabAprobador = request.session.id_colaborador;
     } else if (idRol === 2) {
         estadoSolicitud = 0.5;
-        colabAprobador = null;
+        colabAprobador = request.session.id_colaborador;
     } else {
         estadoSolicitud = 0;
         colabAprobador = null;

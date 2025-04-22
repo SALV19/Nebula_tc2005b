@@ -33,7 +33,7 @@ module.exports = class Colaborador {
   }
 
   static fetchAllCompleteName(){
-    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND (id_rol = 1 OR id_rol = 2)')
+    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND C.estado = 1 AND (id_rol = 1 OR id_rol = 2)')
   }
 
 
@@ -435,24 +435,23 @@ module.exports = class Colaborador {
         SELECT DISTINCT c.id_colaborador
         FROM colaborador c
         INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
         ORDER BY c.nombre ASC
         LIMIT 10 OFFSET ?`, [offset]);
   
       const map = ids.map(row => row.id_colaborador);
-      // console.log("MAPAAA 1: ", map);
       return map;
     } else {
       const [ids] = await db.execute(`
         SELECT DISTINCT c.id_colaborador
         FROM colaborador c
         INNER JOIN fa f ON f.id_colaborador = c.id_colaborador
-        WHERE c.nombre LIKE ?
-        OR c.apellidos LIKE ?
+        WHERE (c.nombre LIKE ? OR c.apellidos LIKE ?)
+        AND c.estado = 1
         ORDER BY c.nombre ASC
         LIMIT 10 OFFSET ?`, [`%${filter}%`, `%${filter}%`, offset]);
   
       const map = ids.map(row => row.id_colaborador);
-      // console.log("MAPAAA 2: ", map);
       return map;
     }
   }
