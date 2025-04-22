@@ -7,6 +7,7 @@ const home_routes = require("../controller/home.controller");
 router.post('/metric', home_routes.get_metric);
 router.post('/hiringRate', home_routes.get_hiring);
 router.post("/addEvent", permissions_middleware.general_permissions, home_routes.add_event);
+router.post('/api/events', home_routes.get_events_calendar);
 router.get('/', home_routes.get_home);
 router.post('/', home_routes.get_requests);
 

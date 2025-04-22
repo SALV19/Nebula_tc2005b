@@ -1,7 +1,7 @@
 <script>
     function createHR(data) {
-        const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(2);
-
+        const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(1);
+        console.log("HR: ", data);
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
         <div class="level">
@@ -9,11 +9,11 @@
                 <div>
                     <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>`;
 
-        if (data.value == 1) {
+        if (data.hiring_counter == 1) {
             content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`;
-        } else if (data.value == 2) {
+        } else if (data.hiring_counter == 2) {
             content += `<p class="headingVac" style="text-align: center;"> Trimesteral </p>`;
-        } else if (data.val == 3) {
+        } else if (data.hiring_counter == 3) {
             content += `<p class="headingVac" style="text-align: center;"> Semestral </p>`;
         } else {
             content += `<p class="headingVac" style="text-align: center;"> Annually </p>`;

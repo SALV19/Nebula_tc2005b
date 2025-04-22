@@ -1,0 +1,51 @@
+@startuml Metric_rotation
+autonumber
+actor Usuario as u
+boundary general.routes.js as gr
+boundary home.routes.js as hr
+boundary metric_rotation_counter.ejs as mrc
+control home.controller.js as hc
+entity home.model.js as hm
+database Nebula as db
+
+activate u
+u ->> gr : fetch POST ('/')
+
+activate gr
+gr -> hr : ('/metric')
+deactivate gr 
+
+activate hr
+hr -> hc : get_hiring(request.body.hiring_rate)
+deactivate hr 
+
+alt hiring_rate = 1
+  activate hc
+  hc ->> hm : h_Rate_M()
+  activate hm
+  hm ->> db : SELECT ((SELECT COUNT(*) FROM colaborador c \n WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE \n AND fechaIngreso IS NOT NULL)\n  / \n (SELECT COUNT(*) \n FROM colaborador c \n  WHERE estado = 1)\n ) * 100 AS contratacionM
+else hiring_rate = 2
+  hc ->> hm : h_rate_T()
+  hm ->> db : SELECT ((SELECT COUNT(*) FROM colaborador c \n WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE \n AND fechaIngreso IS NOT NULL)\n  / \n (SELECT COUNT(*) \n FROM colaborador c \n  WHERE estado = 1)\n ) * 100 AS contratacionM
+else hiring_rate = 3
+  hc ->> hm : h_Rate_S()
+  hm ->> db : SELECT ((SELECT COUNT(*) FROM colaborador c \n WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE \n AND fechaIngreso IS NOT NULL)\n  / \n (SELECT COUNT(*) \n FROM colaborador c \n  WHERE estado = 1)\n ) * 100 AS contratacionM
+else 
+  hc ->> hm : h_Rate_Y()
+  hm ->> db : SELECT ((SELECT COUNT(*) FROM colaborador c \n WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE \n AND fechaIngreso IS NOT NULL)\n  / \n (SELECT COUNT(*) \n FROM colaborador c \n  WHERE estado = 1)\n ) * 100 AS contratacionM
+end
+
+activate db
+db -->> hm : percentage
+deactivate db 
+
+hm -->> hc : percentage
+
+deactivate hm
+
+hc -->> u : response.json({  permissions: request.session.permissions,  counter : percentage,   hiring_rate, });
+
+deactivate hc 
+
+u -> u : actualizar contador de hiring rate
+
