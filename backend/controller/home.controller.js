@@ -175,15 +175,15 @@ exports.get_metric = async (request, response) => {
 
 exports.get_hiring = async (request, response) => {
   // console.log("get_hiring called with:", request.body.hiring_rate);
-  let value = request.body.hiring_rate;
+  let hiring_counter = request.body.hiring_rate;
   let counter;
   // console.log('lol');
 
-  if (value == 1){
+  if (hiring_counter == 1){
     counter = await Requests.h_Rate_M();
-  } else if (value == 2){
-    counter = await Requests.h_Rate_T();
-  } else if(value == 3){
+  } else if (hiring_counter == 2){
+    counter = await Requests.h_rate_T();
+  } else if(hiring_counter == 3){
     counter = await Requests.h_Rate_S();
   } else {
     counter = await Requests.h_Rate_Y();
@@ -192,6 +192,6 @@ exports.get_hiring = async (request, response) => {
   response.json({
     permissions: request.session.permissions,
     counter,
-    value,
+    hiring_counter,
   });
 }

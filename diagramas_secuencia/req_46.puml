@@ -47,5 +47,4 @@ hc -->> u : response.json({  permissions: request.session.permissions,  percenta
 
 deactivate hc 
 
-
-deactivate u 
+u -> u : update metric rotation counter
