@@ -106,3 +106,11 @@ h1{
 .disable_link:hover {
     background-color: rgb(51, 46, 66);
 }
+
+.off_btn {
+    background-color: #24242444;
+    border: none;
+}
+.off_btn:hover {
+    background-color: #454545;
+}
