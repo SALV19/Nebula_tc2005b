@@ -288,3 +288,7 @@ textarea{
     margin:3%;
     color:#EEEEEE;
 }
+.space-between{
+    padding-top: 1rem !important;
+    padding-bottom: 0.8rem !important;
+} 

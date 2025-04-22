@@ -198,3 +198,8 @@ textarea::-webkit-scrollbar-thumb {
 textarea::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+.reactivate{
+    background-color: #59A250;
+    color: #EEEEEE;
+    margin-left: 13rem;
+}

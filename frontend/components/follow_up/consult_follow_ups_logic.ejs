@@ -53,8 +53,8 @@ function TableFollowUps(data) {
     data.fechasAgendadas.forEach((fecha, idx) => { 
         const indicadorAverage = get_average_progress(data, fecha);   
         console.log(`id-${idx}:`, data.id_evaluacion[idx]);    
-        table_content += `<tr class="fecha-row" data-index="${idx}">`;
-            table_content += `<td style="text-align: left; width: 10px;">
+        table_content += `<tr class="fecha-row " data-index="${idx}">`;
+            table_content += `<td class="space-between" style="text-align: left; width: 10px;">
                 <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
                 </td>`;
 
@@ -68,13 +68,13 @@ function TableFollowUps(data) {
 
     if (data.permissions?.includes('consult_followUps')) {
             const completeName = fecha.nombre + ' ' + fecha.apellidos;
-            table_content += `<td class="fixed-width"> ${completeName}</td>`;
+            table_content += `<td class="fixed-width space-between"> ${completeName}</td>`;
         }
 
-        table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
+        table_content += `<td class="fixed-width space-between"> Date: ${formattedDate}</td>`;
         // console.log(fecha.fechaAgendada);             
   // Columna de fecha
-        table_content += `<td class='is-flex is-align-items-center'>
+        table_content += `<td class='is-flex is-align-items-center space-between'>
                             <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
                             <p style="margin-right: 0.5rem; width: auto;">${indicadorAverage}%</p>
                             <div style="width: 20rem;">

@@ -508,5 +508,15 @@ module.exports = class Colaborador {
         WHERE id_colaborador = ?
     `, [id_colaborador]);
     return result
-}
+  }
+  static async reactivate_Collab(id_colaborador){
+    const result = await db.execute(`
+        UPDATE colaborador
+        SET estado = 1
+        WHERE id_colaborador = ?
+    `, [id_colaborador]);
+    console.log("Result: ", result[0]);
+    return result[0]
+  }
+
 };
