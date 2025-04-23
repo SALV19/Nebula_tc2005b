@@ -185,7 +185,7 @@ module.exports = class Requests {
                   AND c.email <> ?
                   `;
       if (filter.pending) {
-        query += `AND sf.estado = 0 `;
+        query += `AND sf.estado < 1 `;
         if (filter.accepted) {
           query += `OR sf.estado = 1 `;
         }

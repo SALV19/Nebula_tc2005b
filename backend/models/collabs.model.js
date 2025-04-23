@@ -173,7 +173,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
+        fa.id_fa AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -489,7 +489,7 @@ module.exports = class Colaborador {
         c.puesto,
         d.nombre_departamento,
         em.nombre_empresa
-      ORDER BY c.nombre ASC
+      ORDER BY c.nombre, d.nombre_departamento ASC
     `, ids);
       // console.log("Row: ", rows);
     return rows;
