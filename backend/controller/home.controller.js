@@ -135,17 +135,26 @@ exports.add_event = (request, response) => {
   response.redirect('/');
 }
 
-exports.delete_event = (request, response) => {
-  console.log("entro a delete_event");
-  const { eventId, calendarId } = req.body;
-  Event.deleteEvent(eventId, calendarId, request.user.accessToken)
-    .then(() => {
-      res.status(200).send("Evento eliminado exitosamente");
-    })
-    .catch((error) => {
-      console.error("Error al eliminar evento:", error);
-      res.status(500).send("Error al eliminar evento");
-    });
+exports.delete_event = async (request, response) => {
+  console.log(request.user.accessToken);
+  try {
+    const { eventId, calendarId } = request.body;
+    console.log("eventId: ", eventId);
+    console.log("calednarId: ", calendarId);
+    console.log(request.body);
+    const result = await Event.deleteEvent(eventId, calendarId, request.user.accessToken);
 
-    response.redirect('/');
+    response.json({
+      success: true,
+      message: `Evento eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar evento:", error);
+
+    response.status(500).json({ // Cambiar el status a 500 para indicar un error del servidor
+      success: false,
+      error: error.message || 'Error al eliminar el evento en el servidor.', // Enviar el mensaje del error
+    });
+  }
 }

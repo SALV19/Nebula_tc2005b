@@ -33,6 +33,9 @@
 
           eventoSeleccionado = info.event;
 
+          const eventIdToDelete = info.event.id;
+          const calendarIdToDelete = info.event.calendarId;
+
           // Opciones para formato en español
           const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
           const horaOptions = { hour: '2-digit', minute: '2-digit' };
@@ -51,6 +54,9 @@
           document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
             : 'No end hour availablr';
           document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
+          
+          popup.dataset.eventId = eventIdToDelete;
+          popup.dataset.calendarId = calendarIdToDelete;
         }
       }
     });
@@ -64,18 +70,20 @@
   }
 
   function deleteEvent(eventId, calendarId) {
-    const csrfToken = document.getElementById('_csrf').value;
-    console.log('Token que estoy mandando:', csrfToken);
+    const popup = document.getElementById('pop-up');
+    const csrf = document.getElementById('_csrf').value;
+    const eventIdToDelete = popup.dataset.eventId;
+    const calendarIdToDelete = popup.dataset.calendarId;
+    console.log()
     fetch('/deleteEvent', {
       method: "POST",
       headers: {
         'Content-Type': 'application/json',
-        'CSRF-Token': csrfToken,
+        'csrf-token': csrf,
       },
-      body: JSON.stringify({ eventId, calendarId })
+      body: JSON.stringify({ eventId: eventIdToDelete, calendarId: calendarIdToDelete })
     })
     .then(response => {
-      const popup = document.getElementById('pop-up');
       popup.style.display = 'none';
       if (response.ok) {
         const Toast = Swal.mixin({
@@ -96,11 +104,11 @@
         });
 
         setTimeout(() => {
-          window.location.href = '/'; 
+          window.location.href = '/';   
         }, 2000);
       } else {
-        return response.text().then(text => {
-          throw new Error(text);
+        return response.json().then(errorData => {
+          throw new Error(errorData.error || 'Error desconocido al eliminar el evento.');
         });
       }
     })

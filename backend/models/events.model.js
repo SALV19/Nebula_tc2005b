@@ -78,7 +78,7 @@ module.exports = class Event {
     }); 
   }
 
-  static deleteEvent(eventId, calendarId, accesToken) {
+  static async deleteEvent(eventId, calendarId, accessToken) {
     return new Promise((resolve, reject) => {
       const oauth2Client = new google.auth.OAuth2(
         process.env.GOOGLE_CLIENT_ID,
