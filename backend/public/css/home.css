@@ -384,3 +384,36 @@ p{
 .counter{
     padding-left: 1rem;
 }
+.button.is-link.is-rounded.k{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
+
+}
+.button.is-link.is-rounded.k{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
+}
