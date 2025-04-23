@@ -84,7 +84,9 @@ exports.get_home = async (request, response) => {
           permissions: request.session.permissions,
           total_absences: absences.length,
           csrfToken: request.csrfToken(),
-          eventos: JSON.stringify(eventos),          
+          eventos: JSON.stringify(eventos), 
+          calendarMeeting: process.env.CALENDAR_ID_MEETING, 
+          calendarEvent: process.env.CALENDAR_ID_EVENT,         
         })
       })
       .catch(error => {console.error(error)}) 
@@ -136,12 +138,8 @@ exports.add_event = (request, response) => {
 }
 
 exports.delete_event = async (request, response) => {
-  console.log(request.user.accessToken);
   try {
     const { eventId, calendarId } = request.body;
-    console.log("eventId: ", eventId);
-    console.log("calednarId: ", calendarId);
-    console.log(request.body);
     const result = await Event.deleteEvent(eventId, calendarId, request.user.accessToken);
 
     response.json({

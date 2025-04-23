@@ -40,6 +40,9 @@
     </aside>
     <script>
       let eventos = <%- eventos %>; 
+      const CALENDAR_ID_MEETING = "<%= calendarMeeting %>";
+      const CALENDAR_ID_EVENT = "<%= calendarEvent %>";
+      const allowedCalendarIds = [CALENDAR_ID_MEETING, CALENDAR_ID_EVENT];
     </script>
     <% if (eventos) { %>
       <% if (permissions.includes('add_event')) {%> 

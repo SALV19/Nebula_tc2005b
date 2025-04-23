@@ -27,14 +27,21 @@
       eventClick: function(info) {
         // Mostrar el pop-up
         const popup = document.getElementById('pop-up');
-        if (popup) {
+        const deleteButton = document.querySelector('#pop-up .is-flex .button');
+        if (popup && deleteButton) {
           console.log(info.event);
           const endDate = info.event.end;
 
           eventoSeleccionado = info.event;
 
           const eventIdToDelete = info.event.id;
-          const calendarIdToDelete = info.event.calendarId;
+          const calendarIdToDelete = info.event.extendedProps.calendarId;;
+
+          if (allowedCalendarIds.includes(calendarIdToDelete)) {
+            deleteButton.style.display = 'block'; 
+          } else {
+            deleteButton.style.display = 'none'; 
+          }
 
           // Opciones para formato en español
           const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
