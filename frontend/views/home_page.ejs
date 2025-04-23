@@ -1,7 +1,13 @@
 <%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<input type="hidden" id="_csrf" value="<%= csrfToken %>">
+<!-- <input type="hidden" id="_csrf" value=<%= csrfToken %>/> -->
+<script>
+  const CALENDAR_ID_MEETING = "<%= calendarMeeting %>";
+  const CALENDAR_ID_EVENT = "<%= calendarEvent %>";
+  const allowedCalendarIds = [CALENDAR_ID_MEETING, CALENDAR_ID_EVENT];
+  console.log("calendarios, ", allowedCalendarIds);
+</script>
 
 <%- include('../components/nav_bar.ejs') %>
 <div class="columns">
@@ -27,13 +33,16 @@
           <div class="is-flex is-align-items-center mb-2">
             <div id="color-calendar" class="calendar-color-box"></div>
             <h2 id="event-title" class="title-event"></h2>
-          </div>                  
-        </div>
-        <div class="is-flex is-flex-direction-column is-align-items-start">
+          </div>  
+        </div>                
+        <div class="is-flex is-flex-direction-column is-align-items-start ">
           <p class="text-event"><strong>Date: </strong><span id="event-date"></span></p>
           <p class="text-event"><strong>Start Hour: </strong><span id="event-hour-start"></span></p>
           <p class="text-event"><strong>End Hour: </strong><span id="event-hour-end"></span></p>
           <p class="text-event" style="text-align: left;"><strong>Details: </strong> <span id="event-details" style="text-align: justify;"></span></p>
+        </div>
+        <div class="is-flex is-justify-content-center">
+          <button class="button is-link is-rounded k" onclick="deleteEvent()">Delete</button>
         </div>
       </div>
     </aside>
@@ -66,7 +75,7 @@
     </div>
 
   
-  <div class="columns is-multiline column-counter" style="text-align: left;">
+  <div class="columns is-multiline column-counter" >
     <div class="column is-half margin-counter">
       <%- include ('../components/home/home_requests_logic.ejs') %>
       <%- include('../components/vacations_left.ejs') %>

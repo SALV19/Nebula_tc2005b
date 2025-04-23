@@ -25,8 +25,9 @@ body{
 }
 
 .column-counter{
-    margin-top: 5rem;    
+    margin-top: -2rem !important;    
     font-size: small;
+    text-align: left
 }
 .column2 {
     display: flex;
@@ -219,12 +220,17 @@ body{
     padding: 0 1rem;
     align-items: center;
     font-size: 1.5rem; 
-    width: 24rem;
-    margin-top: -1rem;
+    width: 22.5rem;
+    margin-top: -2rem;
 }
 .align-counter{
     align-self: flex-start; 
     margin-bottom: -1px
+}
+
+.k{
+    font-size: small;
+    margin-top: 5%;
 }
 .metric-wrapper {
     position: absolute;

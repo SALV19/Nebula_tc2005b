@@ -95,7 +95,7 @@ module.exports = class Requests {
     }
 
     static async metric_month(){
-        const month = await db.execute(`SELECT 
+        const counter = await db.execute(`SELECT 
             ( 
                 (SELECT COUNT(*) 
                 FROM colaborador c 
@@ -108,10 +108,10 @@ module.exports = class Requests {
                     AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
             ) * 100 AS indice_rotacion;
         `)
-        return month[0];
+        return counter[0];
     }
     static async metric_trimester(){
-        const trimester = await db.execute(`
+        const counter = await db.execute(`
             SELECT 
                 ( 
                     (SELECT COUNT(*) 
@@ -125,11 +125,11 @@ module.exports = class Requests {
                     AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))
                 ) * 100 AS indice_rotacion;
             `)
-        return trimester[0];
+        return counter[0];
     }
 
     static async metric_semester(){
-        const semester = await db.execute(`
+        const counter = await db.execute(`
             SELECT 
             ( 
                 (SELECT COUNT(*) 
@@ -143,10 +143,10 @@ module.exports = class Requests {
                 AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))
             ) * 100 AS indice_rotacion;
         `)        
-        return semester[0];                                      
+        return counter[0];                                      
     }
     static async metric_anually(){
-        const anual = await db.execute(`
+        const counter = await db.execute(`
             SELECT 
             ( 
                 (SELECT COUNT(*) 
@@ -160,11 +160,11 @@ module.exports = class Requests {
                 AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))
             ) * 100 AS indice_rotacion;
         `)
-        return anual[0];
+        return counter[0];
     }
 
     static async h_Rate_M(){
-        const month = await db.execute(`
+        const percentage = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
                 FROM colaborador c 
@@ -176,10 +176,10 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        return month[0];
+        return percentage[0];
     }
     static async h_rate_T(){
-        const trimester = await db.execute(`
+        const percentage = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
                 FROM colaborador c 
@@ -191,10 +191,10 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        return trimester[0];
+        return percentage[0];
     }
     static async h_Rate_S(){
-        const semester = await db.execute(`
+        const percentage = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
                 FROM colaborador c 
@@ -206,10 +206,10 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        return semester[0];
+        return percentage[0];
     }
     static async h_Rate_Y(){
-        const year = await db.execute(`
+        const percentage = await db.execute(`
             SELECT (
                 (SELECT COUNT(*) 
                 FROM colaborador c 
@@ -221,7 +221,7 @@ module.exports = class Requests {
                 WHERE estado = 1)
             ) * 100 AS contratacionM
         `)
-        return year[0];
+        return percentage[0];
     }
 }
 
