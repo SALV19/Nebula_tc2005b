@@ -187,3 +187,24 @@ label:hover, label:active{
     font-weight: bold;
     width: 100%;
 }
+.button.is-success{
+    background-color: #59A250;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    color: #EEEEEE;
+    margin-top: 0.5rem;
+    padding: -1rem;
+    width: 4rem;
+    height: 2rem;
+}
+.button.is-success:hover{
+    background-color: #41753b;
+}
