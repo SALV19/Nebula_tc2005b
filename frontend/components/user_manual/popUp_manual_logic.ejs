@@ -6,29 +6,87 @@
     let carouselInstance = null;
 
     const manuals = {
+        //ALE
         "/": [
             {
-                html: `
-            </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
-                `
+                html: `<div><h1 class="scribe-title">Calendar</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
             },
             {
-                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
-                text: "2. Haz clic aquí"
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/bab1b7a2-0b49-4e25-8eb5-0ee0c442fa62/ascreenshot.jpeg?tl_px=0,284&br_px=2122,1471&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=637,276"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
             },
             {
-                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/4a96eb28-8399-477a-9567-23c6677978ea/ascreenshot.jpeg",
-                text: "3. Luego selecciona el ícono"
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
             }
         ],
+        //YESSICA
         "/requests": [
             {
-                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/9c8b6175-75a6-4777-bdf1-e84847388583/ascreenshot.jpeg",
-                text: "2. Haz clic aquí"
+                html: `<div><h1 class="scribe-title">Request</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
             },
             {
-                img: "https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-21/4a96eb28-8399-477a-9567-23c6677978ea/ascreenshot.jpeg",
-                text: "3. Luego selecciona el ícono"
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
+            }
+        ],
+        //KAMI
+        "/follow_ups": [
+            {
+                html: `<div><h1 class="scribe-title">Follow-Ups</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
+            },
+            {
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
+            }
+        ],
+        //SANTI
+        "/view_collabs": [
+            {
+                html: `<div><h1 class="scribe-title">Collabs</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
+            },
+            {
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
+            }
+        ],
+        //FA
+        "/reports": [
+            {
+                html: `<div><h1 class="scribe-title">Reports</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
+            },
+            {
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
+            }
+        ],
+        //ALE
+        "/personal_info": [
+            {
+                html: `<div><h1 class="scribe-title">Personal Info</h1></div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/519d80be-0e64-47c0-a4f6-4633d4392b1f/ascreenshot.jpeg?tl_px=0,174&br_px=2122,1361&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=548,277"/></p><div class="scribe-step"><p class="scribe-step-text">3. Click this button.</p>
+                    `
+            },
+            {
+                html: `<div class= "title-space"> </div>
+                </div><p class="scribe-screenshot-container"><img class="scribe-screenshot" width="560" alt="" src="https://ajeuwbhvhr.cloudimg.io/colony-recorder.s3.amazonaws.com/files/2025-04-22/2df337cc-836c-4cc9-85ce-6d91c94e3b08/ascreenshot.jpeg?tl_px=0,0&br_px=2122,1186&force_format=jpeg&q=100&width=1120.0&wat=1&wat_opacity=0.7&wat_gravity=northwest&wat_url=https://colony-recorder.s3.us-west-1.amazonaws.com/images/watermarks/FB923C_standard.png&wat_pad=70,260"/></p><div class="scribe-step"><p class="scribe-step-text">4. Click "colaborador"</p>
+                    `
             }
         ]
     };
@@ -37,8 +95,6 @@
         const popup = document.getElementById("pop-upM");
         const wrapper = document.getElementById("slider-wrapper");
         const path = window.location.pathname;
-
-        
 
         wrapper.innerHTML = "";
 

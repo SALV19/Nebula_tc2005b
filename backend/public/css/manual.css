@@ -44,6 +44,14 @@
 
 .scribe-title, .scribe-author, .scribe-step-text {
     color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+}
+
+.scribe-title {
+    margin-top: -0.5rem;
 }
 
 .carousel {
@@ -56,8 +64,8 @@
 }
 
 .scribe-screenshot {
-    max-width: 100%;
-    border-radius: 5px;
+    width: 90%;
+    border-radius: 3px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
 }
 
@@ -66,5 +74,9 @@
     font-weight: bold;
     font-size: 1.1rem;
     text-align: center;
-    margin: 0.5rem 0 1rem;
+    margin: 0.5rem 0 2.5rem;
+}
+
+.title-space {
+    margin-top: 2.75rem;
 }
