@@ -1,0 +1,82 @@
+.cancelButton {
+    position: absolute;
+    right: 3vw;
+    top: 3vh;
+    cursor: pointer;
+}
+
+.pop-upM {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.3);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.pop-up-contentM {
+    background-color: #242424;
+    padding: 2vw;
+    padding-top: 5vh;
+    border-radius: 5px;
+    width: 60vw;
+    height: auto;
+    overflow-y: auto;
+    position: relative;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+}
+
+#slider {
+    overflow: hidden;
+}
+
+.card {
+    margin: 0 auto;
+}
+
+.card-image img {
+    max-width: 100%;
+}
+
+.scribe-title, .scribe-author, .scribe-step-text {
+    color: white;
+    text-align: center;
+    font-size: 1.5rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+}
+
+.scribe-title {
+    margin-top: -0.5rem;
+}
+
+.carousel {
+    display: flex !important;
+}
+
+.scribe-screenshot-container {
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.scribe-screenshot {
+    width: 90%;
+    border-radius: 3px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+}
+
+.scribe-step-text {
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    text-align: center;
+    margin: 0.5rem 0 2.5rem;
+}
+
+.title-space {
+    margin-top: 2.75rem;
+}

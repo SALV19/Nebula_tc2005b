@@ -94,10 +94,11 @@ exports.post_collab = (request, response) => {
   });
 
   const foto = "link";
-  
   argon2.hash(password)
     .then(hashedPassword => {
-      return new_Colab.save(hashedPassword,foto);
+      const firstPassword = 'first' + hashedPassword;
+      console.log(firstPassword);
+      return new_Colab.save(firstPassword,foto);
     })
     .then(([rows]) => {
       if (rows.length === 0)
@@ -134,6 +135,7 @@ exports.get_collabs_info = async (request, response) => {
     [collabs] = await Colaborador.fetchCollabs(null, offset, filter)
       .then((data) => data)
       .catch((e) => console.error(e));
+       
 
     abscences = await Promise.all(collabs.map(async (c) => {
       const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
