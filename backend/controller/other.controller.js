@@ -7,8 +7,6 @@ exports.get_404 = (request, response, next) => {
 exports.get_permissions = async (request, response, next) => {
 
   if(request.cookies.email) {
-    console.log("permissions");
-    console.log(request.session.permissions);
     request.session.email = request.cookies.email;
     request.session.permissions = request.cookies.permissions;
     request.session.id_colaborador = request.cookies.id_colaborador;

@@ -53,10 +53,11 @@ async function general_report(periodicity) {
 
   let [empresas_validaciones, _] = await Reports.fetchCompany(empresas, 
                                                   `${periodicity.target_month}-01`, `${periodicity.curr_date}-31`)
+  
   empresas_validaciones = empresas_validaciones.reduce((a, v) => {
     return {...a, [v.nombre_empresa]: {...a[v.nombre_empresa], [v.indicador]: v.average}}
   }, {})
-  
+
   return empresas_validaciones
 }
 
@@ -178,7 +179,6 @@ exports.get_general_report = async (request, response) => {
   const periodicity = getStartEnd(request.body.periodicity ?? 1)
   if (request.body.company_values.length == 0) {
     const empresas_validaciones = await general_report(periodicity)
-
     response.status(200).json({
       type: "general",
       empresas_validaciones
