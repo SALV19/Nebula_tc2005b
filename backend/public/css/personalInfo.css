@@ -60,3 +60,11 @@
 .b:hover {
     background-color: rgb(150, 50, 45);
 }
+.headingVac{
+    font-size: 1.5vh;
+    display: inline-block;
+    margin-right: 1vh;
+    margin-left: 1vh; 
+  }
+  
+

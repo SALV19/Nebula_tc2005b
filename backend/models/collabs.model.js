@@ -27,13 +27,15 @@ module.exports = class Colaborador {
     this.rfc = colab_rfc;
   }
 
-  //
-  static fetchAllCollabsName(id_colaborador){
-    return db.execute(`Select id_colaborador, nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
-  }
-
   static fetchAllCompleteName(){
-    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND C.estado = 1 AND (id_rol = 1 OR id_rol = 2)')
+    return db.execute(`SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
+                      FROM colaborador c
+                      INNER JOIN equipo e
+                        ON e.id_colaborador = c.id_colaborador
+                      INNER JOIN departamento d
+                        ON d.id_departamento = e.id_departamento
+                      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
+                      `)
   }
 
 
@@ -173,7 +175,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
+        fa.id_fa AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -425,7 +427,6 @@ module.exports = class Colaborador {
       SELECT * from fa
       `)
     
-      // console.log("faltas : ", faults);
       return faults;
   }
 
@@ -456,6 +457,23 @@ module.exports = class Colaborador {
     }
   }
   
+  static fetchDepartmentCollabs(id_departments) {
+    if (id_departments.length <= 0) {
+      return []
+    }
+    let query = `SELECT c.id_colaborador, c.nombre, c.apellidos, d.nombre_departamento, d.id_departamento
+                FROM colaborador c
+                INNER JOIN equipo e
+                  ON e.id_colaborador = c.id_colaborador
+                INNER JOIN departamento d
+                  ON d.id_departamento = e.id_departamento
+                WHERE ( d.id_departamento = ? \n`
+      for (let i = 1; i < id_departments.length; i++) {
+        query += `OR d.id_departamento = ? \n`
+      }
+      query += ') GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.nombre_departamento, d.id_departamento;'
+      return db.execute(query, [...id_departments])
+  }
 
   static async fetchFaultsCollabsByIds(ids) {
     if (ids.length === 0) return [];
@@ -489,7 +507,7 @@ module.exports = class Colaborador {
         c.puesto,
         d.nombre_departamento,
         em.nombre_empresa
-      ORDER BY c.nombre ASC
+      ORDER BY c.nombre, d.nombre_departamento ASC
     `, ids);
       // console.log("Row: ", rows);
     return rows;
@@ -503,11 +521,14 @@ module.exports = class Colaborador {
   }
 
   static async deleteCollab(id_colaborador){
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 10);
     const result = await db.execute(`
         UPDATE colaborador
-        SET estado = 0
+        SET estado = 0, 
+        fechaSalida = ?
         WHERE id_colaborador = ?
-    `, [id_colaborador]);
+    `, [formattedDate, id_colaborador]);
     return result
   }
   static async reactivate_Collab(id_colaborador){
