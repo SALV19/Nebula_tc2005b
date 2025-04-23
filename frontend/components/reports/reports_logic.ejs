@@ -1,0 +1,533 @@
+<script src="tom-select.complete.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script>
+    function getRandomColor() {
+        var letters = '0123456789ABCDEF';
+        var color = '#';
+        for (var i = 0; i < 6; i++) {
+            color += letters[Math.floor(Math.random() * 16)];
+        }
+        return color;
+    }
+
+
+    function createChart(data, pdf) {
+        const chart_container = document.querySelector("#chart-container")
+        chart_container.innerHTML = ''
+    
+        const chartWrapper = document.querySelector("#radar-container")
+        if (chartWrapper.hasAttribute("style")) {
+            
+            chartWrapper.removeAttribute("style")
+        }
+        if (pdf) {
+            chartWrapper.style.width = '800px'; 
+            chartWrapper.style.height = '600px';
+        }
+
+        const ctx = document.getElementById(`chart`).getContext("2d");
+        document.querySelector("#chart").display = "box"
+        let chartStatus = Chart.getChart("chart"); 
+        if (chartStatus != undefined) {
+            chartStatus.destroy();
+            
+        }
+
+        const empresas = Object.keys(data);
+        const indicatorLabels = Object.keys(data[empresas[0]]);
+        const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
+        const datas= [];
+        let j=0;
+        for(let i of empresas) {
+            datas.push({
+                    label: i,
+                    data: Object.values(data[i]),
+                    borderColor: colores[j],
+                    borderWidth: 3,
+                    backgroundColor: colores[j]+"00",
+                });
+            j = j+1;
+        }        
+
+        new Chart(ctx, { 
+            type: 'radar',
+            data: {
+                labels: indicatorLabels,
+                datasets: datas, 
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        display: true,
+                        position:'right',
+                        labels: {
+                            padding: 30, 
+                            color: pdf ? "#000" : "#FFFFFF", 
+                            usePointStyle: true,
+                            textAlign: 'center',
+                        }
+                    }
+                },
+                scales: {
+                    r: {
+                        backgroundColor: pdf ? "#EEE" : "#454545",
+                        hoverBackgroundColor: "#767574",
+                        angleLines: { 
+                            display: false,
+                        },
+                        grid: {
+                            color: "#747474" 
+                        },
+                        suggestedMin: 0,
+                        suggestedMax: 5,
+                        ticks: {
+                            stepSize: 1, 
+                            beginAtZero: true,
+                            color: pdf ? "#222" : "#EEEEEE",
+                            backdropColor: pdf ? "#EEE" : "#454545" , 
+                        },
+                        pointLabels: {  
+                            padding:20,
+                            color: pdf ? "#000" : "#FFFFFF", 
+                            font: {
+                                size: 13,
+                                weight: "italic"
+                            }
+                        }
+                    }
+                }
+            } 
+        });
+    }
+
+    function createDepartmentsChart(data, pdf) {
+        const chart_container = document.getElementById('chart-container');
+        chart_container.innerHTML = ''; 
+        
+        chart_container.style.display = 'grid';
+        chart_container.style.flexWrap = 'wrap';
+        chart_container.style.gap = '20px';
+        chart_container.style.justifyContent = 'center';
+        
+        const mainCanvas = document.querySelector("#chart");
+        if (mainCanvas) {
+            mainCanvas.style.display = "none";
+        }
+
+        Object.keys(data).forEach(entries => {
+            const chartWrapper = document.createElement('div');
+            chartWrapper.style.width = '600px'; 
+            chartWrapper.style.height = '400px';
+            chartWrapper.style.position = 'relative';
+            
+            const canvasId = `chart-${entries}`;
+            const canvas = document.createElement('canvas');
+            canvas.className = 'canvas-viewF';
+            canvas.id = canvasId;
+            
+            chartWrapper.appendChild(canvas);
+            chart_container.appendChild(chartWrapper);
+            
+            const departamentos = Object.keys(data[entries]);
+            const indicatorLabels = Object.keys(Object.values(data[entries])[0] || {});
+            
+            const datasets = departamentos.map(i => ({
+                label: i,
+                data: Object.values(data[entries][i]),
+                borderColor: getRandomColor(),
+                borderWidth: 3,
+                backgroundColor: "#00000000",
+            }));
+            
+            new Chart(canvas, { 
+                type: 'radar',
+                data: {
+                    labels: indicatorLabels,
+                    datasets: datasets, 
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: true,
+                            position: 'right',
+                            labels: {
+                                padding: 30, 
+                                color: pdf ? "#000" : "#FFFFFF", 
+                                usePointStyle: true,
+                                textAlign: 'center',
+                            }
+                        },
+                        title: {
+                            display: true,
+                            text: entries, 
+                            color: "#FFFFFF",
+                            font: {
+                                size: 24
+                            }
+                        }
+                    },
+                    scales: {
+                        r: {
+                            backgroundColor: pdf ? "#EEE" : "#454545",
+                            hoverBackgroundColor: "#767574",
+                            angleLines: { 
+                                display: false,
+                            },
+                            grid: {
+                                color: "#747474" 
+                            },
+                            suggestedMin: 0,
+                            suggestedMax: 5,
+                            ticks: {
+                                stepSize: 1, 
+                                beginAtZero: true,
+                                color: pdf ? "#222" : "#EEEEEE",
+                                backdropColor: pdf ? "#EEE" : "#454545",
+                            },
+                            pointLabels: {  
+                                padding: 20,
+                                color: pdf ? "#000" : "#FFFFFF",
+                                font: {
+                                    size: 13,
+                                    weight: "italic"
+                                }
+                            }
+                        }
+                    }
+                } 
+            });
+        });
+    }
+    
+    function createCollabsChart(data, pdf) {
+        const chart_container = document.getElementById('chart-container');
+        chart_container.innerHTML = ''; 
+        
+        chart_container.style.display = 'grid';
+        chart_container.style.flexWrap = 'wrap';
+        chart_container.style.gap = '20px';
+        chart_container.style.justifyContent = 'center';
+        
+        const mainCanvas = document.querySelector("#chart");
+        if (mainCanvas) {
+            mainCanvas.style.display = "none";
+        }
+        let collabs_created = []
+        Object.keys(data).forEach(e => {            
+            const departamentos = Object.values(data[e])
+            // console.log(departamentos)
+            departamentos.forEach(colaboradores => {
+                // console.log(colaboradores)
+                for (let i of Object.keys(colaboradores)) {
+                    if (collabs_created.includes(i)) {
+                        return
+                    }
+                } 
+
+                collabs_created = [...collabs_created, ...Object.keys(colaboradores)]
+                
+                const indicatorLabels = Object.keys(Object.values(colaboradores)[0])
+
+                Object.keys(colaboradores).forEach(collab => {
+                    const colaborador = Object.keys(colaboradores[collab])
+                    console.log(colaborador)
+                    const dataset = [{
+                                        data: Object.values(colaboradores[collab]),
+                                        borderColor: getRandomColor(),
+                                        borderWidth: 3,
+                                        backgroundColor: "#00000000",
+                                    }]
+                    // console.log(collab, ": ", dataset)
+                    const chartWrapper = document.createElement('div');
+                    chartWrapper.style.width = '600px'; 
+                    chartWrapper.style.height = '400px';
+                    chartWrapper.style.position = 'relative';
+                    
+                    const canvasId = `chart-${Math.random()}`;
+                    const canvas = document.createElement('canvas');
+                    canvas.className = 'canvas-viewF';
+                    canvas.id = canvasId;
+                    
+                    chartWrapper.appendChild(canvas);
+                    chart_container.appendChild(chartWrapper);
+
+                    new Chart(canvas, { 
+                        type: 'radar',
+                        data: {
+                            labels: indicatorLabels,
+                            datasets: dataset, 
+                        },
+                        options: {
+                            responsive: true,
+                            maintainAspectRatio: false,
+                            plugins: {
+                                legend: {
+                                    display: false,
+                                },
+                                title: {
+                                    display: true,
+                                    text: collab, 
+                                    color: "#FFFFFF",
+                                    font: {
+                                        size: 24
+                                    }
+                                },
+                            },
+                            scales: {
+                                r: {
+                                    backgroundColor: pdf ? "#EEE" : "#454545",
+                                    hoverBackgroundColor: "#767574",
+                                    angleLines: { 
+                                        display: false,
+                                    },
+                                    grid: {
+                                        color: "#747474" 
+                                    },
+                                    suggestedMin: 0,
+                                    suggestedMax: 5,
+                                    ticks: {
+                                        stepSize: 1, 
+                                        beginAtZero: true,
+                                        color: pdf ? "#222" : "#EEEEEE",
+                                        backdropColor: pdf ? "#EEE" : "#454545",
+                                    },
+                                    pointLabels: {  
+                                        padding: 20,
+                                        color: pdf ? "#000" : "#FFFFFF",
+                                        font: {
+                                            size: 13,
+                                            weight: "italic"
+                                        }
+                                    }
+                                }
+                            }
+                        } 
+                    });
+                })
+            });
+        });
+    }
+    
+    function showComapnyCheckboxes(value) {
+        var checkboxes = document.getElementById(value);
+        if (checkboxes.style.display == "block") {
+            checkboxes.style.display = "none";
+        } else {
+            checkboxes.style.display = "block";
+        }
+    }
+
+    function hideComapnyCheckboxes(value) {
+        var checkboxes = document.getElementById(value);
+        checkboxes.style.display = "none";
+
+    }
+
+    function showDepartmentCheckboxes(value) {
+        const companies = document.querySelectorAll("[id$=-company]");
+        const selectedCompanies = Array.from(companies)
+            .filter(c => c.checked)
+            .map(c => c.value);
+
+        const nodept = document.querySelectorAll("[id$=-department]");
+        const departmentMap = {};
+
+        selectedCompanies.forEach(company => {
+            nodept.forEach(department => {
+                if (department.id.startsWith(company)) {
+                    const deptValue = department.value;
+                    if (!departmentMap[deptValue]) {
+                        departmentMap[deptValue] = [];
+                    }
+                    departmentMap[deptValue].push(company);
+                }
+            });
+        });
+        
+        nodept.forEach(department => {
+            department.parentElement.style.display = "none";
+        });
+
+        for (let deptValue in departmentMap) {
+            const companiesForDept = departmentMap[deptValue];
+            if (companiesForDept.length > 1) {
+                companiesForDept.forEach(company => {
+                    const departmentElement = Array.from(nodept).find(department => department.value === deptValue && department.id.startsWith(company));
+                    if (departmentElement) {
+                        departmentElement.parentElement.style.display = "block";
+                        departmentElement.nextElementSibling.innerText = `${deptValue} - ${company}`;
+                    }
+                });
+            } else if (companiesForDept.length === 1) {
+                const departmentElement = Array.from(nodept).find(department => department.value === deptValue && department.id.startsWith(companiesForDept[0]));
+                if (departmentElement) {
+                    departmentElement.parentElement.style.display = "block";
+                    departmentElement.nextElementSibling.innerText = deptValue;
+                }
+            }
+        }
+
+        const checkboxes = document.getElementById(value);
+        checkboxes.style.display = "block";
+    }
+    function updateOptions(element) {
+        const departmentCheckboxes = document.querySelectorAll(`[id^='${element.value}'][id$='-department']`);
+        departmentCheckboxes.forEach(dept => dept.checked = false)
+    }
+
+    function updateInfoText() {
+        const date = new Date();
+        
+        const day = String(date.getDate()).padStart(2, '0'); 
+        const month = String(date.getMonth() + 1).padStart(2, '0'); 
+        const year = date.getFullYear();
+
+        const formattedDate = `${day}/${month}/${year}`;
+
+        const departmentCheckboxes = document.querySelectorAll("[id$='-department']");
+        const selectedDepartments = Array.from(departmentCheckboxes)
+            .filter(checkbox => checkbox.checked)
+            .map(checkbox => checkbox.value);
+
+        const selectPeriod = document.querySelector("#periodic_select");
+        const periodicity = selectPeriod.options[selectPeriod.selectedIndex]?.text || "Sin periodo";
+
+        const summary = `${formattedDate} | ${periodicity}`;
+        document.getElementById("report-info").innerText = summary;
+    }
+
+    async function download_report() {
+        const search = document.querySelector("#forms_container")
+        const bar = document.querySelector("hr")
+        const update = document.querySelector("#update_btn")
+        const title_input = document.querySelector("#title_input")
+        const nav = document.querySelector("#navbar")
+        const footer = document.querySelector("footer")
+        
+        const subtitle = document.querySelector(".report-info")
+        subtitle.style.margin = "0";
+
+        const title = document.querySelector("#title").value
+        const title_element = document.createElement("h1")
+        title_element.innerHTML = title
+        subtitle.parentElement.appendChild(title_element)
+        
+        await fetchData(true).then(t => {
+            search.classList.add("hide")
+            bar.classList.add("hide")
+            update.classList.add("hide")
+            title_input.classList.add("hide")
+            nav.classList.add("hide")
+            footer.classList.add("hide")
+
+            const pdfFrame = window.frames
+            setTimeout(() => {
+                pdfFrame.focus()
+                pdfFrame.print()
+                setTimeout(() => {
+                    search.classList.remove("hide")
+                    bar.classList.remove("hide")
+                    update.classList.remove("hide")
+                    title_input.classList.remove("hide")
+                    nav.classList.remove("hide")
+                    footer.classList.remove("hide")
+
+                    subtitle.removeAttribute("style")
+                }, 500)
+            }, 500)
+        })
+        setTimeout(() => {
+            fetchData()
+        }, 500);
+    }
+    
+    async function fetchData(pdf = null) {
+        const companies = document.querySelectorAll("[id$=-company")
+        companies.forEach(company => {
+            company.addEventListener('change', () => showDepartmentCheckboxes('department'));
+        });
+        const department = document.querySelectorAll("[id$=-department]")
+        const collab = document.querySelectorAll("[id$=-collab]")
+        const periodicity = document.querySelector("#periodic_select")
+        
+        const company_values = Array.prototype.reduce.call(companies, (acc, c) => {
+            if (c.checked) {
+                acc.push(c.value)
+            }
+            return acc
+        }, [])
+        const department_values = Array.prototype.reduce.call(department, (acc, d) => {
+            if (d.checked) {
+                acc.push(d.value)
+            }
+            return acc
+        }, [])
+        const collabs_values = Array.prototype.reduce.call(collab, (acc, c) => {
+            if (c.checked) {
+                acc.push(c.value)
+            }
+            return acc
+        }, [])
+
+        const csrf = document.querySelector('#_csrf').value        
+        return await fetch('/reports', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'csrf-token': csrf
+            },
+            body: JSON.stringify({
+                message: "Prueba metodo post",
+                company_values,
+                department_values,
+                collabs_values,
+                periodicity: periodicity.value
+            })
+        })
+        .then((response) => response.json())
+        .then(data => {
+            // Create chart with data
+            if (data.type == "general") {
+                createChart(data.empresas_validaciones, pdf)
+            }
+            else if (data.type == "department") {
+                createDepartmentsChart(data.departamentos_validaciones, pdf)
+            }
+            else if (data.type = "collabs") {
+                createCollabsChart(data.collabs_validaciones, pdf)
+            }
+            updateInfoText();
+            return true
+        })
+        .catch(error => console.error("ERROR: ", error))
+    }
+
+    function showCollabCheckboxes() {
+        const colaboradores = document.querySelector("#collaborator")
+        colaboradores.style.display = "block"
+        
+        const csrf = document.querySelector('#_csrf').value        
+
+        const departamentos = document.querySelectorAll("[id$='-department']")
+        const selected = []
+        departamentos.forEach(dept => {
+            if (dept.checked) {
+                selected.push(dept.dataset.id)
+            }
+        })
+        const collabs = document.querySelectorAll("[id$=-collab-lable]")
+        collabs.forEach(c => {
+            c.style.display = "none"
+            for (let id of selected) {
+                if (c.dataset.depid == id) {
+                    c.style.display ="block";
+                    continue
+                }
+            }
+        })
+    }
+    
+
+</script>
