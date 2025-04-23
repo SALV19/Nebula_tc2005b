@@ -1,5 +1,4 @@
 exports.general_permissions = (request, response, next) => {
-  console.log("Permisos:", request.session.permissions);
   if (request.session.permissions.length > 0) {
     next()
   } else {

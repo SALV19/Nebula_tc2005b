@@ -38,10 +38,6 @@ module.exports = class Colaborador {
                       `)
   }
 
-  static fetchAllCompleteName(){
-    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND C.estado = 1 AND (id_rol = 1 OR id_rol = 2)')
-  }
-
 
   save(hashedPassword, foto) {
     return db
@@ -431,7 +427,6 @@ module.exports = class Colaborador {
       SELECT * from fa
       `)
     
-      // console.log("faltas : ", faults);
       return faults;
   }
 
