@@ -602,7 +602,6 @@ exports.reactivate_Collab = async (request, response) => {
   
   try {
     const id_colaborador = request.body.colab_reactivate;
-    console.log("ID: ", id_colaborador);
     const result = await Colaborador.reactivate_Collab(id_colaborador);
 
     response.json({
