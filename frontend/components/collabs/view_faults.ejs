@@ -59,8 +59,8 @@
                         <span class="file-cta ${falta.link ? 'off_btn' : ''}">
                           <span class="file-icon"><i class="fas fa-upload"></i></span>
                           ${falta.link 
-                          ? '<span class="file-label fixed-width off" id="file_name_${falta.id_fa}">Overwrite...</span>'
-                          : '<span class="file-label fixed-width" id="file_name_${falta.id_fa}">Choose a file…</span>'
+                          ? `<span class="file-label fixed-width off" id="file_name_${falta.id_fa}">Overwrite...</span>`
+                          : `<span class="file-label fixed-width" id="file_name_${falta.id_fa}">Choose a file…</span>`
                           }
                           
                           </span>
@@ -133,6 +133,7 @@
     function update(element) {
       console.log(element.id)
       const file_button = document.querySelector(`#file_name_${element.id}`)
+      console.log(file_button)
       const submit_button = document.querySelector(`#submit_btn_${element.id}`)
 
       file_button.innerHTML = element.value.split("\\").at(-1)

@@ -1,10 +1,11 @@
 <link rel="stylesheet" href="/css/calendar.css" />
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <body>
   <div id='calendar' class="calendar"></div>
 </body>
 <script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.15/index.global.min.js'></script>
 <script>
+  let eventoSeleccionado = null;  
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
@@ -37,6 +38,8 @@
         .then(response => response.json())
         .then(data => {
           const formattedEvents = data.map(event => ({
+            id: event.id,
+            calendarId: event.calendarId,
             title: event.title,
             start: event.start,
             end: event.end,
@@ -60,9 +63,24 @@
       eventClick: function(info) {
         
         const popup = document.getElementById('pop-up');
-        if (popup) {
+        const deleteButton = document.querySelector('#pop-up .is-flex .button');
+        if (popup && deleteButton) {
+          console.log("event", info.event);
           const endDate = info.event.end;
 
+          eventoSeleccionado = info.event;
+
+          const eventIdToDelete = info.event.id;
+          const calendarIdToDelete = info.event.extendedProps.calendarId;
+          console.log("calendario de evento", calendarIdToDelete);
+
+          if (allowedCalendarIds.includes(calendarIdToDelete)) {
+            deleteButton.style.display = 'block'; 
+          } else {
+            deleteButton.style.display = 'none'; 
+          }
+
+          // Opciones para formato en español
           const fechaOptions = { year: 'numeric', month: 'long', day: 'numeric' };
           const horaOptions = { hour: '2-digit', minute: '2-digit' };
           popup.style.display = 'block'; 
@@ -75,6 +93,9 @@
           document.getElementById('event-hour-end').innerText = endDate ? endDate.toLocaleTimeString('en-US', horaOptions)
             : 'No end hour availablr';
           document.getElementById('event-details').innerText = info.event.extendedProps.description || 'No description available';
+          
+          popup.dataset.eventId = eventIdToDelete;
+          popup.dataset.calendarId = calendarIdToDelete;
         }
       }
     });
@@ -85,5 +106,60 @@
     const popup = document.getElementById('pop-up');
     popup.style.display = 'none'; 
   }
+
+  function deleteEvent(eventId, calendarId) {
+    const popup = document.getElementById('pop-up');
+    const csrf = document.getElementById('_csrf').value;
+    const eventIdToDelete = popup.dataset.eventId;
+    const calendarIdToDelete = popup.dataset.calendarId;
+    console.log()
+    fetch('/deleteEvent', {
+      method: "POST",
+      headers: {
+        'Content-Type': 'application/json',
+        'csrf-token': csrf,
+      },
+      body: JSON.stringify({ eventId: eventIdToDelete, calendarId: calendarIdToDelete })
+    })
+    .then(response => {
+      popup.style.display = 'none';
+      if (response.ok) {
+        const Toast = Swal.mixin({
+          toast: true,
+          position: 'top-end',
+          showConfirmButton: false,
+          timer: 2000,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+
+        Toast.fire({
+          icon: 'success',
+          title: 'Successfully deleted event'
+        });
+
+        setTimeout(() => {
+          window.location.href = '/';   
+        }, 2000);
+      } else {
+        return response.json().then(errorData => {
+          throw new Error(errorData.error || 'Error desconocido al eliminar el evento.');
+        });
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+        icon: 'error',
+        title: 'Oops...',
+        text: error.message || 'The event could not be deleted',
+      });
+    });
+  }
+
+
+
 </script>
 
