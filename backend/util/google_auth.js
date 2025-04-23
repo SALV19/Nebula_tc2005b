@@ -5,7 +5,8 @@ const User = require("../models/user.model");
 const scope_def = [
   "email",
   "profile",
-  "https://www.googleapis.com/auth/calendar"
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/drive"
 ];
 
 passport.use(

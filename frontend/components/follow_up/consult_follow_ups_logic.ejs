@@ -1,6 +1,8 @@
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
 
-    console.log("entro a consult follow ups logic");
+    // console.log("entro a consult follow ups logic");
 
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
@@ -49,7 +51,8 @@ function TableFollowUps(data) {
             <tbody>`;
 
     data.fechasAgendadas.forEach((fecha, idx) => { 
-        const indicadorAverage = get_average_progress(data, fecha);       
+        const indicadorAverage = get_average_progress(data, fecha);   
+        console.log(`id-${idx}:`, data.id_evaluacion[idx]);    
         table_content += `<tr class="fecha-row" data-index="${idx}">`;
             table_content += `<td style="text-align: left; width: 10px;">
                 <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
@@ -63,8 +66,13 @@ function TableFollowUps(data) {
 
     const formattedDate = formatDate(fecha.fechaAgendada);
 
+    if (data.permissions?.includes('consult_followUps')) {
+            const completeName = fecha.nombre + ' ' + fecha.apellidos;
+            table_content += `<td class="fixed-width"> ${completeName}</td>`;
+        }
+
         table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
-        console.log(fecha.fechaAgendada);             
+        // console.log(fecha.fechaAgendada);             
   // Columna de fecha
         table_content += `<td class='is-flex is-align-items-center'>
                             <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
@@ -73,11 +81,12 @@ function TableFollowUps(data) {
                                 <div class="progress-bar-consult mr-2 ${get_progress_color(data, fecha)}" style="--completion: ${indicadorAverage}%;"></div>
                             </div>
                         </td>`
+
         table_content += `</tr>`;
 
         // Fila adicional oculta por defecto
         table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
-                            <td colspan="3" class="has-background">
+                            <td colspan="4" class="has-background">
                                 <div class="columns">
                                     <!-- Primera columna -->
                                     <div class="column">
@@ -103,6 +112,14 @@ function TableFollowUps(data) {
                                                     <p class="response-text hidden-content-viewF">${respuesta}</p>
                                                 </div>`;
                                         });
+                                        if (data.permissions?.includes('consult_followUps')) {
+                                            table_content += ` <div class="button-container">
+                                                                    <button class="button-style" id="buttn-${idx}" value="${data.id_evaluacion[idx]}">`
+                                                                        console.log("Data", data.id_evaluacion[idx]);
+                                                                        table_content += `DELETE 
+                                                                    </button>
+                                                                </div>`
+                                        }
         table_content += `           </div>
                                     </div>
                                     <!-- Segunda columna -->
@@ -115,7 +132,7 @@ function TableFollowUps(data) {
                                     <div class="column is-one-fifth">
                                         Notes
                                         <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
-                                        <button class="button is-success mt-2 mx-6" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
+                                        <button class="button is-success mt-2 mx-6 button-style-s" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">SUBMIT</button>
                                     </div>
                                 </div>
                             </td>
@@ -145,6 +162,7 @@ function TableFollowUps(data) {
                 }]
             },
             options: {
+                backgroundColor: '#454545',
                 plugins: {
                     legend: {
                         display: false
@@ -152,14 +170,21 @@ function TableFollowUps(data) {
                 },
                 scales: {
                     r: {
-                        backgroundColor: "#FFFF",
-                        hoverBackgroundColor: "#767574",
-                        angleLines: { display: true },
+                        backgroundColor: "#454545",
+                        hoverBackgroundColor: "#FFFFF",
+                        angleLines: { 
+                            display: false,
+                        },
+                        grid: {
+                            color: "#EEEEEE" 
+                        },
                         suggestedMin: 0,
                         suggestedMax: 5,
                         ticks: {
-                            stepSize: 1, 
-                            beginAtZero: true
+                            color: '#EEEEEE',
+                            backdropColor: '#454545',
+                            stepSize: 1,  
+                            beginAtZero: true,
                         },
                         pointLabels: {  
                             color: "#FFFF", 
@@ -253,15 +278,40 @@ document.querySelectorAll('.toggle-question').forEach(question => {
     });
 });
 
+    const buttons = document.querySelectorAll(".button-style"); 
+
+    buttons.forEach((btn) => {
+        btn.addEventListener("click", (e) => {
+            const idEvaluacion = e.target.value;
+            console.log("ID de evaluación:", idEvaluacion);
+            Swal.fire({
+                title: "Are you sure?",
+                text: `Do you want to delete this evaluation?`,
+                icon: "question",
+                showCancelButton: true,
+                confirmButtonColor: `#59A250`,
+                cancelButtonColor: "#7066E0",
+                confirmButtonText: "Yes, update it!"
+              }).then((result) => {
+                if (result.isConfirmed) {
+                    delete_Eval(idEvaluacion); 
+                }
+              })
+        });
+    });
+
+
 }
+
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = ( ) => {
     console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
-    const route = selected_option.innerHTML
+    const route = selected_option.getAttribute('data-route');
     fetch(`/follow_ups/${route}`, {
+    
     method: 'GET',
     headers: {
             'Content-Type': 'application/json',
@@ -276,4 +326,43 @@ const get_info_FU = ( ) => {
     })
     .catch(e => console.log(e))
 }
+
+    const delete_Eval = (id_evaluacion) => {
+        console.log("entro al post delete");
+        const csrf = document.getElementById('_csrf').value;
+        const value = document.querySelector('button-style');
+        console.log("VALOR: ", id_evaluacion);
+
+        fetch('/follow_ups/deleteEval', {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrf
+            },
+            body: JSON.stringify({
+                valor: id_evaluacion,
+            }),
+        })
+        .then(response => {
+            console.log("Entro al response", response);
+            return response.json()
+        })
+        .then(data => {
+            Swal.fire({
+                title: "Updated!",
+                text: `The request has been updated.`,
+                icon: "success",
+            });
+            get_info_FU();
+        })
+        .catch(e => {
+            Swal.fire({
+                title: "Error!",
+                text: "There was a problem deleting the evaluation. Please try again.",
+                icon: "error",
+            });
+            console.error("Update error:", e);
+        });
+    };
+
 </script>

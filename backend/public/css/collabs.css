@@ -64,6 +64,9 @@
     align-items: center;
     gap: 0.8vw; 
 }
+#modality {
+    margin-top: .5rem;
+}
 
 .line-input {
     border: none;
@@ -100,11 +103,15 @@
     margin-top: 0; 
 }
 
-.buttons {
-    position: relative;
+.vc{
+    margin:3%;
+    color:#EEEEEE;
+}
+
+.my_buttons {
     width: 100%;
-    display: flex; 
-    justify-content: flex-end; 
+    display: flex;
+    justify-content: end;
 }
 
 .button.is-save {
@@ -168,4 +175,26 @@ select option[disabled] {
 
 .ml-6, .mx-6 {
     margin-left: 5.5rem !important;
+}
+
+textarea{
+    resize:none;
+}
+
+textarea::-webkit-scrollbar {
+    width: 0.0;
+}
+textarea::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+textarea::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+textarea::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }

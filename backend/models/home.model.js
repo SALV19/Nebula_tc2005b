@@ -32,20 +32,196 @@ module.exports = class Requests {
             `, [id])
         }
     }
+    
+    static async fetchReqHome(offset) {
+        const [rows] = await db.execute(`SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, ds.fecha
+        FROM solicitudes_falta sf, dias_solicitados ds
+        WHERE sf.id_solicitud_falta = ds.id_solicitud_falta
+        ORDER BY fecha DESC
+        LIMIT 8 OFFSET ?`, [offset]);
+    
+        return rows; // Return the rows directly
+    }
 
-    static async fetchRequests(id_collab, offset){
-        return db.execute(`
-            SELECT sf.id_colaborador, sf.fecha, sf.estado
-            FROM solicitudes_falta sf, dias_solicitados ds, colaborador c
-            INNER JOIN dias_solicitados ds
+    static async fetchTeamRequests(email, offset) {
+        console.log("Email",email);
+        console.log("offset",offset);
+        const [rows] = await db.execute(
+            `SELECT  c.email, c.nombre, c.apellidos, sf.*, ds.fecha
+                FROM solicitudes_falta sf
+                JOIN dias_solicitados ds
                 ON ds.id_solicitud_falta = sf.id_solicitud_falta
-            INNER JOIN solicitades_falta sf
-                ON sf.id_colaborador = c.id_colaborador
+                JOIN colaborador c
+                ON c.id_colaborador = sf.id_colaborador
+                JOIN equipo e 
+                ON e.id_colaborador = c.id_colaborador
+                JOIN departamento d
+                ON d.id_departamento = e.id_departamento
+                WHERE d.nombre_departamento = (
+                    SELECT nombre_departamento
+                    FROM colaborador c
+                    INNER JOIN equipo e
+                    ON c.id_colaborador = e.id_colaborador
+                    INNER JOIN departamento d
+                    ON d.id_departamento = e.id_departamento
+                    WHERE c.email = ?
+                )
+                AND e.id_rol = 1
+                AND c.email != ?
+                GROUP BY sf.id_solicitud_falta
+                ORDER BY sf.estado ASC, ds.fecha ASC
+                LIMIT 8 OFFSET ?`, [email, email, offset]);
+        return rows;
+    }
+
+    static async fetchByLoggedColab(offset, id_colaborador) {
+        const [rows] = await db.execute(
+          `SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, MIN(ds.fecha) AS fecha
+            FROM solicitudes_falta sf
+            JOIN dias_solicitados ds
+            ON sf.id_solicitud_falta = ds.id_solicitud_falta
             WHERE sf.id_colaborador = ?
-            LIMIT 7 OFFSET ?`, [id_collab, offset])
+            GROUP BY sf.id_solicitud_falta
+            ORDER BY fecha DESC
+            LIMIT 8 OFFSET ?
+            `,
+          [id_colaborador, offset]
+        );
+        console.log("Rows: ", rows);
+        return rows;
     }
     static async fetchAdmsFaults(id_colaborador){
         return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
+    }
+
+    static async metric_month(){
+        const counter = await db.execute(`SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
+                    AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
+                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)
+        return counter[0];
+    }
+    static async metric_trimester(){
+        const counter = await db.execute(`
+            SELECT 
+                ( 
+                    (SELECT COUNT(*) 
+                    FROM colaborador c 
+                    WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
+                    AND fechaSalida IS NOT NULL)
+                / 
+                    (SELECT COUNT(*) 
+                    FROM colaborador c 
+                    WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
+                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))
+                ) * 100 AS indice_rotacion;
+            `)
+        return counter[0];
+    }
+
+    static async metric_semester(){
+        const counter = await db.execute(`
+            SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
+                AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 6 MONTH 
+                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)        
+        return counter[0];                                      
+    }
+    static async metric_anually(){
+        const counter = await db.execute(`
+            SELECT 
+            ( 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
+                AND fechaSalida IS NOT NULL)
+            / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 12 MONTH 
+                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))
+            ) * 100 AS indice_rotacion;
+        `)
+        return counter[0];
+    }
+
+    static async h_Rate_M(){
+        const percentage = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        return percentage[0];
+    }
+    static async h_rate_T(){
+        const percentage = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        return percentage[0];
+    }
+    static async h_Rate_S(){
+        const percentage = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        return percentage[0];
+    }
+    static async h_Rate_Y(){
+        const percentage = await db.execute(`
+            SELECT (
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
+                AND fechaIngreso IS NOT NULL)
+                / 
+                (SELECT COUNT(*) 
+                FROM colaborador c 
+                WHERE estado = 1)
+            ) * 100 AS contratacionM
+        `)
+        return percentage[0];
     }
 }
 

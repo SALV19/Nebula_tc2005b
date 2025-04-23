@@ -1,0 +1,74 @@
+@startuml REQ_40
+actor User as u
+boundary reports.router.js as rr
+boundary reports.ejs as re
+control reports.controller.js as rc
+entity reports.model.js as rm
+database Nebula as db
+
+activate u
+u -> rr : GET /reports
+deactivate u
+activate rr
+rr -> rc : get_reports(request, response)
+deactivate rr
+activate rc 
+rc -> re : response.render('reports.ejs')
+deactivate rc
+activate re
+re -> u : HTML
+deactivate re
+activate u
+u ->> rr : fetch('/reports' \nmethod: POST\nheader: {\n\t'Content-Type': 'application/json',\n\tcsrfToken: csrfToken\n}\n body: {\n\tfilter: filter_obj\n1})
+activate rr
+rr ->> rc : get_reports_info(request, response)
+deactivate rr
+activate rc
+rc -> rc : period = get_periodicity(request.body.periodicity)
+alt request.body.filter == null
+  rc ->> rm : Reports.fetchGeneral(period)
+  activate rm
+  rm ->> db : SELECT nombre_empresa, indicador, AVG(valor_metrica)...
+  activate db
+  db -->> rm : [nombre_empresa, indicador, AVG(valor_metrica)] as General
+  deactivate db
+  rm -->> rc : [General]
+  deactivate rm
+  rc -->> u : response.json([General])
+else request.body.filter => {company: [companies]}
+  rc ->> rm : Reports.fetchCompany(period)
+  activate rm
+  rm ->> db : SELECT nombre_departamento, indicador, AVG(valor_metrica)... \nWHERE empresa = comanies...
+  activate db
+  db -->> rm : [nombre_departamento, indicador, AVG(valor_metrica)] as Company
+  deactivate db
+  rm -->> rc : [Company]
+  deactivate rm
+  rc -->> u : response.json([Company])
+else request.body.filter => {company: [companies], department: [departments]}
+  rc ->> rm : Reports.fetchDepartment(period)
+  activate rm
+  rm ->> db : SELECT nombre_departamento, indicador, AVG(valor_metrica)... \nWHERE empresa = [companies] \nAND nombre_departamento = [departments]
+  activate db
+  db -->> rm : [nombre_departamento, indicador, AVG(valor_metrica)] as Company
+  deactivate db
+  rm -->> rc : [Department]
+  deactivate rm
+  rc -->> u : response.json([Department])
+else request.body.filter => {comapny: [companies], , department: [departments], collabs: [collabs]}
+  rc ->> rm : Reports.fetchByColaborator(period)
+  activate rm
+  rm ->> db : SELECT nombre_departamento, indicador, AVG(valor_metrica)... \nWHERE empresa = [companies] \nAND nombre_departamento = [departments]\nAND nombre = [collabs[0]] \nAND apellido = [collabs[1]]
+  activate db
+  db -->> rm : [nombre_departamento, indicador, AVG(valor_metrica)] as Company
+  deactivate db
+  rm -->> rc : [Collabs]
+  deactivate rm
+  rc -->> u : response.json([Collabs])
+end
+deactivate rc
+u -->> u : response.json() => data
+u -> u : generate_graph(filter, data)
+
+
+@enduml

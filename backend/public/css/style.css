@@ -4,8 +4,9 @@
 
 body, section, table, thead, tr {
   background-color: #242424;
+  font-family: "Montserrat", sans-serif;
+  font-style: normal;
 }
-
 body {
   height: 102vh;
 }
@@ -21,10 +22,7 @@ body {
 }
 
 footer {
-  position: absolute; 
-  top: 95%;
-  right: 0;
-  width: 100vw;
+  
 }
 
 
@@ -32,7 +30,8 @@ footer {
 html,
 body,
 #app {
-  height: 105vh;
+  min-height: 105vh;
+  max-height: auto;
   background-color: #242424;
 }
 
@@ -93,6 +92,6 @@ body,
   font-size: 1.5vh;
   display: inline-block;
   margin-right: 1vh;
-  margin-left: 1vh; 
+  margin-left: 1vh;
 }
 

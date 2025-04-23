@@ -1,0 +1,34 @@
+<script>
+  function add_info_to_select(data) {
+    const select_collab = document.querySelector("#absent")
+    let collabs_names = ''
+    data.colaboradores.forEach(c => {
+      collabs_names += `<option value="${c.id_colaborador}">${c.nombre} ${c.apellidos}</option>`
+    });
+    select_collab.innerHTML += collabs_names
+  }
+
+  function addFault() {
+    const date = document.querySelector("#date")
+    date.valueAsDate = new Date()
+    const popup = document.getElementById("fault-pop-up");
+    if (popup) {
+      popup.style.display = "flex";
+    }
+
+    fetch('/view_collabs/get_collabs_name', {
+      method: "GET"
+    })
+      .then(response => response.json())
+      .then(data => add_info_to_select(data))
+      .catch(error => console.error(data))
+  }
+  function closeFaultPopup() {
+    const popup = document.getElementById("fault-pop-up");
+    if (popup) {
+      popup.style.display = "none";
+    }
+  }
+
+
+</script>
