@@ -412,10 +412,13 @@
         
         const subtitle = document.querySelector(".report-info")
         subtitle.style.margin = "0";
+        subtitle.classList.add("report-info-print")
 
         const title = document.querySelector("#title").value
         const title_element = document.createElement("h1")
         title_element.innerHTML = title
+        title_element.id = "title_text"
+        title_element.classList.add("title_report")
         subtitle.parentElement.appendChild(title_element)
         
         await fetchData(true).then(t => {
@@ -439,6 +442,8 @@
                     footer.classList.remove("hide")
 
                     subtitle.removeAttribute("style")
+                    document.querySelector("#title_text").remove()
+                    subtitle.classList.remove("report-info-print")
                 }, 500)
             }, 500)
         })

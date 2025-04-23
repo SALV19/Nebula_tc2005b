@@ -145,16 +145,27 @@ label:hover, label:active{
     display: flex; 
     justify-content: flex-end; 
 }
+.report-container {
+    height: 33rem;
+    margin-right: 40rem;
+}
 
 .report-info {
     font-size: 2vh;
     color: #EEEEEE;
     margin-top: 2vh;
     margin-left: 1vh;
+    overflow-y: scroll;
+}
+.report-info-print {
+    font-size: 1.5vh;
 }
 
 .multiple-radar-container {
-    width: 90vw;
+    min-width: 65vw;
+    max-width: 100vw;
+    height: 65vh;
+    overflow-y: scroll;
 }
 
 .hide {
@@ -168,4 +179,11 @@ label:hover, label:active{
 @media print {
     @page { margin: 0; }
     body { margin: 1.6cm; }
+}
+
+.title_report {
+    font-size: 1.5rem;
+    font-family: 'Montserrat';
+    font-weight: bold;
+    width: 100%;
 }
