@@ -5,7 +5,6 @@ exports.get_404 = (request, response, next) => {
 };
 
 exports.get_permissions = async (request, response, next) => {
-
   if(request.cookies.email) {
     request.session.email = request.cookies.email;
     request.session.permissions = request.cookies.permissions;
@@ -22,14 +21,16 @@ exports.get_permissions = async (request, response, next) => {
   if (request.user) {
     request.session.email = request.user.profile.emails[0].value;
     if (request.user.user?.id_colaborador) {
-      request.session.id_colaborador = request.user.user.id_colaborador
-      if(first_login(request.user.user.contrasena)) {
+      request.session.id_colaborador = request.user.user.id_colaborador;
+      console.log("Resultado de first_login:", first_login(request.user.user.contrasena));
+      const isFirstLogin = await first_login(request.user.user.contrasena);
+      if(isFirstLogin === true) {
         request.session.firstLogin = true;
         request.session.sourceRoute = "initial";
         console.log("viene de google");
         response.redirect('/log_in/initial_password');
         return; 
-      }
+      } 
     }
     else {
       request.session.id_colaborador =null
@@ -53,6 +54,7 @@ exports.get_permissions = async (request, response, next) => {
 async function first_login(dbpassword) {
   const prefijo = "first";
   if (dbpassword.startsWith(prefijo)) {
+    console.log("entro a lo del prefijo");
     return true;
   } else {
     console.log("no entro a la verificacion de prefijo");
