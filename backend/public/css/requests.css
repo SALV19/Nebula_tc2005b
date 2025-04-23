@@ -262,7 +262,7 @@ textarea{
     padding: 0rem;
     font-size: 0.9rem;
     color: white;
-    border-radius: 5px;
+    border-radius: 4rem !important;
     width: 7rem;
 }
 
@@ -292,3 +292,46 @@ textarea{
     padding-top: 0.8rem !important;
     padding-bottom: 0.8rem !important;
 } 
+.button.has-text-white.is-danger.mr-4 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;    
+    margin-top: 0.5rem;
+
+}
+
+.button.has-text-white.is-danger.mr-4:hover {
+    background-color: rgb(150, 50, 45);
+}
+
+.button.has-text-white.is-success{
+    background-color: #59A250;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    color: #EEEEEE;
+    margin-top: 0.5rem;
+    padding: -1rem;
+}
+.button.has-text-white.is-success:hover {
+    background-color: #41753b;
+}
+.checkbox{
+    font-size: small;
+}

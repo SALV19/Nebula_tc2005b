@@ -41,7 +41,7 @@
     <% if (google_outh) { %>
       <% if (permissions.includes('add_event')) {%> 
       <div style="display: flex;">
-        <button class="button is-link is-rounded" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
+        <button class="button is-link" style="margin-left: auto;" onclick="openAddEventPopup()">+Add event</button>
         <%- include('includes/_addEvent_form.ejs') %>
         </div>
       <% } %> 

@@ -519,5 +519,4 @@ module.exports = class Colaborador {
     console.log("Result: ", result[0]);
     return result[0]
   }
-
 };

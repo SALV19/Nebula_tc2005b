@@ -202,4 +202,65 @@ textarea::-webkit-scrollbar-thumb:hover {
     background-color: #59A250;
     color: #EEEEEE;
     margin-left: 13rem;
+    border-radius: 4px;
+    color: #EEEEEE;
+    font-weight: 600;
+    font-size: medium;
+}
+.reactivate:hover {
+    background-color: #41753b;
+}
+.button-personal-d {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: medium;
+}
+
+.button-personal-d:hover {
+    background-color: rgb(150, 50, 45);
+}
+.button-personal-u {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: #4358b8;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: medium;
+}
+
+.button-personal-u:hover {
+    background-color: #304cc7;
+}
+.add-colllab{
+    background-color: #59A250;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    color: #EEEEEE;
+}
+.add-collab:hover {
+    background-color: #41753b;
 }

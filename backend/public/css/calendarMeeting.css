@@ -184,7 +184,15 @@ button:hover {
 
 .button.is-success {
     background-color: #59A250;
-    color:#fff;
+    color: #EEEEEE;
+    border-radius: 4px;
+    color: #EEEEEE;
+    font-weight: 600;
+    font-size: medium;
+    margin-top: 2rem;
+}
+.button.is-success:hover{
+    background-color: #41753b;
 }
 
 .line-input-calendar {

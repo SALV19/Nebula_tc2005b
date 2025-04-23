@@ -114,3 +114,20 @@ h1{
 .off_btn:hover {
     background-color: #454545;
 }
+.b{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: small;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+  }
+.b:hover {
+    background-color: rgb(150, 50, 45);
+}

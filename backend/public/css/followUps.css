@@ -153,12 +153,16 @@
     color: #FFFF;
     width: 5vw;
     height: 2vw;
-    border-radius: 0.5vw;
+    border-radius: 0.3rem;
     margin-top: 1vw;
     align-items: center;
     justify-content: center;
     margin-right: 3vw;
-    font-size: small;
+    font-size: medium;
+    font-weight: 600;
+}
+.approve-button:hover{
+    background-color: #41753b;
 }
 
 .button-container {
@@ -407,9 +411,17 @@
     width: 6rem;
     height: 2rem;
     font-size: small;
-    background-color: #B8453E;
-    color: #EEEEEE;
     border-radius: 0.5rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
 }
 .button-style-s{
     width:6rem;
@@ -417,12 +429,16 @@
     font-size: small;
     background-color:#59A250;
     color:#EEEEEE;
-    border-radius: 0.5rem;
+    border-radius: 0.5rem; 
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+}
+.button-style-s:hover{
+    background-color: #41753b;
 }
 .button-style:hover{
-    background-color: #d04e47;
+    background-color: rgb(150, 50, 45);
 }
-.space-between{
-    padding-top: 0.8rem !important;
-    padding-bottom: 0.8rem !important;
-} 
