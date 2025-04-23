@@ -162,7 +162,7 @@ body{
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out;
-    font-size: 15px;
+    font-size: 13px;
 }
 .button.is-link:hover{
     background-color: rgb(150, 50, 45);
@@ -192,7 +192,8 @@ body{
 
 .button.is-success {
     padding: 0.25em 0.5em;
-    width:fit-content;
+    width:6rem;
+    height: 2rem;
     display: inline-block;
     background-color: #59A250;
     color:#EEEEEE;
@@ -305,7 +306,7 @@ body{
     color: white;
     width: 4rem;              
     height: 1.5rem;
-    border-radius: 0.5rem;
+    border-radius: 4px;
     margin: 0.4rem auto 0 auto;  
     display: flex;
     align-items: center;
@@ -315,6 +316,10 @@ body{
     cursor: pointer;
     border: none;
     transition: background-color 0.2s ease;
+}
+.approve-button:hover,
+.hr-button:hover{
+    background-color: #41753b;
 }
 .requests{
     background-color: transparent;

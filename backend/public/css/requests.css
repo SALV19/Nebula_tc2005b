@@ -301,7 +301,8 @@ textarea{
     transition: background-color 0.2s ease-in-out;
     font-size: small;    
     margin-top: 0.5rem;
-
+    width: 4rem;
+    height: 2rem;
 }
 
 .button.has-text-white.is-danger.mr-4:hover {
@@ -323,6 +324,8 @@ textarea{
     color: #EEEEEE;
     margin-top: 0.5rem;
     padding: -1rem;
+    width: 4rem;
+    height: 2rem;
 }
 .button.has-text-white.is-success:hover {
     background-color: #41753b;
@@ -342,8 +345,10 @@ textarea{
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out;
-    font-size: medium;
+    font-size: small;
     margin-right: 1rem;
+    width: 6rem;
+    height: 2rem;
 }
 .button.is-link.is-rounded.is-normal.button-request-update:hover{
     background-color: #304cc7;
@@ -360,7 +365,9 @@ textarea{
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out;
-    font-size: medium;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
 }
 .button.is-link.is-rounded.is-normal.button-request-delete:hover{
     background-color: rgb(150, 50, 45);
@@ -380,7 +387,16 @@ textarea{
     color: #EEEEEE;
     margin-top: 0.5rem;
     padding: -1rem;
+    width: 6rem;
+    height: 2rem;
 }
 .button.is-save:hover{
     background-color: #41753b;
+}
+.dropdown-content{
+    font-style: normal;
+    font-size: medium;
+}
+label{
+    margin-top: 0.5rem;
 }

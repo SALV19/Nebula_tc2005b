@@ -154,12 +154,13 @@
     width: 5vw;
     height: 2vw;
     border-radius: 0.3rem;
-    margin-top: 1vw;
     align-items: center;
     justify-content: center;
     margin-right: 3vw;
-    font-size: medium;
+    font-size: small;
     font-weight: 600;
+    width: 6rem;
+    height: 2rem;
 }
 .approve-button:hover{
     background-color: #41753b;
@@ -167,10 +168,10 @@
 
 .button-container {
     display: flex;
-    justify-content: center; /* Centra horizontalmente */
-    align-items: center; /* Centra verticalmente (opcional) */
-    height: 100px; /* Ajusta la altura según necesites */
-    width: 100%; /* Asegura que ocupe todo el ancho disponible */
+    justify-content: center; 
+    align-items: center;
+    height: 100px;
+    width: 100%; 
 }
 
 .canvas {
@@ -411,7 +412,7 @@
     width: 6rem;
     height: 2rem;
     font-size: small;
-    border-radius: 0.5rem;
+    border-radius: 4px;
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -429,7 +430,7 @@
     font-size: small;
     background-color:#59A250;
     color:#EEEEEE;
-    border-radius: 0.5rem; 
+    border-radius: 4px; 
     border: none;
     cursor: pointer;
     font-weight: 600;
@@ -441,4 +442,8 @@
 }
 .button-style:hover{
     background-color: rgb(150, 50, 45);
+}
+.space-between{
+    padding-top: 1.5rem;
+    padding-bottom: 1.5rem;
 }

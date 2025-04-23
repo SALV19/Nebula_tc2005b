@@ -112,13 +112,21 @@
     width: 100%;
     display: flex;
     justify-content: end;
+    margin-top: -1rem;
 }
-
+.my_button {
+    width: 100%;
+    display: flex;
+    justify-content: end;
+}
 .button.is-save {
     background-color: #59A250; 
     color: #fff; 
     border: none; 
     margin-top: 3vh;
+    width: 6rem;
+    height: 2rem;
+    font-size: small;
 }
 
 .error {
@@ -205,7 +213,9 @@ textarea::-webkit-scrollbar-thumb:hover {
     border-radius: 4px;
     color: #EEEEEE;
     font-weight: 600;
-    font-size: medium;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
 }
 .reactivate:hover {
     background-color: #41753b;
@@ -222,7 +232,9 @@ textarea::-webkit-scrollbar-thumb:hover {
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out;
-    font-size: medium;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
 }
 
 .button-personal-d:hover {
@@ -240,7 +252,9 @@ textarea::-webkit-scrollbar-thumb:hover {
     font-weight: 600;
     text-decoration: none;
     transition: background-color 0.2s ease-in-out;
-    font-size: medium;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
 }
 
 .button-personal-u:hover {
@@ -260,6 +274,8 @@ textarea::-webkit-scrollbar-thumb:hover {
     font-weight: 600;
     transition: background-color 0.2s ease-in-out;
     color: #EEEEEE;
+    width: 6rem;
+    height: 2rem;
 }
 .add-collab:hover {
     background-color: #41753b;

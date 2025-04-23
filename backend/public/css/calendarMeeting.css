@@ -188,8 +188,11 @@ button:hover {
     border-radius: 4px;
     color: #EEEEEE;
     font-weight: 600;
-    font-size: medium;
+    font-size: small;
     margin-top: 2rem;
+    padding:-1rem;
+    width: 6rem;
+    height: 2rem;
 }
 .button.is-success:hover{
     background-color: #41753b;
