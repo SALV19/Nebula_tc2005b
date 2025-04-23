@@ -20,7 +20,9 @@
       method: "GET"
     })
       .then(response => response.json())
-      .then(data => add_info_to_select(data))
+      .then(data => {
+        add_info_to_select(data)
+      })
       .catch(error => console.error(data))
   }
   function closeFaultPopup() {

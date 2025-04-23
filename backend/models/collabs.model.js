@@ -516,6 +516,7 @@ module.exports = class Colaborador {
     return db.execute(`SELECT nombre, apellidos, id_colaborador
                       FROM colaborador
                       WHERE email <> ?
+                      AND estado = 1
         `, [email])
   }
 
@@ -529,5 +530,13 @@ module.exports = class Colaborador {
         WHERE id_colaborador = ?
     `, [formattedDate, id_colaborador]);
     return result
+  }
+  static async reactivate_Collab(id_colaborador){
+    const result = await db.execute(`
+        UPDATE colaborador
+        SET estado = 1, fechaIngreso = CURRENT_DATE
+        WHERE id_colaborador = ?
+    `, [id_colaborador]);
+    return result[0]
   }
 };

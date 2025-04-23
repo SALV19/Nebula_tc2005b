@@ -95,34 +95,65 @@ module.exports = class Requests {
     }
 
     static async metric_month(){
-        const counter = await db.execute(`SELECT 
-            ( 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
-                    AND fechaSalida IS NOT NULL)
-            / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
-                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))
-            ) * 100 AS indice_rotacion;
+        const counter = await db.execute(`
+            SELECT 
+                (
+                    (
+                        SELECT COUNT(*) 
+                        FROM colaborador c 
+                        WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
+                        AND fechaSalida IS NOT NULL
+                    ) 
+                    / 
+                    (
+                        (
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH)
+                            )
+                            +
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                            )
+                        ) / 2.0
+                    )
+                ) * 100 AS indice_rotacion;
         `)
         return counter[0];
     }
     static async metric_trimester(){
         const counter = await db.execute(`
             SELECT 
-                ( 
-                    (SELECT COUNT(*) 
-                    FROM colaborador c 
-                    WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
-                    AND fechaSalida IS NOT NULL)
-                / 
-                    (SELECT COUNT(*) 
-                    FROM colaborador c 
-                    WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
-                    AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))
+                (
+                    (
+                        SELECT COUNT(*) 
+                        FROM colaborador c 
+                        WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
+                        AND fechaSalida IS NOT NULL
+                    ) 
+                    / 
+                    (
+                        (
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH)
+                            )
+                            +
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                            )
+                        ) / 2.0
+                    )
                 ) * 100 AS indice_rotacion;
             `)
         return counter[0];
@@ -131,16 +162,31 @@ module.exports = class Requests {
     static async metric_semester(){
         const counter = await db.execute(`
             SELECT 
-            ( 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
-                AND fechaSalida IS NOT NULL)
-            / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 6 MONTH 
-                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))
+            (
+                (
+                    SELECT COUNT(*) 
+                    FROM colaborador c 
+                    WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
+                    AND fechaSalida IS NOT NULL
+                ) 
+                / 
+                (
+                    (
+                        (
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 6 MONTH 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH)
+                        )
+                        +
+                        (
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                        )
+                    ) / 2.0
+                )
             ) * 100 AS indice_rotacion;
         `)        
         return counter[0];                                      
@@ -148,78 +194,118 @@ module.exports = class Requests {
     static async metric_anually(){
         const counter = await db.execute(`
             SELECT 
-            ( 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
-                AND fechaSalida IS NOT NULL)
-            / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 12 MONTH 
-                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))
-            ) * 100 AS indice_rotacion;
+                (
+                    (
+                        SELECT COUNT(*) 
+                        FROM colaborador c 
+                        WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
+                        AND fechaSalida IS NOT NULL
+                    ) 
+                    / 
+                    (
+                        (
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 12 MONTH 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH)
+                            )
+                            +
+                            (
+                                SELECT COUNT(*) 
+                                FROM colaborador c 
+                                WHERE fechaIngreso <= CURRENT_DATE 
+                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                            )
+                        ) / 2.0
+                    )
+                ) * 100 AS indice_rotacion;
         `)
         return counter[0];
     }
 
     static async h_Rate_M(){
         const percentage = await db.execute(`
-            SELECT (
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE 
-                AND fechaIngreso IS NOT NULL)
-                / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE estado = 1)
-            ) * 100 AS contratacionM
+        SELECT 
+            AVG(porcentaje_colaborador)  as percentage
+        FROM (
+            SELECT  
+                es.id_colaborador AS collab,
+                COUNT(es.id_evaluacion) AS eval,
+                ((AVG(mi.valor_metrica) / 5) * 100)  AS porcentaje_colaborador
+            FROM 
+                evaluaciones_de_seguimiento es
+            INNER JOIN  
+                metrica_indicadores mi ON es.id_evaluacion = mi.id_evaluacion
+            WHERE  
+                es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE
+            GROUP BY es.id_colaborador
+        ) AS promedios;
+
+
         `)
         return percentage[0];
     }
     static async h_rate_T(){
         const percentage = await db.execute(`
-            SELECT (
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE 
-                AND fechaIngreso IS NOT NULL)
-                / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE estado = 1)
-            ) * 100 AS contratacionM
+            SELECT 
+                AVG(porcentaje_colaborador)  as percentage
+            FROM (
+                SELECT  
+                    es.id_colaborador AS collab,
+                    COUNT(es.id_evaluacion) AS eval,
+                    ((AVG(mi.valor_metrica) / 5) * 100) AS porcentaje_colaborador
+                FROM 
+                    evaluaciones_de_seguimiento es
+                INNER JOIN  
+                    metrica_indicadores mi ON es.id_evaluacion = mi.id_evaluacion
+                WHERE  
+                    es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE
+                GROUP BY es.id_colaborador
+            ) AS promedios;
+
         `)
         return percentage[0];
     }
     static async h_Rate_S(){
         const percentage = await db.execute(`
-            SELECT (
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE 
-                AND fechaIngreso IS NOT NULL)
-                / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE estado = 1)
-            ) * 100 AS contratacionM
+            SELECT 
+                AVG(porcentaje_colaborador)  as percentage
+            FROM (
+                SELECT  
+                    es.id_colaborador AS collab,
+                    COUNT(es.id_evaluacion) AS eval,
+                    ((AVG(mi.valor_metrica) / 5) * 100)  AS porcentaje_colaborador
+                FROM 
+                    evaluaciones_de_seguimiento es
+                INNER JOIN  
+                    metrica_indicadores mi ON es.id_evaluacion = mi.id_evaluacion
+                WHERE  
+                    es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE
+                GROUP BY es.id_colaborador
+            ) AS promedios;
+
+
         `)
         return percentage[0];
     }
     static async h_Rate_Y(){
         const percentage = await db.execute(`
-            SELECT (
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE fechaIngreso BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE 
-                AND fechaIngreso IS NOT NULL)
-                / 
-                (SELECT COUNT(*) 
-                FROM colaborador c 
-                WHERE estado = 1)
-            ) * 100 AS contratacionM
+           SELECT 
+                AVG(porcentaje_colaborador)  as percentage
+            FROM (
+                SELECT  
+                    es.id_colaborador AS collab,
+                    COUNT(es.id_evaluacion) AS eval,
+                    ((AVG(mi.valor_metrica) / 5) * 100) AS porcentaje_colaborador
+                FROM 
+                    evaluaciones_de_seguimiento es
+                INNER JOIN  
+                    metrica_indicadores mi ON es.id_evaluacion = mi.id_evaluacion
+                WHERE  
+                    es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE
+                GROUP BY es.id_colaborador
+            ) AS promedios;
         `)
         return percentage[0];
     }

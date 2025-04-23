@@ -1,6 +1,6 @@
 <script>
     function createHR(data) {
-        const indiceRotacion = parseFloat(data.counter[0].contratacionM).toFixed(1);
+        const indiceRotacion = parseFloat(data.counter[0].percentage).toFixed(1);
         console.log("HR: ", data);
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
@@ -21,7 +21,7 @@
 
         content += `
                     <div class="metric-wrapper">
-                        <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG hiring rate</p>
+                        <p class="headingVac" style="text-align:center; padding-left:1rem;">AVG feelings</p>
                         <i class="bi bi-caret-down-fill is-clickable size-icon" id="hiring-rate-icon"></i>
                         <div class="hr-container control" id="HRoptions"> 
                             <div>
