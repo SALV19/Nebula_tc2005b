@@ -107,7 +107,7 @@ exports.get_vacations = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -132,7 +132,7 @@ exports.get_abscences = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -156,7 +156,7 @@ exports.get_collabs_requests = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
