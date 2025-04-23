@@ -264,7 +264,23 @@ body{
 .size-icon{
     font-size: 20px;
 }
-.options-container,
+.options-container{
+    background-color: #747474;
+    z-index: 9999;
+    width: 10rem;
+    height: 8rem;
+    border-radius: 6px;
+    padding: 1rem;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    margin-left: -10.5rem;
+    margin-top: 1.5rem;
+    display: none; 
+    color: #EEEEEE;
+    text-align: left !important;
+    font-size: x-small !important;
+}
 .hr-container{
     background-color: #747474;
     z-index: 9999;
@@ -281,6 +297,7 @@ body{
     color: #EEEEEE;
     text-align: left !important;
     font-size: x-small !important;
+
 }
 .approve-button,
 .hr-button {
