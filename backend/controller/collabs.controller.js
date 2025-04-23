@@ -4,10 +4,17 @@ const Empresa = require("../models/empresa.model");
 const Equipo = require("../models/equipo.model");
 const Rol = require("../models/rol.model");
 const Requests = require("../models/home.model");
+const fs = require('fs');
+const FaltaAdministrativa = require("../models/fa.model")
+const path = require('path')
+const pdf = require("html-pdf")
+
+const {google} = require('googleapis');
 
 const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
+const argon2 = require('argon2');
 
 let settings = {
   selectedOption: "active",
@@ -15,20 +22,31 @@ let settings = {
 
 exports.get_collabs = async (request, response) => {
   try {
-    const [collabsDataPues, collabsDataMod, depData, empData, rolData] =
+    const [collabsDataPues, collabsDataMod, depData, rolData] =
       await Promise.all([
         Colaborador.fetchAllColabPues(),
         Colaborador.fetchAllColabMod(),
         Departamento.fetchAllDep(),
-        Empresa.fetchAllEmp(),
+        // Empresa.fetchAllEmp(),
         Rol.fetchAllRol(),
       ]);
 
     const [rowsColP, fieldDataColPues] = collabsDataPues;
     const [rowsColM, fieldDataColMod] = collabsDataMod;
     const [rowsDep, fieldDataDep] = depData;
-    const [rowsEmp, fieldDataEmp] = empData;
     const [rowsRol, fieldDataRol] = rolData;
+    const empresa = rowsDep.reduce(
+      (accum, emp_dep) => {
+        if (!accum.has(emp_dep.nombre_empresa)) {
+          accum.set(emp_dep.nombre_empresa, [{departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento}])
+        }
+        else {
+          accum.get(emp_dep.nombre_empresa).push({departamento: emp_dep.nombre_departamento, id: emp_dep.id_departamento})
+        }
+        return accum
+      },
+      new Map()
+    )
 
     const successData = request.session.successData;
     request.session.successData = null;
@@ -42,8 +60,8 @@ exports.get_collabs = async (request, response) => {
       csrfToken: request.csrfToken(),
       puesto: rowsColP,
       modalidad: rowsColM,
-      empresa: rowsEmp,
-      departamento: rowsDep,
+      empresa: empresa,
+      // departamento: rowsDep,
       rol: rowsRol,
       successData,
       successDataUpdate,
@@ -75,8 +93,12 @@ exports.post_collab = (request, response) => {
     numbers: true,
   });
 
-  new_Colab
-    .save(password)
+  const foto = "link";
+  
+  argon2.hash(password)
+    .then(hashedPassword => {
+      return new_Colab.save(hashedPassword,foto);
+    })
     .then(([rows]) => {
       if (rows.length === 0)
         throw new Error("No se encontró el colaborador insertado.");
@@ -98,7 +120,7 @@ exports.post_collab = (request, response) => {
     })
     .catch((error) => {
       console.error(error);
-      response.redirect("/view_collabs?error=true");
+      response.redirect("/view_collabs?error=true&message=ER_DUP_ENTRY");
     });
 };
 
@@ -160,6 +182,64 @@ exports.get_collabs_info = async (request, response) => {
     abscences,
   });
 };
+exports.get_inactive = async (request, response) => {
+  const offset = request.body.offset * 10;
+  const filter = request.body.filter;
+  let collabs;
+  let diasDisponibles_Totales, abscences;
+
+  if (request.session.permissions.includes('consult_all_collabs')) {
+    [collabs] = await Colaborador.fetchInactiveCollabs(null, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+                        const dias_disponibles_totales = await contVac(null, null, colab_id=c.id_colaborador)
+                          .then((e) => {
+                            return e
+                          })
+                        return dias_disponibles_totales
+                      }))
+                    
+  }
+  else {
+    [collabs] = await Colaborador.fetchCollabs(request.session.email, offset, filter)
+      .then((data) => data)
+      .catch((e) => console.error(e));
+    abscences = await Promise.all(collabs.map(async (c) => {
+      const abscences = await Requests.fetchDaysApproved(null, id=c.id_colaborador)
+        .then(data => data[0])
+        .catch(e => {
+          console.error("Error fetching approved absences:", e);
+          return [];
+        });
+        return abscences.length
+    }))
+    diasDisponibles_Totales = await Promise.all(collabs.map(async (c) => {
+      const aaaa = await contVac(null, null, colab_id=c.id_colaborador)
+        .then((e) => {
+          return e
+        })
+      return aaaa
+    })) 
+  }
+  
+  response.json({
+    selectedOption: "Active",
+    collabs: collabs,
+    diasDisponibles_Totales: diasDisponibles_Totales,
+    abscences,
+  });
+};
 
 exports.get_collab_data = async (req, res) => {
   try {
@@ -167,6 +247,7 @@ exports.get_collab_data = async (req, res) => {
 
     const [collabResult] = await Colaborador.fetchCollabById(id);
     const [equipoResult] = await Equipo.fetchEquipoById(id);    
+
 
     res.json({
       colaborador: collabResult[0],
@@ -242,3 +323,269 @@ exports.update_collab = async (request, response) => {
     response.redirect("/view_collabs?error=true");
   }
 };
+
+exports.uploadFA = async (request, response)=> {
+  const { file } = request;
+  const my_file = file
+
+  //Validar tipo de archivo
+  const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
+  if (!allowedTypes.includes(my_file.mimetype)) {
+    return response.status(400).json({ success: false, message: 'Solo se permiten archivos PDF o DOCX' });
+  }
+
+  const googleLogin = request.user?.accessToken ? 1 : 0;
+
+  if (googleLogin == 1) {
+    const oauth2Client = new google.auth.OAuth2(
+      process.env.GOOGLE_CLIENT_ID, 
+      process.env.GOOGLE_CLIENT_SECRET, 
+      process.env.REDIRECT
+      // 'http://localhost:3000/log_in/success'
+    );
+    
+    oauth2Client.setCredentials({
+      access_token: request.user.accessToken 
+    });
+
+    const drive = google.drive({version: 'v3', auth: oauth2Client});
+    const id_fa = request.body.id_fa;
+    // Nombre para evitar duplicados
+    const fileName = `${id_fa}_${Date.now()}_${my_file.originalname}`; 
+
+    const requestBody = {
+      name: fileName,  
+      fields: 'id, name, webViewLink, mimeType',
+    };
+
+    const media = {
+      mimeType: my_file.mimetype,
+      body: fs.createReadStream(my_file.path),
+    };
+
+    try {
+      const fileUploaded = await drive.files.create({
+        requestBody,
+        media: media,
+      });
+
+      //Borra el archivo Temporal
+      fs.unlinkSync(my_file.path);
+
+      // Respuesta al frontend
+      
+      // Construye el enlace de visualización manualmente
+      const fileId = fileUploaded.data.id;
+      const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+
+      // Respuesta al frontend
+      // console.log('File ID:', fileId);
+      // console.log('Link:', fileLink);
+    
+      await FaltaAdministrativa.updateLink(id_fa, fileLink);
+
+      return response.json({
+        success: true,
+        fileId: fileId,
+        name: fileUploaded.data.name,
+        mimeType: fileUploaded.data.mimeType,
+        viewLink: fileLink,
+      });
+      // return file.data;
+    } catch (err) {
+      console.error("Error al subir a Drive:", err);
+      return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+    }
+  } else {
+      return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
+  }
+};
+exports.get_faults = async (request, response) => {
+  const offset = request.body.offset * 10;
+  // console.log("Offsets: ", offset);
+  
+  const filter = request.body.filter;
+  // console.log("Filtro", filter);
+
+  const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
+
+  const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
+
+  const faults = await Colaborador.fetchAllFaults();
+
+  // console.log("Total IDs obtenidos:", ids.length); 
+  // console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
+
+  const map = {};
+  rows.forEach(c => {
+    map[c.id_colaborador] = {
+      ...c,
+      faltas: [],
+    };
+  });
+
+  faults.forEach(f => {
+    if (map[f.id_colaborador]) {
+      map[f.id_colaborador].faltas.push({
+        id_fa: f.id_fa,
+        motivo: f.motivo,
+        fecha: f.fecha,
+        link: f.link
+      });
+    }
+  });
+
+  const resultado = Object.values(map);
+
+  response.json({
+    selectedOption: 'Faults',
+    permissions: request.session.permissions,
+    faults : resultado,
+  });
+}
+
+exports.get_collabs_name = async (request, response) => {
+  Colaborador.fetchCollabsName(request.session.email)
+    .then(([colaboradores]) => {
+      response.json({
+        colaboradores
+      })
+    })
+}
+
+exports.register_fault = async (request, response) => {
+  
+  const [[collab]] = await Colaborador.fetchCollabById(request.body.absent)
+  const name = collab.nombre + " " + collab.apellidos;
+
+  const imgPath = path.join(__dirname, "../public/img/nuclea.png");
+  const imgBase64 = fs.readFileSync(imgPath, "base64");
+
+
+  response.render('template_fautl', {
+    nuclea_img: `data:image/png;base64,${imgBase64}`,
+    date: request.body.date,
+    nombre_participantes: request.body.asistants,
+    nombre_colaboradores: name,
+    motivo: request.body.description,
+    consecuencias: request.body.consequences,
+    desición: request.body.decisions
+  }, 
+  (err, data) => {
+    if (err) {
+      console.log(err)
+      response.send(err);
+    } else {
+      let options = {
+          "height": "11.25in",
+          "width": "8.5in",
+          "header": {
+              "height": "20mm"
+          },
+          "footer": {
+              "height": "20mm",
+          },
+        };
+        pdf.create(data, options).toFile("report.pdf", async function (err, data) {
+          if (err) {
+            console.log(err)
+            response.send(err);
+          } else {
+            const googleLogin = request.user?.accessToken ? 1 : 0;
+            const my_file = fs.readFileSync(data.filename)
+            
+            const fileName = `${Date.now()}_FA`; 
+
+            if (googleLogin == 1) {
+              const oauth2Client = new google.auth.OAuth2(
+                process.env.GOOGLE_CLIENT_ID, 
+                process.env.GOOGLE_CLIENT_SECRET, 
+                process.env.REDIRECT
+                // 'http://localhost:3000/log_in/success'
+              );
+                
+              oauth2Client.setCredentials({
+                access_token: request.user.accessToken 
+              });
+              const drive = google.drive({version: 'v3', auth: oauth2Client});
+
+              const requestBody = {
+                name: fileName,  
+                fields: 'id, name, webViewLink, mimeType',
+              };
+              const media = {
+                mimeType: my_file.mimetype,
+                body: fs.createReadStream(data.filename),
+              };
+
+              try {
+                const fileUploaded = await drive.files.create({
+                  requestBody,
+                  media: media,
+                });
+
+                //Borra el archivo Temporal
+                fs.unlinkSync(data.filename);
+
+                // Respuesta al frontend
+                
+                // Construye el enlace de visualización manualmente
+                const fileId = fileUploaded.data.id;
+                const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+              
+                const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, fileLink)
+                fault.save()
+
+                return response.json({
+                  success: true,
+                  type: "drive",
+                  name: fileUploaded.data.name,
+                  viewLink: fileLink,
+                });
+                // return file.data;
+              } catch (err) {
+                console.error("Error al subir a Drive:", err);
+                return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+              }
+            } else {
+              const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
+              fault.save()
+
+                return response.json({
+                    success: true,
+                    type: "pdf",
+                    name: fileName,
+                    viewLink: `/view_collabs/download?filename=${fileName}`,
+                  });
+              
+            }
+            }
+        });
+    }
+  })
+  return  
+}
+
+exports.download = (request, response) => {
+  response.download(path.join(__dirname, '../../report.pdf'), request.query.filename + ".pdf")
+}
+exports.delete_Collab = async (request, response) => {
+  try {
+    const id_colaborador = request.body.valor;
+    const result = await Colaborador.deleteCollab(id_colaborador);
+
+    response.json({
+      success: true,
+      message: `Colaborador eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar colaborador:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar colaborador.' 
+    })
+  }
+}
+

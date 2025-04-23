@@ -1,0 +1,42 @@
+@startuml Req_44_Download_Backend
+title Requisito 44 - Descargar archivo desde backend (proxy de Google Drive)
+autonumber
+
+actor collab
+boundary collabs.route.js as collabRoute
+control collabs.controller.js as collabsController
+entity falta.model as collabModel
+database Nebula as nebula
+collections "Google Drive API" as Google
+
+activate collab
+collab ->> collabRoute : GET /view_collabs/downloadFA/
+deactivate collab
+
+activate collabRoute
+collabRoute ->> collabsController : downloadFA(id_falta)
+deactivate collabRoute
+
+activate collabsController
+collabsController ->> collabModel : getFileIdById(id_falta)
+
+activate collabModel
+collabModel ->> nebula : SELECT file_id FROM faltas WHERE id_colaborador = ?
+
+activate nebula
+nebula -->> collabModel : fileUrl
+deactivate nebula
+
+collabModel -->> collabsController : return fileUrl
+deactivate collabModel
+
+collabsController ->> Google : downloadFile(fileUrl)
+
+activate Google
+Google -->> collabsController : file stream (pdf/docx)
+deactivate Google
+
+collabsController ->> collab : file ="falta.pdf"
+deactivate collabsController
+activate collab
+@enduml

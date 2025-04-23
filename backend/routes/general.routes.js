@@ -2,11 +2,11 @@ const express = require("express");
 const router = express.Router();
 
 const followUp_routes = require('./followUp.routes');
-const home_routes = require("../controller/home.controller");
 const personal_info_routes = require("../controller/personal_info.controller");
 const reports_routes = require("./reports.routes")
 const request_routes = require('./request.routes')
 const collabs_routes = require("./collabs.routes");
+const home_routes = require("./home.routes");
 
 const permissions_middleware = require('../util/middlewares/permission.middleware')
 
@@ -15,6 +15,8 @@ router.use("/follow_ups", permissions_middleware.general_permissions, followUp_r
 router.get("/personal_info", permissions_middleware.general_permissions, personal_info_routes.get_personal_info);
 router.use("/reports", permissions_middleware.view_reports, reports_routes);
 router.use("/requests", permissions_middleware.general_permissions, request_routes);
-router.get("/", home_routes.get_home);
+router.use("/", permissions_middleware.general_permissions, home_routes);
+
+
 
 module.exports = router;

@@ -1,0 +1,331 @@
+body{
+    background-color: #454545;
+}
+.column-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: small;
+}
+.columns-container{
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    font-size: small;
+    margin-left: -2rem;
+}
+.center-log{
+    margin:13rem;
+}
+
+.is-three-quarters{
+    padding-left: 8rem;
+    padding-top: 5rem;
+    font-size: small;
+}
+
+.column-counter{
+    margin-top: -2rem !important;    
+    font-size: small;
+    text-align: left
+}
+.column2 {
+    display: flex;
+    align-items: center;
+}
+
+.column1 {
+    display: flex;
+    flex-direction: column;
+    margin-top: 5rem;
+    margin-left: 7rem;   
+}
+.vacations {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+.dateLine {
+    color: #747474; /* Color del texto */
+    background: transparent;
+    border: none;
+    border-bottom: 0.04vh solid #fff;
+    outline: none;
+    width: 29vw;
+    font-size: 2vh;
+    text-align: center;
+    margin-top: 2vh;
+    margin-left: 3.5vw;
+    margin-bottom: 2vh;  
+}   
+.column-counters{
+    margin-top: 4.9rem;    
+    font-size: small;
+}
+.pop-up-d {
+    height: 35vh;
+    width: 30vw;
+    position: absolute;
+    top:0;
+    left: 0;
+    z-index: 9999; 
+    margin-top: 18rem;
+    margin-left: 20rem;
+    border-radius: 1rem;   
+    padding: 0.4rem;
+    background-color: #454545;
+}
+.pop-up-k {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 9999;
+    background-color: #454545;
+    padding: 1.5rem;
+    display: none; 
+    height: auto;
+    width: auto;
+  }
+  
+.pop-up-content-d {
+    padding: 1.5rem; 
+}
+.pop-up-content-k {
+    padding: 0.7rem; 
+}
+
+.title-event{
+    font-weight: bold;
+    font-style:italic;
+    font-size: x-large;
+    color:#FFFF;
+}
+.text-event{
+    padding: 0.3rem;
+    font-size:small;
+    color:#FFFF;
+}
+.line-input {
+    border: none;
+    border-bottom: 0.04vh solid #fff; 
+    outline: none;
+    width: 100%;
+    padding: 0.5vh 0; 
+    background: transparent;
+    font-size: 2vh;
+    color: #747474;
+    margin-bottom: 2vh; 
+}
+.calendar-color-box {
+    width: 25px;
+    height: 20px;
+    display: inline-block;
+    vertical-align: left;
+    border-radius: 0.3rem;
+    margin-right: 1rem;
+}
+
+.button-close {
+    position: absolute;
+    top: 0.5rem;
+    right: 0.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: transparent;
+    border: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+  }
+  
+  .button-close:hover {
+    background-color: rgba(255, 255, 255, 0.1);
+    border-radius: 50%;
+  }
+
+.button.is-link.is-rounded {
+    padding: 0.25em 0.5em;
+    width:fit-content;
+    display: inline-block;
+    background-color: #B8453E;
+}
+
+.form-section {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.subtitleForm {
+    color: white;
+    font-size: 2vh;
+}
+
+.date-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 2vw;
+}
+
+.date-row .form-section {
+    flex: 1;
+}
+
+.button.is-success.is-rounded {
+    padding: 0.25em 0.5em;
+    width:fit-content;
+    display: inline-block;
+    background-color: #59A250;
+    color:#EEEEEE;
+    border-radius: 0.2rem; 
+}
+
+.line-input::-webkit-calendar-picker-indicator {
+    filter: invert(1);
+}
+
+.popup-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.5); /* efecto nublado */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9998; /* debajo del popup */
+  }
+
+.error {
+    color:#B8453E;
+    display: none;
+    font-size: 1.5vh;
+    margin-top: 0.1vh; 
+    margin-bottom: 0.4vh; 
+    text-align:center;
+    font-weight: 600; 
+}
+  
+.is-disabled {
+  pointer-events: none;
+  opacity: 0.5;
+}
+.my_buttons {
+    padding: 0 1rem;
+    align-items: center;
+    font-size: 1.5rem; 
+    width: 22.5rem;
+    margin-top: -2rem;
+}
+.align-counter{
+    align-self: flex-start; 
+    margin-bottom: -1px
+}
+.metric-wrapper {
+    position: absolute;
+    display: flex;
+    align-items: justify;
+}
+
+.size-icon{
+    font-size: 20px;
+}
+.options-container,
+.hr-container{
+    background-color: #747474;
+    z-index: 9999;
+    width: 10rem;
+    height: 8rem;
+    border-radius: 6px;
+    padding: 1rem;
+    position: absolute;
+    top: 100%; 
+    left: 0;
+    margin-left: -9.5rem;
+    margin-top: 1.5rem;
+    display: none; 
+    color: #EEEEEE;
+    text-align: left !important;
+    font-size: x-small !important;
+}
+.approve-button,
+.hr-button {
+    background-color: #59A250;
+    color: white;
+    width: 4rem;              
+    height: 1.5rem;
+    border-radius: 0.5rem;
+    margin: 0.4rem auto 0 auto;  
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size:  x-small;
+    font-weight: bold;
+    cursor: pointer;
+    border: none;
+    transition: background-color 0.2s ease;
+}
+.requests{
+    background-color: transparent;
+    color: #FFFFFF;
+    text-align: center;
+    padding-top: 1rem;
+}
+.table{
+    width:22rem;
+    background-color: #252525;
+}
+td{
+    background-color: #242424 !important;
+    border: none !important;
+    border-color: none !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+.status {
+    display: inline-block; 
+    padding: 0rem;
+    font-size: small;
+    color: white;
+    border-radius: 5px;
+    width: 7rem;
+}
+
+.half-color-button {
+    background: linear-gradient(to right, rgb(72, 199, 142) 50%, rgb(255, 183, 15) 50%);
+    text-align: center;
+    width: 7rem;
+    display: inline-block; 
+    font-size: 13px;
+}
+
+p{
+    border-radius: 2rem;
+    text-align: center;
+    padding: 0.2rem !important;
+}
+.is-three-quarters{
+    padding-left:9rem;
+    padding-top: 3rem;
+    padding-right: 3rem;
+    font-size: small;
+}
+.is-half{
+    margin-top: 4rem;
+    text-align: left;
+    margin-left: -1rem;
+}
+
+.text-size{
+    font-size: x-small;
+}
+
+.counter{
+    padding-left: 1rem;
+}

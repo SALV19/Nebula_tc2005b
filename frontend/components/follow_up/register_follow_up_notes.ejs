@@ -1,0 +1,52 @@
+<script>
+  function registerNote(text_id, id) {
+    const content = document.getElementById(text_id).value
+    const csrf = document.querySelector('#_csrf').value
+    fetch('/follow_ups/register_notes', {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json',
+          'csrf-token': csrf
+        },
+        body: JSON.stringify({
+          content,
+          id
+        })
+      }
+    )
+    .then(response => response.json())
+    .then(data => {
+      if (data.message == "Success") {
+        Swal.fire({
+          toast: true,
+          position: 'top-end',
+          icon: 'success',
+          title: 'Note-added!',
+          showConfirmButton: false,
+          timer: 1500,
+          timerProgressBar: true,
+          didOpen: (toast) => {
+            toast.addEventListener('mouseenter', Swal.stopTimer)
+            toast.addEventListener('mouseleave', Swal.resumeTimer)
+          }
+        });
+
+      }
+      else {
+        Swal.fire({
+          title: "Sorry, your note could not be saved",
+          html: `<p>Status: ${response.status}</p>`,  
+          icon: "error",
+        })
+      }
+    })
+    .catch(error => {
+      Swal.fire({
+          title: "Sorry, your note could not be saved",
+          html: `<p>Try to reload the page, or try at another time</p>`,  
+          icon: "error",
+        })
+    })
+  }
+
+</script>

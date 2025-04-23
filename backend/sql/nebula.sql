@@ -144,13 +144,18 @@ CREATE TABLE `tiene_evento` (
 --
 -- Estructura de tabla para la tabla `fa`
 --
-
+DROP TABLE fa;
 CREATE TABLE `fa` (
   `id_fa` int(8) PRIMARY KEY AUTO_INCREMENT,
   `id_colaborador` varchar(36) NOT NULL,
   `motivo` varchar(250) NOT NULL,
-  `fecha` date NOT NULL
+  `fecha` date NOT NULL,
+  `link` varchar(250)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_spanish2_ci;
+ALTER TABLE `fa`
+  ADD KEY `fk_colaborador` (`id_colaborador`);
+ALTER TABLE `fa`
+  ADD CONSTRAINT `fk_colaborador` FOREIGN KEY (`id_colaborador`) REFERENCES `colaborador` (`id_colaborador`);
 
 -- --------------------------------------------------------
 
@@ -280,8 +285,6 @@ ALTER TABLE `tiene_evento`
 --
 -- Indices de la tabla `fa`
 --
-ALTER TABLE `fa`
-  ADD KEY `fk_colaborador` (`id_colaborador`);
 
 --
 -- Indices de la tabla `metrica_indicadores`
@@ -331,8 +334,7 @@ ALTER TABLE `evento`
 --
 -- Filtros para la tabla `fa`
 --
-ALTER TABLE `fa`
-  ADD CONSTRAINT `fk_colaborador` FOREIGN KEY (`id_colaborador`) REFERENCES `colaborador` (`id_colaborador`);
+
 
 --
 -- Filtros para la tabla `rol_permisos`

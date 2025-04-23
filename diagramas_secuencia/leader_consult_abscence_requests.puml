@@ -23,7 +23,6 @@ rpe -> u : HTML requests_page.ejs
 activate u
 u ->> rpe : Selects requests
 rpe ->> crl : get_info()
-deactivate rpe
 activate crl
 crl ->> rr : POST /requests/Requests
 deactivate crl
@@ -44,7 +43,11 @@ deactivate rc
 activate crl
 crl ->> crl : format_data_to_json
 crl -> crl : createTableRequests(data)
-crl -> u : XML HTML content
+crl -> rpe : [data]
 deactivate crl
+activate rpe
+rpe -> u : XML HTML content
+deactivate rpe
+
 
 @enduml

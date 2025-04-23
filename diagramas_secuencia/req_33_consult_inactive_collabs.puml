@@ -1,0 +1,56 @@
+@startuml Prueba
+autonumber
+actor Usuario as u
+boundary collabs.routes.js as cr
+boundary collabs.ejs as ce
+control collabs.controller.js as cc
+entity collabs.model.js as cm
+entity home.model.js as mm
+control colabVac as cV
+database Nebula as db
+
+activate u
+u -> cr : GET /view_collabs
+deactivate u
+activate cr
+cr -> cc : get_collabs()
+deactivate cr
+activate cc 
+cc -> ce : response.render("collabs")
+deactivate cc
+activate ce
+ce -> u : HTML collabs.ejs
+deactivate ce
+activate u
+u ->> cr : POST /view_collabs/Inactive
+activate cr
+cr ->> cc : get_collabs_info()
+deactivate cr
+activate cc
+cc ->> cm : Colaborador.fetchCollabs()
+activate cm
+cm ->> db : SELECT (...) FROM collabs \nJOIN (...) \nWHERE id = 1\nAND estado = 0
+activate db
+db -->> cm : [collabs]
+deactivate db
+cm -->> cc : [collabs]
+deactivate cm
+cc ->> mm : await Promise.all(collabs.map(c => \nRequests.fetchDaysApproved(c.id)))
+activate mm
+mm ->> db : SELECT fechas \nFROM dias_solicitados \nJoin (...) \nWHERE collab.id = ?, [c.id]
+activate db
+db -->> mm : [ausencias]
+deactivate db
+mm -->> cc : [ausencias]
+deactivate mm
+cc ->> cV : await Promise.all(collabs.map( c => collabVac(c.id)))
+activate cV
+cV -->> cc : [daisDisponibles_Totales]
+deactivate cV
+cc -->> u : [collabs, ausencias, daisDisponibles_Totales]
+deactivate cc
+u -->> u : response.json()
+u -> u : createTableCollabs(data)
+
+
+@enduml

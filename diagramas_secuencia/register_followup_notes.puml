@@ -1,0 +1,33 @@
+@startuml Register Followup notes
+actor User as u
+boundary followUp.routes.js as fr
+boundary followUp.ejs as fe
+control followUp.controller.js as fc
+
+activate u
+u -> u : registerNote(content)
+u ->> fr : fetch('/follow_ups/register_notes', POST, body: {content})
+activate fr
+fr ->> fc : create_note(request, response)
+deactivate fr
+activate fc
+create entity eval_note as en
+fc -> en : const eval_note = new Evaluation.createNote(id, null, note_content)
+fc ->> en : eval_note.save_note()
+activate en
+
+database Nebula as db
+
+en ->> db : UPDATE evaluaciones_de_seguimiento SET notas = ? \nWHERE id_evaluacion = ?, [note_content, this.id]
+activate db
+db -->> en : [status]
+deactivate db
+en -->> fc : [status]
+deactivate en
+destroy en
+fc -->> u : [status]
+deactivate fc
+
+database Nebula as db
+
+@enduml

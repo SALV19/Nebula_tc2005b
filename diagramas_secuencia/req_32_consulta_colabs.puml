@@ -1,41 +1,56 @@
 @startuml Prueba
 autonumber
 actor Usuario as u
-boundary requests.routes as vcr
-control requests.controller as vcc
-entity requests.model as vcm
+boundary collabs.routes.js as cr
+boundary collabs.ejs as ce
+control collabs.controller.js as cc
+entity collabs.model.js as cm
+entity home.model.js as mm
+control colabVac as cV
 database Nebula as db
 
 activate u
-u -> vcr : GET /requests
+u -> cr : GET /view_collabs
 deactivate u
-
-activate vcr
-vcr -> vcc : getCollabs(user_department)
-deactivate vcr
-
-activate vcc
-vcc -> vcm : getCollabsInfo(user_department)
-
-activate vcm
-vcm ->> db : Consult information of collaborators in the leader's team
-activate db
-db -->> vcm : [id_collaborator, name, last_name, \nposition, phone, mail, role, modality status, \nbirthday, entryDate, department, company]
-vcm ->> db : Consult accepted abscences requests of collaborators
-db -->> vcm : [start_date, end_date, reason, type]
-vcm ->> db : Consult administrative faults
-db -->> vcm : [faults]
-deactivate db
-
-vcm -> vcc : [collab_info]
-deactivate vcm
-vcc -> vcc : getAbscences()
-vcc -> vcr : collaborators_info
-deactivate vcc
-activate vcr
-vcr -> u : HTML view_collaborators.ejs
-deactivate vcr
+activate cr
+cr -> cc : get_collabs()
+deactivate cr
+activate cc 
+cc -> ce : response.render("collabs")
+deactivate cc
+activate ce
+ce -> u : HTML collabs.ejs
+deactivate ce
 activate u
+u ->> cr : POST /view_collabs/Active
+activate cr
+cr ->> cc : get_collabs_info()
+deactivate cr
+activate cc
+cc ->> cm : Colaborador.fetchCollabs()
+activate cm
+cm ->> db : SELECT (...) FROM collabs \nJOIN (...) \nWHERE id = 1\nAND estado = 1
+activate db
+db -->> cm : [collabs]
+deactivate db
+cm -->> cc : [collabs]
+deactivate cm
+cc ->> mm : await Promise.all(collabs.map(c => \nRequests.fetchDaysApproved(c.id)))
+activate mm
+mm ->> db : SELECT fechas \nFROM dias_solicitados \nJoin (...) \nWHERE collab.id = ?, [c.id]
+activate db
+db -->> mm : [ausencias]
+deactivate db
+mm -->> cc : [ausencias]
+deactivate mm
+cc ->> cV : await Promise.all(collabs.map( c => collabVac(c.id)))
+activate cV
+cV -->> cc : [daisDisponibles_Totales]
+deactivate cV
+cc -->> u : [collabs, ausencias, daisDisponibles_Totales]
+deactivate cc
+u -->> u : response.json()
+u -> u : createTableCollabs(data)
 
 
 @enduml
