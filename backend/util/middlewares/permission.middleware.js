@@ -2,6 +2,7 @@ exports.general_permissions = (request, response, next) => {
   if (request.session.permissions.length > 0) {
     next()
   } else {
+    console.log("NO TIENE PERMISOS, NO PASA DE ACA");
     response.render("error_401");
   }
 };
