@@ -516,7 +516,6 @@ module.exports = class Colaborador {
         SET estado = 1
         WHERE id_colaborador = ?
     `, [id_colaborador]);
-    console.log("Result: ", result[0]);
     return result[0]
   }
 };
