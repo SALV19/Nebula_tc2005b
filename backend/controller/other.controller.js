@@ -20,12 +20,10 @@ exports.get_permissions = async (request, response, next) => {
 
   const email = request.session.email ?? request.user.profile.emails[0].value;
   if (request.user) {
-    // console.log(request.user);
-    // console.log(request.user.user.contrasena.length);
     request.session.email = request.user.profile.emails[0].value;
     if (request.user.user?.id_colaborador) {
       request.session.id_colaborador = request.user.user.id_colaborador
-      if(request.user.user.contrasena.length == 10) {
+      if(first_login(request.user.user.contrasena)) {
         request.session.firstLogin = true;
         request.session.sourceRoute = "initial";
         console.log("viene de google");
@@ -50,4 +48,14 @@ exports.get_permissions = async (request, response, next) => {
   response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
   
   response.redirect('/')
+}
+
+async function first_login(dbpassword) {
+  const prefijo = "first";
+  if (dbpassword.startsWith(prefijo)) {
+    return true;
+  } else {
+    console.log("no entro a la verificacion de prefijo");
+    return false;
+  }
 }

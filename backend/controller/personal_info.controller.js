@@ -3,6 +3,7 @@ const Collaborator = require("../models/collabs.model");
 const { deploymentmanager } = require("googleapis/build/src/apis/deploymentmanager");
 const {contVac} = require("../util/contVacations");
 const Requests = require("../models/home.model");
+const multer = require('multer');
 
 exports.get_personal_info = async (request, response) => {
 
@@ -57,14 +58,5 @@ exports.get_personal_info = async (request, response) => {
       });
     })
   })
-
-  
-
-  
-
-
-  
 };
-
-
   
