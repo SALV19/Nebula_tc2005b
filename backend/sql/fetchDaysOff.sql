@@ -14,4 +14,3 @@ FROM evento e
 LEFT JOIN tiene_evento te
   ON te.id_evento = e.id_evento
 WHERE te.id_evento IS NULL;
-

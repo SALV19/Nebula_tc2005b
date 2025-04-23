@@ -1,0 +1,50 @@
+@startuml Metric_rotation
+autonumber
+actor Usuario as u
+boundary general.routes.js as gr
+boundary home.routes.js as hr
+boundary metric_rotation_counter.ejs as mrc
+control home.controller.js as hc
+entity home.model.js as hm
+database Nebula as db
+
+activate u
+u ->> gr : fetch POST ('/')
+
+activate gr
+gr -> hr : ('/metric')
+deactivate gr 
+
+activate hr
+hr -> hc : get_metrics(request.body.periodo)
+deactivate hr 
+
+alt periodo = 1
+  activate hc
+  hc ->> hm : metricMonth()
+  activate hm
+  hm ->> db : SELECT \n  ( \n  (SELECT COUNT(*) FROM colaborador c \n  WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE \n AND fechaSalida IS NOT NULL)\n  / \n(SELECT COUNT(*)  FROM colaborador c \n WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH \n AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH))\n ) * 100 AS indice_rotacion;
+else periodo = 2
+  hc ->> hm : metricTrimester()
+  hm ->> db : SELECT \n  ( \n  (SELECT COUNT(*) FROM colaborador c \n  WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE \n AND fechaSalida IS NOT NULL)\n  / \n(SELECT COUNT(*)  FROM colaborador c \n WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH \n AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH))\n ) * 100 AS indice_rotacion;
+else periodo = 3
+  hc ->> hm : metricSemester()
+  hm ->> db : SELECT \n  ( \n  (SELECT COUNT(*) FROM colaborador c \n  WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 6 MONTH AND CURRENT_DATE \n AND fechaSalida IS NOT NULL)\n  / \n(SELECT COUNT(*)  FROM colaborador c \n WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH \n AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 6 MONTH))\n ) * 100 AS indice_rotacion;
+else 
+  hc ->> hm : metricAnually()
+  hm ->> db : SELECT \n  ( \n  (SELECT COUNT(*) FROM colaborador c \n  WHERE fechaSalida BETWEEN CURRENT_DATE - INTERVAL 12 MONTH AND CURRENT_DATE \n AND fechaSalida IS NOT NULL)\n  / \n(SELECT COUNT(*)  FROM colaborador c \n WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH \n AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 12 MONTH))\n ) * 100 AS indice_rotacion;
+end
+
+activate db
+db -->> hm : counter[0]
+deactivate db 
+
+hm -->> hc : counter
+
+deactivate hm
+
+hc -->> u : response.json({  permissions: request.session.permissions,  percentage : counter,   periodo, });
+
+deactivate hc 
+
+u -> u : update metric rotation counter

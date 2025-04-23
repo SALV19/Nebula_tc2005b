@@ -1,5 +1,4 @@
 .subtitleForm {
-    font-size: 2vh; /* Cambiado de px a vh */
     display: flex;
     margin-bottom: 0; 
     padding-bottom: 0.4vh; /* Cambiado de px a vh */
@@ -13,8 +12,9 @@
     outline: none;
     width: 29vw;
     background: transparent;
-    font-size: 2vh; 
     color: #747474;
+    padding: 0.3rem;
+    font-size: 1rem;
 }
 
 .input-container {
@@ -30,7 +30,6 @@
     border-bottom: 0.04vh solid #fff;
     outline: none;
     width: 29vw;
-    font-size: 2vh;
     text-align: center;
     margin-top: 2vh;
     margin-left: 3.5vw;
@@ -57,8 +56,7 @@
     outline: none;
     width: 37vw;
     background: transparent;
-    font-size: 2vh;
-    color: #ABB1BF;
+    color: #FFFFFF;
     margin-top: 3vh;
     display: flex;  /* Use flexbox */
     justify-content: space-between;  /* Push text to the left, icon to the right */
@@ -85,7 +83,6 @@
     height: 5vw;
     margin-top: 1vw;
     padding: 1vw;
-    font-size: 1.5vh;
     background-color: #454545;
     color: #fff;
     resize: none;
@@ -107,7 +104,6 @@
     flex-direction: row;
     flex-wrap: wrap;
     gap: 1vw;
-    font-size: small;
 }
 
 .column{
@@ -118,8 +114,7 @@
 
 .progress-text{
     text-align: justify;
-    color: #ABB1BF;
-    font-size: medium;
+    color: #FFFFFF;
 }
 
 .progress-bar{
@@ -132,7 +127,7 @@
     align-items: center;     
     width: 100%;
     margin-top: -6rem;
-    margin-bottom: -7rem;
+    margin-bottom: -5rem;
 }
 
 .radar-containerF {
@@ -163,6 +158,7 @@
     align-items: center;
     justify-content: center;
     margin-right: 3vw;
+    font-size: small;
 }
 
 .button-container {
@@ -260,6 +256,7 @@
     text-align: center;
     margin-top: 0.5vw;
     font-weight: bold;
+    font-size: small;
 }
 
 .text-hidden.show {
@@ -324,6 +321,8 @@
     overflow-y: scroll; 
     overflow-x: hidden;
     border: none;
+    color: #ffffff;
+    font-size: 1rem;
 }
 
 .container-scroll::-webkit-scrollbar {
@@ -341,6 +340,32 @@
 
 
 .container-scroll::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
+
+.custom-scroll-container{
+    width: 84vw;
+    height:75vh;
+    overflow-y: scroll; 
+    overflow-x: hidden;
+    border: none;
+}
+
+.custom-scroll-container::-webkit-scrollbar {
+    width: 0.5vw;
+}
+.custom-scroll-container::-webkit-scrollbar-track {
+    background: #242424; 
+    border-radius: 10px;
+}
+
+.custom-scroll-container::-webkit-scrollbar-thumb {
+    background: #f4f4f4 ; 
+    border-radius: 10px;
+}
+
+
+.custom-scroll-container::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
 
@@ -365,4 +390,35 @@
 }
 .success {
     background-color: #48C78E;
+}
+.hidden-message{
+    font-size: small;
+}
+.button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    height: 3rem;
+    margin-top: auto;
+}
+.button-style{
+    margin-top: 1.5rem;
+    width: 6rem;
+    height: 2rem;
+    font-size: small;
+    background-color: #B8453E;
+    color: #EEEEEE;
+    border-radius: 0.5rem;
+}
+.button-style-s{
+    width:6rem;
+    height: 2rem;
+    font-size: small;
+    background-color:#59A250;
+    color:#EEEEEE;
+    border-radius: 0.5rem;
+}
+.button-style:hover{
+    background-color: #d04e47;
 }

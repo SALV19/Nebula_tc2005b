@@ -22,9 +22,11 @@ module.exports = class Indicators_metrics {
     
     static fetchAll(id_evaluacion){
         const placeholders = id_evaluacion.map(() => '?').join(', ');
+        if (placeholders.length <= 0){
+            throw "Error, no follow_ups";
+        }
         
         return db.execute(
-            `SELECT id_evaluacion, id_indicador, valor_metrica FROM metrica_indicadores 
-            WHERE id_evaluacion IN (${placeholders})`, id_evaluacion);
+            `SELECT id_evaluacion, id_indicador, valor_metrica FROM metrica_indicadores WHERE id_evaluacion IN (${placeholders})`, id_evaluacion);
     }
 }

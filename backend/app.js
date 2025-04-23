@@ -4,8 +4,10 @@ const path = require("path");
 const session = require("express-session");
 const bodyParser = require("body-parser");
 const passport = require("passport");
-const MobiscrollCalendar = require('../frontend/components/calendar/calendar.js');
+const cookieParser = require("cookie-parser");
 
+
+const {google} = require('googleapis')
 
 require("dotenv").config();
 require("./util/google_auth");
@@ -13,6 +15,9 @@ require("./util/mailer")
 
 // Server set-up
 const app = express();
+
+app.use(cookieParser());
+const oauth2Client = new google.auth.OAuth2(process.env.GOOGLE_CLIENT_ID, process.env.GOOGLE_CLIENT_SECRET, process.env.REDIRECT)
 
 app.set("view engine", "ejs");
 app.set("views", [
@@ -49,6 +54,15 @@ const general_routes = require("./routes/general.routes");
 const other_controllers = require("./controller/other.controller");
 
 app.use("/log_in", login_routes);
+// app.use("/fault_pdf", (req, res, next) => {
+//   res.render("template_fautl", {
+//     nombre_participantes: "Una cosa",
+//     nombre_colaboradores: "Una cosa",
+//     motivo: "Una cosa",
+//     consecuencias: "Una cosa",
+//     desición: "Una cosa",
+//   })
+// })
 app.use("/", auth_middleware, general_routes);
 
 app.use(other_controllers.get_404);

@@ -1,35 +1,50 @@
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
 <script>
-document.addEventListener("DOMContentLoaded", function () {
+  document.addEventListener("DOMContentLoaded", function () {
+    
+    // We get the object with the data from the successfully sent request
     const successRequest = <%- JSON.stringify(successRequest || null) %>;
 
+    // If there is a successful request, we show the confirmation pop-up
     if (successRequest) {
-            const start = successRequest.startDate;
-            const end = successRequest.endDate;
-            const location = successRequest.location || '—';
-            const reason = successRequest.description || '—';
-            const evidence = successRequest.evidence || null;
-            const totalDays = successRequest.totalDays || null; 
+      const start = successRequest.startDate;
+      const end = successRequest.endDate;
+      const location = successRequest.location || '—';
+      const reason = successRequest.description || '—';
+      const evidence = successRequest.evidence || null;
+      const totalDays = successRequest.totalDays || null; 
 
-            Swal.fire({
-            title: "<span><i class='fas fa-check-square' style='color:green'></i><b>Request submitted!</b></span>",
-            html: `
-                <div style="text-align: left; margin-top: 1rem;">
-                <p><i class="fa-regular fa-calendar-days"></i> <b>Dates:</b> ${start} – ${end}</p>
-                <p><i class="fa-solid fa-location-dot"></i> <b>Location:</b> ${location}</p>
-                <p><i class="fa-regular fa-file-lines"></i> <b>Reason:</b> ${reason}</p>
-                ${evidence ? `<p><i class="fa-solid fa-link"></i> <b>Evidence:</b> <a href="${evidence}" target="_blank">${evidence}</a></p>` : ""}
-                ${totalDays ? `<hr><p>📅 <b>You registered ${totalDays} valid day${totalDays > 1 ? "s" : ""}.</b></p>` : ""}
-                </div>
-            `,
-            icon: "success",
-            confirmButtonText: "OK",
-            customClass: {
-                confirmButton: 'btn-ok'
-            }
-        }).then(() => {
-            window.history.replaceState({}, document.title, window.location.pathname);
-        });
+      Swal.fire({
+      title:  `
+        <span><i class='fas fa-check-square' style='color:green'></i><b>Request submitted!</b></span>
+      `,
+      html: `
+        <div style="margin-top: 1rem;">
+          <div style="display: flex; align-items: center; gap: 0.5rem;">
+            <i class="fa-regular fa-calendar-days"></i>
+            <p style="margin: 0;"><b>Dates:</b> ${start} / ${end}</p>
+          </div>
+          ${totalDays 
+            ? `<div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem;">
+                <i class="fa-regular fa-calendar"></i>
+                <p style="margin: 0;"><b>You registered ${totalDays} valid day${totalDays > 1 ? "s" : ""}.</b></p>
+              </div>`
+            : ""}
+        </div>
+      `,
+      icon: "success",
+      confirmButtonText: "OK",
+      customClass: {
+          confirmButton: 'btn-ok'
+      }
+      }).then(() => {
+
+        // Clear the URL to prevent the pop-up from appearing again
+          window.history.replaceState({}, document.title, window.location.pathname);
+      });
     }
-    });
+  });
+  
 </script>
+

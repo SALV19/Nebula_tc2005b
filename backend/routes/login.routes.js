@@ -1,16 +1,18 @@
 const express = require("express");
 const router = express.Router();
 const passport = require("passport");
+const scope_def = require("../util/google_auth");
 
 const log_in_routes = require("../controller/log_in.controller");
 const other_controllers = require("../controller/other.controller");
+const initial_password_middleware = require("../util/initial_password_middleware")
 
 router.get("/", log_in_routes.get_log_in);
 router.post("/", log_in_routes.post_log_in);
 
 router.get(
   "/auth/google",
-  passport.authenticate("google", { scope: ["email", "profile"] })
+  passport.authenticate("google", { scope: scope_def })
 );
 router.get(
   "/google/callback",
@@ -22,7 +24,6 @@ router.get(
 router.get("/auth/failure", log_in_routes.auth_fail);
 router.get('/success', other_controllers.get_permissions)
 
-
 const reset_password_routes = require("../controller/reset_password.controller");
 const token_middleware=require("../util/token_middleware")
 router.get("/forgot_password", reset_password_routes.get_reset_password_request);
@@ -33,5 +34,12 @@ router.post("/token", reset_password_routes.post_token);
 
 router.get("/reset_password",token_middleware.token_middleware, reset_password_routes.get_reset_password);
 router.post("/reset_password", reset_password_routes.post_reset_password);
+
+router.get("/initial_password", initial_password_middleware.initial_middleware, reset_password_routes.get_initial_password);
+
+router.get('/logout', (request, response, next) => {
+  request.session.destroy()
+  response.redirect('/')
+})
 
 module.exports = router;
