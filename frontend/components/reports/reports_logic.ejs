@@ -1,5 +1,6 @@
 <script src="tom-select.complete.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
@@ -9,7 +10,13 @@
         }
         return color;
     }
-
+    function createEmpty() {
+        Swal.fire({
+            title: "Empty filter",
+            html: `<p>Sorry, there is no data in the selected filter, try something different</p>`,
+            icon: "error",
+        })
+    }
 
     function createChart(data, pdf) {
         const chart_container = document.querySelector("#chart-container")
@@ -217,9 +224,7 @@
         let collabs_created = []
         Object.keys(data).forEach(e => {            
             const departamentos = Object.values(data[e])
-            // console.log(departamentos)
             departamentos.forEach(colaboradores => {
-                // console.log(colaboradores)
                 for (let i of Object.keys(colaboradores)) {
                     if (collabs_created.includes(i)) {
                         return
@@ -232,14 +237,13 @@
 
                 Object.keys(colaboradores).forEach(collab => {
                     const colaborador = Object.keys(colaboradores[collab])
-                    console.log(colaborador)
                     const dataset = [{
                                         data: Object.values(colaboradores[collab]),
                                         borderColor: getRandomColor(),
                                         borderWidth: 3,
                                         backgroundColor: "#00000000",
                                     }]
-                    // console.log(collab, ": ", dataset)
+                    
                     const chartWrapper = document.createElement('div');
                     chartWrapper.style.width = '600px'; 
                     chartWrapper.style.height = '400px';
@@ -408,10 +412,13 @@
         
         const subtitle = document.querySelector(".report-info")
         subtitle.style.margin = "0";
+        subtitle.classList.add("report-info-print")
 
         const title = document.querySelector("#title").value
         const title_element = document.createElement("h1")
         title_element.innerHTML = title
+        title_element.id = "title_text"
+        title_element.classList.add("title_report")
         subtitle.parentElement.appendChild(title_element)
         
         await fetchData(true).then(t => {
@@ -435,6 +442,8 @@
                     footer.classList.remove("hide")
 
                     subtitle.removeAttribute("style")
+                    document.querySelector("#title_text").remove()
+                    subtitle.classList.remove("report-info-print")
                 }, 500)
             }, 500)
         })
@@ -490,13 +499,24 @@
         .then(data => {
             // Create chart with data
             if (data.type == "general") {
-                createChart(data.empresas_validaciones, pdf)
+                if (Object.keys(data.empresas_validaciones).length > 0) 
+                    createChart(data.empresas_validaciones, pdf)
+                else 
+                    createEmpty()
             }
             else if (data.type == "department") {
-                createDepartmentsChart(data.departamentos_validaciones, pdf)
+                if (Object.keys(data.departamentos_validaciones).length > 0) {
+                    createDepartmentsChart(data.departamentos_validaciones, pdf)
+                }
+
+                else 
+                    createEmpty()
             }
             else if (data.type = "collabs") {
-                createCollabsChart(data.collabs_validaciones, pdf)
+                if (Object.keys(data.collabs_validaciones).length > 0)
+                    createCollabsChart(data.collabs_validaciones, pdf)
+                else
+                    createEmpty()
             }
             updateInfoText();
             return true
@@ -517,6 +537,7 @@
                 selected.push(dept.dataset.id)
             }
         })
+        
         const collabs = document.querySelectorAll("[id$=-collab-lable]")
         collabs.forEach(c => {
             c.style.display = "none"
