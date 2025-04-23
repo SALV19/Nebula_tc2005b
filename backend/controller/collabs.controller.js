@@ -93,9 +93,12 @@ exports.post_collab = (request, response) => {
     numbers: true,
   });
 
+  const foto = "link";
   argon2.hash(password)
     .then(hashedPassword => {
-      return new_Colab.save(hashedPassword);
+      const firstPassword = 'first' + hashedPassword;
+      console.log(firstPassword);
+      return new_Colab.save(firstPassword,foto);
     })
     .then(([rows]) => {
       if (rows.length === 0)

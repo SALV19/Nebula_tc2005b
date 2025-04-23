@@ -12,19 +12,19 @@ activate S
 S -->> gr : fetch('requests' )
 
 activate gr
-gr -> SRoute : (' /Requests/update ')
+gr -->> SRoute : (' /Requests/update ')
 deactivate gr 
 
 
 activate SRoute
-SRoute -> SController : update_estado()
+SRoute -->> SController : update_estado()
 deactivate SRoute
 
 activate SController 
-SController ->> SModel : save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador)
+SController -->> SModel : save_State(req.body.estado, req.body.id_solicitud_falta, req.session.id_colaborador)
 
 activate SModel
-SModel ->> db : `UPDATE solicitudes_falta SET estado = ?, colabAprobador = ? \nWHERE id_solicitud_falta = ?`,[estado, colabAprobador, id_solicitud_falta]
+SModel -->> db : `UPDATE solicitudes_falta SET estado = ?, colabAprobador = ? \nWHERE id_solicitud_falta = ?`,[estado, colabAprobador, id_solicitud_falta]
 activate db
 db -->> SModel : estado
 deactivate db
