@@ -17,6 +17,7 @@
     "bootstrap-icons": "^1.11.3",
     "chart.js": "^4.4.8",
     "check-password-strength": "^3.0.0",
+    "choices.js": "^11.1.0",
     "cookie-parser": "^1.4.7",
     "cookie-session": "^2.1.0",
     "csurf": "^1.11.0",
@@ -36,7 +37,8 @@
     "nodemailer": "^6.10.0",
     "passport": "^0.7.0",
     "passport-google-oauth20": "^2.0.0",
-    "sweetalert2": "^11.17.2"
+    "sweetalert2": "^11.17.2",
+    "tom-select": "^2.4.3"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

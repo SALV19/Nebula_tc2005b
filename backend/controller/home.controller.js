@@ -68,10 +68,12 @@ exports.get_events_calendar = async (request, response) => {
         timeMin: new Date(start).toISOString(),
         timeMax: new Date(end).toISOString(),
         singleEvents: true,
-        orderBy: 'startTime'
+        orderBy: 'startTime',
       });
 
       const eventosDelCalendario = eventsResponse.data.items.map(event => ({
+        id: event.id,
+        calendarId: calendarId, 
         title: event.summary,
         start: event.start.dateTime || event.start.date,
         end: event.end?.dateTime || event.end?.date,
@@ -115,6 +117,8 @@ exports.get_home = async (request, response) => {
         total_absences: absences.length,
         csrfToken: request.csrfToken(),
         google_outh,
+        calendarMeeting: process.env.CALENDAR_ID_MEETING, 
+        calendarEvent: process.env.CALENDAR_ID_EVENT,
       })
     })
     .catch(error => {console.error(error)}) 
@@ -136,18 +140,33 @@ exports.add_event = (request, response) => {
   const endDateAdjusted = endDateObject.toISOString().split('T')[0];
 
   Collab.fetchEmails(request.session.email).then(data => {
-  const [rowsE, fieldDataE] = data;
-    const evento = new Event(startDate, endDate, motive, type);
-    // console.log(rowsE);
-    evento.save();
-    
-    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE);
+    const [rowsE, fieldDataE] = data;
+    return Event.insertEvents(startDate, endDateAdjusted, motive, request.user.accessToken, rowsE, type);
   }).catch(error => {
     console.error(error);
   })
   response.redirect('/');
 }
 
+exports.delete_event = async (request, response) => {
+  try {
+    const { eventId, calendarId } = request.body;
+    const result = await Event.deleteEvent(eventId, calendarId, request.user.accessToken);
+
+    response.json({
+      success: true,
+      message: `Evento eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar evento:", error);
+
+    response.status(500).json({ // Cambiar el status a 500 para indicar un error del servidor
+      success: false,
+      error: error.message || 'Error al eliminar el evento en el servidor.', // Enviar el mensaje del error
+    });
+  }
+}
 exports.get_metric = async (request, response) => {
   // console.log("get_metric called with:", request.body.periodo);
   let periodo = request.body.periodo;

@@ -27,13 +27,15 @@ module.exports = class Colaborador {
     this.rfc = colab_rfc;
   }
 
-  //
-  static fetchAllCollabsName(id_colaborador){
-    return db.execute(`Select id_colaborador, nombre, apellidos FROM colaborador WHERE id_colaborador = ?`, [id_colaborador])
-  }
-
   static fetchAllCompleteName(){
-    return db.execute('SELECT C.id_colaborador, nombre, apellidos FROM colaborador C, equipo E WHERE C.id_colaborador = E.id_colaborador AND C.estado = 1 AND (id_rol = 1 OR id_rol = 2)')
+    return db.execute(`SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
+                      FROM colaborador c
+                      INNER JOIN equipo e
+                        ON e.id_colaborador = c.id_colaborador
+                      INNER JOIN departamento d
+                        ON d.id_departamento = e.id_departamento
+                      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
+                      `)
   }
 
 
@@ -425,7 +427,6 @@ module.exports = class Colaborador {
       SELECT * from fa
       `)
     
-      // console.log("faltas : ", faults);
       return faults;
   }
 
@@ -456,6 +457,23 @@ module.exports = class Colaborador {
     }
   }
   
+  static fetchDepartmentCollabs(id_departments) {
+    if (id_departments.length <= 0) {
+      return []
+    }
+    let query = `SELECT c.id_colaborador, c.nombre, c.apellidos, d.nombre_departamento, d.id_departamento
+                FROM colaborador c
+                INNER JOIN equipo e
+                  ON e.id_colaborador = c.id_colaborador
+                INNER JOIN departamento d
+                  ON d.id_departamento = e.id_departamento
+                WHERE ( d.id_departamento = ? \n`
+      for (let i = 1; i < id_departments.length; i++) {
+        query += `OR d.id_departamento = ? \n`
+      }
+      query += ') GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.nombre_departamento, d.id_departamento;'
+      return db.execute(query, [...id_departments])
+  }
 
   static async fetchFaultsCollabsByIds(ids) {
     if (ids.length === 0) return [];
