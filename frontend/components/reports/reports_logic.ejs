@@ -1,5 +1,6 @@
 <script src="tom-select.complete.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
@@ -9,7 +10,13 @@
         }
         return color;
     }
-
+    function createEmpty() {
+        Swal.fire({
+            title: "Empty filter",
+            html: `<p>Sorry, there is no data in the selected filter, try something different</p>`,
+            icon: "error",
+        })
+    }
 
     function createChart(data, pdf) {
         const chart_container = document.querySelector("#chart-container")
@@ -489,6 +496,13 @@
         .then((response) => response.json())
         .then(data => {
             // Create chart with data
+            console.log(data.empresas_validaciones?.length, data.departamentos_validaciones?.lengt, data.collabs_validaciones?.length)
+            if (!(data.empresas_validaciones?.length 
+                || data.departamentos_validaciones?.lengt
+                || data.collabs_validaciones?.length)) {
+                    createEmpty()
+                    return
+                }
             if (data.type == "general") {
                 createChart(data.empresas_validaciones, pdf)
             }
