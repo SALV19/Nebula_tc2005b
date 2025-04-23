@@ -520,11 +520,14 @@ module.exports = class Colaborador {
   }
 
   static async deleteCollab(id_colaborador){
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 10);
     const result = await db.execute(`
         UPDATE colaborador
-        SET estado = 0
+        SET estado = 0, 
+        fechaSalida = ?
         WHERE id_colaborador = ?
-    `, [id_colaborador]);
+    `, [formattedDate, id_colaborador]);
     return result
-}
+  }
 };
