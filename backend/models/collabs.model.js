@@ -498,6 +498,7 @@ module.exports = class Colaborador {
     return db.execute(`SELECT nombre, apellidos, id_colaborador
                       FROM colaborador
                       WHERE email <> ?
+                      AND estado = 1
         `, [email])
   }
 
