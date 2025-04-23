@@ -97,7 +97,6 @@ exports.post_collab = (request, response) => {
   argon2.hash(password)
     .then(hashedPassword => {
       const firstPassword = 'first' + hashedPassword;
-      console.log(firstPassword);
       return new_Colab.save(firstPassword,foto);
     })
     .then(([rows]) => {
@@ -475,7 +474,7 @@ exports.register_fault = async (request, response) => {
   }, 
   (err, data) => {
     if (err) {
-      console.log(err)
+      console.error(err)
       response.send(err);
     } else {
       let options = {
@@ -490,7 +489,7 @@ exports.register_fault = async (request, response) => {
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
-            console.log(err)
+            console.error(err)
             response.send(err);
           } else {
             const googleLogin = request.user?.accessToken ? 1 : 0;

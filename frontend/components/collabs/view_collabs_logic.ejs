@@ -1,4 +1,10 @@
 <script>
+  function createEmpty() {
+      const table = document.querySelector('#requests_table')
+      table.innerHTML = `<tr >
+                          <div class="is-fullwidth is-flex is-justify-content-center " style="background-color: #242424; border-bottom: #EEE 2px solid">No Data</div>
+                        </tr>`
+    }
   // Crea el contenido de la tabla para solicitudes
   function createTableCollabs(data) {
     const table = document.querySelector('#requests_table')
@@ -12,6 +18,7 @@
                           </tr>
                         </thead>
   <tbody >`
+
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
       table_content += `<tr id='collab-${idx}' key='${idx}'>`
@@ -108,6 +115,14 @@
     })
     .then(response => response.json())
     .then(data => {
+      if (data.collabs.length <= 0 && pagination_value.value == 1) {
+        createEmpty()
+      }
+      else if (data.collabs.length <= 0) {
+        pagination_value.value = pagination_value.value - 1
+        return 0
+      }
+      
       createTableCollabs(data)
     })
     .catch(e => console.error(e))
@@ -156,15 +171,21 @@
         
         pagination_value.dispatchEvent(new Event('change'));
     })
-    pagination_value.addEventListener('change', (v) => {
+    pagination_value.addEventListener('change', async (v) => {
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML;
 
       if (route == 'Faults'){
-        get_faults_info(pagination_value.value-1);
+        const content = await get_faults_info(pagination_value.value-1);
+        if (content <= 0) {
+          get_faults_info(pagination_value.value - 2)
+        }
         return
       }
-      get_info(pagination_value.value-1);
+      const content = await get_info(pagination_value.value-1);
+      if (content <= 0) {
+        get_info(pagination_value.value - 2)
+      }
       
     })
 

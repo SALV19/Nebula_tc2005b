@@ -25,15 +25,12 @@ exports.post_log_in = async (request, response) => {
   const user_info = await getUserLoginInfo(email, password);
 
   if (user_info[0].length) {
-    console.log("log_in");
     if(await first_login(password, user_info[0][0].contrasena)) {
-      console.log("first time");
       request.session.email = request.body.email;
       request.session.firstLogin = true;
       request.session.sourceRoute = "initial";
       response.redirect("/log_in/initial_password");
     } else if (await argon2.verify(user_info[0][0].contrasena, password)) {
-      console.log("NO PRIMERA VEZ");
       request.session.email = request.body.email;
       
       request.session.id_colaborador = user_info[0][0].id_colaborador;
@@ -64,16 +61,14 @@ async function getUserLoginInfo(email) {
 async function first_login(password, dbpassword) {
   const prefijo = "first";
   if (dbpassword.startsWith(prefijo)) {
-    console.log(dbpassword.slice(prefijo.length));
     const verifiedPassword = dbpassword.slice(prefijo.length);
-    console.log("password",verifiedPassword);
     if(await argon2.verify(verifiedPassword, password)) {
       return true;
     } else {
       return false;
     }
   } else {
-    console.log("no entro a la verificacion de prefijo");
+    console.error("no entro a la verificacion de prefijo");
     return false;
   }
 }
