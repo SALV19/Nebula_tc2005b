@@ -20,7 +20,7 @@ exports.get_permissions = async (request, response, next) => {
   const email = request.session.email ?? request.user.profile.emails[0].value;
   const active = request.session.estado ?? request.user.user.estado
 
-  if (active) {
+  if (!active) {
     response.render("error_401")
     request.session.destroy()
     return
@@ -34,7 +34,6 @@ exports.get_permissions = async (request, response, next) => {
       if(isFirstLogin === true) {
         request.session.firstLogin = true;
         request.session.sourceRoute = "initial";
-        console.log("viene de google");
         response.redirect('/log_in/initial_password');
         return; 
       } 
@@ -61,10 +60,8 @@ exports.get_permissions = async (request, response, next) => {
 async function first_login(dbpassword) {
   const prefijo = "first";
   if (dbpassword.startsWith(prefijo)) {
-    console.log("entro a lo del prefijo");
     return true;
   } else {
-    console.log("no entro a la verificacion de prefijo");
     return false;
   }
 }

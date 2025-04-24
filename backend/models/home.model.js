@@ -44,8 +44,6 @@ module.exports = class Requests {
     }
 
     static async fetchTeamRequests(email, offset) {
-        console.log("Email",email);
-        console.log("offset",offset);
         const [rows] = await db.execute(
             `SELECT  c.email, c.nombre, c.apellidos, sf.*, ds.fecha
                 FROM solicitudes_falta sf
@@ -87,7 +85,6 @@ module.exports = class Requests {
             `,
           [id_colaborador, offset]
         );
-        console.log("Rows: ", rows);
         return rows;
     }
     static async fetchAdmsFaults(id_colaborador){

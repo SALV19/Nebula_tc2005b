@@ -70,7 +70,6 @@ async function first_login(password, dbpassword) {
       return false;
     }
   } else {
-    console.error("no entro a la verificacion de prefijo");
     return false;
   }
 }

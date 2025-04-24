@@ -112,9 +112,11 @@
                       </a>
                     </div>
               </div>
+              <p>Please download the file since it wasn't able to upload</p>
                 `,
             }).then(() => {
               resolve(true)
+              get_faults_info()
             });
           }
           form.reset(); 
