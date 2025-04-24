@@ -18,10 +18,13 @@ exports.get_requests = async (request, response) => {
     let reqData;
 
     if (idRol === 3) {
+      console.log("ROL 3");
       reqData = await Requests.fetchReqHome(offset);
     } else if (idRol === 2) {
+      console.log("ROL 2");
       reqData = await Requests.fetchTeamRequests(request.session.email,offset);
     } else {
+      console.log("ROL 1");
       reqData = await Requests.fetchByLoggedColab(offset,request.session.id_colaborador);
     }
 

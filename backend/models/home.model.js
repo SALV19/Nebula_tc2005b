@@ -12,17 +12,19 @@ module.exports = class Requests {
 
     static async fetchDaysApproved(email, id=null) {
         if(email) {
-            return db.execute(`SELECT ds.fecha
-                                FROM solicitudes_falta sf
-                                INNER JOIN dias_solicitados ds
-                                    ON sf.id_solicitud_falta = ds.id_solicitud_falta
-                                INNER JOIN colaborador c
-                                    ON c.id_colaborador = sf.id_colaborador
-                                WHERE c.email = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
-                            `, [email])
+            return db.execute(`
+                SELECT ds.fecha
+                FROM solicitudes_falta sf
+                INNER JOIN dias_solicitados ds
+                    ON sf.id_solicitud_falta = ds.id_solicitud_falta
+                INNER JOIN colaborador c
+                    ON c.id_colaborador = sf.id_colaborador
+                WHERE c.email = ? AND sf.estado = 1 AND tipo_falta != 'Vacation' ;
+            `, [email])
         }
         else {
-            return db.execute(`SELECT ds.fecha
+            return db.execute(`
+                SELECT ds.fecha
                 FROM solicitudes_falta sf
                 INNER JOIN dias_solicitados ds
                     ON sf.id_solicitud_falta = ds.id_solicitud_falta
@@ -34,20 +36,20 @@ module.exports = class Requests {
     }
     
     static async fetchReqHome(offset) {
-        const [rows] = await db.execute(`SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, ds.fecha
+        const [rows] = await db.execute(`
+        SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, MIN(ds.fecha) AS fecha
         FROM solicitudes_falta sf, dias_solicitados ds
         WHERE sf.id_solicitud_falta = ds.id_solicitud_falta
+        GROUP BY sf.id_solicitud_falta, sf.estado
         ORDER BY fecha DESC
         LIMIT 8 OFFSET ?`, [offset]);
-    
+        // console.log("FECHAS: ", rows);
         return rows; // Return the rows directly
     }
 
     static async fetchTeamRequests(email, offset) {
-        console.log("Email",email);
-        console.log("offset",offset);
-        const [rows] = await db.execute(
-            `SELECT  c.email, c.nombre, c.apellidos, sf.*, ds.fecha
+        const [rows] = await db.execute(`
+                SELECT  c.email, c.nombre, c.apellidos, sf.*, MIN(ds.fecha) as fecha
                 FROM solicitudes_falta sf
                 JOIN dias_solicitados ds
                 ON ds.id_solicitud_falta = sf.id_solicitud_falta
@@ -68,27 +70,26 @@ module.exports = class Requests {
                 )
                 AND e.id_rol = 1
                 AND c.email != ?
-                GROUP BY sf.id_solicitud_falta
-                ORDER BY sf.estado ASC, ds.fecha ASC
+                GROUP BY sf.id_solicitud_falta, sf.estado
+                ORDER BY fecha DESC
                 LIMIT 8 OFFSET ?`, [email, email, offset]);
         return rows;
     }
 
     static async fetchByLoggedColab(offset, id_colaborador) {
-        const [rows] = await db.execute(
-          `SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, MIN(ds.fecha) AS fecha
+        const rows = await db.execute(`
+            SELECT sf.id_solicitud_falta, sf.id_colaborador, sf.estado, MIN(ds.fecha) AS fecha
             FROM solicitudes_falta sf
             JOIN dias_solicitados ds
             ON sf.id_solicitud_falta = ds.id_solicitud_falta
             WHERE sf.id_colaborador = ?
-            GROUP BY sf.id_solicitud_falta
+            GROUP BY sf.id_solicitud_falta, sf.estado 
             ORDER BY fecha DESC
             LIMIT 8 OFFSET ?
             `,
           [id_colaborador, offset]
         );
-        console.log("Rows: ", rows);
-        return rows;
+        return rows[0];
     }
     static async fetchAdmsFaults(id_colaborador){
         return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);

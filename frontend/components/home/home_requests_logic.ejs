@@ -1,10 +1,10 @@
 <script>
     function createTableRequests(data) {
         console.log("entro al table");
+        console.log("DATAA: ", data);
         const table = document.querySelector('#requests_table');
 
         let table_content = `
-        <input type="hidden" id="_csrf" value="<%= csrfToken %>">
             <caption style="background-color: #DBDBDB; color: #252525; padding:0.5rem; font-size:medium;"> Requests </caption>
             <thead>
                 <tr>
@@ -68,47 +68,51 @@
 
     // Consulta a db para la información de solicitudes
     const get_request = (pagination = 0) => {
-    const csrf = document.getElementById('_csrf').value;
-    const prev_button = document.querySelector("#prev-page");
-    const next_button = document.querySelector("#next-page");
-    const pagination_value = document.querySelector("#pagination");
+        const csrf = document.getElementById('_csrf').value;
+        const prev_button = document.querySelector("#prev-page");
+        const next_button = document.querySelector("#next-page");
+        const pagination_value = document.querySelector("#pagination");
 
-    fetch("/", {
-        method: 'POST',
-        headers: {
-        'Content-Type': 'application/json',
-        'x-csrf-token': csrf
-        },
-        body: JSON.stringify({
-        offset: pagination,
-        }),
-    })
-    .then(response => response.json())
-    .then(data => {
-        createTableRequests(data);
-        if (data.faults.length < 8 && pagination > 0 ) {
-            next_button.style.visibility = "hidden";
-            prev_button.style.visibility = "visible";
-        } else if (data.faults.length < 8 && pagination === 0){
-            pagination_value.value = pagination;
-            next_button.style.visibility = "hidden";
-            prev_button.style.visibility = "hidden";
-        } else if (data.faults.length === 8 && pagination === 0){
-            pagination_value.value = pagination + 1;
-            prev_button.style.visibility = "hidden";
-            next_button.style.visibility = "visible";
-        } else if (data.faults.length === 0 && pagination > 0){
-            pagination_value.value = pagination;
-            next_button.style.visibility = "hidden";
-            prev_button.style.visibility = "visible";
-        } else {
-            prev_button.style.visibility = "visible";
-            next_button.style.visibility = "visible";
-            pagination_value.value = pagination + 1;
-           
-        }
-    })
-    .catch(e => console.error(e));
+        fetch("/", {
+            method: 'POST',
+            headers: {
+            'Content-Type': 'application/json',
+            'x-csrf-token': csrf
+            },
+            body: JSON.stringify({
+            offset: pagination,
+            }),
+        })
+        .then(response => {
+            return response.json()
+        })
+        .then(data => {
+            createTableRequests(data);
+            if (data.faults.length < 8 && pagination > 0 ) {
+                next_button.style.visibility = "hidden";
+                prev_button.style.visibility = "visible";
+            } else if (data.faults.length < 8 && pagination === 0){
+                pagination_value.value = pagination;
+                next_button.style.visibility = "hidden";
+                prev_button.style.visibility = "hidden";
+            } else if (data.faults.length === 8 && pagination === 0){
+                pagination_value.value = pagination + 1;
+                prev_button.style.visibility = "hidden";
+                next_button.style.visibility = "visible";
+            } else if (data.faults.length === 0 && pagination > 0){
+                pagination_value.value = pagination;
+                next_button.style.visibility = "hidden";
+                prev_button.style.visibility = "visible";
+            } else {
+                prev_button.style.visibility = "visible";
+                next_button.style.visibility = "visible";
+                pagination_value.value = pagination + 1;
+            
+            }
+        })
+        .catch(e => {
+            console.error(e)
+        });
     };
 
 
