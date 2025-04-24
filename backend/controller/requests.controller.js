@@ -56,11 +56,12 @@ exports.get_requests = async (request, response) => {
 };
 
 exports.showPopUp = async (request, response) => {
+  
   try {
     const email = request.session.email;
 
     const [allRequestsData] = await Requests.fetchDaysApproved(email);
-    const [allPendingRequests] = await Requests.fetchDaysPending(email);
+    const [allPendingRequests] = await Requests.fetchDaysPending(email, request.query.id);
     const [holidaysData] = await Events.fetchEvents();
     const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
     const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
@@ -200,7 +201,8 @@ exports.post_abscence_requests = async (request, response, next) => {
       request.body.location,
       request.body.description,
       request.body.evidence,
-      estadoSolicitud,
+      // Unnecesary
+      estadoSolicitud, 
       colabAprobador,
     );
 
@@ -240,6 +242,20 @@ exports.update_request = async (request, response) => {
 
   const [_ , subtype] = request.body.requestType.split("|");
 
+  const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
+  const idRol = rolData[0]?.id_rol;
+
+  if (idRol === 3) {
+    estadoSolicitud = 1;
+    colabAprobador = request.session.id_colaborador;
+  } else if (idRol === 2) {
+      estadoSolicitud = 0.5;
+      colabAprobador = request.session.id_colaborador;
+  } else {
+      estadoSolicitud = 0;
+      colabAprobador = null;
+  }
+
   const request_update = Requests.updateConstructor(
     request.session.email,
     subtype, 
@@ -249,7 +265,7 @@ exports.update_request = async (request, response) => {
     request.body.evidence,
     request.body.request_id
   );
-  await request_update.update()
+  await request_update.update(estadoSolicitud, colabAprobador)
 
   request.session.successRequest = {
     startDate: daysOff[0],
