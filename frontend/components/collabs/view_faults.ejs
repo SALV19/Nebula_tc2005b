@@ -177,7 +177,7 @@
                   <p><b>Name:</b> ${result.name}</p>
                   <br>
                   <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
-                  🔗 Ver archivo en Drive
+                  🔗 View file in Drive
                   </a>
                   `,
               });
@@ -185,14 +185,14 @@
           } else {
               Swal.fire({
               icon: "error",
-              title: "Error al subir archivo",
-              text: result.message || "Hubo un error inesperado.",
+              title: "Error uploading file",
+              text: result.message || "There was an unexpected error.",
               });
           }
       } catch (error) {
           Swal.fire({
               icon: "error",
-              title: "Fallo en el servidor",
+              title: "Server failure",
               text: error.message,
           });
           }
