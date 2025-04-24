@@ -43,8 +43,7 @@ module.exports = class Requests {
         GROUP BY sf.id_solicitud_falta, sf.estado
         ORDER BY fecha DESC
         LIMIT 8 OFFSET ?`, [offset]);
-        // console.log("FECHAS: ", rows);
-        return rows; // Return the rows directly
+        return rows;
     }
 
     static async fetchTeamRequests(email, offset) {

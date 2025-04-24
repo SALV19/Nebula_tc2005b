@@ -9,8 +9,14 @@ module.exports = class FaltaAdministrativa {
   }
 
   save() {
-    return db.execute(`INSERT INTO fa(id_colaborador, motivo, fecha, link)
-                    VALUES(?, ?, ?, ?)`, [this.id_colaborador, this.motivo, this.fecha, this.link])
+    if (this.link) {
+      return db.execute(`INSERT INTO fa(id_colaborador, motivo, fecha, link)
+                      VALUES(?, ?, ?, ?)`, [this.id_colaborador, this.motivo, this.fecha, this.link])
+    }
+    else {
+      return db.execute(`INSERT INTO fa(id_colaborador, motivo, fecha, link)
+                      VALUES(?, ?, ?, '')`, [this.id_colaborador, this.motivo, this.fecha])
+    }
   }
 
   // UPDATE del campo `Link` para una falta existente
@@ -34,10 +40,9 @@ module.exports = class FaltaAdministrativa {
   static async deactivate_collab(id_colaborador){
     const deactivate = await db.execute(`
       UPDATE colaborador
-      SET estado = 0
-      WHERE id_colaborador = ?
+        SET estado = 0, fechaSalida = CURRENT_DATE
+        WHERE id_colaborador = ?;
     `, [id_colaborador])
-    console.log("LOL: ", deactivate[0]);
     return deactivate[0];
   }
 };

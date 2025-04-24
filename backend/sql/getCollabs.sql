@@ -188,5 +188,23 @@ SELECT  c.id_colaborador, c.nombre, c.apellidos,
                 c.modalidad, c.foto, c.curp, c.rfc, c.estado,
                 d.nombre_departamento
         ORDER BY c.nombre ASC
-            LIMIT 10
+            LIMIT 10;
 
+UPDATE colaborador
+  SET estado = 1, fechaSalida = NULL
+  WHERE id_colaborador = '11a74e4e-0e9b-11f0-ae3b-7af62ad273cc';
+
+SELECT * FROM colaborador WHERE id_colaborador = 1;
+
+DESCRIBE colaborador;
+
+SELECT id_fa, id_colaborador, COUNT(id_colaborador) 
+FROM fa 
+HAVING COUNT(id_colaborador) > 3;
+SELECT * FROM fa WHERE id_colaborador = '11a74e4e-0e9b-11f0-ae3b-7af62ad273cc';
+SELECT * FROM fa
+ORDER BY id_colaborador;
+
+DELETE FROM fa WHERE id_fa = 62;
+DELETE FROM fa WHERE id_fa = 61;
+DELETE FROM fa WHERE id_fa = 60;

@@ -6,7 +6,7 @@ const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
-const sendWhatsapp = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+const sendWhatsapp = require('../util/sendWhatsapp'); 
 const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
 const Eval_Questions = require('../models/eval_questions.model');
@@ -354,7 +354,6 @@ exports.get_meeting_events = (request, response) => {
 };
 
 exports.get_followUps_info = (request, response, next) => {
-  // console.log("entro al controlador")
   settings.selectedOption = 'collaborators';
 
   const idColaborador = request.session.id_colaborador;
@@ -394,8 +393,7 @@ exports.get_followUps_info = (request, response, next) => {
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
-        // console.log("selectedOption que se está enviando:", selectedOption);
-        // console.log("ID_EVAL: ", id_evaluacion);
+        
         response.json({
           id_evaluacion,
           selectedOption,

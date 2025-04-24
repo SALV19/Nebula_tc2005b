@@ -169,7 +169,7 @@
                         title: {
                             display: true,
                             text: entries, 
-                            color: "#FFFFFF",
+                            color: pdf ? "#000" : "#FFFFFF",
                             font: {
                                 size: 24
                             }
@@ -273,7 +273,7 @@
                                 title: {
                                     display: true,
                                     text: collab, 
-                                    color: "#FFFFFF",
+                                    color: pdf ? "#000" : "#FFFFFF",
                                     font: {
                                         size: 24
                                     }
@@ -420,14 +420,19 @@
         title_element.id = "title_text"
         title_element.classList.add("title_report")
         subtitle.parentElement.appendChild(title_element)
+
+        const container = document.querySelector(".multiple-radar-container")
         
         await fetchData(true).then(t => {
             search.classList.add("hide")
             bar.classList.add("hide")
             update.classList.add("hide")
+            update.style.display = "none"
             title_input.classList.add("hide")
             nav.classList.add("hide")
             footer.classList.add("hide")
+
+            container.style.overflowY = "visible";
 
             const pdfFrame = window.frames
             setTimeout(() => {
@@ -437,6 +442,7 @@
                     search.classList.remove("hide")
                     bar.classList.remove("hide")
                     update.classList.remove("hide")
+                    update.style.display = "inline-flex"       
                     title_input.classList.remove("hide")
                     nav.classList.remove("hide")
                     footer.classList.remove("hide")
@@ -444,6 +450,9 @@
                     subtitle.removeAttribute("style")
                     document.querySelector("#title_text").remove()
                     subtitle.classList.remove("report-info-print")
+
+                    container.style.overflowY = "scroll";
+                    
                 }, 500)
             }, 500)
         })

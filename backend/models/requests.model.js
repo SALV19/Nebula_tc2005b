@@ -39,12 +39,12 @@ module.exports = class Requests {
     );
   }
 
-  update() {
+  update(estado, collab_aprovador) {
     const dates = this.dates.join(',')
     console.log(this.request_id, this.type, this.reason, this.location, this.evidence, dates)
     return db.execute(
-      `CALL update_abscence_request(?, ?, ?, ?, ?, ?)`,
-      [this.request_id, this.type, this.reason, this.location, this.evidence, dates]
+      `CALL update_abscence_request(?, ?, ?, ?, ?, ?, ?, ?)`,
+      [this.request_id, this.type, this.reason, this.location, this.evidence, dates, estado, collab_aprovador]
     )
   }
 
@@ -73,17 +73,20 @@ module.exports = class Requests {
   }
 
     // pending days (no specific type)
-    static async fetchDaysPending(email) {
+    static async fetchDaysPending(email, id) {
+      let query = `SELECT ds.fecha
+              FROM solicitudes_falta sf
+              INNER JOIN dias_solicitados ds
+                ON sf.id_solicitud_falta = ds.id_solicitud_falta
+              INNER JOIN colaborador c
+                ON c.id_colaborador = sf.id_colaborador
+              WHERE c.email = ? AND sf.estado < 1\n`
+      if (id) {
+        query += `AND sf.id_solicitud_falta <> ?`
+      }
       return db.execute(
-        `SELECT ds.fecha
-                          FROM solicitudes_falta sf
-                          INNER JOIN dias_solicitados ds
-                            ON sf.id_solicitud_falta = ds.id_solicitud_falta
-                          INNER JOIN colaborador c
-                            ON c.id_colaborador = sf.id_colaborador
-                          WHERE c.email = ? AND sf.estado < 1;
-                        `,
-        [email]
+        query,
+        id ? [email, id] : [email]
       );
     }
 
@@ -155,6 +158,7 @@ module.exports = class Requests {
                             WHERE c.email = ?
                           )
                            AND c.email != ?
+                           AND e.id_rol = 1
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
@@ -183,6 +187,7 @@ module.exports = class Requests {
                       WHERE c.email = ?
                     )
                   AND c.email <> ?
+                  AND e.id_rol = 1
                   `;
       if (filter.pending) {
         query += `AND sf.estado < 1 `;
