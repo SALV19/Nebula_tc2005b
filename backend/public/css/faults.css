@@ -40,7 +40,7 @@ h1{
 }
 .button2{
     height: 2rem;
-    width: 7rem;
+    width: 6rem;
     background-color: #60508F;
     color: #EEEEEE; 
     font-size: small;
@@ -51,6 +51,7 @@ h1{
     border-radius: 4px; 
     cursor: pointer;
     margin: 1.15rem;
+    font-weight: 600;
 }
 .button2:hover{
     background-color: #524577;
@@ -113,4 +114,23 @@ h1{
 }
 .off_btn:hover {
     background-color: #454545;
+}
+.b{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: small;
+    padding: 0.5rem;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-weight: 600;
+    height: 2rem;
+  }
+.b:hover {
+    background-color: rgb(150, 50, 45);
 }

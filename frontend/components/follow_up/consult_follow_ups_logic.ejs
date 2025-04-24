@@ -53,8 +53,8 @@ function TableFollowUps(data) {
     data.fechasAgendadas.forEach((fecha, idx) => { 
         const indicadorAverage = get_average_progress(data, fecha);   
         console.log(`id-${idx}:`, data.id_evaluacion[idx]);    
-        table_content += `<tr class="fecha-row" data-index="${idx}">`;
-            table_content += `<td style="text-align: left; width: 10px;">
+        table_content += `<tr class="fecha-row " data-index="${idx}">`;
+            table_content += `<td class="space-between" style="text-align: left; width: 10px;">
                 <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
                 </td>`;
 
@@ -68,13 +68,13 @@ function TableFollowUps(data) {
 
     if (data.permissions?.includes('consult_followUps')) {
             const completeName = fecha.nombre + ' ' + fecha.apellidos;
-            table_content += `<td class="fixed-width"> ${completeName}</td>`;
+            table_content += `<td class="fixed-width space-between"  style="padding-top:0.8rem; padding-bottom:0.8rem"> ${completeName}</td>`;
         }
 
-        table_content += `<td class="fixed-width"> Date: ${formattedDate}</td>`;
+        table_content += `<td class="fixed-width space-between"  style="padding-top:0.8rem; padding-bottom:0.8rem"> Date: ${formattedDate}</td>`;
         // console.log(fecha.fechaAgendada);             
   // Columna de fecha
-        table_content += `<td class='is-flex is-align-items-center'>
+        table_content += `<td class='is-flex is-align-items-center space-between' style="padding-top:0.8rem; padding-bottom:0.8rem">
                             <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
                             <p style="margin-right: 0.5rem; width: auto;">${indicadorAverage}%</p>
                             <div style="width: 20rem;">
@@ -116,7 +116,7 @@ function TableFollowUps(data) {
                                             table_content += ` <div class="button-container">
                                                                     <button class="button-style" id="buttn-${idx}" value="${data.id_evaluacion[idx]}">`
                                                                         console.log("Data", data.id_evaluacion[idx]);
-                                                                        table_content += `DELETE 
+                                                                        table_content += `Delete 
                                                                     </button>
                                                                 </div>`
                                         }
@@ -132,7 +132,7 @@ function TableFollowUps(data) {
                                     <div class="column is-one-fifth">
                                         Notes
                                         <textarea class="custom-textarea" id="note-${idx}" value="${fecha.notes[idx] ? fecha.notes[idx] : ''}">${fecha.notes[idx] ? fecha.notes[idx] : ''}</textarea>
-                                        <button class="button is-success mt-2 mx-6 button-style-s" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">SUBMIT</button>
+                                        <button class="button is-success mt-2 mx-6 button-style-s" onclick="registerNote('note-${idx}', ${fecha.id_evaluacion})">Submit</button>
                                     </div>
                                 </div>
                             </td>

@@ -25,7 +25,6 @@ module.exports = class Meeting {
             year: "YEARLY",
             no: ""
         };
-        console.log(repeatMap[repeating]);
         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
         var event = {
             summary: summary,
@@ -106,7 +105,6 @@ module.exports = class Meeting {
             
             return Promise.all(promesas)
                 .then(resultados => {
-                    console.log(`Creados ${resultados.length} eventos`);
                     return resultados[0];
                 });
         } else {
@@ -118,7 +116,6 @@ module.exports = class Meeting {
                     },
                     function(err, event) {
                         if (err) {
-                            console.log('Error contacting Calendar service:', err);
                             reject(err);
                             return;
                         }

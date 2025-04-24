@@ -40,6 +40,26 @@
     color: #B8453E;
 }
 
+.b{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.5rem 1rem;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-weight: 600;
+    width: 6rem;
+    height: 2rem;
+    font-size: small;
+}
+.b:hover {
+    background-color: rgb(150, 50, 45);
+}
 .headingVac{
     font-size: 1.5vh;
     display: inline-block;

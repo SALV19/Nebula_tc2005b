@@ -114,8 +114,6 @@ exports.get_meeting = (request, response, next) => {
 };
 
 exports.post_meeting = (request, response, next) => {
-  console.log(request.body);
-
   let validationErrors = {};
   let hasErrors = false;
   
@@ -173,7 +171,6 @@ exports.post_meeting = (request, response, next) => {
   const endTime = request.body.endTime;
   const summary = "Follow up Nebula";
   let occurrences = 0;
-  console.log("id_colaborador: ", id_colaborador)
   
 
   if(repeating == 'day') {
@@ -195,7 +192,6 @@ exports.post_meeting = (request, response, next) => {
   Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
       const [rowsE, fieldData] = emailCollab;
-      console.log(rowsE);
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
 
@@ -358,7 +354,6 @@ exports.get_meeting_events = (request, response) => {
 };
 
 exports.get_followUps_info = (request, response, next) => {
-  console.log("entro al controlador")
   settings.selectedOption = 'collaborators';
 
   const idColaborador = request.session.id_colaborador;
@@ -398,8 +393,7 @@ exports.get_followUps_info = (request, response, next) => {
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
-        console.log("selectedOption que se está enviando:", selectedOption);
-        console.log("ID_EVAL: ", id_evaluacion);
+        
         response.json({
           id_evaluacion,
           selectedOption,

@@ -38,7 +38,6 @@ exports.get_requests = async (request, response) => {
 
 exports.get_events_calendar = async (request, response) => {
   const { start, end } = request.body;
-  console.log("Entro aqui al events");
 
   if (!request.user?.accessToken) {
     return response.status(401).json({ error: 'No autorizado' });
@@ -125,7 +124,6 @@ exports.get_home = async (request, response) => {
 };
 
 exports.add_event = (request, response) => {
-  // console.log("Entro aqui");
   const motive = request.body.motive;
   const type = request.body.type;
   const startDate = request.body.startDate;
@@ -168,10 +166,8 @@ exports.delete_event = async (request, response) => {
   }
 }
 exports.get_metric = async (request, response) => {
-  // console.log("get_metric called with:", request.body.periodo);
   let periodo = request.body.periodo;
   let counter;
-  // console.log('lol');
 
   if (periodo == 1){
     counter = await Requests.metric_month();
@@ -183,8 +179,6 @@ exports.get_metric = async (request, response) => {
     counter = await Requests.metric_anually();
   }
 
-  // console.log("counter: ", counter);
-  // console.log("Val:", periodo);
   response.json({
     permissions: request.session.permissions,
     percentage : counter,
@@ -193,10 +187,8 @@ exports.get_metric = async (request, response) => {
 }
 
 exports.get_hiring = async (request, response) => {
-  // console.log("get_hiring called with:", request.body.hiring_rate);
   let hiring_counter = request.body.hiring_rate;
   let counter;
-  // console.log('lol');
 
   if (hiring_counter == 1){
     counter = await Requests.h_Rate_M();

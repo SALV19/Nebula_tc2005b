@@ -1,6 +1,8 @@
 <script>
   function add_info_to_select(data) {
     const select_collab = document.querySelector("#absent")
+    select_collab.innerHTML = ''
+    select_collab.innerHTML = `<option value="" disabled selected>Select an option</option>`
     let collabs_names = ''
     data.colaboradores.forEach(c => {
       collabs_names += `<option value="${c.id_colaborador}">${c.nombre} ${c.apellidos}</option>`
@@ -20,7 +22,9 @@
       method: "GET"
     })
       .then(response => response.json())
-      .then(data => add_info_to_select(data))
+      .then(data => {
+        add_info_to_select(data)
+      })
       .catch(error => console.error(data))
   }
   function closeFaultPopup() {

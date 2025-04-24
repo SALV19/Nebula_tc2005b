@@ -1,4 +1,10 @@
 <script>
+  function createEmpty() {
+      const table = document.querySelector('#requests_table')
+      table.innerHTML = `<tr >
+                          <div class="is-fullwidth is-flex is-justify-content-center " style="background-color: #242424; border-bottom: #EEE 2px solid">No Data</div>
+                        </tr>`
+    }
   // Crea el contenido de la tabla para solicitudes
   function createTableCollabs(data) {
     const table = document.querySelector('#requests_table')
@@ -12,8 +18,10 @@
                           </tr>
                         </thead>
   <tbody >`
+
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
+      console.log(d)
       table_content += `<tr id='collab-${idx}' key='${idx}'>`
       table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}""></i></td>`
       table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
@@ -31,6 +39,7 @@
                                 <p class='has-text-weight-bold mb-4'>Role</p>
                                 <p class='has-text-weight-bold mb-4'>Modality</p>
                                 <p class='has-text-weight-bold mb-2'>Birthday</p>
+                                ${d.fechaSalida ? "<p class='has-text-weight-bold mb-2'>Exit day</p>" : ''}
                               </div>
                               <div class="column ">
                                   <p class='mb-4'>${d.telefono}</p>
@@ -39,6 +48,7 @@
                                   <p class='mb-4'>${d.modalidad == 1 ? 'In Person' : 
                                     d.modalidad == 2 ? 'Online' : 'Hybrid'}</p>
                                   <p class='mb-2'>${d.fechaNacimiento.split("T")[0]}</p>
+                                  ${d.fechaSalida ? `<p class='mb-2'>${d.fechaSalida.split("T")[0]}</p>` : ''}
                               </div>
                               <div class="column my-2">
                                 <div class='is-flex is-justify-content-space-around	mb-4'>
@@ -56,12 +66,14 @@
                                   </div>
                                 </div>
                                 ${d.estado <= 0 
-                                  ? '' 
+                                  ? `<% if (permissions?.includes('delete_collab')) {%>
+                                      <button class='button reactivate is-small is-size-7 vc ' onclick="reactivate_button('${d.id_colaborador}')">Reactivate</button>
+                                      <% } %>` 
                                   : `<% if (permissions?.includes('consult_all_collabs')) {%>
                                     <div class='is-flex is-justify-content-center '}>
-                                      <button class='button is-link is-rounded is-small is-size-7 vc' onclick="update_button('${d.id_colaborador}')">UPDATE</button>
+                                      <button class='button is-link is-small is-size-7 vc button-collab button-personal-u' onclick="update_button('${d.id_colaborador}')">Update</button>
                                       <% if (permissions?.includes('delete_collab')) {%>
-                                      <button class='button is-danger is-rounded is-small is-size-7 vc' onclick="delete_button('${d.id_colaborador}')">DELETE</button>
+                                      <button class='button  is-small is-size-7 vc button-collab button-personal-d' onclick="delete_button('${d.id_colaborador}')">Delete</button>
                                       <% } %>
                                       </div>
                                     <% } %>`
@@ -95,7 +107,7 @@
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.innerHTML;
-    fetch(`/view_collabs/${route}`, {
+    return fetch(`/view_collabs/${route}`, {
       method: 'POST',
       headers: {
             'Content-Type': 'application/json',
@@ -108,6 +120,14 @@
     })
     .then(response => response.json())
     .then(data => {
+      if (data.collabs.length <= 0 && pagination_value.value == 1) {
+        createEmpty()
+      }
+      else if (data.collabs.length <= 0) {
+        pagination_value.value = pagination_value.value - 1
+        return 0
+      }
+      
       createTableCollabs(data)
     })
     .catch(e => console.error(e))
@@ -156,17 +176,24 @@
         
         pagination_value.dispatchEvent(new Event('change'));
     })
-    pagination_value.addEventListener('change', (v) => {
+    pagination_value.addEventListener('change', async (v) => {
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML;
 
       if (route == 'Faults'){
-        get_faults_info(pagination_value.value-1);
+        const content = await get_faults_info(pagination_value.value-1);
+        if (content <= 0) {
+          get_faults_info(pagination_value.value - 2)
+        }
         return
       }
-      get_info(pagination_value.value-1);
+      const content = await get_info(pagination_value.value-1);
+      if (content <= 0) {
+        get_info(pagination_value.value - 2)
+      }
       
     })
+
 
   
   function searchParam(content) {

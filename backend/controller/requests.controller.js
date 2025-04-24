@@ -25,7 +25,6 @@ exports.update_estado = async (req, res) => {
         const fechaFormateada = `${dia}/${mes}/${año}`;
         
         await sendWhatsapp.sendWhatsAppNotiRequests(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
-        console.log("info enviada");
       } else {
         console.warn("No se encontró teléfono del colaborador");
       }
@@ -107,7 +106,7 @@ exports.get_vacations = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -132,7 +131,7 @@ exports.get_abscences = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -156,7 +155,7 @@ exports.get_collabs_requests = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -168,12 +167,10 @@ exports.get_collabs_requests = async (request, response) => {
 };
 
 exports.post_abscence_requests = async (request, response, next) => {
-  console.log("hola")
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
   // Default status is "pending" (0)
-  console.log("session", request.session.id_colaborador);
   let estadoSolicitud = 0;
   let colabAprobador;
 
@@ -181,7 +178,6 @@ exports.post_abscence_requests = async (request, response, next) => {
      // Get the collaborator's role using their email (session)
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
-    console.log(idRol)
 
      /**If the role is SuperAdmin (id_rol = 3), automatically approve 
       * And if is lider (id_rol = 3), automatically status = 0.5 */ 
@@ -196,8 +192,6 @@ exports.post_abscence_requests = async (request, response, next) => {
         colabAprobador = null;
     }
 
-    console.log(estadoSolicitud)
-    console.log("colabAprovador: ", colabAprobador);
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -209,7 +203,6 @@ exports.post_abscence_requests = async (request, response, next) => {
       estadoSolicitud,
       colabAprobador,
     );
-    console.log("Request_register: ", request_register);
 
     // Save the main request record to the database
     const result = await request_register.save(estadoSolicitud, colabAprobador);
@@ -256,7 +249,6 @@ exports.update_request = async (request, response) => {
     request.body.evidence,
     request.body.request_id
   );
-  // console.log(request_update)
   await request_update.update()
 
   request.session.successRequest = {

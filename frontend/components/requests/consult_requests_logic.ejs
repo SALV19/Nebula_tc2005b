@@ -174,23 +174,23 @@
   <tbody >`
     // Información por cada renglón de la tabla
     data.abscences.forEach((d, idx) => {
-      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}'>`;
-      table_content += `<td class="is-flex">
+      table_content += `<tr id='request' data-key='${d.id_solicitud_falta}' style="border-bottom: solid 1px rgb(53, 58, 70)">`;
+      table_content += `<td class="is-flex space-between" style="border: none;">
                           <i class="bi bi-caret-right-fill mr-4" id='caret-${idx}'></i>
                           <p id="start_date-${d.id_solicitud_falta}">${my_formatDate(d.start)}</p>
                         </td>`
-      table_content += `<td id="end_date-${d.id_solicitud_falta}">${my_formatDate(d.end)}</td>`
-      table_content += `<td id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
+      table_content += `<td class="space-between" id="end_date-${d.id_solicitud_falta}">${my_formatDate(d.end)}</td>`
+      table_content += `<td class="space-between" id="tipo_falta-${d.id_solicitud_falta}">${d.tipo_falta}</td>`
       if (d.estado == 0) {
-        table_content += `<td> <p class='status has-background-warning'>Pending...</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-warning'>Pending...</p></td>`
       } else if (d.estado == 0.5) {
-        table_content += `<td> <p class='status half-color-button'>Pending...</p></td>`
+        table_content += `<td class="space-between" > <p class='status half-color-button'>Pending...</p></td>`
       }
       else if (d.estado == 1) {
-        table_content += `<td> <p class='status has-background-success'>Accepted</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-success'>Accepted</p></td>`
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>`
+        table_content += `<td class="space-between" > <p class='status has-background-danger'>Denied</p></td>`
       }
       table_content += `<td style="display: none">
                           <input type='hidden' value='${d.ubicacion}' id="ubicacion-${d.id_solicitud_falta}"/>
@@ -216,8 +216,8 @@
           table_content += `<div style="flex-grow: 1;"> </div>
                               <div style="min-height: 50px;">
                                 <div class='is-flex is-justify-content-center is-align-items-flex-end'>
-                                    <button class="button is-link is-rounded is-normal button-request" onclick="updateRequest(${d.id_solicitud_falta})">Update</button>
-                                    <button class="button is-link is-rounded is-normal  is-danger button-request" onclick="deleteRequest(${d.id_solicitud_falta})">Delete</button>
+                                    <button class="button is-link is-rounded is-normal button-request-update" onclick="updateRequest(${d.id_solicitud_falta})">Update</button>
+                                    <button class="button is-link is-rounded is-normal  is-danger button-request-delete" onclick="deleteRequest(${d.id_solicitud_falta})">Delete</button>
                                   </div>
                                 </div>`
         }
@@ -282,13 +282,13 @@
     // Información por cada renglón de la tabla
     data.requests[0].forEach((d, idx) => {
       table_content += `<tr id='request' key='${idx}'>`;
-      table_content += `<td ><i class="bi bi-caret-right-fill" id='caret-${idx}'></i> ${d.nombre} ${d.apellidos}</td>`
-      table_content += `<td>${my_formatDate(d.start)}</td>`
-      table_content += `<td>${my_formatDate(d.end)}</td>`
-      table_content += `<td>${d.tipo_falta}</td>`
+      table_content += `<td class="space-between"><i class="bi bi-caret-right-fill" id='caret-${idx}'></i> ${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td class="space-between">${my_formatDate(d.start)}</td>`
+      table_content += `<td class="space-between">${my_formatDate(d.end)}</td>`
+      table_content += `<td class="space-between">${d.tipo_falta}</td>`
       if (d.estado == 0) {
-        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
-         <td>
+        table_content += `<td class="space-between"> <p id="${d.id_solicitud_falta}" class='status has-background-warning'>Pending...</p></td>
+         <td class="space-between">
           <button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
               <i class="bi bi-check-circle is-size-5 is-clickable has-text-primary mr-4 accept-icon" data-id="${d.id}"></i>  
             </button>
@@ -298,7 +298,7 @@
           </td>
           </tr>`
       } else if (d.estado == 0.5) {
-        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
+        table_content += `<td class="space-between"> <p id="${d.id_solicitud_falta}" class='status half-color-button'>Pending...</p></td>
          <td>`
           if (data.collab[idx][0].id_colaborador != sesionUsuario) {
             table_content += `<button class="approve" type="submit" name="estado" data-id="${d.id_solicitud_falta}" value="${d.estado + 0.5}">
@@ -313,12 +313,12 @@
         
       }
       else if (d.estado == 1) {
-        table_content += `<td> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
+        table_content += `<td class="space-between"> <p id="${d.id_solicitud_falta}" class='status has-background-success'>Accepted</p></td>
         <td class="back"></td>
         </tr>`
       }
       else if (d.estado == 2) {
-        table_content += `<td> <p class='status has-background-danger'>Denied</p></td>
+        table_content += `<td class="space-between"> <p class='status has-background-danger'>Denied</p></td>
         <td class="back"></td>
         </tr>`
       }
@@ -363,9 +363,6 @@
         const additionalRow = document.getElementById(`additional-row-${idx}`)
         const caret = document.querySelector(`#caret-${idx}`)
         
-        // hacer que en los botones de aceptar o rechazar no se expanda la vista
-        // Si el elemento clickeado (v.target -> elemento exacto en el que ocurrió) tiene la clase 
-        // "accept-icon" o "deny-icon", el código detiene la ejecución con return para que la fila no se expanda.
         if(v.target.classList.contains("accept-icon") || v.target.classList.contains("deny-icon")){
           return;
         }

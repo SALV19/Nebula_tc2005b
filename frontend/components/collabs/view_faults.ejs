@@ -108,7 +108,7 @@
       const csrf = document.getElementById('_csrf').value
       const selected_option = document.querySelector('.selected')
       const route = selected_option.innerHTML;
-      fetch(`/view_collabs/${route}`, {
+      return fetch(`/view_collabs/${route}`, {
         method: 'POST',
         headers: {
               'Content-Type': 'application/json',
@@ -123,6 +123,7 @@
       .then(data => {
         if (data.faults?.length === 0 && pagination > 0) {
           get_faults_info(pagination - 1);
+          return 0
         } else {
           createTableFaults(data);
         }

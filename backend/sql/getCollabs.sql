@@ -139,3 +139,72 @@ INNER JOIN equipo e
 INNER JOIN departamento d
   ON d.id_departamento = e.id_departamento
 GROUP BY c.nombre, c.apellidos, d.nombre_departamento
+
+
+
+SELECT  c.id_colaborador, c.nombre, c.apellidos, 
+        c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+        c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+        c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+        d.nombre_departamento, em.nombre_empresa,
+        r.tipo_rol,
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
+        FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN rol r ON r.id_rol = e.id_rol
+        LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
+        LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
+        GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
+                c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+                c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+                c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+                d.nombre_departamento
+        ORDER BY c.nombre ASC
+            LIMIT 10 OFFSET
+
+
+
+SELECT  c.id_colaborador, c.nombre, c.apellidos, 
+        c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+        c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+        c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+        d.nombre_departamento, em.nombre_empresa,
+        r.tipo_rol,
+        fa.id_fa AS FaltasAdministrativas
+        FROM colaborador c
+        LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
+        LEFT JOIN rol r ON r.id_rol = e.id_rol
+        LEFT JOIN departamento d ON d.id_departamento = e.id_departamento
+        LEFT JOIN departamento_empresa de ON de.id_departamento = d.id_departamento
+        LEFT JOIN empresa em ON em.id_empresa = de.id_empresa
+        LEFT JOIN fa ON fa.id_colaborador = c.id_colaborador
+        WHERE c.estado = 1
+        GROUP BY c.id_colaborador, c.nombre, c.apellidos, 
+                c.fechaNacimiento, c.telefono, c.puesto, c.email, 
+                c.fechaIngreso, c.fechaSalida, c.ubicacion, 
+                c.modalidad, c.foto, c.curp, c.rfc, c.estado,
+                d.nombre_departamento
+        ORDER BY c.nombre ASC
+            LIMIT 10;
+
+UPDATE colaborador
+  SET estado = 1, fechaSalida = NULL
+  WHERE id_colaborador = '11a74e4e-0e9b-11f0-ae3b-7af62ad273cc';
+
+SELECT * FROM colaborador WHERE id_colaborador = 1;
+
+DESCRIBE colaborador;
+
+SELECT id_fa, id_colaborador, COUNT(id_colaborador) 
+FROM fa 
+HAVING COUNT(id_colaborador) > 3;
+SELECT * FROM fa WHERE id_colaborador = '11a74e4e-0e9b-11f0-ae3b-7af62ad273cc';
+SELECT * FROM fa
+ORDER BY id_colaborador;
+
+DELETE FROM fa WHERE id_fa = 62;
+DELETE FROM fa WHERE id_fa = 61;
+DELETE FROM fa WHERE id_fa = 60;
