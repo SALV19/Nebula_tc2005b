@@ -91,7 +91,48 @@ async function sendMeetingNotification(name, summary, day, time, telefono) {
     }
 }
 
+async function sendFaultsNotification(name, telefono) {
+    
+    telefono = String(telefono).replace(/\D/g, '')
+    if (!telefono.startsWith('52')) {
+        telefono = '52' + telefono;
+    }
+    
+    try {
+        const response = await axios.post(
+            "https://graph.facebook.com/v17.0/609265038937705/messages",
+            {
+                messaging_product: "whatsapp",
+                to: telefono,
+                type: "template",
+                template: {
+                    name: "faults",
+                    language: { code: "en_US" },
+                    components: [
+                        {
+                            type: "body",
+                            parameters: [
+                                { type: "text", parameter_name: "name", text: name },
+                            ],
+                        },
+                    ],
+                },
+            },
+            {
+                headers: {
+                    Authorization: `Bearer ${process.env.WHATSAPP_TOKEN}`,
+                    "Content-Type": "application/json",
+                },
+            }
+        );
+        console.log("Mensaje enviado con éxito:", response.data);
+    } catch (error) {
+        console.error("Error al enviar mensaje de WhatsApp:", error.response ? error.response.data : error);
+    }
+}
+
 module.exports = {
     sendWhatsAppNotiRequests,
-    sendMeetingNotification 
+    sendMeetingNotification,
+    sendFaultsNotification 
 };
