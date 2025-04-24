@@ -69,13 +69,10 @@ module.exports = class Event {
             },
             async function(err, event) {
                 if (err) {
-                    console.log('Error contacting Calendar service:', err);
                     reject(err);
                     return;
                 }
-                console.log('Event created:', event.data.htmlLink);
                 const eventId = event.data.id;
-                console.log('Event ID:', eventId);
                 const newEvent = new Event(startDate, endDate, motive, type, eventId);
                 try {
                   await newEvent.save();
@@ -112,7 +109,6 @@ module.exports = class Event {
 
         if (calendarId === process.env.CALENDAR_ID_EVENT) {
           await db.execute('DELETE FROM evento WHERE id_google_event = ?', [eventId]);
-          console.log('Evento eliminado de la base de datos.');
         }
 
         resolve(); 
