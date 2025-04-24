@@ -23,7 +23,9 @@ exports.post_log_in = async (request, response) => {
   const password = request.body.password;
 
   const user_info = await getUserLoginInfo(email, password);
-
+  
+  request.session.estado = user_info[0][0].estado
+  
   if (user_info[0].length) {
     if(await first_login(password, user_info[0][0].contrasena)) {
       request.session.email = request.body.email;

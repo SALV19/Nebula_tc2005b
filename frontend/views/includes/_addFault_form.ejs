@@ -9,12 +9,11 @@
                   <div class="is-flex is-flex-direction-column mt-4	mb-6">
                     <div class="is-flex">
                       <p style="width: 8rem;" class="centered">Asistants: </p>
-                        <input type="text" name="asistants" class="line-input has-text-light" id="asistants" placeholder="John Doe,Jane Doe" required>
+                        <input type="text" name="asistants" class="line-input has-text-light" id="asistants" placeholder="John Doe,Jane Doe">
                     </div>
                     <div class="is-flex">
                       <p style="width: 8rem;" class="">Absent: </p>
                         <select name="absent" id="absent" class="line-input dropdown centered" required>
-                          <option value="" disabled selected>Select an option</option>
                         </select>
                         <p class="hidden is-danger" id="#error_message">Please select collaborator</p>
                     </div>
@@ -58,11 +57,12 @@
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#aaa",
-      confirmButtonText: "Yes, register fault!"
-    }).then((result) => {
-
-      if (result.isConfirmed) {
-        fetch('/view_collabs/register_fault?_csrf=<%=csrfToken%>', {
+      confirmButtonText: "Yes, register fault!",
+      loaderHtml: '<div class="spinner-border text-primary"></div>',
+      preConfirm: () => {
+        Swal.showLoading()
+        return new Promise((resolve) => {
+          fetch('/view_collabs/register_fault?_csrf=<%=csrfToken%>', {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -77,9 +77,6 @@
           })
         })
         .then(response => {
-          // if (response.status(403)) {
-          //   alert("No inicaste sesión con google")
-          // }
           return response.json()
         })
         .then(data => {
@@ -98,6 +95,9 @@
                     </div>
               </div>
                   `,
+            }).then(() => {
+              resolve(true)
+              get_faults_info()
             });
           } else {
             Swal.fire({
@@ -113,6 +113,8 @@
                     </div>
               </div>
                 `,
+            }).then(() => {
+              resolve(true)
             });
           }
           form.reset(); 
@@ -123,6 +125,11 @@
                           html: `<p>Please try again later or contact support<br>Error: ${error}</p>`,
                           icon: "error",
                         }))
+        })
+      }
+    }).then((result) => {
+      if (result.isConfirmed) {
+        
       }
     });
 
