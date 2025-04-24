@@ -516,15 +516,27 @@ module.exports = class Colaborador {
     return db.execute(`SELECT nombre, apellidos, id_colaborador
                       FROM colaborador
                       WHERE email <> ?
+                      AND estado = 1
         `, [email])
   }
 
   static async deleteCollab(id_colaborador){
+    const now = new Date();
+    const formattedDate = now.toISOString().slice(0, 10);
     const result = await db.execute(`
         UPDATE colaborador
-        SET estado = 0
+        SET estado = 0, 
+        fechaSalida = ?
+        WHERE id_colaborador = ?
+    `, [formattedDate, id_colaborador]);
+    return result
+  }
+  static async reactivate_Collab(id_colaborador){
+    const result = await db.execute(`
+        UPDATE colaborador
+        SET estado = 1, fechaIngreso = CURRENT_DATE
         WHERE id_colaborador = ?
     `, [id_colaborador]);
-    return result
-}
+    return result[0]
+  }
 };
