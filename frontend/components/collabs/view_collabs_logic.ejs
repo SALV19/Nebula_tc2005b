@@ -21,6 +21,7 @@
 
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
+      console.log(d)
       table_content += `<tr id='collab-${idx}' key='${idx}'>`
       table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}""></i></td>`
       table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
@@ -38,6 +39,7 @@
                                 <p class='has-text-weight-bold mb-4'>Role</p>
                                 <p class='has-text-weight-bold mb-4'>Modality</p>
                                 <p class='has-text-weight-bold mb-2'>Birthday</p>
+                                ${d.fechaSalida ? "<p class='has-text-weight-bold mb-2'>Exit day</p>" : ''}
                               </div>
                               <div class="column ">
                                   <p class='mb-4'>${d.telefono}</p>
@@ -46,6 +48,7 @@
                                   <p class='mb-4'>${d.modalidad == 1 ? 'In Person' : 
                                     d.modalidad == 2 ? 'Online' : 'Hybrid'}</p>
                                   <p class='mb-2'>${d.fechaNacimiento.split("T")[0]}</p>
+                                  ${d.fechaSalida ? `<p class='mb-2'>${d.fechaSalida.split("T")[0]}</p>` : ''}
                               </div>
                               <div class="column my-2">
                                 <div class='is-flex is-justify-content-space-around	mb-4'>
