@@ -52,7 +52,7 @@
                     <p class="container-text">${falta.motivo}</p>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <form class="file buttons" onsubmit="return validate_FA_form(event, this)">
+                    <form class="file buttons is-flex-wrap-nowrap" onsubmit="return validate_FA_form(event, this)">
                       <label class="file-label">
                         <input type="hidden" value="${falta.id_fa}" name="id_fa" id="id_fa" />
                         <input class="file-input" type="file" name="drive_file" id="${falta.id_fa}" onchange="update(this)" required />
