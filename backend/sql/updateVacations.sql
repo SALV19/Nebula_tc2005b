@@ -8,6 +8,8 @@ CREATE PROCEDURE update_abscence_request (
     IN p_ubicacion VARCHAR(250),
     IN p_evidencia VARCHAR(250),
     IN p_dates VARCHAR(250)
+    IN p_estado INT,
+    IN p_collab_aprovador VARCHAR(250),
 )
 BEGIN
 
@@ -15,8 +17,8 @@ BEGIN
     DECLARE pos INT;
 
     UPDATE solicitudes_falta 
-    SET estado = 0, 
-        `colabAprobador` = '',
+    SET estado = p_estado, 
+        `colabAprobador` = p_collab_aprovador,
         `tipo_falta` = p_tipo_falta,
         `descripcion` = p_descripcion,
         `ubicacion` = p_ubicacion,

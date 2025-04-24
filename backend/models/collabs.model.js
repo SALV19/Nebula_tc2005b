@@ -28,14 +28,16 @@ module.exports = class Colaborador {
   }
 
   static fetchAllCompleteName(){
-    return db.execute(`SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
-                      FROM colaborador c
-                      INNER JOIN equipo e
-                        ON e.id_colaborador = c.id_colaborador
-                      INNER JOIN departamento d
-                        ON d.id_departamento = e.id_departamento
-                      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
-                      `)
+    return db.execute(`
+      SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
+      FROM colaborador c
+      INNER JOIN equipo e
+        ON e.id_colaborador = c.id_colaborador
+      INNER JOIN departamento d
+        ON d.id_departamento = e.id_departamento
+      WHERE e.id_rol <= 2
+      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
+      `)
   }
 
 
@@ -175,7 +177,7 @@ module.exports = class Colaborador {
         c.modalidad, c.foto, c.curp, c.rfc, c.estado,
         d.nombre_departamento, em.nombre_empresa,
         r.tipo_rol,
-        fa.id_fa AS FaltasAdministrativas
+        COUNT(DISTINCT fa.id_fa) AS FaltasAdministrativas
         FROM colaborador c
         LEFT JOIN equipo e ON e.id_colaborador = c.id_colaborador
         LEFT JOIN rol r ON r.id_rol = e.id_rol
@@ -374,7 +376,16 @@ module.exports = class Colaborador {
         `SELECT nombre, telefono FROM colaborador WHERE id_colaborador = ?`, 
         [id_colaborador]
     );
-}
+  }
+
+  static fetchFaultNoti(id_colaborador) {
+    return db.execute(
+        `SELECT c.nombre, c.apellidos, 
+          (SELECT telefono FROM colaborador WHERE email = 'contenido1@nuclea.solutions' LIMIT 1) AS telefono
+          FROM colaborador c WHERE c.id_colaborador = ?`, 
+          [id_colaborador]
+    );
+  }C
 
   static fetchColabVac(idColaborador){
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador
