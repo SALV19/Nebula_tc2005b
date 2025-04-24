@@ -15,6 +15,8 @@ const {contVac} = require('../util/contVacations')
 
 const generator = require("generate-password-browser");
 const argon2 = require('argon2');
+const { request } = require("http");
+const { response } = require("express");
 
 let settings = {
   selectedOption: "active",
@@ -97,7 +99,6 @@ exports.post_collab = (request, response) => {
   argon2.hash(password)
     .then(hashedPassword => {
       const firstPassword = 'first' + hashedPassword;
-      console.log(firstPassword);
       return new_Colab.save(firstPassword,foto);
     })
     .then(([rows]) => {
@@ -475,7 +476,7 @@ exports.register_fault = async (request, response) => {
   }, 
   (err, data) => {
     if (err) {
-      console.log(err)
+      console.error(err)
       response.send(err);
     } else {
       let options = {
@@ -490,7 +491,7 @@ exports.register_fault = async (request, response) => {
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
-            console.log(err)
+            console.error(err)
             response.send(err);
           } else {
             const googleLogin = request.user?.accessToken ? 1 : 0;
@@ -536,7 +537,13 @@ exports.register_fault = async (request, response) => {
                 const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
               
                 const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, fileLink)
-                fault.save()
+                await fault.save();
+
+                const collab = await FaltaAdministrativa.count_faults(request.body.absent);
+
+                if (collab.count >= 3){
+                  await FaltaAdministrativa.deactivate_collab(request.body.absent);
+                }
 
                 return response.json({
                   success: true,
@@ -571,6 +578,7 @@ exports.register_fault = async (request, response) => {
 exports.download = (request, response) => {
   response.download(path.join(__dirname, '../../report.pdf'), request.query.filename + ".pdf")
 }
+
 exports.delete_Collab = async (request, response) => {
   try {
     const id_colaborador = request.body.valor;
@@ -591,3 +599,23 @@ exports.delete_Collab = async (request, response) => {
   }
 }
 
+exports.reactivate_Collab = async (request, response) => {
+  
+  try {
+    const id_colaborador = request.body.colab_reactivate;
+    const result = await Colaborador.reactivate_Collab(id_colaborador);
+
+    response.json({
+      success: true,
+      message: `Colaborador reactivado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al reactivar colaborador:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al reactivar colaborador.' 
+    })
+  }
+}

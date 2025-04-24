@@ -38,7 +38,6 @@ exports.get_requests = async (request, response) => {
 
 exports.get_events_calendar = async (request, response) => {
   const { start, end } = request.body;
-  console.log("Entro aqui al events");
 
   if (!request.user?.accessToken) {
     return response.status(401).json({ error: 'No autorizado' });

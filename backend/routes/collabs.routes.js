@@ -14,10 +14,11 @@ router.post('/Active', collabs_controller.get_collabs_info)
 router.post('/Inactive', collabs_controller.get_inactive)
 router.post('/get_collab_data', collabs_controller.get_collab_data);
 router.post('/update_collab', collabs_controller.update_collab);
-router.post('/register_fault', collabs_controller.register_fault)
+router.post('/register_fault', collabs_controller.register_fault);
 router.get('/download', collabs_controller.download)
 router.post('/uploadFA', upload.single("drive_file"), collabs_controller.uploadFA)
 router.post('/deleteCollab', collabs_controller.delete_Collab);
+router.post('/reactivateCollab', collabs_controller.reactivate_Collab);
 
 router.post('/Faults', collabs_controller.get_faults);
 router.get("/get_collabs_name", collabs_controller.get_collabs_name)
