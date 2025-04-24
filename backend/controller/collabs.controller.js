@@ -17,6 +17,7 @@ const generator = require("generate-password-browser");
 const argon2 = require('argon2');
 const { request } = require("http");
 const { response } = require("express");
+const sendWhatsapp = require('../util/sendWhatsapp'); 
 
 let settings = {
   selectedOption: "active",
@@ -543,7 +544,17 @@ exports.register_fault = async (request, response) => {
 
                 if (collab.count >= 3){
                   await FaltaAdministrativa.deactivate_collab(request.body.absent);
-                }
+                  
+                  const id_colaborador = request.body.absent;
+                  const [[data]] = await Colaborador.fetchFaultNoti(id_colaborador);
+                  const { telefono, nombre, apellidos } = data;
+                  const completeName = nombre + " " + apellidos;
+                
+                  if (telefono) {
+                    await sendWhatsapp.sendFaultsNotification(completeName, telefono);
+                  }
+                
+                }                
 
                 return response.json({
                   success: true,
