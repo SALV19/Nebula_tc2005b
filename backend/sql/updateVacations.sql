@@ -7,9 +7,9 @@ CREATE PROCEDURE update_abscence_request (
     IN p_descripcion VARCHAR(250),
     IN p_ubicacion VARCHAR(250),
     IN p_evidencia VARCHAR(250),
-    IN p_dates VARCHAR(250),
+    IN p_dates VARCHAR(250)
     IN p_estado INT,
-    IN p_collab_aprovador VARCHAR(250)
+    IN p_collab_aprovador VARCHAR(250),
 )
 BEGIN
 
