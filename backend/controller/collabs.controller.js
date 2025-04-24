@@ -558,7 +558,13 @@ exports.register_fault = async (request, response) => {
               }
             } else {
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
-              fault.save()
+              await fault.save()
+
+              const collab = await FaltaAdministrativa.count_faults(request.body.absent);
+
+              if (collab.count >= 3){
+                await FaltaAdministrativa.deactivate_collab(request.body.absent);
+              }
 
                 return response.json({
                     success: true,

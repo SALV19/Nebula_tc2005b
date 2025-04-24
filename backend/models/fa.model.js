@@ -34,9 +34,9 @@ module.exports = class FaltaAdministrativa {
   static async deactivate_collab(id_colaborador){
     const deactivate = await db.execute(`
       UPDATE colaborador
-      SET estado = 0
-      WHERE id_colaborador = ?
-    `, [id_colaborador])
+        SET estado = 1, fechaSalida = CURRENT_DATE
+        WHERE id_colaborador = ?;
+    `, [String(id_colaborador)])
     console.log("LOL: ", deactivate[0]);
     return deactivate[0];
   }

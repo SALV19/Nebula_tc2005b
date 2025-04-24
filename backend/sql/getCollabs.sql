@@ -188,5 +188,12 @@ SELECT  c.id_colaborador, c.nombre, c.apellidos,
                 c.modalidad, c.foto, c.curp, c.rfc, c.estado,
                 d.nombre_departamento
         ORDER BY c.nombre ASC
-            LIMIT 10
+            LIMIT 10;
 
+UPDATE colaborador
+  SET estado = 1, fechaSalida = CURRENT_DATE
+  WHERE id_colaborador = '1';
+
+SELECT * FROM colaborador WHERE id_colaborador = 1;
+
+DESCRIBE colaborador;
