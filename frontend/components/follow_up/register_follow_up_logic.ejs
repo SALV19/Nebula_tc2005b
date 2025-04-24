@@ -317,7 +317,7 @@
                 showCancelButton: true,
                 confirmButtonColor: `#59A250`,
                 cancelButtonColor: "#7066E0",
-                confirmButtonText: "Yes, update it!"
+                confirmButtonText: "Yes, register it!"
               }).then((result) => {
                   if (result.isConfirmed) { 
                     try {
@@ -326,7 +326,7 @@
                         console.log(error);
                         Swal.fire({
                             title: "Problem",
-                            text: `There was an error saving the evaluation`,
+                            text: `There was an error registering the evaluation`,
                             icon: "error",
                             confirmButtonColor: `#59A250`,
                             confirmButtonText: "OK",  
