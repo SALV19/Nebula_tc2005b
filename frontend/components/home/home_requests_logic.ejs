@@ -88,10 +88,13 @@
         })
         .then(data => {
             createTableRequests(data);
-            if (data.faults.length < 8 && pagination > 0 ) {
+             if (data.faults.length === 0){
+                next_button.style.visibility = "hidden";
+                prev_button.style.visibility = "hidden";
+            } else if (data.faults.length < 8 && pagination > 0 ) {
                 next_button.style.visibility = "hidden";
                 prev_button.style.visibility = "visible";
-            } else if (data.faults.length < 8 && pagination === 0){
+            }else if (data.faults.length < 8 && pagination === 0){
                 pagination_value.value = pagination;
                 next_button.style.visibility = "hidden";
                 prev_button.style.visibility = "hidden";
@@ -103,7 +106,7 @@
                 pagination_value.value = pagination;
                 next_button.style.visibility = "hidden";
                 prev_button.style.visibility = "visible";
-            } else {
+            }  else {
                 prev_button.style.visibility = "visible";
                 next_button.style.visibility = "visible";
                 pagination_value.value = pagination + 1;
@@ -118,6 +121,8 @@
 
         
     document.addEventListener("DOMContentLoaded", () => {
+        get_request();
+        
         const prev_button = document.querySelector("#prev-page");
         const next_button = document.querySelector("#next-page");
         const pagination_value = document.querySelector("#pagination");
@@ -141,9 +146,7 @@
         pagination_value.addEventListener("change", () => {
             get_request(Number(pagination_value.value - 1));
         });
-        
-        get_request();
-        
+           
     });
 
 </script>

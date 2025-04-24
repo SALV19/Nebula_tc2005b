@@ -28,14 +28,16 @@ module.exports = class Colaborador {
   }
 
   static fetchAllCompleteName(){
-    return db.execute(`SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
-                      FROM colaborador c
-                      INNER JOIN equipo e
-                        ON e.id_colaborador = c.id_colaborador
-                      INNER JOIN departamento d
-                        ON d.id_departamento = e.id_departamento
-                      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
-                      `)
+    return db.execute(`
+      SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
+      FROM colaborador c
+      INNER JOIN equipo e
+        ON e.id_colaborador = c.id_colaborador
+      INNER JOIN departamento d
+        ON d.id_departamento = e.id_departamento
+      WHERE e.id_rol <= 2
+      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
+      `)
   }
 
 

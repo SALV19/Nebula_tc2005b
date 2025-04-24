@@ -435,8 +435,7 @@
             text: `The request has been updated.`,
             icon: "success",
           });
-          get_info()
-          
+          get_info() 
         })
         .catch((error) => {
           Swal.fire({
@@ -491,7 +490,6 @@
 
     
     fetch("/requests/pop_up",{
-        
         method:"GET", 
         headers:{"Content-Type": "aplication/json"}
       }).then(response => response.json())
