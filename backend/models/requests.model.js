@@ -155,6 +155,7 @@ module.exports = class Requests {
                             WHERE c.email = ?
                           )
                            AND c.email != ?
+                           AND e.id_rol = 1
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
@@ -183,6 +184,7 @@ module.exports = class Requests {
                       WHERE c.email = ?
                     )
                   AND c.email <> ?
+                  AND e.id_rol = 1
                   `;
       if (filter.pending) {
         query += `AND sf.estado < 1 `;

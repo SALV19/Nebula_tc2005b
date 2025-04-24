@@ -381,10 +381,6 @@ exports.uploadFA = async (request, response)=> {
       // Construye el enlace de visualización manualmente
       const fileId = fileUploaded.data.id;
       const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
-
-      // Respuesta al frontend
-      // console.log('File ID:', fileId);
-      // console.log('Link:', fileLink);
     
       await FaltaAdministrativa.updateLink(id_fa, fileLink);
 
@@ -406,19 +402,14 @@ exports.uploadFA = async (request, response)=> {
 };
 exports.get_faults = async (request, response) => {
   const offset = request.body.offset * 10;
-  // console.log("Offsets: ", offset);
   
   const filter = request.body.filter;
-  // console.log("Filtro", filter);
 
   const ids = await Colaborador.fetchPaginatedCollabIds(offset, filter);
 
   const rows = await Colaborador.fetchFaultsCollabsByIds(ids);
 
   const faults = await Colaborador.fetchAllFaults();
-
-  // console.log("Total IDs obtenidos:", ids.length); 
-  // console.log("Total rows devueltos por fetchFaultsCollabsByIds:", rows.length); 
 
   const map = {};
   rows.forEach(c => {
@@ -569,7 +560,12 @@ exports.register_fault = async (request, response) => {
               }
             } else {
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
-              fault.save()
+              await fault.save()
+
+              const collab = await FaltaAdministrativa.count_faults(request.body.absent);
+              if (collab.count >= 3){
+                await FaltaAdministrativa.deactivate_collab(request.body.absent);
+              }
 
                 return response.json({
                     success: true,

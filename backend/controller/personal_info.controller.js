@@ -38,8 +38,6 @@ exports.get_personal_info = async (request, response) => {
         }
       }
 
-      console.log(link);
-
       response.render("personal_info", {
         permissions: request.session.permissions,
         csrfToken: request.csrfToken(),
