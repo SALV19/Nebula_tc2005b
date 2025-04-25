@@ -1,17 +1,11 @@
 const axios = require("axios");
 
 async function sendWhatsAppNotiRequests(name, type, date, telefono) {
-    console.log("Nombre:", name, "-", typeof name);
-    console.log("Tipo de falta:", type, "-", typeof type);
-    console.log("Fecha de inicio:", date, "-", typeof date);
-    
     
     telefono = String(telefono).replace(/\D/g, '')
     if (!telefono.startsWith('52')) {
         telefono = '52' + telefono;
     }
-    
-    console.log("telefono:", telefono, "-", typeof date);
     
     try {
         const response = await axios.post(
@@ -42,7 +36,6 @@ async function sendWhatsAppNotiRequests(name, type, date, telefono) {
                 },
             }
         );
-        console.log("Mensaje de WhatsApp enviado con éxito:", response.data);
     } catch (error) {
         console.error("Error al enviar mensaje de WhatsApp:", error.response ? error.response.data : error);
     }
@@ -85,7 +78,6 @@ async function sendMeetingNotification(name, summary, day, time, telefono) {
                 },
             }
         );
-        console.log("Mensaje enviado con éxito:", response.data);
     } catch (error) {
         console.error("Error al enviar mensaje de WhatsApp:", error.response ? error.response.data : error);
     }
@@ -125,7 +117,6 @@ async function sendFaultsNotification(name, telefono) {
                 },
             }
         );
-        console.log("Mensaje enviado con éxito:", response.data);
     } catch (error) {
         console.error("Error al enviar mensaje de WhatsApp:", error.response ? error.response.data : error);
     }

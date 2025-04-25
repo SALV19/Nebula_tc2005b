@@ -6,7 +6,6 @@
   const CALENDAR_ID_MEETING = "<%= calendarMeeting %>";
   const CALENDAR_ID_EVENT = "<%= calendarEvent %>";
   const allowedCalendarIds = [CALENDAR_ID_MEETING, CALENDAR_ID_EVENT];
-  console.log("calendarios, ", allowedCalendarIds);
 </script>
 
 <%- include('../components/nav_bar.ejs') %>
@@ -14,7 +13,6 @@
   <% if (permissions_error <= 0 ) {%>
 
     <script>
-      console.log("Entro al if")
       Swal.fire({
         title: "Colaborator not registered",
         html: `<p>Please get in contact with Human Resources to fix this</p>`,
@@ -103,7 +101,7 @@
     <div class="column is-half margin-counter">
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
       <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-        <%- include('../components/home/hiring_rate.ejs') %>
+        <%- include('../components/home/feeling_avg_rate.ejs') %>
         <p id="hiring-rate-container" style="margin-right: 3rem;">
   
         </p>

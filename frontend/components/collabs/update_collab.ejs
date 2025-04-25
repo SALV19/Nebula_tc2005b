@@ -41,15 +41,12 @@
       document.getElementById('rfc-input_modify').value = col.rfc;
       document.getElementById('curp-input_modify').value = col.curp;
       document.getElementById('empresa_modify').value = eq.nombre_empresa;
-      console.log(eq.nombre_empresa)
       selectedCompanyModify(eq.nombre_empresa);
 
       document.getElementById('department_modify').value = eq.id_departamento;
-      console.log(eq.nombre_departamento);
       // selectedDepartmentModify(eq.nombre_departamento);
     
       document.getElementById('position_modify').value = col.puesto;
-      console.log(col.puesto);
       
       document.getElementById('role_modify').value = eq.id_rol;
        // Abre el pop up 
@@ -127,14 +124,12 @@
 
 
   function selectedCompanyModify(val) {
-    console.log("Si se mando")
       const selector = document.querySelector("#department_modify")
       selector.disabled = false;
       const options = document.querySelectorAll(".department_option_modify")
 
       let selected_option;
       options.forEach(o => {
-        console.log(o.id)
           if (o.id != `option-modify-${val}`) {
               o.disabled = true;
           }

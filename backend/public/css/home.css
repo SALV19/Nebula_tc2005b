@@ -23,7 +23,7 @@ body{
     position: fixed;
     width: 70vw;
     height: 100vh;
-    z-index: 9998;
+    z-index: 998;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -34,7 +34,7 @@ body{
     top: 50%;
     left: 55%;
     transform: translate(-50%, -50%);
-    z-index: 9999;
+    z-index: 3;
     background-color: #454545;
     color: white;
     width: 30rem;
@@ -444,4 +444,13 @@ p{
     font-size: small;
     width: 6rem;
     height: 2rem;
+}
+.text-red{
+    color: rgb(184, 69, 62);
+}
+.text-yellow{
+    color: #F7DD46;
+}
+.text-green{
+    color: #59A250;
 }
