@@ -288,3 +288,10 @@ textarea::-webkit-scrollbar-thumb:hover {
 .has-text-succes{
     color: #59A250;
 }
+.headingVac{
+    font-size: 1.5vh;
+    display: inline-block;
+    margin-right: 1vh;
+    margin-left: 1vh; 
+    text-align: center;
+  }

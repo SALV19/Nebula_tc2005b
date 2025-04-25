@@ -3,18 +3,166 @@
 <link rel="stylesheet" href="/css/calendarMeeting.css" />
 <link rel="stylesheet" href="/css/collabs.css">
 <% if (googleLogin == 0) { %>
-  <div class="has-text-centered">
-    <br>
-    <label class="is-size-6 styling " for="collaborators">Google login access is required</label>
-    <br>
-    <br>
-    <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px;" 
-      href="/log_in/auth/google">
-      <span class="icon mr-2" style="margin-right: 8px;">
-        <img src="/icons/google.webp" class="image is-24x24" />
-      </span>
-      <span>Log in with Google</span>
-    </a>
+  <div class="content">
+    <div class="center-log">
+      <div class="calendar-wrapper">
+        <div class="popLogGoogle">
+          <label class="is-size-6 styling" for="collaborators">
+            Google login access is required to <br> register a meeting
+          </label>
+          <br><br>
+          <a class="button is-white"
+            style="display: inline-flex; align-items: center; width: auto; max-width: 220px;"
+            href="/log_in/auth/google">
+            <span class="icon mr-2" style="margin-right: 8px;">
+              <img src="/icons/google.webp" class="image is-24x24" />
+            </span>
+            <span>Log in with Google</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  <div class="section-container row-container" id="meeting-container">
+    <div class="form-column">
+      <% if (typeof errorMessage !== 'undefined' && errorMessage) { %>
+        <p class="form-error-message"><%= errorMessage %></p>
+      <% } %>
+      
+      <% if (typeof successMessage !== 'undefined' && successMessage) { %>
+        <p class="form-success-message"><%= successMessage %></p>
+      <% } %>
+      
+      <% if (Object.keys(errors).length > 0) { %>
+        <div class="error-container">
+          <p class="error-title">Por favor, corrija los errores en el formulario</p>
+        </div>
+      <% } %>
+      <form action="/follow_ups/meeting" method="POST">
+        <input type="hidden" name="_csrf" value="<%= csrfToken %>">
+        <div>
+          <label class="subtitleForm">Collaborator</label>
+          <select name="id_colaborador" id="collaborators" class="line-input-calendar dropdown 
+          <%= typeof errors !== 'undefined' %>" required>
+          <option value="default" disabled <%= typeof formData === 'undefined' || !formData.id_colaborador ? 'selected' : '' %>>
+            Select Collaborator
+          </option>
+            <% if (colaboradores.length > 0) { %>
+              <% for (let i = 0; i < colaboradores.length; i++) { %>
+                <option value="<%= colaboradores[i].id_colaborador %>">
+                  <%= colaboradores[i].nombre + " " + colaboradores[i].apellidos %>
+                </option>
+              <% } %>
+            <% } else { %>
+              <option disabled> No hay colaboradores disponibles </option>
+            <% } %>
+          </select>
+          <p id="errorMessage" class="text-hidden <%= typeof errors !== 'undefined' && errors.collaborator ? 'show' : '' %>">
+            <%= typeof errors !== 'undefined' && errors.collaborator ? errors.collaborator : 'Select a collaborator' %>
+          </p>
+        </div> 
+        <br>
+
+        <div>
+          <label class="subtitleForm">Date</label>
+          <section class="input-container">
+            <input class="line-input-calendar" type="date" id="filter_end" name="fechaAgendada" value="<%= new Date().toISOString().split('T')[0] %>"/ required>
+          </section>
+          <p id="dateError" class="text-hidden"> Select a valid date </p>
+        </div>
+        <br> 
+
+        <div>
+          <label class="subtitleForm">Start time</label>
+          <section class="input-container">
+            <input class="line-input-calendar" type="time" id="filter_end" name="startTime" min="09:00" 
+            max="18:00" value="<%= new Date().toTimeString().split(' ')[0].substring(0, 5) %>"/ required>
+          </section>
+          <p id="dateError" class="text-hidden"> Select a valid date </p>
+        </div> 
+        <br>
+       
+
+        <div>
+          <label class="subtitleForm">End time</label>
+          <section class="input-container">
+            <input class="line-input-calendar" type="time" id="filter_end" name="endTime" min="09:00" 
+            max="18:00" value="<%= new Date(Date.now() + 30*60000).toTimeString().split(' ')[0].substring(0, 5) %>" required>
+          </section>
+          <p id="dateError" class="text-hidden"> Select a valid time </p>
+        </div>
+
+        <br>
+        
+        <div>
+          <label class="subtitleForm">Repeating</label>
+          <select id="repeating" name="repeating" class="line-input-calendar dropdown" required>
+            <option value="no">Does not repeat</option>
+            <option value="day">Day</option>
+            <option value="week">Week</option>
+            <option value="month">Month</option>
+            <option value="year">Year</option>
+          </select>
+          <p id="dateError" class="text-hidden"> Select a valid option </p>
+        </div>
+
+        <div id="dayBlock" class="block" style="display: none">
+          <br>
+          <label class="subtitleForm">After</label>
+          <input type="number" id="dayOccurrences" name="dayOccurrences" min="1" 
+            max="25" placeholder="occurrences" class="line-input-calendar" >
+          <p id="dateError" class="text-hidden"> Select a valid number (1-25) </p>
+        </div> 
+
+        <div id="weekBlock" class="block" style="display: none">
+          <br>
+          <label class="subtitleForm">After</label>
+          <input type="number" id="weekOccurrences" name="weekOccurrences" min="1" 
+            max="5" placeholder="occurrences" class="line-input-calendar" >
+          <p id="dateError" class="text-hidden"> Select a valid number (1-5) </p>
+        </div> 
+
+        <div id="monthBlock" class="block" style="display: none">
+          <br>
+          <label class="subtitleForm">After</label>
+          <input type="number" id="monthOccurrences" name="monthOccurrences" min="1" 
+            max="12" placeholder="occurrences" class="line-input-calendar" >
+          <p id="dateError" class="text-hidden"> Select a valid number (1-12) </p>
+        </div> 
+
+        <div id="yearBlock" class="block" style="display: none">
+          <br>
+          <label class="subtitleForm">After</label>
+          <input type="number" id="yearOccurrences" name="yearOccurrences" min="1" 
+            max="3" placeholder="occurrences" class="dateLine" class="line-input-calendar" >
+          <p id="dateError" class="text-hidden"> Select a valid number (1-3) </p>
+        </div> 
+
+        <div class="button-container">
+          <button id="submitButton" class="button is-success" type="submit">Submit</button>
+        </div>
+      </form>
+    </div>
+    
+    <div class="calendar-column">
+      <aside class="pop-up-d" style="display: none;" id="pop-up">
+        <div class="pop-up-content-d">              
+          <button onclick="closePopup()" class="button-close">
+            <i class="bi bi-x"></i>
+          </button>
+          <div class="column-container">
+            <div class="column2">
+              <div id="color-calendar" class="calendar-color-box"></div>
+              <h2 id="event-title" class="title-event"></h2>
+            </div>                  
+          </div>
+          <p class="text-event"><strong>Date: </strong><span id="event-date"></span></p>
+          <p class="text-event"><strong>Start Hour: </strong><span id="event-hour-start"></span></p>
+          <p class="text-event"><strong>End Hour: </strong><span id="event-hour-end"></span></p>
+          <p class="text-event"><strong>Details: </strong> <span id="event-details"></span></p>
+        </div>
+      </aside>
+      <div id="calendar" class="calendar"></div>
+    </div>
   </div>
 <% } else { %> 
   <div class="section-container row-container" id="meeting-container">

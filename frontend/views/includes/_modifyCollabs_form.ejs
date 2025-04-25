@@ -9,13 +9,13 @@
                                 <div class="cell">
                                     <div><label class="subtitleForm">Name</label></div>
                                     <section class="input-container">
-                                        <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150">
+                                        <input name="nombre" type="text" id="name_modify" placeholder="Insert name" class="line-input" required maxlength="150" tabindex="1">
                                     </section>
 
                                     
                                     <div><label class="subtitleForm">Company</label></div>
                                     <section class="input-container">
-                                        <select name="nombre_empresa" id="empresa_modify" class="line-input dropdown" required onchange="selectedCompanyModify(this.value)">
+                                        <select name="nombre_empresa" id="empresa_modify" class="line-input dropdown" required onchange="selectedCompanyModify(this.value)" tabindex="3">
                                             <option value="" disabled selected>Select Company</option>
                                             <% for (const [key, value] of empresa) { %>
                                                 <option value="<%= key %>"><%= key %></option>
@@ -25,12 +25,12 @@
 
                                     <div><label class="subtitleForm">Position</label></div>
                                     <section class="input-container">
-                                        <input name="puesto" type="text" id="position_modify" placeholder="Insert Position" class="line-input" required maxlength="100">
+                                        <input name="puesto" type="text" id="position_modify" placeholder="Insert Position" class="line-input" required maxlength="100" tabindex="5">
                                     </section>
 
                                     <div><label class="subtitleForm">Mail</label></div>
                                     <section class="input-container">
-                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateFormModify()" required maxlength="100">
+                                        <input name="email" type="text" id="mail-input_modify" placeholder="Insert mail" class="line-input" onblur="validateFormModify()" required maxlength="100" tabindex="7">
                                         <p id="mail-error_modify" class="error" style="display: none;">
                                             Invalid email domain
                                             <span title="@nuclea.solutions, @zigzag.house, @we.page, @mayaprotocol, @moca.app" style="cursor: help; margin-left: 5px;">
@@ -41,12 +41,12 @@
                                     
                                     <div><label class="subtitleForm">Location</label></div>
                                     <section class="input-container">
-                                        <input name="ubicacion" type="text" id="location_modify" placeholder="Insert collab location" class="line-input" required maxlength="150">
+                                        <input name="ubicacion" type="text" id="location_modify" placeholder="Insert collab location" class="line-input" required maxlength="150" tabindex="9">
                                     </section>
                                     
                                     <div><label class="subtitleForm">Modality</label></div>
                                     <section class="input-container">
-                                        <select name="modalidad" id="modality_modify" class="line-input dropdown" required>
+                                        <select name="modalidad" id="modality_modify" class="line-input dropdown" required tabindex="11">
                                             <option value="" disabled selected>Select Modality</option>
                                             <% if (modalidad && modalidad.length > 0) { %>
                                                 <% for (let i = 0; i < modalidad.length; i++) { %>
@@ -68,7 +68,7 @@
 
                                     <div><label class="subtitleForm">Phone</label></div>
                                         <section class="input-container">
-                                            <input name="telefono" type="text" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validateFormModify()" required maxlength="15">
+                                            <input name="telefono" type="text" id="phone-input_modify" placeholder="Insert phone" class="line-input" oninput="validateFormModify()" required maxlength="15" tabindex="13">
                                             <p id="phone-error_modify" class="error" style="display: none;">Phone must be between 10 to 15 digits</p>
                                         </section>
                                     </div>
@@ -76,12 +76,12 @@
                                     <div class="cell">
                                         <div><label class="subtitleForm">Last Name</label></div>
                                         <section class="input-container">
-                                            <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required required maxlength="150">
+                                            <input name="apellidos" type="text" id="last-name_modify" placeholder="Insert last name" class="line-input" required required maxlength="150" tabindex="2">
                                         </section>
                                                                         
                                         <div><label class="subtitleForm">Department</label></div>
                                         <section class="input-container">
-                                            <select name="id_departamento" id="department_modify" class="line-input dropdown" required disabled onchange="selectedDepartmentModify(this)">
+                                            <select name="id_departamento" id="department_modify" class="line-input dropdown" required disabled onchange="selectedDepartmentModify(this)" tabindex="4">
                                                 <option value="" disabled selected>Select Department</option>
                                                 <% for (const [key, value] of empresa) {%>
                                                     <% for (let i = 0; i < value.length; i++) {%>
@@ -93,7 +93,7 @@
 
                                         <div><label class="subtitleForm">Role</label></div>
                                         <section class="input-container">
-                                            <select name="id_rol" id="role_modify" class="line-input dropdown" required>
+                                            <select name="id_rol" id="role_modify" class="line-input dropdown" required tabindex="6">
                                                 <option value="" disabled selected>Select Role</option>
                                                 <% if (rol && rol.length > 0) { %>
                                                     <% for (let i = 0; i < rol.length; i++) { %>
@@ -114,25 +114,25 @@
                                         </section>
 
                                         <div><label class="subtitleForm">Birthday</label></div>
-                                        <input name="fechaNacimiento" id="birthday_modify" class="dateLine" type="date" required>
+                                        <input name="fechaNacimiento" id="birthday_modify" class="dateLine" type="date" required tabindex="8">
 
                                         <div><label class="subtitleForm">Entry Date</label></div>
-                                        <input name="fechaIngreso" id="entry-date_modify" class="dateLine" type="date" required>
+                                        <input name="fechaIngreso" id="entry-date_modify" class="dateLine" type="date" required tabindex="10">
 
                                         <div><label class="subtitleForm">RFC</label></div>
                                         <section class="input-container">
-                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateFormModify()" maxlength="13">
+                                            <input name="rfc" type="text" id="rfc-input_modify" placeholder="Insert RFC (Optional)" class="line-input" oninput="validateFormModify()" maxlength="13" tabindex="12">
                                             <p id="rfc-error_modify" class="error" style="display: none;">RCF must be between 12 to 13 characters</p>
                                         </section>
 
                                         <div><label class="subtitleForm">CURP</label></div>
                                         <section class="input-container">
-                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateFormModify()" maxlength="18">
+                                            <input name="curp" type="text" id="curp-input_modify" placeholder="Insert CURP (Optional)" class="line-input" oninput="validateFormModify()" maxlength="18" tabindex="14">
                                             <p id="curp-error_modify" class="error" style="display: none;">CURP must be of 18 characters</p>
                                         </section>
 
                                     <div class="my_button">
-                                        <button type="submit" class="button is-save">Save</button>
+                                        <button type="submit" class="button is-save" tabindex="15">Save</button>
                                     </div>
                                 </div>
                             </div>

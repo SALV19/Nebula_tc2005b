@@ -435,8 +435,7 @@
             text: `The request has been updated.`,
             icon: "success",
           });
-          get_info()
-          
+          get_info() 
         })
         .catch((error) => {
           Swal.fire({
@@ -490,7 +489,7 @@
     // evidenceContainer.value = null
 
     
-    fetch("/requests/pop_up",{
+    fetch(`/requests/pop_up?id=${id}`,{
         
         method:"GET", 
         headers:{"Content-Type": "aplication/json"}
@@ -632,6 +631,7 @@
   }
 
   function eventCaledarResize($el) {
+    
     let width = $el.width()
     flatpickr.set('showMonths', 1)
     flatpickr.set('maxDate', maxDate[1])
