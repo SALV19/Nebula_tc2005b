@@ -280,3 +280,10 @@ textarea::-webkit-scrollbar-thumb:hover {
 .add-collab:hover {
     background-color: #41753b;
 }
+.headingVac{
+    font-size: 1.5vh;
+    display: inline-block;
+    margin-right: 1vh;
+    margin-left: 1vh; 
+    text-align: center;
+  }
