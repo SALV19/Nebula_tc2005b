@@ -15,7 +15,7 @@ router.use("/follow_ups", permissions_middleware.general_permissions, followUp_r
 router.get("/personal_info", permissions_middleware.general_permissions, personal_info_routes.get_personal_info);
 router.use("/reports", permissions_middleware.view_reports, reports_routes);
 router.use("/requests", permissions_middleware.general_permissions, request_routes);
-router.use("/", permissions_middleware.general_permissions, home_routes);
+router.use("/", home_routes);
 
 
 
