@@ -280,3 +280,11 @@ textarea::-webkit-scrollbar-thumb:hover {
 .add-collab:hover {
     background-color: #41753b;
 }
+
+.has-text-danger-k{
+    color: #B8453E;
+}
+
+.has-text-succes{
+    color: #59A250;
+}
