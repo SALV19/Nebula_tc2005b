@@ -1,7 +1,5 @@
 <script>
     function createTableRequests(data) {
-        console.log("entro al table");
-        console.log("DATAA: ", data);
         const table = document.querySelector('#requests_table');
 
         let table_content = `
@@ -110,7 +108,6 @@
                 prev_button.style.visibility = "visible";
                 next_button.style.visibility = "visible";
                 pagination_value.value = pagination + 1;
-            
             }
         })
         .catch(e => {

@@ -232,8 +232,6 @@ module.exports = class Requests {
                 es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE
             GROUP BY es.id_colaborador
         ) AS promedios;
-
-
         `)
         return percentage[0];
     }
@@ -254,7 +252,6 @@ module.exports = class Requests {
                     es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE
                 GROUP BY es.id_colaborador
             ) AS promedios;
-
         `)
         return percentage[0];
     }

@@ -41,7 +41,6 @@ module.exports = class Requests {
 
   update(estado, collab_aprovador) {
     const dates = this.dates.join(',')
-    console.log(this.request_id, this.type, this.reason, this.location, this.evidence, dates)
     return db.execute(
       `CALL update_abscence_request(?, ?, ?, ?, ?, ?, ?, ?)`,
       [this.request_id, this.type, this.reason, this.location, this.evidence, dates, estado, collab_aprovador]
@@ -136,7 +135,6 @@ module.exports = class Requests {
 
   static async fetchTeamRequests(email, offset, filter = null) {
     if (!filter?.length > 0) {
-      console.log(email);
       return db.execute(
         `SELECT  c.email, c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                         FROM solicitudes_falta sf
@@ -166,7 +164,6 @@ module.exports = class Requests {
         [email, email, offset]
       );
     } else {
-      console.log(filter)
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds
@@ -238,7 +235,6 @@ module.exports = class Requests {
         [offset || 0]
       );
     } else {
-      console.log("filtro")
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds

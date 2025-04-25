@@ -119,7 +119,6 @@ module.exports = class Meeting {
                             reject(err);
                             return;
                         }
-                        console.log('Event created:', event.data.htmlLink);
                         resolve(event.data);
                     }
                 );

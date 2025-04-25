@@ -261,9 +261,7 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
       .then(response => {
           const calendarList = response.data;
           
-          console.log(`El usuario tiene acceso a ${calendarList.items.length} calendarios:`);
           calendarList.items.forEach(cal => {
-              console.log(`- ${cal.summary} (${cal.id})`);
           });
           
           const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
@@ -273,7 +271,6 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
           } else if (calendarId === 'primary') {
               return true;
           } else {
-              console.log(`El usuario NO tiene acceso al calendario: ${calendarId}`);
               return false;
           }
       })
@@ -284,7 +281,6 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
 }
 
 exports.get_meeting_events = (request, response) => {
-  console.log("Solicitando eventos de calendario");
   const googleLogin = request.user?.accessToken ? 1 : 0;
   let eventos = [];
 
@@ -304,7 +300,6 @@ exports.get_meeting_events = (request, response) => {
     calendar.calendarList.list()
       .then(calendarListResponse => {
         const calendars = calendarListResponse.data.items;
-        console.log("Calendarios encontrados:", calendars.length);
         
         const eventPromises = calendars.map(cal => {
           const calendarId = cal.id;
@@ -340,7 +335,6 @@ exports.get_meeting_events = (request, response) => {
       })
       .then(eventArrays => {
         eventos = eventArrays.flat();
-        console.log("Total eventos obtenidos:", eventos.length);
         
         response.json(eventos);
       })
