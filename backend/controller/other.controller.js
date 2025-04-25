@@ -18,12 +18,18 @@ exports.get_permissions = async (request, response, next) => {
   }
 
   const email = request.session.email ?? request.user.profile.emails[0].value;
-  const active = request.session.estado ?? request.user.user.estado
-
-  if (!active) {
-    response.render("error_401")
-    request.session.destroy()
+  if (!request.user.user) {
+    request.session.permissions = [];
+    response.redirect("/")
     return
+  } else {
+    const active = request.session.estado ?? request.user.user.estado
+  
+    if (!active) {
+      response.render("error_401")
+      request.session.destroy()
+      return
+    }
   }
   if (request.user) {
     request.session.email = request.user.profile.emails[0].value;
