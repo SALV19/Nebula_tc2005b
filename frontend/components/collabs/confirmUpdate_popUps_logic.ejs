@@ -5,19 +5,19 @@ document.addEventListener("DOMContentLoaded", function () {
 
     if (successDataUpdate) {
         Swal.fire({
-            title: "¡Colaborador actualizado!",
+            title: "¡Updated Colaborator!",
             html: `
-                <p><b>Nombre:</b> ${successDataUpdate.nombre} ${successDataUpdate.apellidos}</p>
-                <p><b>Correo:</b> ${successDataUpdate.email}</p>
-                <p><b>Teléfono:</b> ${successDataUpdate.telefono}</p>
+                <p><b>Name:</b> ${successDataUpdate.nombre} ${successDataUpdate.apellidos}</p>
+                <p><b>email:</b> ${successDataUpdate.email}</p>
+                <p><b>Phone:</b> ${successDataUpdate.telefono}</p>
                 <p><b>RFC:</b> ${successDataUpdate.rfc}</p>
                 <p><b>CURP:</b> ${successDataUpdate.curp}</p>
-                <p><b>Puesto:</b> ${successDataUpdate.puesto}</p>
-                <p><b>Ubicación:</b> ${successDataUpdate.ubicacion}</p>
-                <p><b>Modalidad:</b> ${successDataUpdate.modalidad}</p>
-                <p><b>Rol:</b> ${successDataUpdate.rol}</p>
-                <p><b>Fecha de Ingreso:</b> ${successDataUpdate.entryDate}</p>
-                <p><b>Fecha de Nacimiento:</b> ${successDataUpdate.birthday}</p>
+                <p><b>Position:</b> ${successDataUpdate.puesto}</p>
+                <p><b>Location:</b> ${successDataUpdate.ubicacion}</p>
+                <p><b>Modality:</b> ${successDataUpdate.modalidad}</p>
+                <p><b>Role:</b> ${successDataUpdate.rol}</p>
+                <p><b>Entry Date:</b> ${successDataUpdate.entryDate}</p>
+                <p><b>Birthdate:</b> ${successDataUpdate.birthday}</p>
             `,
             icon: "success",
             confirmButtonText: "OK",
