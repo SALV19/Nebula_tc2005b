@@ -1,19 +1,21 @@
 
 <script>
     function createCounter(data){
-        console.log("Data: ", data);
-        const percentage = data.percentage;
-        console.log("Porcentaje: ", data.percentage[0]);
-        console.log("percentage: ", percentage)
+        const percentage = data.percentage[0];
         const indiceRotacion = parseFloat(data.percentage[0].indice_rotacion).toFixed(1);
-        console.log("Índice de rotación:", indiceRotacion);
         let content = " ";
         content += `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
         <div class="level">
             <div class="level-item has-text-centered">
-            <div>
-                <h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> ${indiceRotacion}% </h1>`
+            <div>`
+                if (indiceRotacion > 100){
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> 100% </h1>`
+                } else if (indiceRotacion <= 0 || isNaN(indiceRotacion)){
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> 0% </h1>`
+                } else {
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> ${indiceRotacion}% </h1>`
+                }
                 if(data.periodo == 1){
                     content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
                 } else if (data.periodo == 2){
