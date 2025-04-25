@@ -103,7 +103,7 @@
     <div class="column is-half margin-counter">
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
       <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-        <%- include('../components/home/hiring_rate.ejs') %>
+        <%- include('../components/home/feeling_avg_rate.ejs') %>
         <p id="hiring-rate-container" style="margin-right: 3rem;">
   
         </p>

@@ -1,7 +1,7 @@
 <script>
     function createHR(data) {
         const indiceRotacion = parseFloat(data.counter[0].percentage).toFixed(1);
-        console.log("INDICE: ", indiceRotacion);
+        console.log("INDICE feeling: ", indiceRotacion);
         console.log("HR: ", data);
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
