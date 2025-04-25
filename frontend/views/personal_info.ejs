@@ -15,8 +15,13 @@
     <table class="table is-narrow is-fullwidth has-text-centered" >
       <tr>
         <td>
-          <p class='has-text-danger-k is-size-1'><%= `${faults}` %></p>
-          <p class='has-text-centered has-text-danger-k is-size-7'>Faults<br>commited</p>
+          <% if(!faults){ %>
+            <p class='has-text-succes is-size-1'><%= `${faults}` %></p>
+            <p class='has-text-centered has-text-succes is-size-7'>Faults<br>commited</p>
+            <% } else { %>
+            <p class='has-text-danger-k is-size-1'><%= `${faults}` %></p>
+            <p class='has-text-centered has-text-danger-k is-size-7'>Faults<br>commited</p>
+            <% } %>
         </td>
         <td>
           <p class=" has-text-white is-size-1"><%= `${diasDisponibles} / ${diasTotales}` %></p>
@@ -29,7 +34,7 @@
         </td>
       </tr>
     </table>
-   
+
   </div>  
   <div class="column right-k">
     <label class="is-size-6 styling">Full Name:</label>
@@ -99,3 +104,4 @@
     });
   });
 </script>
+<%- include('includes/_footer.ejs') %>

@@ -1,10 +1,16 @@
 <%- include('../components/nav_bar.ejs') %> 
+<script>
+    const generalDataSet = JSON.parse('<%- JSON.stringify(generalDataSet || {}) %>');
+    document.addEventListener("DOMContentLoaded", () => {
+        createChart(generalDataSet, false); 
+    });
+</script>
 <link rel="stylesheet" href="/css/reports.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
 <div class = "hero-body">
     <div class="container-reports">
         <input type="hidden" id="_csrf" value=<%= csrfToken %>>
-            <div id="forms_container" class="container is-fullwidth is-flex">
+            <div id="forms_container" class="container is-fullwidth is-flex is-justify-content-flex-start">
                 <form>
                     <div class="multiselect" onmouseleave="hideComapnyCheckboxes('checkboxes')" >
                         <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
@@ -86,33 +92,28 @@
                     <option value="12" >Anually</option>
                 </select>
             </div>
-            <div class="column is-1">
-                <i class="bi bi-download is-size-4 is-clickable" onclick="download_report()"></i>
-            </div> 
+            
         </div>
         <hr id="line"/>
-
-        <div class="positionRight">
-            <button class="button is-success" onclick="fetchData()" id="update_btn">Update</button>
-        </div>
-
-        <div>
-            <div id="title_input">
-                <label class="subtitle">Title</label>
-                <input type="text" placeholder="Insert title" class="line-inputT" id="title">
+        <div class="columns">
+            <div class="column is-full">
+                <div id="title_input">
+                    <label class="subtitle">Title</label>
+                    <input type="text" placeholder="Insert title" class="line-inputT" id="title">
+                </div>
+                <div id="report-info" class="report-info overflow"> </div>
             </div>
-            </fiv>
-
-            <div id="report-info" class="report-info">
+            <div class="column is-full k"> 
+                <div class="is-flex is-justify-content-center is-align-items-flex-end">
+                    <button class="button-download" onclick="download_report()" id="download_btn">Download</button>
+                    <button class="button-update " onclick="fetchData()" id="update_btn">Update</button>
+                </div>
             </div>
         </div>
-
-        
-
-        <div class="report-container" id="container">
+        <div class="report-container" id="container">   
             <div class="radar-container" id="radar-container">
                 <canvas  class="canvas-viewF" id="chart" ></canvas>
-                <div class="multiple-radar-container is-flex is-flex-wrap-wrap is-fullwidth" id="chart-container">
+                <div class="multiple-radar-container is-flex is-flex-wrap-wrap is-fullwidth overflow" id="chart-container">
             
                 </div>
             </div>

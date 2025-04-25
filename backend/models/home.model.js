@@ -86,12 +86,14 @@ module.exports = class Requests {
             ORDER BY fecha DESC
             LIMIT 8 OFFSET ?
             `,
-          [id_colaborador, offset]
+            [id_colaborador, offset]
         );
         return rows[0];
     }
+
     static async fetchAdmsFaults(id_colaborador){
-        return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
+        return db.execute(`SELECT COUNT(id_fa) AS FaltasAdministrativas 
+                        FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
     }
 
     static async metric_month(){

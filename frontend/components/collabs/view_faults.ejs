@@ -47,7 +47,7 @@
                     <p class="container-text">${falta.motivo}</p>
                   </div>
                   <div class="column" style="margin-top:-1.2rem;">
-                    <form class="file buttons" onsubmit="return validate_FA_form(event, this)">
+                    <form class="file buttons is-flex-wrap-nowrap" onsubmit="return validate_FA_form(event, this)">
                       <label class="file-label">
                         <input type="hidden" value="${falta.id_fa}" name="id_fa" id="id_fa" />
                         <input class="file-input" type="file" name="drive_file" id="${falta.id_fa}" onchange="update(this)" required />
@@ -159,7 +159,7 @@
                   <p><b>Name:</b> ${result.name}</p>
                   <br>
                   <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
-                  🔗 Ver archivo en Drive
+                  🔗 View file in Drive
                   </a>
                   `,
               });
@@ -167,14 +167,14 @@
           } else {
               Swal.fire({
               icon: "error",
-              title: "Error al subir archivo",
-              text: result.message || "Hubo un error inesperado.",
+              title: "Error uploading file",
+              text: result.message || "There was an unexpected error.",
               });
           }
       } catch (error) {
           Swal.fire({
               icon: "error",
-              title: "Fallo en el servidor",
+              title: "Server failure",
               text: error.message,
           });
           }
