@@ -1,12 +1,11 @@
 <%- include('../components/nav_bar.ejs') %>
 <link rel="stylesheet" href="/css/home.css" />
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
-<!-- <input type="hidden" id="_csrf" value=<%= csrfToken %>/> -->
+<input type="hidden" id="_csrf" value="<%= csrfToken %>">
 <script>
   const CALENDAR_ID_MEETING = "<%= calendarMeeting %>";
   const CALENDAR_ID_EVENT = "<%= calendarEvent %>";
   const allowedCalendarIds = [CALENDAR_ID_MEETING, CALENDAR_ID_EVENT];
-  console.log("calendarios, ", allowedCalendarIds);
 </script>
 
 <%- include('../components/nav_bar.ejs') %>
@@ -14,7 +13,6 @@
   <% if (permissions_error <= 0 ) {%>
 
     <script>
-      console.log("Entro al if")
       Swal.fire({
         title: "Colaborator not registered",
         html: `<p>Please get in contact with Human Resources to fix this</p>`,
@@ -58,19 +56,31 @@
       <%- include ('../components/home/add_event_logic.ejs') %>
 
     <% } else { %>
-      <div class="is-three-quarters center-log">
-        <br>
-        <label class="is-size-6 styling" for="collaborators">Google login access is required</label>
-        <br>
-        <br>
-        <a class="button is-white" style="display: inline-flex; align-items: center; width: auto; max-width: 220px; margin-left: 1rem;" 
-          href="/log_in/auth/google">
-          <span class="icon mr-2" style="margin-right: 8px;">
-            <img src="/icons/google.webp" class="image is-24x24" />
-          </span>
-          <span>Log in with Google</span>
-        </a>
+      <div class="content">
+        <div class="center-log">
+          <div class="calendar-wrapper">
+            <div class="popLogGoogle">
+              <label class="is-size-6 styling" for="collaborators">
+                Google login access is required to <br> view calendar events
+              </label>
+              <br><br>
+              <a class="button is-white"
+                style="display: inline-flex; align-items: center; width: auto; max-width: 220px;"
+                href="/log_in/auth/google">
+                <span class="icon mr-2" style="margin-right: 8px;">
+                  <img src="/icons/google.webp" class="image is-24x24" />
+                </span>
+                <span>Log in with Google</span>
+              </a>
+            </div>
+          </div>
+        </div>
+        
+        <div class="is-three-quarters">
+          <%- include('../components/calendar/calendar.ejs') %> 
+        </div>
       </div>
+
     <% } %>
     </div>
 
@@ -91,7 +101,7 @@
     <div class="column is-half margin-counter">
       <%- include('../components/current_absences.ejs', { total_days: total_absences }) %>
       <% if (permissions?.includes('consult_rotation') && permissions?.includes('consult_metrics')) { %>
-        <%- include('../components/home/hiring_rate.ejs') %>
+        <%- include('../components/home/feeling_avg_rate.ejs') %>
         <p id="hiring-rate-container" style="margin-right: 3rem;">
   
         </p>
@@ -99,10 +109,10 @@
     </div>
 
     <div class="column is-full container-t">
-        <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center; margin-top: 1rem;">
-          
-        </table>
-      <div class="is-flex is-justify-content-space-between my_buttons">
+      <table id="requests_table" class="table is-striped" style="background-color: #242424; justify-content: center; align-items: center; margin-top: 1rem;">
+        
+      </table>
+      <div class="is-flex is-justify-content-space-between my_buttons" style="visibility: hidden;">
         <i class="bi bi-caret-left-fill is-clickable" id="prev-page"></i>
         <input type="number" value="1" class="pagination" id="pagination" style="display: none;"/>
         <i class="bi bi-caret-right-fill is-clickable" id="next-page"></i>

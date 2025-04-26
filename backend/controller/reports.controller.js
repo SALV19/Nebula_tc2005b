@@ -31,6 +31,10 @@ exports.get_reports = async(request, response) => {
     }, {})
   })
 
+  const periodicity = getStartEnd(1);
+  const rawData = await general_report(periodicity);
+
+
   const depa = departamentos_empresas.reduce((a, v) => {
     if (!a[Object.keys(v)[0]]) {
       return {...a, [Object.keys(v)[0]]: Object.values(v)[0]}
@@ -44,6 +48,7 @@ exports.get_reports = async(request, response) => {
       collabs,
       depa,
       empresa,
+      generalDataSet: rawData
     });
   };
 

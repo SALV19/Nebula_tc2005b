@@ -323,7 +323,7 @@ exports.update_collab = async (request, response) => {
 
     response.redirect("/view_collabs");
   } catch (error) {
-    console.error("Error al actualizar colaborador:", error);
+    console.error("Error updating collaborator:", error);
     response.redirect("/view_collabs?error=true");
   }
 };
@@ -335,7 +335,7 @@ exports.uploadFA = async (request, response)=> {
   //Validar tipo de archivo
   const allowedTypes = ['application/pdf', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
   if (!allowedTypes.includes(my_file.mimetype)) {
-    return response.status(400).json({ success: false, message: 'Solo se permiten archivos PDF o DOCX' });
+    return response.status(400).json({ success: false, message: 'Only PDF or DOCX files are allowed' });
   }
 
   const googleLogin = request.user?.accessToken ? 1 : 0;
@@ -393,11 +393,11 @@ exports.uploadFA = async (request, response)=> {
       });
       // return file.data;
     } catch (err) {
-      console.error("Error al subir a Drive:", err);
-      return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+      console.error("Error uploading to Drive:", err);
+      return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
     }
   } else {
-      return response.status(403).json({ success: false, message: 'No estás autenticado con Google' });
+      return response.status(403).json({ success: false, message: 'You are not authenticated with Google' });
   }
 };
 exports.get_faults = async (request, response) => {
@@ -460,7 +460,7 @@ exports.register_fault = async (request, response) => {
   response.render('template_fautl', {
     nuclea_img: `data:image/png;base64,${imgBase64}`,
     date: request.body.date,
-    nombre_participantes: request.body.asistants,
+    nombre_participantes: request.body.asistants ?? "",
     nombre_colaboradores: name,
     motivo: request.body.description,
     consecuencias: request.body.consequences,
@@ -555,8 +555,8 @@ exports.register_fault = async (request, response) => {
                 });
                 // return file.data;
               } catch (err) {
-                console.error("Error al subir a Drive:", err);
-                return response.status(500).json({ success: false, message: 'Error al subir archivo a Drive' });
+                console.error("Error uploading file to Drive:", err);
+                return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
               }
             } else {
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)

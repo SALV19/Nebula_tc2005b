@@ -447,3 +447,28 @@
     padding-top: 1.5rem;
     padding-bottom: 1.5rem;
 }
+.center-log{
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    z-index: 9998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto; 
+}
+.popLogGoogle {
+    position: absolute;
+    top: 37%;
+    left: 41%;
+    transform: translate(-50%, -50%);
+    z-index: 500;
+    background-color: #454545;
+    color: white;
+    width: 30rem;
+    height: 12rem;
+    text-align: center;
+    padding-top: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}

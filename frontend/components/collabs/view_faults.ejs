@@ -13,24 +13,21 @@
                             </tr>
                           </thead>
     <tbody >`
-      // Información por cada rengrlón de la tablas
       
         data.faults.forEach((d, idx) => {
           table_content += `<tr id='collab-${idx}' class='icon-close' key='${idx}'>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}"></i></td>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento}</td>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa}</td>`;
-          table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador}</td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}"></i></td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.puesto}</td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre_departamento}</td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre_empresa}</td>`;
+          table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.total_faltas_colaborador}</td>`;
           table_content += '</tr>';
 
-          // Contenido desplegable
           table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
             <td colspan='6' style='background-color:#454545;'>`;
 
           if (d.faltas && d.faltas.length > 0) {
-            // Agregar encabezados una sola vez
             table_content += `
               <div class="has-background columns"">
                 <div class="column"><h1>Date</h1><hr class="hr-table"/></div>
@@ -39,9 +36,7 @@
                 <div class="column"><h1>Download</h1><hr class="hr-table"/></div>
               </div>`;
 
-            // Agregar las filas de faltas sin repetir encabezados
             d.faltas.forEach((falta) => {
-              console.log(falta)
               const date = new Date(falta.fecha);
               table_content += `
                 <div class="has-background columns">
@@ -87,7 +82,6 @@
 
       table_content += '</tbody>'
       table.innerHTML = table_content
-      // <button class='ml-6 button is-danger is-rounded has-text-white'>DELETE</button>
   
       const entries = document.querySelectorAll('[id^="collab-"]');
       entries.forEach((node, idx) => {
@@ -132,27 +126,15 @@
     }
 
     function update(element) {
-      console.log(element.id)
       const file_button = document.querySelector(`#file_name_${element.id}`)
-      console.log(file_button)
       const submit_button = document.querySelector(`#submit_btn_${element.id}`)
 
       file_button.innerHTML = element.value.split("\\").at(-1)
       submit_button.removeAttribute("style")
-      // console.log(element.value)
     }
 
-    //logica de bulma para el boton de upload
-    // const fileInput = document.querySelector("#file-js-example input[type=file]");
-    // fileInput.onchange = () => {
-    //   if (fileInput.files.length > 0) {
-    //     const fileName = document.querySelector("#file-js-example .file-name");
-    //     fileName.textContent = fileInput.files[0].name;
-    //   }
-    // };
-
     async function validate_FA_form(e, form) {
-      e.preventDefault(); // Evita el reload de la página
+      e.preventDefault(); 
       const formData = new FormData(form)
       try {
           const response = await fetch("/view_collabs/uploadFA?_csrf=<%=csrfToken%>", {
@@ -177,7 +159,7 @@
                   <p><b>Name:</b> ${result.name}</p>
                   <br>
                   <a href="${result.viewLink}" target="_blank" class="button is-link is-light">
-                  🔗 Ver archivo en Drive
+                  🔗 View file in Drive
                   </a>
                   `,
               });
@@ -185,14 +167,14 @@
           } else {
               Swal.fire({
               icon: "error",
-              title: "Error al subir archivo",
-              text: result.message || "Hubo un error inesperado.",
+              title: "Error uploading file",
+              text: result.message || "There was an unexpected error.",
               });
           }
       } catch (error) {
           Swal.fire({
               icon: "error",
-              title: "Fallo en el servidor",
+              title: "Server failure",
               text: error.message,
           });
           }

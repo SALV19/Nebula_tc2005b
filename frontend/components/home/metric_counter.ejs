@@ -1,19 +1,21 @@
 
 <script>
     function createCounter(data){
-        console.log("Data: ", data);
-        const percentage = data.percentage;
-        console.log("Porcentaje: ", data.percentage[0]);
-        console.log("percentage: ", percentage)
+        const percentage = data.percentage[0];
         const indiceRotacion = parseFloat(data.percentage[0].indice_rotacion).toFixed(1);
-        console.log("Índice de rotación:", indiceRotacion);
         let content = " ";
         content += `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
         <div class="level">
             <div class="level-item has-text-centered">
-            <div>
-                <h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> ${indiceRotacion}% </h1>`
+            <div>`
+                if (indiceRotacion > 100){
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> 100% </h1>`
+                } else if (indiceRotacion <= 0 || isNaN(indiceRotacion)){
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> 0% </h1>`
+                } else {
+                    content += `<h1 class="is-size-1 has-text-white" style="padding-left: 1.5rem;"> ${indiceRotacion}% </h1>`
+                }
                 if(data.periodo == 1){
                     content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`
                 } else if (data.periodo == 2){
@@ -59,17 +61,10 @@
 
         const icon = document.getElementById("metric-rate-icon");
         icon.addEventListener("click", () => {
-            console.log("Salio");
             const option = document.getElementById("metric_options");
-            console.log("Lol1: ", option);
             option.style.display = option.style.display === "block" ? "none" : "block";
         });
-        const radios = document.querySelectorAll("input[name='answer']");
-        radios.forEach(radio => {
-            radio.addEventListener("input", () => {
-                console.log("Valor seleccionado:", radio.value);
-            });
-        });
+        
         const saveButton = document.querySelector(".approve-button");
         if (saveButton) {
             saveButton.addEventListener("click", (e) => {
@@ -81,7 +76,6 @@
 
     const get_Metric = () => {
         const csrf = document.getElementById('_csrf').value;
-        console.log("CSRF: ", csrf);
         const selectedRadio = document.querySelector("input[name='answer']:checked");
         const value = selectedRadio ? selectedRadio.value : null;
 
@@ -96,15 +90,12 @@
             }),
         })
         .then(response => {
-            console.log("Entro al response", response);
             return response.json()
         })
         .then(data => {
-            console.log("Entro al data", data);
             createCounter(data);
         })
         .catch(e => {
-            console.log("Entro al error", e);
             console.error(e)
         });
     };

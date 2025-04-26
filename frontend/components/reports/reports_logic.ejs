@@ -169,7 +169,7 @@
                         title: {
                             display: true,
                             text: entries, 
-                            color: "#FFFFFF",
+                            color: pdf ? "#000" : "#FFFFFF",
                             font: {
                                 size: 24
                             }
@@ -273,7 +273,7 @@
                                 title: {
                                     display: true,
                                     text: collab, 
-                                    color: "#FFFFFF",
+                                    color: pdf ? "#000" : "#FFFFFF",
                                     font: {
                                         size: 24
                                     }
@@ -406,6 +406,7 @@
         const search = document.querySelector("#forms_container")
         const bar = document.querySelector("hr")
         const update = document.querySelector("#update_btn")
+        const download = document.querySelector("#download_btn")
         const title_input = document.querySelector("#title_input")
         const nav = document.querySelector("#navbar")
         const footer = document.querySelector("footer")
@@ -428,6 +429,8 @@
             bar.classList.add("hide")
             update.classList.add("hide")
             update.style.display = "none"
+            download.classList.add("hide")
+            download.style.display = "none"
             title_input.classList.add("hide")
             nav.classList.add("hide")
             footer.classList.add("hide")
@@ -442,7 +445,9 @@
                     search.classList.remove("hide")
                     bar.classList.remove("hide")
                     update.classList.remove("hide")
-                    update.style.display = "inline-flex"       
+                    update.style.display = "inline-flex" 
+                    download.classList.remove("hide")
+                    download.style.display = "inline-flex"       
                     title_input.classList.remove("hide")
                     nav.classList.remove("hide")
                     footer.classList.remove("hide")

@@ -9,7 +9,6 @@
   document.addEventListener('DOMContentLoaded', function() {
     var calendarEl = document.getElementById('calendar');
 
-    // console.log("eventos", eventos);
     var calendar = new FullCalendar.Calendar(calendarEl, {
       initialView: 'dayGridMonth',
       themeSystem: 'bootstrap5', 
@@ -65,14 +64,12 @@
         const popup = document.getElementById('pop-up');
         const deleteButton = document.querySelector('#pop-up .is-flex .button');
         if (popup && deleteButton) {
-          console.log("event", info.event);
           const endDate = info.event.end;
 
           eventoSeleccionado = info.event;
 
           const eventIdToDelete = info.event.id;
           const calendarIdToDelete = info.event.extendedProps.calendarId;
-          console.log("calendario de evento", calendarIdToDelete);
 
           if (allowedCalendarIds.includes(calendarIdToDelete)) {
             deleteButton.style.display = 'block'; 
@@ -112,7 +109,6 @@
     const csrf = document.getElementById('_csrf').value;
     const eventIdToDelete = popup.dataset.eventId;
     const calendarIdToDelete = popup.dataset.calendarId;
-    console.log()
     fetch('/deleteEvent', {
       method: "POST",
       headers: {

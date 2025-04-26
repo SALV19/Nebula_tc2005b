@@ -14,9 +14,37 @@ body{
     font-size: small;
     margin-left: -2rem;
 }
-.center-log{
-    margin:13rem;
+.content{
+    margin-left: -10rem;
+    margin-top: -2rem;
 }
+
+.center-log{
+    position: fixed;
+    width: 70vw;
+    height: 100vh;
+    z-index: 998;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    pointer-events: auto; 
+}
+.popLogGoogle {
+    position: absolute;
+    top: 50%;
+    left: 55%;
+    transform: translate(-50%, -50%);
+    z-index: 3;
+    background-color: #454545;
+    color: white;
+    width: 30rem;
+    height: 12rem;
+    text-align: center;
+    padding-top: 2rem;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
 
 .is-three-quarters{
     padding-left: 8rem;
@@ -416,4 +444,13 @@ p{
     font-size: small;
     width: 6rem;
     height: 2rem;
+}
+.text-red{
+    color: rgb(184, 69, 62);
+}
+.text-yellow{
+    color: #F7DD46;
+}
+.text-green{
+    color: #59A250;
 }

@@ -2,8 +2,6 @@
 
 <script>
 
-    // console.log("entro a consult follow ups logic");
-
 function get_progress_color(data, fecha) {
     const indicators = data.metricas[0]
     .filter(metricaObj => metricaObj.id_evaluacion === fecha.id_evaluacion) // Filtrar métricas según la evaluación
@@ -52,7 +50,6 @@ function TableFollowUps(data) {
 
     data.fechasAgendadas.forEach((fecha, idx) => { 
         const indicadorAverage = get_average_progress(data, fecha);   
-        console.log(`id-${idx}:`, data.id_evaluacion[idx]);    
         table_content += `<tr class="fecha-row " data-index="${idx}">`;
             table_content += `<td class="space-between" style="text-align: left; width: 10px;">
                 <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>
@@ -72,8 +69,6 @@ function TableFollowUps(data) {
         }
 
         table_content += `<td class="fixed-width space-between"  style="padding-top:0.8rem; padding-bottom:0.8rem"> Date: ${formattedDate}</td>`;
-        // console.log(fecha.fechaAgendada);             
-  // Columna de fecha
         table_content += `<td class='is-flex is-align-items-center space-between' style="padding-top:0.8rem; padding-bottom:0.8rem">
                             <span style="margin-right: 2rem; white-space: nowrap;">Average performance</span>
                             <p style="margin-right: 0.5rem; width: auto;">${indicadorAverage}%</p>
@@ -115,7 +110,6 @@ function TableFollowUps(data) {
                                         if (data.permissions?.includes('consult_followUps')) {
                                             table_content += ` <div class="button-container">
                                                                     <button class="button-style" id="buttn-${idx}" value="${data.id_evaluacion[idx]}">`
-                                                                        console.log("Data", data.id_evaluacion[idx]);
                                                                         table_content += `Delete 
                                                                     </button>
                                                                 </div>`
@@ -283,7 +277,6 @@ document.querySelectorAll('.toggle-question').forEach(question => {
     buttons.forEach((btn) => {
         btn.addEventListener("click", (e) => {
             const idEvaluacion = e.target.value;
-            console.log("ID de evaluación:", idEvaluacion);
             Swal.fire({
                 title: "Are you sure?",
                 text: `Do you want to delete this evaluation?`,
@@ -306,7 +299,6 @@ document.querySelectorAll('.toggle-question').forEach(question => {
 
 // Consulta a db para la información de solicitudes
 const get_info_FU = ( ) => {
-    console.log("entro a get_info_fu");
     const csrf = document.getElementById('_csrf').value
     const selected_option = document.querySelector('.selected')
     const route = selected_option.getAttribute('data-route');
@@ -322,16 +314,13 @@ const get_info_FU = ( ) => {
         return response.json()})
     .then(data => {
         TableFollowUps(data)
-
     })
-    .catch(e => console.log(e))
+    .catch(e => console.error(e))
 }
 
     const delete_Eval = (id_evaluacion) => {
-        console.log("entro al post delete");
         const csrf = document.getElementById('_csrf').value;
         const value = document.querySelector('button-style');
-        console.log("VALOR: ", id_evaluacion);
 
         fetch('/follow_ups/deleteEval', {
             method: 'POST',
@@ -344,7 +333,6 @@ const get_info_FU = ( ) => {
             }),
         })
         .then(response => {
-            console.log("Entro al response", response);
             return response.json()
         })
         .then(data => {
