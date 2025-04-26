@@ -514,7 +514,6 @@ exports.register_fault = async (request, response) => {
               };
 
               try {
-                console.log("upload file")
                 const fileUploaded = await drive.files.create({
                   requestBody,
                   media: media,
@@ -560,7 +559,6 @@ exports.register_fault = async (request, response) => {
                 return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
               }
             } else {
-              console.log("download file")
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
               await fault.save()
 

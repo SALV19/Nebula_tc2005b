@@ -607,7 +607,6 @@
                   },
                   events: [],
                   datesSet: function (info) {
-                    console.log('Nuevo rango:', info.startStr, 'a', info.endStr);
                     fetch(`/follow_ups/meeting/events?start=${info.startStr}&end=${info.endStr}`)
                       .then(res => res.json())
                       .then(events => {
@@ -625,9 +624,8 @@
                 });
                 
                 calendar.render();
-                console.log("Calendario renderizado");
               } else {
-                console.log("Elemento calendar no encontrado o usuario no autenticado");
+                console.error("Elemento calendar no encontrado o usuario no autenticado");
               }
             })
             .catch(error => {

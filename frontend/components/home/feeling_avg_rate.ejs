@@ -61,13 +61,6 @@
             hRoption.style.display = hRoption.style.display === "block" ? "none" : "block";
         });
 
-        const rad = document.querySelectorAll("input[name='answerHR']");
-        rad.forEach(radio => {
-            radio.addEventListener("input", () => {
-                console.log("Valor seleccionado:", radio.value);
-            });
-        });
-
         const saveButton = document.querySelector(".hr-button");
         if (saveButton) {
             saveButton.addEventListener("click", (e) => {
