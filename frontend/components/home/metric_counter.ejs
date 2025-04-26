@@ -64,12 +64,7 @@
             const option = document.getElementById("metric_options");
             option.style.display = option.style.display === "block" ? "none" : "block";
         });
-        const radios = document.querySelectorAll("input[name='answer']");
-        radios.forEach(radio => {
-            radio.addEventListener("input", () => {
-                console.log("Valor seleccionado:", radio.value);
-            });
-        });
+        
         const saveButton = document.querySelector(".approve-button");
         if (saveButton) {
             saveButton.addEventListener("click", (e) => {
