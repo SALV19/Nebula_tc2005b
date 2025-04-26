@@ -16,7 +16,6 @@ exports.get_permissions = async (request, response, next) => {
     }
     return;
   }
-
   const email = request.session.email ?? request.user.profile.emails[0].value;
   if (request.user || request.session.email) {
     const active = request.session.estado ?? request.user.user.estado

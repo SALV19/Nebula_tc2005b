@@ -557,7 +557,7 @@ module.exports = class Colaborador {
   static async reactivate_Collab(id_colaborador){
     const result = await db.execute(`
         UPDATE colaborador
-        SET estado = 1, fechaIngreso = CURRENT_DATE
+        SET estado = 1, fechaIngreso = CURRENT_DATE, fechaSalida = NULL
         WHERE id_colaborador = ?
     `, [id_colaborador]);
     return result[0]

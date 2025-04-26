@@ -1,13 +1,20 @@
 <script>
     function createHR(data) {
         const indiceRotacion = parseFloat(data.counter[0].percentage).toFixed(1);
-        console.log("HR: ", data);
         let content = `
         <input type="hidden" id="_csrf" value="<%= csrfToken %>">
         <div class="level">
             <div class="level-item has-text-centered">
-                <div>
-                    <h1 class="is-size-1 has-text-white"> ${indiceRotacion}% </h1>`;
+                <div>`
+        if (indiceRotacion < 70){
+            content +=  ` <h1 class="is-size-1 text-red"> ${indiceRotacion}% </h1>`;
+        } else if (indiceRotacion < 90){
+            content +=  ` <h1 class="is-size-1 text-yellow"> ${indiceRotacion}% </h1>`;
+        } else if (indiceRotacion <= 100){
+            content +=  ` <h1 class="is-size-1 text-green"> ${indiceRotacion}% </h1>`;
+        } else {
+            content +=  ` <h1 class="is-size-1 text-yellow"> 100% </h1>`;
+        }
 
         if (data.hiring_counter == 1) {
             content += `<p class="headingVac" style="text-align: center;"> Monthly </p>`;
@@ -87,7 +94,6 @@
         })
         .then(response => response.json())
         .then(data => {
-            console.log("Entro al data", data);
             createHR(data);
         })
         .catch(e => {

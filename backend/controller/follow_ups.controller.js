@@ -261,7 +261,8 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
       .then(response => {
           const calendarList = response.data;
           
-          calendarList.items.forEach(cal => {});
+          calendarList.items.forEach(cal => {
+          });
           
           const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
           

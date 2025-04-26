@@ -307,7 +307,6 @@
     Ensures dynamic validation and UI update based on current form state.
      */
     function eventListeners(data){
-      console.log("eventListeners")
       
       // On change: request type
       requestType.addEventListener("change", () => {
@@ -429,7 +428,6 @@
         // Show errors if they exist
         if (errors.length > 0) {
           e.preventDefault();
-          console.log("Errors")
           showErrorPopup(errors);
         } else {
           
