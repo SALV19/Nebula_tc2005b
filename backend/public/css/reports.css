@@ -14,6 +14,7 @@ body {
     flex-wrap: wrap;
     padding-top: 1.8rem;
     background-color: #242424;
+    /* margin-right: 1.8rem; */
 }
 
 .line-input {
@@ -208,3 +209,56 @@ label:hover, label:active{
 .button.is-success:hover{
     background-color: #41753b;
 }
+
+.button-download{
+    height: 2rem;
+    width: 6rem;
+    background-color: #60508F;
+    color: #EEEEEE; 
+    font-size: small;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer;
+    margin: 0.2rem;
+    font-weight: 600;
+    margin-right: 0.5rem;
+}
+.button-download:hover{
+    background-color: #524577;
+    color: white;
+    /* font-weight: bold; */
+}
+
+.button-update{
+    height: 2rem;
+    width: 6rem;
+    background-color: #485FC7;
+    color: #EEEEEE; 
+    font-size: small;
+    display: flex; 
+    justify-content: center;
+    align-items: center;
+    border: none; 
+    border-radius: 4px; 
+    cursor: pointer;
+    margin: 0.2rem;
+    font-weight: 600;
+}
+
+.button-update:hover{
+    background-color: #35458f;
+    color: white;
+    /* font-weight: bold; */
+}
+
+.overflow{
+    overflow-y: visible;
+}
+
+.k{
+    margin-right: 5.8rem;
+}
+

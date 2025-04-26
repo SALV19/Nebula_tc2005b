@@ -7,7 +7,6 @@ const reports_routes = require("./reports.routes")
 const request_routes = require('./request.routes')
 const collabs_routes = require("./collabs.routes");
 const home_routes = require("./home.routes");
-
 const permissions_middleware = require('../util/middlewares/permission.middleware')
 
 router.use("/view_collabs", permissions_middleware.view_collabs, collabs_routes);

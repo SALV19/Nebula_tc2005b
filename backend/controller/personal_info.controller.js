@@ -3,7 +3,6 @@ const Collaborator = require("../models/collabs.model");
 const { deploymentmanager } = require("googleapis/build/src/apis/deploymentmanager");
 const {contVac} = require("../util/contVacations");
 const Requests = require("../models/home.model");
-const multer = require('multer');
 
 exports.get_personal_info = async (request, response) => {
 
@@ -14,7 +13,7 @@ exports.get_personal_info = async (request, response) => {
     return [];
   });
   const faults = await Requests.fetchAdmsFaults(request.session.id_colaborador)
-  .then(data => data[0])
+  .then(data => data[0][0].FaltasAdministrativas)
   .catch(e => {
     console.error("Error fetching administrative faults:");
     return [];
@@ -44,7 +43,7 @@ exports.get_personal_info = async (request, response) => {
         diasDisponibles,
         diasTotales,
         error,
-        faults: faults.length,
+        faults,
         total_absences: absences.length,
         fullName: fullName, 
         email: rowsC[0].email, 

@@ -323,7 +323,7 @@
                     try {
                         document.getElementById("form_method").submit();
                     } catch (error) { 
-                        console.log(error);
+                        console.error(error);
                         Swal.fire({
                             title: "Problem",
                             text: `There was an error registering the evaluation`,
@@ -362,17 +362,14 @@
       const contentContainer = document.getElementById("content-section");
       fetch('/follow_ups/meeting')  
         .then(response => {
-          console.log("Respuesta HTML recibida:", response.status);
           return response.text();
         })
           .then(html => {
-            console.log("HTML recibido, actualizando contenido");
             contentContainer.innerHTML = html;
             const repeatingDropdown = document.getElementById("repeating");
             if (repeatingDropdown) {
               repeatingDropdown.addEventListener("change", function() {
                 let id = this.value;
-                console.log("Seleccionado:", id);
                 let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
                 
                 blocks.forEach(block => {
@@ -423,7 +420,6 @@
                 // Validate date
                 const dateInput = document.querySelector('input[name="fechaAgendada"]');
                 const dateError = document.getElementById("dateError");
-                console.log("dateInput: ", dateInput.value);
                 
                 if (dateInput) {
                   if (!dateInput.value) {
@@ -436,9 +432,6 @@
                     const today = new Date();
                     
                     const todayFormatted = today.toISOString().split('T')[0];
-                    
-                    console.log("today: ", today);
-                    console.log("todatFormatted: ", todayFormatted );
                     
                     if (dateInput.value < todayFormatted) {
                       dateError.classList.add("show");
@@ -586,10 +579,8 @@
             const googleLogin = document.querySelector('.section-container') !== null;
               
             if (googleLogin) {
-                console.log("Usuario autenticado, cargando eventos...");
                 return fetch('/follow_ups/meeting/events');
               } else {
-                console.log("Usuario no autenticado, no se cargarán eventos");
                 return Promise.resolve(null);
               }
           }).then(response => {
@@ -600,11 +591,9 @@
               }
             })
             .then(eventos => {
-              console.log("Eventos recibidos:", eventos);
               
               const calendarEl = document.getElementById('calendar');
               if (calendarEl) {
-                console.log("Inicializando calendario con", eventos.length, "eventos");
                 
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                   initialView: 'dayGridMonth',
@@ -616,7 +605,17 @@
                     center: 'title',
                     right: 'next'
                   },
-                  events: eventos,
+                  events: [],
+                  datesSet: function (info) {
+                    console.log('Nuevo rango:', info.startStr, 'a', info.endStr);
+                    fetch(`/follow_ups/meeting/events?start=${info.startStr}&end=${info.endStr}`)
+                      .then(res => res.json())
+                      .then(events => {
+                        calendar.removeAllEvents();
+                        calendar.addEventSource(events);
+                      })
+                      .catch(err => console.error('Error cargando eventos por mes:', err));
+                  },
                   moreLinkText: 'more',
                   moreLinkClick: 'popover',
                   dayMaxEvents: 2,
