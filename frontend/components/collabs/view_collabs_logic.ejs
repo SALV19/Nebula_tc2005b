@@ -21,13 +21,12 @@
 
     // Información por cada rengrlón de la tabla
     data.collabs.forEach((d, idx) => {
-      console.log(d)
       table_content += `<tr id='collab-${idx}' key='${idx}'>`
-      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}""></i></td>`
-      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
-      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
-      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
-      table_content += `<td style="padding-top: 1rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
+      table_content += `<td style="padding-top:0.8rem; padding-bottom: 0.8rem;"><i class="bi bi-caret-right-fill" id="icon-${idx}""></i></td>`
+      table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre} ${d.apellidos}</td>`
+      table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.puesto}</td>`
+      table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre_departamento} </td>`
+      table_content += `<td style="padding-top: 0.8rem; padding-bottom: 0.8rem;">${d.nombre_empresa} </td>`
       table_content += '</tr>';
       // Contenido desplegable
       table_content += `<tr class="additional-row" id="additional-row-${idx}" style="display: none;">
@@ -52,11 +51,17 @@
                               </div>
                               <div class="column my-2">
                                 <div class='is-flex is-justify-content-space-around	mb-4'>
-                                  <div class='flex-centered'>
-                                    <p class='has-text-danger  is-size-1'>${d.FaltasAdministrativas}</p>
-                                    <p class='has-text-centered is-size-7'>Faults<br>commited</p>
-                                  </div>
-                                  <div class='flex-centered'>
+                                  <div class='flex-centered'>`
+                                    
+                                    if (!d.FaltasAdministrativas){
+                                      table_content += `<p class='has-text-succes  is-size-1'>${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered has-text-succes is-size-7'>Faults<br>commited</p>`
+                                    } else {
+                                      table_content += `<p class='has-text-danger-k  is-size-1'>${d.FaltasAdministrativas}</p>
+                                    <p class='has-text-centered has-text-danger-k is-size-7'>Faults<br>commited</p>`
+                                    }
+      table_content +=           `</div>
+                                    <div class='flex-centered'>
                                     <p class='is-size-1'>${data.diasDisponibles_Totales[idx].diasDisponibles}/${data.diasDisponibles_Totales[idx].diasTotales}</p>
                                     <div>
                                       <p class="headingVac">Vacations<br> left</p>

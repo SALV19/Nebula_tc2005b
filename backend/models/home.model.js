@@ -86,12 +86,14 @@ module.exports = class Requests {
             ORDER BY fecha DESC
             LIMIT 8 OFFSET ?
             `,
-          [id_colaborador, offset]
+            [id_colaborador, offset]
         );
         return rows[0];
     }
+
     static async fetchAdmsFaults(id_colaborador){
-        return db.execute(`SELECT * FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
+        return db.execute(`SELECT COUNT(id_fa) AS FaltasAdministrativas 
+                        FROM fa WHERE id_colaborador = ?`, [id_colaborador]);
     }
 
     static async metric_month(){
@@ -107,21 +109,19 @@ module.exports = class Requests {
                     / 
                     (
                         (
-                            (
-                                SELECT COUNT(*) 
-                                FROM colaborador c 
-                                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
-                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH)
-                            )
-                            +
-                            (
-                                SELECT COUNT(*) 
-                                FROM colaborador c 
-                                WHERE fechaIngreso <= CURRENT_DATE 
-                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
-                            )
-                        ) / 2.0
-                    )
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 1 MONTH 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 1 MONTH)
+                        )
+                        +
+                        (
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                        )
+                    ) / 2.0
                 ) * 100 AS indice_rotacion;
         `)
         return counter[0];
@@ -139,21 +139,19 @@ module.exports = class Requests {
                     / 
                     (
                         (
-                            (
-                                SELECT COUNT(*) 
-                                FROM colaborador c 
-                                WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
-                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH)
-                            )
-                            +
-                            (
-                                SELECT COUNT(*) 
-                                FROM colaborador c 
-                                WHERE fechaIngreso <= CURRENT_DATE 
-                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
-                            )
-                        ) / 2.0
-                    )
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE - INTERVAL 3 MONTH 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE - INTERVAL 3 MONTH)
+                        )
+                        +
+                        (
+                            SELECT COUNT(*) 
+                            FROM colaborador c 
+                            WHERE fechaIngreso <= CURRENT_DATE 
+                            AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                        )
+                    ) / 2.0
                 ) * 100 AS indice_rotacion;
             `)
         return counter[0];
@@ -171,7 +169,6 @@ module.exports = class Requests {
                 ) 
                 / 
                 (
-                    (
                         (
                             SELECT COUNT(*) 
                             FROM colaborador c 
@@ -185,8 +182,7 @@ module.exports = class Requests {
                             WHERE fechaIngreso <= CURRENT_DATE 
                             AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
                         )
-                    ) / 2.0
-                )
+                ) / 2.0
             ) * 100 AS indice_rotacion;
         `)        
         return counter[0];                                      
@@ -203,7 +199,6 @@ module.exports = class Requests {
                     ) 
                     / 
                     (
-                        (
                             (
                                 SELECT COUNT(*) 
                                 FROM colaborador c 
@@ -212,13 +207,11 @@ module.exports = class Requests {
                             )
                             +
                             (
-                                SELECT COUNT(*) 
+                                SELECT COUNT(fechaIngreso) AS total_colaboradores_activos 
                                 FROM colaborador c 
-                                WHERE fechaIngreso <= CURRENT_DATE 
-                                AND (fechaSalida IS NULL OR fechaSalida > CURRENT_DATE)
+                                WHERE fechaSalida IS NULL
                             )
-                        ) / 2.0
-                    )
+                    ) / 2.0
                 ) * 100 AS indice_rotacion;
         `)
         return counter[0];
@@ -241,8 +234,6 @@ module.exports = class Requests {
                 es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 1 MONTH AND CURRENT_DATE
             GROUP BY es.id_colaborador
         ) AS promedios;
-
-
         `)
         return percentage[0];
     }
@@ -263,7 +254,6 @@ module.exports = class Requests {
                     es.fechaAgendada BETWEEN CURRENT_DATE - INTERVAL 3 MONTH AND CURRENT_DATE
                 GROUP BY es.id_colaborador
             ) AS promedios;
-
         `)
         return percentage[0];
     }

@@ -460,7 +460,7 @@ exports.register_fault = async (request, response) => {
   response.render('template_fautl', {
     nuclea_img: `data:image/png;base64,${imgBase64}`,
     date: request.body.date,
-    nombre_participantes: request.body.asistants,
+    nombre_participantes: request.body.asistants ?? "",
     nombre_colaboradores: name,
     motivo: request.body.description,
     consecuencias: request.body.consequences,
@@ -514,6 +514,7 @@ exports.register_fault = async (request, response) => {
               };
 
               try {
+                console.log("upload file")
                 const fileUploaded = await drive.files.create({
                   requestBody,
                   media: media,
@@ -559,6 +560,7 @@ exports.register_fault = async (request, response) => {
                 return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
               }
             } else {
+              console.log("download file")
               const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
               await fault.save()
 

@@ -15,7 +15,7 @@
     display: flex;
     justify-content: center;
     align-items: center;
-    z-index: 999;
+    z-index: 9999;
 }
 
 .pop-up-contentM {
@@ -79,4 +79,7 @@
 
 .title-space {
     margin-top: 2.75rem;
+}
+.title-space-img{
+    margin-top: 4.75rem;
 }
