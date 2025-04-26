@@ -90,7 +90,7 @@ exports.get_meeting = (request, response, next) => {
   delete request.session.errorMessage;
   delete request.session.successMessage;
 
-  Collaborator.fetchAllCompleteName()
+  Collaborator.fetchAllCompleteNameActive()
     .then(collabs => {
       const [rows, fieldData] = collabs;
 
@@ -212,7 +212,7 @@ exports.post_meeting = (request, response, next) => {
         .then(tieneAcceso => {
           
           if (!tieneAcceso) {
-            throw new Error("No se tiene acceso al calendario");
+            throw new Error("Not access");
           }
 
           return Meeting.insertEvents(
@@ -242,14 +242,14 @@ exports.post_meeting = (request, response, next) => {
           return response.json({ success: true, message: 'Meeting scheduled successfully!' });
         })
         .catch(err => {
-          console.error("Error enviando notificación de reunión:", err);
+          console.error("Error sending meeting notification", err);
           return response.status(500).json({ success: false, message: 'Failed to schedule the meeting.' });
         });
         
         
     })
     .catch(error => {
-        console.error("Error al crear la reunión:", error);
+        console.error("Error creating meeting", error);
         
   });
 }
@@ -281,6 +281,8 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
 }
 
 exports.get_meeting_events = (request, response) => {
+  const start = request.query.start;
+  const end = request.query.end;
   const googleLogin = request.user?.accessToken ? 1 : 0;
   let eventos = [];
 
@@ -307,7 +309,9 @@ exports.get_meeting_events = (request, response) => {
           return calendar.events.list({
             calendarId,
             singleEvents: true,
-            orderBy: 'startTime'
+            orderBy: 'startTime',
+            timeMin: start,  
+            timeMax: end, 
           })
           .then(eventsResponse => {
             const eventosDelCalendario = eventsResponse.data.items.map(event => {
