@@ -462,7 +462,7 @@
     top: 37%;
     left: 41%;
     transform: translate(-50%, -50%);
-    z-index: 9999;
+    z-index: 500;
     background-color: #454545;
     color: white;
     width: 30rem;

@@ -51,8 +51,7 @@ function TableFollowUps(data) {
             <tbody>`;
 
     data.fechasAgendadas.forEach((fecha, idx) => { 
-        const indicadorAverage = get_average_progress(data, fecha);   
-        console.log(`id-${idx}:`, data.id_evaluacion[idx]);    
+        const indicadorAverage = get_average_progress(data, fecha);    
         table_content += `<tr class="fecha-row " data-index="${idx}">`;
             table_content += `<td class="space-between" style="text-align: left; width: 10px;">
                 <i class="bi bi-caret-right-fill toggle-icon" id="caret-${idx}"></i>

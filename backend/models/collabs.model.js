@@ -35,7 +35,21 @@ module.exports = class Colaborador {
         ON e.id_colaborador = c.id_colaborador
       INNER JOIN departamento d
         ON d.id_departamento = e.id_departamento
-      WHERE e.id_rol <= 2
+      WHERE e.id_rol <= 2 
+      GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
+      `)
+  }
+
+  static fetchAllCompleteNameActive(){
+    return db.execute(`
+      SELECT c.id_colaborador, c.nombre, c.apellidos, d.id_departamento 
+      FROM colaborador c
+      INNER JOIN equipo e
+        ON e.id_colaborador = c.id_colaborador
+      INNER JOIN departamento d
+        ON d.id_departamento = e.id_departamento
+      WHERE e.id_rol <= 2 
+      AND c.estado = 1
       GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
       `)
   }
@@ -343,9 +357,9 @@ module.exports = class Colaborador {
   }
 
   static async fetchEmails(id_colaborador) {
-    return db.execute(`SELECT email FROM colaborador WHERE email != ?`, [id_colaborador]);
+    return db.execute(`SELECT email FROM colaborador WHERE email != ? AND estado = 1`, [id_colaborador]);
   }
-
+  
   static async fetchPersonalInfo(id_colaborador) {
     return db.execute(`SELECT c.nombre, c.apellidos, r.tipo_rol, c.ubicacion, c.puesto, d.nombre_departamento, c.email, c.foto  
                         FROM colaborador as c, rol as r, departamento as d, equipo as e
