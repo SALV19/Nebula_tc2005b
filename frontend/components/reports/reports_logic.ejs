@@ -2,6 +2,8 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script> 
 <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
+
+    // Function to generate a random hex color
     function getRandomColor() {
         var letters = '0123456789ABCDEF';
         var color = '#';
@@ -10,6 +12,8 @@
         }
         return color;
     }
+
+     // Function to show an error alert when no data is found
     function createEmpty() {
         Swal.fire({
             title: "Empty filter",
@@ -18,6 +22,7 @@
         })
     }
 
+     // Function to create a general chart by companies
     function createChart(data, pdf) {
         const chart_container = document.querySelector("#chart-container")
         chart_container.innerHTML = ''
@@ -28,21 +33,32 @@
             chartWrapper.removeAttribute("style")
         }
         if (pdf) {
+
+            // If generating for PDF, adjust the size
             chartWrapper.style.width = '800px'; 
             chartWrapper.style.height = '600px';
         }
 
         const ctx = document.getElementById(`chart`).getContext("2d");
+        
+        // Ensure canvas is visible
         document.querySelector("#chart").display = "box"
+        
+        // Destroy previous chart instance if it exists
         let chartStatus = Chart.getChart("chart"); 
         if (chartStatus != undefined) {
             chartStatus.destroy();
             
         }
 
+        // Extract companies and indicators from data
         const empresas = Object.keys(data);
         const indicatorLabels = Object.keys(data[empresas[0]]);
+       
+        // Define fixed colors for companies
         const colores = [ "#59A250", "#B7A5E6", "#B8453E", "#485FC7", "#F7DD46"];
+        
+        // Prepare datasets
         const datas= [];
         let j=0;
         for(let i of empresas) {
@@ -56,6 +72,7 @@
             j = j+1;
         }        
 
+        // Create the radar chart
         new Chart(ctx, { 
             type: 'radar',
             data: {
@@ -107,10 +124,14 @@
         });
     }
 
+    // Function to create charts per department
     function createDepartmentsChart(data, pdf) {
         const chart_container = document.getElementById('chart-container');
+        
+        // Clear previous content
         chart_container.innerHTML = ''; 
         
+        // Set grid display for multiple charts
         chart_container.style.display = 'grid';
         chart_container.style.flexWrap = 'wrap';
         chart_container.style.gap = '20px';
@@ -121,6 +142,7 @@
             mainCanvas.style.display = "none";
         }
 
+        // Create a chart for each company
         Object.keys(data).forEach(entries => {
             const chartWrapper = document.createElement('div');
             chartWrapper.style.width = '600px'; 
@@ -143,9 +165,12 @@
                 data: Object.values(data[entries][i]),
                 borderColor: getRandomColor(),
                 borderWidth: 3,
+
+                // Transparent
                 backgroundColor: "#00000000",
             }));
             
+            // Create radar chart for departments
             new Chart(canvas, { 
                 type: 'radar',
                 data: {
@@ -208,10 +233,12 @@
         });
     }
     
+    // Function to create charts for each collaborator
     function createCollabsChart(data, pdf) {
         const chart_container = document.getElementById('chart-container');
         chart_container.innerHTML = ''; 
         
+         // Set grid layout for the multiple charts
         chart_container.style.display = 'grid';
         chart_container.style.flexWrap = 'wrap';
         chart_container.style.gap = '20px';
@@ -221,9 +248,13 @@
         if (mainCanvas) {
             mainCanvas.style.display = "none";
         }
+
+        // List to track already created collaborators
         let collabs_created = []
         Object.keys(data).forEach(e => {            
             const departamentos = Object.values(data[e])
+            
+            // Loop through each department (collaborators)
             departamentos.forEach(colaboradores => {
                 for (let i of Object.keys(colaboradores)) {
                     if (collabs_created.includes(i)) {
@@ -231,10 +262,12 @@
                     }
                 } 
 
+                // Add collaborators to the created list
                 collabs_created = [...collabs_created, ...Object.keys(colaboradores)]
                 
                 const indicatorLabels = Object.keys(Object.values(colaboradores)[0])
 
+                // Create a chart for each collaborator
                 Object.keys(colaboradores).forEach(collab => {
                     const colaborador = Object.keys(colaboradores[collab])
                     const dataset = [{
@@ -249,6 +282,7 @@
                     chartWrapper.style.height = '400px';
                     chartWrapper.style.position = 'relative';
                     
+                    // Unique ID
                     const canvasId = `chart-${Math.random()}`;
                     const canvas = document.createElement('canvas');
                     canvas.className = 'canvas-viewF';
@@ -257,6 +291,7 @@
                     chartWrapper.appendChild(canvas);
                     chart_container.appendChild(chartWrapper);
 
+                    // Create the radar chart
                     new Chart(canvas, { 
                         type: 'radar',
                         data: {
@@ -268,10 +303,14 @@
                             maintainAspectRatio: false,
                             plugins: {
                                 legend: {
+
+                                    // Hide legend for individual charts
                                     display: false,
                                 },
                                 title: {
                                     display: true,
+
+                                    // Set title as collaborator's name
                                     text: collab, 
                                     color: pdf ? "#000" : "#FFFFFF",
                                     font: {
@@ -314,21 +353,28 @@
         });
     }
     
+    // Function to toggle visibility of company checkboxes
     function showComapnyCheckboxes(value) {
         var checkboxes = document.getElementById(value);
         if (checkboxes.style.display == "block") {
+
+            // Hide if visible
             checkboxes.style.display = "none";
         } else {
+
+            // Show if hidden
             checkboxes.style.display = "block";
         }
     }
 
+    // Function to hide company checkboxes
     function hideComapnyCheckboxes(value) {
         var checkboxes = document.getElementById(value);
         checkboxes.style.display = "none";
 
     }
 
+    // Function to show department checkboxes based on selected companies
     function showDepartmentCheckboxes(value) {
         const companies = document.querySelectorAll("[id$=-company]");
         const selectedCompanies = Array.from(companies)
@@ -338,6 +384,7 @@
         const nodept = document.querySelectorAll("[id$=-department]");
         const departmentMap = {};
 
+        // Build a map of departments related to companies
         selectedCompanies.forEach(company => {
             nodept.forEach(department => {
                 if (department.id.startsWith(company)) {
@@ -350,10 +397,12 @@
             });
         });
         
+        // Hide all departments initially
         nodept.forEach(department => {
             department.parentElement.style.display = "none";
         });
 
+        // Show related departments
         for (let deptValue in departmentMap) {
             const companiesForDept = departmentMap[deptValue];
             if (companiesForDept.length > 1) {
@@ -374,13 +423,18 @@
         }
 
         const checkboxes = document.getElementById(value);
+        
+        // Always show the department block
         checkboxes.style.display = "block";
     }
+
+    // Function to reset department checkboxes when changing company
     function updateOptions(element) {
         const departmentCheckboxes = document.querySelectorAll(`[id^='${element.value}'][id$='-department']`);
         departmentCheckboxes.forEach(dept => dept.checked = false)
     }
 
+    // Function to update the information with the date and periodicity
     function updateInfoText() {
         const date = new Date();
         
@@ -402,7 +456,10 @@
         document.getElementById("report-info").innerText = summary;
     }
 
+    // Function to download the report by printing the screen content
     async function download_report() {
+
+        // Get all necessary elements
         const search = document.querySelector("#forms_container")
         const bar = document.querySelector("hr")
         const update = document.querySelector("#update_btn")
@@ -412,9 +469,14 @@
         const footer = document.querySelector("footer")
         
         const subtitle = document.querySelector(".report-info")
+        
+        // Remove margin for printing
         subtitle.style.margin = "0";
+
+        // Add print-specific styling
         subtitle.classList.add("report-info-print")
 
+        // Create the report title element
         const title = document.querySelector("#title").value
         const title_element = document.createElement("h1")
         title_element.innerHTML = title
@@ -424,7 +486,10 @@
 
         const container = document.querySelector(".multiple-radar-container")
         
+         // Fetch data to ensure the charts are loaded
         await fetchData(true).then(t => {
+
+            // Hide elements that should not appear in the PDF
             search.classList.add("hide")
             bar.classList.add("hide")
             update.classList.add("hide")
@@ -435,13 +500,18 @@
             nav.classList.add("hide")
             footer.classList.add("hide")
 
+            // Allow vertical scroll for printing
             container.style.overflowY = "visible";
 
+             // Target the iframe window (if used for printing)
             const pdfFrame = window.frames
+
             setTimeout(() => {
                 pdfFrame.focus()
                 pdfFrame.print()
                 setTimeout(() => {
+
+                    // Restore the page after printing
                     search.classList.remove("hide")
                     bar.classList.remove("hide")
                     update.classList.remove("hide")
@@ -456,31 +526,42 @@
                     document.querySelector("#title_text").remove()
                     subtitle.classList.remove("report-info-print")
 
+                    // Restore scroll
                     container.style.overflowY = "scroll";
-                    
                 }, 500)
             }, 500)
         })
+
+        // Refresh data after printing
         setTimeout(() => {
             fetchData()
         }, 500);
     }
     
+    // Function to fetch data based on selected filters
     async function fetchData(pdf = null) {
+
+        // Get all form elements
         const companies = document.querySelectorAll("[id$=-company")
         companies.forEach(company => {
+            
+            // Update department checkboxes when company is checked
             company.addEventListener('change', () => showDepartmentCheckboxes('department'));
         });
+
         const department = document.querySelectorAll("[id$=-department]")
         const collab = document.querySelectorAll("[id$=-collab]")
         const periodicity = document.querySelector("#periodic_select")
         
+        // Collect selected company values
         const company_values = Array.prototype.reduce.call(companies, (acc, c) => {
             if (c.checked) {
                 acc.push(c.value)
             }
             return acc
         }, [])
+
+        // Collect selected collaborator values
         const department_values = Array.prototype.reduce.call(department, (acc, d) => {
             if (d.checked) {
                 acc.push(d.value)
@@ -495,6 +576,8 @@
         }, [])
 
         const csrf = document.querySelector('#_csrf').value        
+        
+        // Make the POST request to fetch report data
         return await fetch('/reports', {
             method: 'POST',
             headers: {
@@ -511,7 +594,8 @@
         })
         .then((response) => response.json())
         .then(data => {
-            // Create chart with data
+
+            // Build the correct chart depending on the report type
             if (data.type == "general") {
                 if (Object.keys(data.empresas_validaciones).length > 0) 
                     createChart(data.empresas_validaciones, pdf)
@@ -532,18 +616,22 @@
                 else
                     createEmpty()
             }
+
+             // Update the information text with the new report details
             updateInfoText();
             return true
         })
         .catch(error => console.error("ERROR: ", error))
     }
 
+    // Function to show available collaborators when departments are selected
     function showCollabCheckboxes() {
         const colaboradores = document.querySelector("#collaborator")
         colaboradores.style.display = "block"
         
         const csrf = document.querySelector('#_csrf').value        
 
+         // Get all department checkboxes
         const departamentos = document.querySelectorAll("[id$='-department']")
         const selected = []
         departamentos.forEach(dept => {
@@ -552,9 +640,12 @@
             }
         })
         
+        // Hide all collaborator labels initially
         const collabs = document.querySelectorAll("[id$=-collab-lable]")
         collabs.forEach(c => {
             c.style.display = "none"
+            
+            // Show only collaborators related to selected departments
             for (let id of selected) {
                 if (c.dataset.depid == id) {
                     c.style.display ="block";
