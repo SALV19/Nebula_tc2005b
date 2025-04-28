@@ -480,6 +480,11 @@ exports.register_fault = async (request, response) => {
           "footer": {
               "height": "20mm",
           },
+          childOptions: {
+            env: {
+              OPENSLL_CONF: '/dev/null'
+            }
+          }
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
