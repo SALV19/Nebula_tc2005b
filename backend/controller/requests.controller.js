@@ -150,8 +150,6 @@ exports.get_collabs_requests = async (request, response) => {
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-  
-  console.log(requests)
 
   const acceptance_colab = await Promise.all(requests[0].map(async (e) => {
     if (!e.colabAprobador){
