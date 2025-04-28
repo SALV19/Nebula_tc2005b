@@ -482,7 +482,7 @@ exports.register_fault = async (request, response) => {
           },
           childOptions: {
             env: {
-              OPENSLL_CONF: '/dev/null'
+              OPENSLL_CONF: '/etc/mysql/mariadb.conf.d/50-server.cnf'
             }
           }
         };
