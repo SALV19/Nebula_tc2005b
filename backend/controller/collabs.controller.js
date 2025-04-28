@@ -480,6 +480,12 @@ exports.register_fault = async (request, response) => {
           "footer": {
               "height": "20mm",
           },
+          "phantomPath": path.join(__dirname, '../../node_modules/phantomjs-prebuilt/bin/phantomjs'),
+          childOptions: {
+            env: {
+              OPENSLL_CONF: '/dev/null'
+            }
+          }
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
