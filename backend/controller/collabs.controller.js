@@ -480,11 +480,7 @@ exports.register_fault = async (request, response) => {
           "footer": {
               "height": "20mm",
           },
-          childOptions: {
-            env: {
-              OPENSLL_CONF: '/etc/mysql/mariadb.conf.d/50-server.cnf'
-            }
-          }
+          "phantomPath": path.join(__dirname, '../../node_modules/phantomjs-prebuilt/bin/phantomjs')
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
