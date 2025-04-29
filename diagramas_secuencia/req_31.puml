@@ -1,86 +1,86 @@
-@startuml Prueba
+@startuml ModificarColaborador_REQ31_FINAL
 autonumber
+
 actor Collaborator
-boundary general.route.js as gRoutes
-boundary collabs.ejs as collabView
-control collabs.controller.js as collabController
-entity collab.model as collabModel
-database nebula as neb
+boundary collabs.routes.js as Routes
+boundary collabs.ejs as View
+control collabs.controller.js as Controller
+entity collabs.model.js as Model
+database nebula as DB
 
+' === Paso 1: Mostrar vista de colaboradores ===
 activate Collaborator
-Collaborator -> gRoutes : GET/view_collabs
+Collaborator -> Routes : POST /view_collabs/get_collab_data
 deactivate Collaborator
+activate Routes
+Routes -> Controller : get_collab_data()
+deactivate Routes
 
-activate gRoutes
-gRoutes -> collabController: get_view_collabs()
-deactivate gRoutes
+activate Controller
+Controller -> Model : Colaborador.fetchCollabById(id)
+activate Model
 
-activate collabController
-collabController ->> collabModel: get_update_collabs()
+Model -> DB : SELECT * FROM colaborador WHERE id_colaborador = ?
 
-activate collabModel
-collabModel ->> neb: (SELECT * FROM colaborador)
+activate DB
+DB --> Model : [colaborador]
+deactivate DB
+Model --> Controller : [colaborador]
+deactivate Model
 
-activate neb
-neb-->> collabModel: []
-deactivate neb
+Controller -> Model : Equipo.fetchEquipoById(id)
+activate Model
+Model -> DB : SELECT * FROM equipo WHERE id_colaborador = ?
+activate DB
+DB --> Model : [equipo]
+deactivate DB
+Model --> Controller : [equipo]
+deactivate Model
 
-collabModel -->> collabController: []
-deactivate collabModel
-
-collabController -->> collabView: [{}]
-deactivate collabController
-
-activate collabView
-collabView -> Collaborator: html
-deactivate collabView
- 
+Controller -> Routes : JSON (colaborador + equipo)
+deactivate Controller
+activate Routes
+Routes -> View : llenar campos en formulario emergente
+deactivate Routes
+activate View
+View -> Collaborator : Mostrar popup con campos precargados
 activate Collaborator
-Collaborator -> collabView : update_pop_up()
-deactivate Collaborator
-
-activate collabView
-deactivate collabController
-
-collabView -> Collaborator : Opens pop up for registration
-deactivate collabView
-
-activate Collaborator
-Collaborator -> gRoutes :POST/view_collabs
-deactivate Collaborator
+deactivate View
 
 
-activate gRoutes
-gRoutes -> collabController : post_view_collab()
-deactivate gRoutes
+' === Paso 3: Modificación de datos ===
+Collaborator -> Routes : POST /view_collabs/update_collab
 
-' Pre-procesa información antes de guardarla en db
-' De rango a dias específicos que se guardan en db
+activate Routes
+Routes -> Controller : update_collab()
+deactivate Routes
 
-activate collabController
-collabController -> collabController: process_data()
+activate Controller
+Controller -> Model : Colaborador.updateById(id)
+activate Model
+Model -> DB :`UPDATE colaborador \n SET nombre = ?, apellidos = ?, fechaNacimiento = ?, telefono = ?, puesto = ?, email = ?, fechaIngreso = ?, ubicacion = ?, modalidad = ?, curp = ?, rfc = ? \n WHERE id_colaborador = ?`
 
-' ES LO SUFICIENTEMENTE IMPORTANTE COMO PARA PONERLA?
-' collabView -> collabView : verify_data()
+activate DB
+DB --> Model : OK
+deactivate DB
+Model --> Controller : OK
+deactivate Model
 
-collabController ->> collabModel: save()
+Controller -> Model : Equipo.updateById(id)
+activate Model
 
-activate collabModel
-collabModel ->> neb : INSERT INTO colaborador, equipo, departamento, empresa, rol
-activate neb
-neb -->> collabModel : response
-deactivate neb
-collabModel -->> collabController : reponse
-deactivate collabModel
-collabController -> collabView : response
-deactivate collabController
-activate collabView 
-collabView -> Collaborator : Confirmation
-deactivate collabView
-activate Collaborator
+Model -> DB :` UPDATE equipo \n SET id_departamento = ?, id_rol = ? \n WHERE id_colaborador = ?`
+activate DB
+DB --> Model : OK
+deactivate DB
+Model --> Controller : OK
+deactivate Model
 
-
-
-
+Controller -> Routes : redirect /view_collabs (con session.successDataUpdate)
+deactivate Controller
+activate Routes
+Routes -> Collaborator : Vista actualizada + SweetAlert
+deactivate Routes
+deactivate Controller
 
 @enduml

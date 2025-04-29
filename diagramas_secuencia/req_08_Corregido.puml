@@ -1,0 +1,137 @@
+@startuml RegistroSolicitudFalta_REQ8_FINAL
+autonumber
+actor Collaborator
+boundary requests.routes.js as RequestRoutes
+boundary requests_page.ejs as RequestView
+control requests.controller.js as RequestController
+control contVacations.js as VacationsUtil
+control sendWhatsapp.js as WhatsappUtil
+entity requests.model.js as RequestModel
+database nebulaDB as MySQL
+
+' === Inicio: Visualizar solicitudes ===
+
+activate Collaborator
+Collaborator -> RequestRoutes : GET /requests
+deactivate Collaborator
+activate RequestRoutes
+RequestRoutes -> RequestController : get_requests()
+deactivate RequestRoutes
+
+activate RequestController
+RequestController ->> RequestView : Render requests_page.ejs (con datos de sesión)
+deactivate RequestController
+
+activate RequestView
+RequestView --> Collaborator : Mostrar vista de solicitudes
+activate Collaborator
+deactivate RequestView
+
+' === Flujo: Registrar nueva solicitud ===
+Collaborator ->> RequestRoutes : GET /requests/pop_up
+activate RequestRoutes
+
+RequestRoutes ->> RequestController : showPopUp()
+deactivate RequestRoutes
+
+
+activate RequestController
+
+RequestController ->> RequestModel : fetchDaysApproved(email)
+activate RequestModel
+RequestModel ->> MySQL :`SELECT ds.fecha \n FROM solicitudes_falta sf \n INNER JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta \n INNER JOIN colaborador c ON c.id_colaborador = sf.id_colaborador \n WHERE c.email = ? AND sf.estado = 1;`
+activate MySQL
+MySQL -->> RequestModel : [días aprobados]
+deactivate MySQL
+RequestModel -->> RequestController : [días aprobados]
+deactivate RequestModel
+
+RequestController ->> RequestModel : fetchDaysPending(email)
+activate RequestModel
+RequestModel ->> MySQL :`SELECT ds.fecha \n FROM solicitudes_falta sf \n INNER JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta \n INNER JOIN colaborador c ON c.id_colaborador = sf.id_colaborador \n WHERE c.email = ? AND sf.estado < 1;`
+activate MySQL
+MySQL -->> RequestModel : [días pendientes]
+deactivate MySQL
+RequestModel -->> RequestController : [días pendientes]
+deactivate RequestModel
+
+RequestController ->> RequestModel : fetchApprovedVacationDays(email)
+activate RequestModel
+RequestModel ->> MySQL :`SELECT ds.fecha \n JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta \n JOIN colaborador c ON c.id_colaborador = sf.id_colaborador \n FROM solicitudes_falta sf \n WHERE c.email = ? AND sf.estado = 1 AND sf.tipo_falta = 'Vacation';`
+activate MySQL
+MySQL -->> RequestModel : [vacaciones aprobadas]
+deactivate MySQL
+RequestModel -->> RequestController : [vacaciones aprobadas]
+deactivate RequestModel
+
+RequestController ->> RequestModel : fetchPendingVacationDays(email)
+activate RequestModel
+RequestModel ->> MySQL :`SELECT ds.fecha \n FROM solicitudes_falta sf \n JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta \n JOIN colaborador c ON c.id_colaborador = sf.id_colaborador \n WHERE c.email = ? AND sf.estado = 0 AND sf.tipo_falta = 'Vacation';`
+activate MySQL
+MySQL -->> RequestModel : [vacaciones pendientes]
+deactivate MySQL
+RequestModel -->> RequestController : [vacaciones pendientes]
+deactivate RequestModel
+
+RequestController ->> RequestModel : fetchCollabById(id_colaborador)
+activate RequestModel
+RequestModel ->> MySQL :`SELECT * FROM colaborador WHERE id_colaborador = ?;`
+activate MySQL
+MySQL -->> RequestModel : [datos colaborador]
+deactivate MySQL
+RequestModel -->> RequestController : [datos colaborador]
+deactivate RequestModel
+
+RequestController ->> VacationsUtil : contVac(request)
+activate VacationsUtil
+VacationsUtil ->> MySQL : [Cálculo de días totales]
+activate MySQL
+MySQL -->> VacationsUtil : [días totales]
+deactivate MySQL
+VacationsUtil -->> RequestController : [días totales]
+deactivate VacationsUtil
+
+
+RequestController -->> RequestRoutes : JSON (días aprobados, pendientes, vacaciones, datos colaborador)
+deactivate RequestController
+activate RequestRoutes
+
+
+RequestRoutes --> RequestView : Mostrar formulario emergente
+deactivate RequestRoutes
+activate RequestView
+
+RequestView --> Collaborator : Formulario de solicitud
+
+deactivate RequestView
+
+' === Submit: Enviar solicitud de falta ===
+Collaborator -> RequestRoutes : POST /requests/insert_request
+
+activate RequestRoutes
+RequestRoutes -> RequestController : post_abscence_requests(data)
+deactivate RequestRoutes
+
+activate RequestController
+RequestController ->> RequestModel : save solicitud (estado)
+activate RequestModel
+RequestModel ->> MySQL :`INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia, colabAprobador) \n VALUES((SELECT id_colaborador FROM colaborador WHERE email = ?), ?, ?, ?, ?, ?, ?);`
+activate MySQL
+MySQL -->> RequestModel : {insertId}
+deactivate MySQL
+RequestModel -->> RequestController : {insertId}
+
+deactivate RequestModel
+
+' === Notificación si es SuperAdmin ===
+
+RequestController ->> RequestRoutes : redirect /requests
+deactivate RequestController
+activate RequestRoutes
+
+
+RequestRoutes --> Collaborator : Redirigir a tabla actualizada
+deactivate RequestRoutes
+
+
+@enduml
