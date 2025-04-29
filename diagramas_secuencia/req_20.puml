@@ -17,9 +17,9 @@ homeController ->> requestsModel : fetchDaysApproved(request.session.email)
 activate requestsModel 
 requestsModel ->> DB : `SELECT ds.fecha \n FROM solicitudes_falta sf \n INNER JOIN dias_solicitados ds \n ON sf.id_solicitud_falta = ds.id_solicitud_falta \n INNER JOIN colaborador c \n ON c.id_colaborador = sf.id_colaborador \n WHERE c.email = ? AND sf.estado = 1; \n `, [email]) 
 activate DB 
-DB -->> requestsModel : [fechas aprobadas] 
+DB -->> requestsModel : [absences] 
 deactivate DB 
-requestsModel -->> homeController : [fechas aprobadas] 
+requestsModel -->> homeController : [absences] 
 deactivate requestsModel 
 homeController -->> homeView :  response.render("home_page", { \n total_absences: absences.length,}) 
 deactivate homeController 
