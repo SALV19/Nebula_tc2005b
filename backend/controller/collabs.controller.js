@@ -496,6 +496,8 @@ exports.register_fault = async (request, response) => {
         }
       });
 
+      await browser.close();
+
       const googleLogin = request.user?.accessToken ? 1 : 0;
       fs.writeFileSync("report.pdf", pdfBuffer)
 
@@ -561,6 +563,9 @@ exports.register_fault = async (request, response) => {
           return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
         }
       } else {
+        const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
+        await fault.save();
+
         const collab = await FaltaAdministrativa.count_faults(request.body.absent);
         if (collab.count >= 3){
           await FaltaAdministrativa.deactivate_collab(request.body.absent);
@@ -573,14 +578,10 @@ exports.register_fault = async (request, response) => {
             viewLink: `/view_collabs/download?filename=${fileName}`,
           });
       }
-      await browser.close();
+      
     }
   })
 }
-
-    
-      
-    // }
 
 exports.download = (request, response) => {
   response.download(path.join(__dirname, '../../report.pdf'), request.query.filename + ".pdf")
