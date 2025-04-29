@@ -478,13 +478,15 @@ exports.register_fault = async (request, response) => {
         browser = await puppeteer.launch({
           headless: "new",
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          executablePath: '/usr/bin/chromium-browser', // Absolute path
+
         });
       }
       else {
         browser = await puppeteer.launch({
           headless: "new",
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
-          executablePath: 'root/.cache/puppeteer/chrome/linux-135.0.7049.114/chrome-linux64/chrome'
+          executablePath: 'chromium-browser', // Just the command name
         });
       }
       
