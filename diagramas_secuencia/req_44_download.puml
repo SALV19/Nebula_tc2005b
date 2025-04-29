@@ -11,7 +11,7 @@ collections "Google Drive API" as Google
 
 activate collab
 collab ->> collabRoute : GET /view_collabs/downloadFA/
-deactivate collab
+
 
 activate collabRoute
 collabRoute ->> collabsController : downloadFA(id_falta)
@@ -36,7 +36,7 @@ activate Google
 Google -->> collabsController : file stream (pdf/docx)
 deactivate Google
 
-collabsController ->> collab : file ="falta.pdf"
+collabsController -->> collab : file ="falta.pdf"
 deactivate collabsController
-activate collab
+
 @enduml

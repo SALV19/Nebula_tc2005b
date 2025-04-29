@@ -10,76 +10,74 @@ database nebula as DB
 
 ' === Paso 1: Mostrar vista de colaboradores ===
 activate Collaborator
-Collaborator -> Routes : POST /view_collabs/get_collab_data
-deactivate Collaborator
+Collaborator ->> Routes : POST /view_collabs/get_collab_data
 activate Routes
-Routes -> Controller : get_collab_data()
+Routes ->> Controller : get_collab_data()
 deactivate Routes
 
 activate Controller
-Controller -> Model : Colaborador.fetchCollabById(id)
+Controller ->> Model : Colaborador.fetchCollabById(id)
 activate Model
 
-Model -> DB : SELECT * FROM colaborador WHERE id_colaborador = ?
+Model ->> DB : SELECT * FROM colaborador WHERE id_colaborador = ?
 
 activate DB
-DB --> Model : [colaborador]
+DB -->> Model : [colaborador]
 deactivate DB
-Model --> Controller : [colaborador]
+Model -->> Controller : [colaborador]
 deactivate Model
 
-Controller -> Model : Equipo.fetchEquipoById(id)
+Controller ->> Model : Equipo.fetchEquipoById(id)
 activate Model
-Model -> DB : SELECT * FROM equipo WHERE id_colaborador = ?
+Model ->> DB : SELECT * FROM equipo WHERE id_colaborador = ?
 activate DB
-DB --> Model : [equipo]
+DB -->> Model : [equipo]
 deactivate DB
-Model --> Controller : [equipo]
+Model -->> Controller : [equipo]
 deactivate Model
 
-Controller -> Routes : JSON (colaborador + equipo)
+Controller ->> Routes : JSON (colaborador + equipo)
 deactivate Controller
 activate Routes
-Routes -> View : llenar campos en formulario emergente
+Routes ->> View : llenar campos en formulario emergente
 deactivate Routes
 activate View
-View -> Collaborator : Mostrar popup con campos precargados
-activate Collaborator
+View ->> Collaborator : Mostrar popup con campos precargados
 deactivate View
 
 
 ' === Paso 3: Modificación de datos ===
-Collaborator -> Routes : POST /view_collabs/update_collab
+Collaborator ->> Routes : POST /view_collabs/update_collab
 
 activate Routes
-Routes -> Controller : update_collab()
+Routes ->> Controller : update_collab()
 deactivate Routes
 
 activate Controller
-Controller -> Model : Colaborador.updateById(id)
+Controller ->> Model : Colaborador.updateById(id)
 activate Model
-Model -> DB :`UPDATE colaborador \n SET nombre = ?, apellidos = ?, fechaNacimiento = ?, telefono = ?, puesto = ?, email = ?, fechaIngreso = ?, ubicacion = ?, modalidad = ?, curp = ?, rfc = ? \n WHERE id_colaborador = ?`
+Model ->> DB :`UPDATE colaborador \n SET nombre = ?, apellidos = ?, fechaNacimiento = ?, telefono = ?, puesto = ?, email = ?, fechaIngreso = ?, ubicacion = ?, modalidad = ?, curp = ?, rfc = ? \n WHERE id_colaborador = ?`
 
 activate DB
-DB --> Model : OK
+DB -->> Model : OK
 deactivate DB
-Model --> Controller : OK
+Model -->> Controller : OK
 deactivate Model
 
-Controller -> Model : Equipo.updateById(id)
+Controller ->> Model : Equipo.updateById(id)
 activate Model
 
-Model -> DB :` UPDATE equipo \n SET id_departamento = ?, id_rol = ? \n WHERE id_colaborador = ?`
+Model ->> DB :` UPDATE equipo \n SET id_departamento = ?, id_rol = ? \n WHERE id_colaborador = ?`
 activate DB
-DB --> Model : OK
+DB -->> Model : OK
 deactivate DB
-Model --> Controller : OK
+Model -->> Controller : OK
 deactivate Model
 
-Controller -> Routes : redirect /view_collabs (con session.successDataUpdate)
+Controller ->> Routes : redirect /view_collabs (con session.successDataUpdate)
 deactivate Controller
 activate Routes
-Routes -> Collaborator : Vista actualizada + SweetAlert
+Routes ->> Collaborator : Vista actualizada + SweetAlert
 deactivate Routes
 deactivate Controller
 
