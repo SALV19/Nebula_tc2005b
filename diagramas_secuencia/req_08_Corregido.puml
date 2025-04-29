@@ -19,13 +19,14 @@ RequestRoutes -> RequestController : get_requests()
 deactivate RequestRoutes
 
 activate RequestController
-RequestController ->> RequestView : Render requests_page.ejs (con datos de sesión)
+RequestController -> RequestView : Render requests_page.ejs (con datos de sesión)
 deactivate RequestController
 
 activate RequestView
 RequestView --> Collaborator : Mostrar vista de solicitudes
-activate Collaborator
 deactivate RequestView
+activate Collaborator
+
 
 ' === Flujo: Registrar nueva solicitud ===
 Collaborator ->> RequestRoutes : GET /requests/pop_up
@@ -107,10 +108,12 @@ deactivate RequestView
 
 ' === Submit: Enviar solicitud de falta ===
 Collaborator -> RequestRoutes : POST /requests/insert_request
+deactivate Collaborator
 
 activate RequestRoutes
 RequestRoutes -> RequestController : post_abscence_requests(data)
 deactivate RequestRoutes
+
 
 activate RequestController
 RequestController ->> RequestModel : save solicitud (estado)
@@ -125,13 +128,22 @@ deactivate RequestModel
 
 ' === Notificación si es SuperAdmin ===
 
-RequestController ->> RequestRoutes : redirect /requests
+RequestController --> RequestRoutes : redirect /requests
 deactivate RequestController
 activate RequestRoutes
 
 
-RequestRoutes --> Collaborator : Redirigir a tabla actualizada
+RequestRoutes -> RequestController : get_requests()
 deactivate RequestRoutes
+
+activate RequestController
+RequestController -> RequestView : Render requests_page.ejs (con datos de sesión)
+deactivate RequestController
+
+activate RequestView
+RequestView --> Collaborator : Mostrar vista de solicitudes
+deactivate RequestView
+activate Collaborator
 
 
 @enduml
