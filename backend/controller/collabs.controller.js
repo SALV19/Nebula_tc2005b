@@ -485,7 +485,8 @@ exports.register_fault = async (request, response) => {
             env: {
               OPENSLL_CONF: '/dev/null'
             }
-          }
+          },
+          phantomPath: require("phantomjs-prebuilt").path
         };
         pdf.create(data, options).toFile("report.pdf", async function (err, data) {
           if (err) {
