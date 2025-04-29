@@ -473,10 +473,20 @@ exports.register_fault = async (request, response) => {
       response.send(err);
       return
     } else {
-      const browser = await puppeteer.launch({
-        headless: "new",
-        args: ['--no-sandbox', '--disable-setuid-sandbox']
-      });
+      let browser;
+      if (process.env.PROD_ENVIROMENT == "develop") {
+        browser = await puppeteer.launch({
+          headless: "new",
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+        });
+      }
+      else {
+        browser = await puppeteer.launch({
+          headless: "new",
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          executablePath: 'root/.cache/puppeteer/chrome/linux-135.0.7049.114/chrome-linux64/chrome'
+        });
+      }
       
 
       const page = await browser.newPage();
