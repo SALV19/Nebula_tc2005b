@@ -7,7 +7,9 @@
   <section class="hero-body">
     <div class="container is-widescreen">
       <div class="columns has-text-centered overhead is-vcentered offset">
-        <p class="option <%= selectedOption === 'collab' ? 'selected' : ''%>">Collaborators</p>
+        <p class="option <%= selectedOption === 'collaborator' ? 'selected' : ''%>" data-route="collaborator">
+          <%= permissions?.includes('consult_followUps') ? 'Collaborators' : 'Follow-ups' %>
+        </p>
         <% if (permissions?.includes('register_followUp') || permissions?.includes('register_meeting')) { %>
           <p class="option <%= selectedOption === 'meetings' ? 'selected' : ''%>">Meetings</p>
           <p class="option <%= selectedOption === 'register' ? 'selected' : '' %>">Register</p> 

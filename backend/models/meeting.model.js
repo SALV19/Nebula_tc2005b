@@ -25,7 +25,6 @@ module.exports = class Meeting {
             year: "YEARLY",
             no: ""
         };
-        console.log(repeatMap[repeating]);
         const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
         var event = {
             summary: summary,
@@ -96,7 +95,7 @@ module.exports = class Meeting {
                 
                 promesas.push(
                     calendar.events.insert({
-                        calendarId: 'c_03768ccf82eda9630ea10180b3249084dda11ae3e62a2e67092ca0889e25ca56@group.calendar.google.com',
+                        calendarId: process.env.CALENDAR_ID_MEETING,
                         resource: eventoIndividual
                     })
                 );
@@ -106,23 +105,20 @@ module.exports = class Meeting {
             
             return Promise.all(promesas)
                 .then(resultados => {
-                    console.log(`Creados ${resultados.length} eventos`);
                     return resultados[0];
                 });
         } else {
             return new Promise((resolve, reject) => {
                 calendar.events.insert(
                     {
-                        calendarId: 'c_03768ccf82eda9630ea10180b3249084dda11ae3e62a2e67092ca0889e25ca56@group.calendar.google.com',
+                        calendarId: process.env.CALENDAR_ID_MEETING,
                         resource: event
                     },
                     function(err, event) {
                         if (err) {
-                            console.log('Error contacting Calendar service:', err);
                             reject(err);
                             return;
                         }
-                        console.log('Event created:', event.data.htmlLink);
                         resolve(event.data);
                     }
                 );

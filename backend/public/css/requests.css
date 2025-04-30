@@ -124,12 +124,7 @@ td {
     justify-content: flex-end; 
 }
 
-.button.is-save {
-    background-color: #59A250; 
-    color: #fff; 
-    border: none; 
-    margin-top: 1vh;
-}
+
 
 /*FORMATO FORM*/
 .subtitleForm {
@@ -255,14 +250,14 @@ textarea{
     text-align: left;
 }
 .my_event {
-    color: white !important;
+    background-color: red;
 }
 .status {
     display: inline-block; /* Para que no ocupe todo el ancho */
     padding: 0rem;
     font-size: 0.9rem;
     color: white;
-    border-radius: 5px;
+    border-radius: 4rem !important;
     width: 7rem;
 }
 
@@ -284,40 +279,124 @@ textarea{
     margin-left: 5.5rem !important;
 }
 
-.flatpickr-calendar {
-    background-color: #454545 !important;
-    border-color: transparent !important;
-}
-.flatpickr-day {
-    color: #B5B5B5 !important;
-}
-.prevMonthDay, .nextMonthDay {
-    color: #121212 !important;
-}
-.selected {
-    color: white !important;
-}
-
-.my_event {
-    color: white !important;
-}
-
-.flatpickr-monthDropdown-months, .numInput  {
-    border: none !important;
-    color: white !important;
-}
-
-.flatpickr-monthDropdown-months option {
-    background-color: #242424 !important;
-}
-
-.numInput::-webkit-outer-spin-button,
-.numInput::-webkit-inner-spin-button {
-  -webkit-appearance: none !important;
-  margin: 0 !important;
+/* .button-request-delete.button-request-update{
+    margin:5rem !important;
+    color:#EEEEEE;
+} */
+.space-between{
+    padding-top: 0.8rem !important;
+    padding-bottom: 0.8rem !important;
+} 
+.button.has-text-white.is-danger.mr-4 {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;    
+    margin-top: 0.5rem;
+    width: 4rem;
+    height: 2rem;
 }
 
-/* Firefox */
-.numInput[type=number] {
-  -moz-appearance: textfield !important;
+.button.has-text-white.is-danger.mr-4:hover {
+    background-color: rgb(150, 50, 45);
+}
+
+.button.has-text-white.is-success{
+    background-color: #59A250;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    color: #EEEEEE;
+    margin-top: 0.5rem;
+    padding: -1rem;
+    width: 4rem;
+    height: 2rem;
+}
+.button.has-text-white.is-success:hover {
+    background-color: #41753b;
+}
+.checkbox{
+    font-size: small;
+}
+.button.is-link.is-rounded.is-normal.button-request-update{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: #4358b8;
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;
+    margin-right: 1rem;
+    width: 6rem;
+    height: 2rem;
+}
+.button.is-link.is-rounded.is-normal.button-request-update:hover{
+    background-color: #304cc7;
+}
+.button.is-link.is-rounded.is-normal.button-request-delete{
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 4px;
+    color: #EEEEEE;
+    background-color: rgb(184, 69, 62);
+    border: none;
+    cursor: pointer;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color 0.2s ease-in-out;
+    font-size: small;
+    width: 6rem;
+    height: 2rem;
+}
+.button.is-link.is-rounded.is-normal.button-request-delete:hover{
+    background-color: rgb(150, 50, 45);
+}
+.button.is-save{
+    background-color: #59A250;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: #EEEEEE;
+    border: none;
+    cursor: pointer;
+    font-size: small;
+    text-decoration: none;
+    font-weight: 600;
+    transition: background-color 0.2s ease-in-out;
+    color: #EEEEEE;
+    margin-top: 0.5rem;
+    padding: -1rem;
+    width: 6rem;
+    height: 2rem;
+}
+.button.is-save:hover{
+    background-color: #41753b;
+}
+.dropdown-content{
+    font-style: normal;
+    font-size: medium;
+}
+label{
+    margin-top: 0.5rem;
 }

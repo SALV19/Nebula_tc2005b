@@ -1,1 +1,126 @@
 <%- include('../components/nav_bar.ejs') %> 
+<script>
+    const generalDataSet = JSON.parse('<%- JSON.stringify(generalDataSet || {}) %>');
+    document.addEventListener("DOMContentLoaded", () => {
+        createChart(generalDataSet, false); 
+    });
+</script>
+<link rel="stylesheet" href="/css/reports.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/choices.js/public/assets/styles/choices.min.css"/>
+<div class = "hero-body">
+    <div class="container-reports">
+        <input type="hidden" id="_csrf" value=<%= csrfToken %>>
+            <div id="forms_container" class="container is-fullwidth is-flex is-justify-content-flex-start">
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('checkboxes')" >
+                        <div class="selectBox" onclick="showComapnyCheckboxes('checkboxes')">
+                            <select class="line-input">
+                            <option>Company</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="checkboxes" class="checkboxes limit">
+                            <% for (let i = 0; i < empresa.length; i++) { %>
+                                <label for="<%= i %>-company" class="checkbox-row">
+                                    <input 
+                                        type="checkbox"  
+                                        id="<%= i %>-company" 
+                                        value="<%= empresa[i].nombre_empresa %>" 
+                                        onclick="updateOptions(this)"/>
+                                            <%= empresa[i].nombre_empresa%>
+                                </label>
+                            <% } %>
+                        </div>
+                    </div>
+                </form>
+                
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('department')">
+                        <div class="selectBox" onclick="showDepartmentCheckboxes('department')">
+                            <select class="line-input">
+                                <option>Department</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="department" class="checkboxes limit">
+                            <% for (let empresa of Object.keys(depa)) {%>
+                                <% for (let departamento of depa[empresa]) {%>
+                                    <label for="<%= `${empresa}-${departamento.nombre}` %>-department" class="checkbox-row">
+                                        <input 
+                                            type="checkbox"  
+                                            id="<%=  `${empresa}-${departamento.nombre}` %>-department" 
+                                            value="<%= departamento.nombre %>"
+                                            data-id="<%= departamento.id %>"/>
+                                        <span><%= departamento.nombre %></span>
+                                    </label>
+                                <% } %>
+                
+                            <% } %>
+                        </div>
+                    </div>
+                </form>
+                <form>
+                    <div class="multiselect" onmouseleave="hideComapnyCheckboxes('collaborator')">
+                        <div class="selectBox" onclick="showCollabCheckboxes()">
+                            <select class="line-input">
+                                <option>Collaborator</option>
+                            </select>
+                            <div class="overSelect"></div>
+                        </div>
+                        <div id="collaborator" class="checkboxes limit">
+                            <% for (let i=0; i < collabs.length; i++) {%>
+                                <label 
+                                    for="<%= i %>-collab" class="checkbox-row" 
+                                    id="<%= i %>-collab-lable"
+                                    data-depid="<%= collabs[i].id_departamento %>">
+                                        <input 
+                                            type="checkbox"  
+                                            id="<%= i %>-collab"  
+                                            value="<%= collabs[i].id_colaborador %>" />
+                                            <span><%= collabs[i].nombre + " " + collabs[i].apellidos  %></span>
+                                        </label>
+                            <% } %>
+                        </div>
+                    </div>
+                </form>
+                
+                <div class="column is-one-fifth multiselect limit">
+                <select class="line-input" name="department" id="periodic_select">
+                    <option value="1">Monthly</option>
+                    <option value="3">Trimester</option>
+                    <option value="6" >Semester</option>
+                    <option value="12" >Annually</option>
+                </select>
+            </div>
+            
+        </div>
+        <hr id="line"/>
+        <div class="columns">
+            <div class="column is-full">
+                <div id="title_input">
+                    <label class="subtitle">Title</label>
+                    <input type="text" placeholder="Insert title" class="line-inputT" id="title">
+                </div>
+                <div id="report-info" class="report-info overflow"> </div>
+            </div>
+            <div class="column is-full k"> 
+                <div class="is-flex is-justify-content-center is-align-items-flex-end">
+                    <button class="button-download" onclick="download_report()" id="download_btn">Download</button>
+                    <button class="button-update " onclick="fetchData()" id="update_btn">Update</button>
+                </div>
+            </div>
+        </div>
+        <div class="report-container" id="container">   
+            <div class="radar-container" id="radar-container">
+                <canvas  class="canvas-viewF" id="chart" ></canvas>
+                <div class="multiple-radar-container is-flex is-flex-wrap-wrap is-fullwidth overflow" id="chart-container">
+            
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<%- include ('../components/reports/reports_logic.ejs') %>
+<%- include('includes/_footer.ejs') %>

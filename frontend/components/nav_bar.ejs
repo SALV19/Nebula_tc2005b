@@ -1,7 +1,7 @@
 <%- include ('../views/includes/_header.ejs') %>
 <link rel="stylesheet" href="/css/nav.css">
 <% if (permissions.length > 0) {%>
-<nav class="sidenav">
+<nav class="sidenav" id="navbar">
   <a href="/">
     <img src="/icons/nuclea.png" alt="" style="width: 30px; height: 30px;">
     <span><img src="/icons/nuclea_nombre.png" alt="" style="height: 15px;"></span>
@@ -15,10 +15,12 @@
         <i class="bi bi-question-square"></i> 
         <span>Request</span>
       </a>
+    <% if (permissions.includes('view_followUps')) {%>
       <a href="/follow_ups">
         <i class="bi bi-graph-up"></i> 
         <span>Follow-ups</span>
       </a>
+      <% } %>
     <% if (permissions.includes('consult_collabs')) {%>
       <a href="/view_collabs">
         <i class="bi bi-people-fill"></i> 
@@ -32,9 +34,20 @@
       </a>
     <% } %>
   </div>
+
+  <div>
   <a href="/personal_info" class="">
     <i class="bi bi-person-fill"></i> 
     <span>Personal Info</span>
   </a>
+  <a class="" onclick="openManual()">
+    <i class="bi bi-question-circle"></i> 
+    <span>User Manual</span>
+  </a>
+</div>
 <% } %>
 </nav>
+
+<%- include ('../components/user_manual/popUp_manual.ejs') %>
+<%- include ('../components/user_manual/popUp_manual_logic.ejs') %>
+

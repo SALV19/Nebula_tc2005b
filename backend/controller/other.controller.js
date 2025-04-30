@@ -5,10 +5,7 @@ exports.get_404 = (request, response, next) => {
 };
 
 exports.get_permissions = async (request, response, next) => {
-
   if(request.cookies.email) {
-    console.log("permissions");
-    console.log(request.session.permissions);
     request.session.email = request.cookies.email;
     request.session.permissions = request.cookies.permissions;
     request.session.id_colaborador = request.cookies.id_colaborador;
@@ -17,24 +14,34 @@ exports.get_permissions = async (request, response, next) => {
     } else {
       response.redirect('/');
     }
-    
     return;
   }
-
   const email = request.session.email ?? request.user.profile.emails[0].value;
+  if (request.user || request.session.email) {
+    const active = request.session.estado ?? request.user.user.estado
+    if (!active) {
+      response.render("error_401")
+      request.session.destroy()
+      return
+    }
+  } else if (!request.user.user) {
+    request.session.permissions = [];
+    response.redirect("/")
+    return
+  }
+  
   if (request.user) {
-    // console.log(request.user);
-    // console.log(request.user.user.contrasena.length);
     request.session.email = request.user.profile.emails[0].value;
+
     if (request.user.user?.id_colaborador) {
-      request.session.id_colaborador = request.user.user.id_colaborador
-      if(request.user.user.contrasena.length == 10) {
+      request.session.id_colaborador = request.user.user.id_colaborador;
+      const isFirstLogin = await first_login(request.user.user.contrasena);
+      if(isFirstLogin === true) {
         request.session.firstLogin = true;
         request.session.sourceRoute = "initial";
-        console.log("viene de google");
         response.redirect('/log_in/initial_password');
         return; 
-      }
+      } 
     }
     else {
       request.session.id_colaborador =null
@@ -53,4 +60,13 @@ exports.get_permissions = async (request, response, next) => {
   response.cookie("come_from", 0, {maxAge: 360000, httpOnly: true});
   
   response.redirect('/')
+}
+
+async function first_login(dbpassword) {
+  const prefijo = "first";
+  if (dbpassword.startsWith(prefijo)) {
+    return true;
+  } else {
+    return false;
+  }
 }
