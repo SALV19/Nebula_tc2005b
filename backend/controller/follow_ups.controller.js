@@ -6,21 +6,19 @@ const Indicators_metrics = require('../models/metric_indicators.model');
 const Meeting = require('../models/meeting.model');
 const { response } = require('express');
 const {google} = require('googleapis');
-const sendWhatsapp = require('../util/sendWhatsapp'); // ajusta la ruta si es necesario
+const sendWhatsapp = require('../util/sendWhatsapp'); 
 const Evaluation = require('../models/periodic_eval.model');
 const Answers = require('../models/questions_answers.model');
 const Eval_Questions = require('../models/eval_questions.model');
 
-
-
 let settings = {
-  selectedOption: 'collab',
+  selectedOption: 'collaborator',
 };
 
 exports.get_FollowUp = (request, response) => {
   request.session.errorMessage = '';
   response.render("followUp", {
-    selectedOption: 'collab',
+    selectedOption: 'collaborator',
     permissions: request.session.permissions,
     csrfToken : request.csrfToken(),
   })
@@ -92,7 +90,7 @@ exports.get_meeting = (request, response, next) => {
   delete request.session.errorMessage;
   delete request.session.successMessage;
 
-  Collaborator.fetchAllCompleteName()
+  Collaborator.fetchAllCompleteNameActive()
     .then(collabs => {
       const [rows, fieldData] = collabs;
 
@@ -116,8 +114,6 @@ exports.get_meeting = (request, response, next) => {
 };
 
 exports.post_meeting = (request, response, next) => {
-  console.log(request.body);
-
   let validationErrors = {};
   let hasErrors = false;
   
@@ -175,7 +171,6 @@ exports.post_meeting = (request, response, next) => {
   const endTime = request.body.endTime;
   const summary = "Follow up Nebula";
   let occurrences = 0;
-  console.log("id_colaborador: ", id_colaborador)
   
 
   if(repeating == 'day') {
@@ -197,7 +192,6 @@ exports.post_meeting = (request, response, next) => {
   Collaborator.fetchEmail(id_colaborador)
     .then(emailCollab => {
       const [rowsE, fieldData] = emailCollab;
-      console.log(rowsE);
       const startFechaHora = new Date(`${fecha}T${startTime}:00`);
       const startTimeRFC = startFechaHora.toISOString();
 
@@ -218,7 +212,7 @@ exports.post_meeting = (request, response, next) => {
         .then(tieneAcceso => {
           
           if (!tieneAcceso) {
-            throw new Error("No se tiene acceso al calendario");
+            throw new Error("Not access");
           }
 
           return Meeting.insertEvents(
@@ -248,14 +242,14 @@ exports.post_meeting = (request, response, next) => {
           return response.json({ success: true, message: 'Meeting scheduled successfully!' });
         })
         .catch(err => {
-          console.error("Error enviando notificación de reunión:", err);
+          console.error("Error sending meeting notification", err);
           return response.status(500).json({ success: false, message: 'Failed to schedule the meeting.' });
         });
         
         
     })
     .catch(error => {
-        console.error("Error al crear la reunión:", error);
+        console.error("Error creating meeting", error);
         
   });
 }
@@ -267,9 +261,7 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
       .then(response => {
           const calendarList = response.data;
           
-          console.log(`El usuario tiene acceso a ${calendarList.items.length} calendarios:`);
           calendarList.items.forEach(cal => {
-              console.log(`- ${cal.summary} (${cal.id})`);
           });
           
           const calendarExiste = calendarList.items.some(cal => cal.id === calendarId);
@@ -279,7 +271,6 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
           } else if (calendarId === 'primary') {
               return true;
           } else {
-              console.log(`El usuario NO tiene acceso al calendario: ${calendarId}`);
               return false;
           }
       })
@@ -290,7 +281,8 @@ function verificarAccesoCalendario(auth, calendarId = 'primary') {
 }
 
 exports.get_meeting_events = (request, response) => {
-  console.log("Solicitando eventos de calendario");
+  const start = request.query.start;
+  const end = request.query.end;
   const googleLogin = request.user?.accessToken ? 1 : 0;
   let eventos = [];
 
@@ -310,7 +302,6 @@ exports.get_meeting_events = (request, response) => {
     calendar.calendarList.list()
       .then(calendarListResponse => {
         const calendars = calendarListResponse.data.items;
-        console.log("Calendarios encontrados:", calendars.length);
         
         const eventPromises = calendars.map(cal => {
           const calendarId = cal.id;
@@ -318,7 +309,9 @@ exports.get_meeting_events = (request, response) => {
           return calendar.events.list({
             calendarId,
             singleEvents: true,
-            orderBy: 'startTime'
+            orderBy: 'startTime',
+            timeMin: start,  
+            timeMax: end, 
           })
           .then(eventsResponse => {
             const eventosDelCalendario = eventsResponse.data.items.map(event => {
@@ -346,7 +339,6 @@ exports.get_meeting_events = (request, response) => {
       })
       .then(eventArrays => {
         eventos = eventArrays.flat();
-        console.log("Total eventos obtenidos:", eventos.length);
         
         response.json(eventos);
       })
@@ -359,21 +351,20 @@ exports.get_meeting_events = (request, response) => {
   }
 };
 
-
 exports.get_followUps_info = (request, response, next) => {
-  
-  settings.selectedOption = 'Collaborators';
+  settings.selectedOption = 'collaborators';
 
   const idColaborador = request.session.id_colaborador;
+  const hasConsultPermission = request.session.permissions.includes('consult_followUps');
+  const selectedOption = hasConsultPermission ? 'collaborator' : 'followUps';
 
-  // console.log("entro a get follow ups info");
+  // Si tiene permiso, obtener todos los follow-ups; de lo contrario, solo los del colaborador
+  const fetchInfo = hasConsultPermission ? Evaluation.fetchAll() : Evaluation.fetchAllInfo([idColaborador]);
 
-  Evaluation.fetchAllInfo([idColaborador])
+  fetchInfo
     .then(([evalInfo]) => {
-
-      // console.log("entro al primer then");
       const id_evaluacion = evalInfo.map(id => id.id_evaluacion);
-      const notes = evalInfo.map(n => n.notas)      
+      const notes = evalInfo.map(n => n.notas);
       const fechasAgendadas = evalInfo.map(evaluacion => {
         const fecha = new Date(evaluacion.fechaAgendada);
         const year = fecha.getFullYear().toString().slice(2); 
@@ -381,8 +372,10 @@ exports.get_followUps_info = (request, response, next) => {
         const day = fecha.getDate().toString().padStart(2, '0');
         return {
           id_evaluacion: evaluacion.id_evaluacion, 
-          fechaAgendada: `${year}-${month}-${day}`,
-          notes: notes
+          fechaAgendada: `${day}-${month}-${year}`,
+          notes: notes,
+          nombre: evaluacion.nombre,
+          apellidos: evaluacion.apellidos
         };
       });
 
@@ -395,20 +388,21 @@ exports.get_followUps_info = (request, response, next) => {
         const metricas = metrics;
         const indicadores = indicators;
 
-        // console.log("entro al segundo then");
-
         const id_pregunta = questions[0].map(q => q.id_pregunta);
 
         const respuestas = await Answers.fetchAnswers(id_pregunta, id_evaluacion);
+        
         response.json({
-          selectedOption: 'Collaborators',
+          id_evaluacion,
+          selectedOption,
           fechasAgendadas,
           pregunta,
           respuestas,  
           indicadores,
-          metricas
+          metricas,
+          permissions: request.session.permissions
         });
-      })
+      });
     })
     .catch(error => {
       response.status(500).send("Error al obtener información");
@@ -438,4 +432,24 @@ exports.create_note = async (request, response) => {
 
 
 
+}
+
+exports.post_delete_eval = async (request, response) => {
+  try {
+    const id_eval = request.body.valor;
+    const result = await Eval_Questions.deleteEval(id_eval);
+
+    response.json({
+      success: true,
+      message: `Evaluación con ID ${id_eval} eliminada correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar evaluación:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar evaluación.' 
+    })
+  }
 }

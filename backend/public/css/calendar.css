@@ -1,9 +1,9 @@
 .calendar {
-    width: 57rem;
-    height: 45rem;
+    width: 52rem;
+    height: 34rem;
     color: white; /* Text color */
     border-radius: 10px; /* Rounded corners */
-    padding: 0.7rem;
+    padding-top: 0.8rem;
 }
 
 .fc-toolbar-title{
@@ -22,6 +22,7 @@
     padding: 0.2rem;
     border-radius: 0.4rem;
 }
+
 
 /* Change the current day highlight */
 .fc-day-today {

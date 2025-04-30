@@ -1,0 +1,41 @@
+@startuml SuperAdmin Register Collab Fault
+actor User as u
+boundary collabs.router.js as cr
+control collabs.controller.js as cc
+entity fault.model.js as fm
+database Nebula as db
+
+activate u
+u -> u : get_faults_pop_up()
+u -> cr : POST /view_collabs/register_fault
+deactivate u
+activate cr
+cr -> cc : register_fault(request, response)
+deactivate cr
+activate cc
+cc -> cc : const fault = new Fault(user_id, reason)
+cc ->> fm : fault.save()
+activate fm
+fm ->> db : INSERT INTO fa VALUES(id_collab, motivo)
+activate db
+db -->> fm : [success]
+deactivate db
+fm -->> cc : [success]
+deactivate fm
+cc -> u : response.status(200).send(user_id, date, reason)
+deactivate cc
+activate u
+u -> cr : POST/ view_collabs/create_fault_form (nombre_participantes, \nnombre_colaboradores, motivo, consecuencias, desición)
+deactivate u
+activate cr
+cr -> cc : create_fault_report()
+deactivate cr
+activate cc
+cc -> u : response.render("template_fault.ejs", {nombre_participantes, \nnombre_colaboradores, motivo, consecuencias, desición})
+deactivate cc
+activate u
+
+
+
+
+@enduml

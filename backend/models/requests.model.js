@@ -1,48 +1,49 @@
 const db = require("../util/database");
 
 module.exports = class Requests {
-  constructor(colab_email, type, dates, location, reason, evidence, request_id) {
+  constructor(colab_email, type, dates, location, reason, evidence, request_id, approvement_collab) {
     this.colab_email = colab_email;
     this.type = type;
     this.dates = dates;
     this.location = location;
     this.reason = reason;
     this.evidence = evidence;
-    this.request_id = request_id
+    this.request_id = request_id;
+    this.approve_collab = approvement_collab;
   }
   static postConstructor(colab_email, type, dates, location, reason, evidence) {
     return new Requests(colab_email, type, dates, location, reason, evidence, null)
   }
   static updateConstructor(colab_email, type, dates, location, reason, evidence, request_id) {
-    return new Requests(colab_email, type, dates, location, reason, evidence, request_id)
+    return new Requests(colab_email, type, dates, location, reason, evidence, request_id, null)
   }
 
   // Save the main request
-  save(estado) {
+  save(estado, colab) {
     return db.execute(
-      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia) 
+      `INSERT INTO solicitudes_falta(id_colaborador, estado, tipo_falta, descripcion, ubicacion, evidencia, colabAprobador) 
         VALUES((
           SELECT id_colaborador 
           FROM colaborador 
           WHERE email = ?
-        ), ?, ?, ?, ?, ?)`,
+        ), ?, ?, ?, ?, ?, ?)`,
       [
         this.colab_email,
         estado,
         this.type,
         this.reason,
         this.location,
-        this.evidence
+        this.evidence,
+        colab,
       ]
     );
   }
 
-  update() {
+  update(estado, collab_aprovador) {
     const dates = this.dates.join(',')
-    console.log(this.request_id, this.type, this.reason, this.location, this.evidence, dates)
     return db.execute(
-      `CALL update_abscence_request(?, ?, ?, ?, ?, ?)`,
-      [this.request_id, this.type, this.reason, this.location, this.evidence, dates]
+      `CALL update_abscence_request(?, ?, ?, ?, ?, ?, ?, ?)`,
+      [this.request_id, this.type, this.reason, this.location, this.evidence, dates, estado, collab_aprovador]
     )
   }
 
@@ -71,17 +72,20 @@ module.exports = class Requests {
   }
 
     // pending days (no specific type)
-    static async fetchDaysPending(email) {
+    static async fetchDaysPending(email, id) {
+      let query = `SELECT ds.fecha
+              FROM solicitudes_falta sf
+              INNER JOIN dias_solicitados ds
+                ON sf.id_solicitud_falta = ds.id_solicitud_falta
+              INNER JOIN colaborador c
+                ON c.id_colaborador = sf.id_colaborador
+              WHERE c.email = ? AND sf.estado < 1\n`
+      if (id) {
+        query += `AND sf.id_solicitud_falta <> ?`
+      }
       return db.execute(
-        `SELECT ds.fecha
-                          FROM solicitudes_falta sf
-                          INNER JOIN dias_solicitados ds
-                            ON sf.id_solicitud_falta = ds.id_solicitud_falta
-                          INNER JOIN colaborador c
-                            ON c.id_colaborador = sf.id_colaborador
-                          WHERE c.email = ? AND sf.estado < 1;
-                        `,
-        [email]
+        query,
+        id ? [email, id] : [email]
       );
     }
 
@@ -131,7 +135,6 @@ module.exports = class Requests {
 
   static async fetchTeamRequests(email, offset, filter = null) {
     if (!filter?.length > 0) {
-      console.log(email);
       return db.execute(
         `SELECT  c.email, c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                         FROM solicitudes_falta sf
@@ -153,6 +156,7 @@ module.exports = class Requests {
                             WHERE c.email = ?
                           )
                            AND c.email != ?
+                           AND e.id_rol = 1
                         GROUP BY sf.id_solicitud_falta
                         ORDER BY sf.estado ASC, ds.fecha ASC
                         LIMIT 10 OFFSET ?
@@ -160,7 +164,6 @@ module.exports = class Requests {
         [email, email, offset]
       );
     } else {
-      console.log(filter)
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds
@@ -181,9 +184,10 @@ module.exports = class Requests {
                       WHERE c.email = ?
                     )
                   AND c.email <> ?
+                  AND e.id_rol = 1
                   `;
       if (filter.pending) {
-        query += `AND sf.estado = 0 `;
+        query += `AND sf.estado < 1 `;
         if (filter.accepted) {
           query += `OR sf.estado = 1 `;
         }
@@ -231,7 +235,6 @@ module.exports = class Requests {
         [offset || 0]
       );
     } else {
-      console.log("filtro")
       let query = `SELECT c.nombre, c.apellidos, sf.*, MIN(ds.fecha) AS start, MAX(ds.fecha) AS end
                   FROM solicitudes_falta sf
                   JOIN dias_solicitados ds
@@ -396,6 +399,13 @@ module.exports = class Requests {
       return db.execute(query, [collab_id, offset]);
   }
 
-  
-  
+  static async deleteRequest(id_request){
+    const result = await db.execute(`
+        DELETE FROM solicitudes_falta WHERE id_solicitud_falta = ?
+    `, [id_request]);
+    return result
+  }
+
 };
+
+

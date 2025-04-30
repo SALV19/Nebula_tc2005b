@@ -56,7 +56,7 @@
                   <span>
                     ${data.questions[i].pregunta}
                     </span>
-                      <i class="bi bi-caret-right-fill" id="icon-${i}"> </i>
+                      <i class="bi bi-caret-down-fill" id="icon-${i}"> </i>
                     </p>
               
                   <!-- Campo oculto para enviar el ID de la pregunta -->
@@ -64,7 +64,7 @@
 
                 
                   <!-- Campo de entrada para la respuesta -->
-                  <textarea class="show-question-container" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+                  <textarea class="show-question-container" name="respuesta" placeholder="Write the response here..."></textarea>
             `
             } else if (i > 0) {
             content +=  `
@@ -73,7 +73,7 @@
                   <span>
                       ${data.questions[i].pregunta}
                   </span>
-                  <i class="bi bi-caret-down-fill" id="icon-${i}""></i>
+                  <i class="bi bi-caret-right-fill" id="icon-${i}""></i>
                   </p>
 
                   <!-- Campo oculto para enviar el ID  la pregunta -->
@@ -81,7 +81,7 @@
 
                 
                   <!-- Campo de entrada para la respuesta -->
-                  <textarea class="hidden-content"  id="lenghtVal" name="respuesta" placeholder="Escribe tu respuesta aquí"></textarea>
+                  <textarea class="hidden-content"  id="lenghtVal" name="respuesta" placeholder="Write the response here..."></textarea>
                   <p class="text-length"> TEXT </p>
             `
             }
@@ -205,21 +205,29 @@
               }]
             },
             options: {
-              plugins: {
+              backgroundColor: '#454545',
+              plugins: {   
                 legend: {
                   display: false // Hide the legend
                 }
               },
               scales: {
                 r: {
-                  backgroundColor: "#FFFF",
-                  hoverBackgroundColor: "#767574",
-                  angleLines: { display: true },
+                  backgroundColor: "#454545",
+                  hoverBackgroundColor: "#FFFFF",
+                  angleLines: { 
+                    display: false,
+                 },
+                 grid: {
+                    color: "#EEEEEE" 
+                  },
                   suggestedMin: 0,
                   suggestedMax: 5,
                   ticks: {
-                    stepSize: 1,  // Ensures steps of 1
-                    beginAtZero: true
+                    color: '#EEEEEE',
+                    backdropColor: '#454545',
+                    stepSize: 1,  
+                    beginAtZero: true,
                   },
                   pointLabels: {  
                     color: "#FFFF",  // Changes the label color
@@ -309,16 +317,16 @@
                 showCancelButton: true,
                 confirmButtonColor: `#59A250`,
                 cancelButtonColor: "#7066E0",
-                confirmButtonText: "Yes, update it!"
+                confirmButtonText: "Yes, register it!"
               }).then((result) => {
                   if (result.isConfirmed) { 
                     try {
                         document.getElementById("form_method").submit();
                     } catch (error) { 
-                        console.log(error);
+                        console.error(error);
                         Swal.fire({
                             title: "Problem",
-                            text: `There was an error saving the evaluation`,
+                            text: `There was an error registering the evaluation`,
                             icon: "error",
                             confirmButtonColor: `#59A250`,
                             confirmButtonText: "OK",  
@@ -354,17 +362,14 @@
       const contentContainer = document.getElementById("content-section");
       fetch('/follow_ups/meeting')  
         .then(response => {
-          console.log("Respuesta HTML recibida:", response.status);
           return response.text();
         })
           .then(html => {
-            console.log("HTML recibido, actualizando contenido");
             contentContainer.innerHTML = html;
             const repeatingDropdown = document.getElementById("repeating");
             if (repeatingDropdown) {
               repeatingDropdown.addEventListener("change", function() {
                 let id = this.value;
-                console.log("Seleccionado:", id);
                 let blocks = ["dayBlock", "weekBlock", "monthBlock", "yearBlock"];
                 
                 blocks.forEach(block => {
@@ -415,7 +420,6 @@
                 // Validate date
                 const dateInput = document.querySelector('input[name="fechaAgendada"]');
                 const dateError = document.getElementById("dateError");
-                console.log("dateInput: ", dateInput.value);
                 
                 if (dateInput) {
                   if (!dateInput.value) {
@@ -428,9 +432,6 @@
                     const today = new Date();
                     
                     const todayFormatted = today.toISOString().split('T')[0];
-                    
-                    console.log("today: ", today);
-                    console.log("todatFormatted: ", todayFormatted );
                     
                     if (dateInput.value < todayFormatted) {
                       dateError.classList.add("show");
@@ -578,10 +579,8 @@
             const googleLogin = document.querySelector('.section-container') !== null;
               
             if (googleLogin) {
-                console.log("Usuario autenticado, cargando eventos...");
                 return fetch('/follow_ups/meeting/events');
               } else {
-                console.log("Usuario no autenticado, no se cargarán eventos");
                 return Promise.resolve(null);
               }
           }).then(response => {
@@ -592,11 +591,9 @@
               }
             })
             .then(eventos => {
-              console.log("Eventos recibidos:", eventos);
               
               const calendarEl = document.getElementById('calendar');
               if (calendarEl) {
-                console.log("Inicializando calendario con", eventos.length, "eventos");
                 
                 const calendar = new FullCalendar.Calendar(calendarEl, {
                   initialView: 'dayGridMonth',
@@ -608,7 +605,16 @@
                     center: 'title',
                     right: 'next'
                   },
-                  events: eventos,
+                  events: [],
+                  datesSet: function (info) {
+                    fetch(`/follow_ups/meeting/events?start=${info.startStr}&end=${info.endStr}`)
+                      .then(res => res.json())
+                      .then(events => {
+                        calendar.removeAllEvents();
+                        calendar.addEventSource(events);
+                      })
+                      .catch(err => console.error('Error cargando eventos por mes:', err));
+                  },
                   moreLinkText: 'more',
                   moreLinkClick: 'popover',
                   dayMaxEvents: 2,
@@ -618,9 +624,8 @@
                 });
                 
                 calendar.render();
-                console.log("Calendario renderizado");
               } else {
-                console.log("Elemento calendar no encontrado o usuario no autenticado");
+                console.error("Elemento calendar no encontrado o usuario no autenticado");
               }
             })
             .catch(error => {
@@ -641,9 +646,8 @@
         parentElement.appendChild(element);
         return element;
       }
- 
-    
 
+    
     document.querySelectorAll(".option").forEach(option => {
       option.addEventListener("click", (event) => {
         // Eliminar la clase 'selected' de todos
@@ -655,14 +659,13 @@
         // Obtener y mostrar el contenido del botón
         const buttonText = option.textContent.trim();
 
-        if (option.innerHTML == 'Register'){
+        if (buttonText === 'Register'){
           get_info_register();
-        } else if (option.innerHTML == 'Collaborators'){
+        } else if (buttonText === 'Collaborators' || buttonText === 'Follow-ups'){
           get_info_FU();
-        } else if(option.innerHTML == 'Meetings') {
+        } else if(buttonText === 'Meetings') {
           get_meeting();
         }
-
       });
     });
 </script>

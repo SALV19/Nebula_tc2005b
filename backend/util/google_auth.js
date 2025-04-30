@@ -5,7 +5,8 @@ const User = require("../models/user.model");
 const scope_def = [
   "email",
   "profile",
-  "https://www.googleapis.com/auth/calendar"
+  "https://www.googleapis.com/auth/calendar",
+  "https://www.googleapis.com/auth/drive"
 ];
 
 passport.use(
@@ -13,7 +14,7 @@ passport.use(
     {
       clientID: process.env.GOOGLE_CLIENT_ID,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET,
-      callbackURL: "http://localhost:3000/log_in/google/callback",
+      callbackURL: process.env.CALL_BACK ?? "http://localhost:3000/log_in/google/callback",
       scope: [...scope_def],
       accessType: "offline",
       prompt: "consent",

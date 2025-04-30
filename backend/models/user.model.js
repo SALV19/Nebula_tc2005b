@@ -9,13 +9,13 @@ module.exports = class User {
   static async fetchByEmail(email, callback = null) {
     if (!callback) {
       return db.execute(
-        "SELECT id_colaborador, email, contrasena FROM colaborador c WHERE c.email = (?)",
+        "SELECT id_colaborador, email, contrasena, estado FROM colaborador c WHERE c.email = (?)",
         [email]
       );
     } else {
       const { err, user } = await db
         .execute(
-          "SELECT id_colaborador, email, contrasena FROM colaborador c WHERE c.email = (?)",
+          "SELECT id_colaborador, email, contrasena, estado FROM colaborador c WHERE c.email = (?)",
           [email]
         )
         .then((usr) => {
@@ -57,6 +57,5 @@ module.exports = class User {
                                           WHERE c.email = ?)
                                           AND c.email <> ?;
                                           `, [email, email]);
-    return colaboradores;
   }
 };

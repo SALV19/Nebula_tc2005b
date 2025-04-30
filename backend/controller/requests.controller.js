@@ -25,7 +25,6 @@ exports.update_estado = async (req, res) => {
         const fechaFormateada = `${dia}/${mes}/${año}`;
         
         await sendWhatsapp.sendWhatsAppNotiRequests(info.nombre, info.tipo_falta, fechaFormateada, info.telefono);
-        console.log("info enviada");
       } else {
         console.warn("No se encontró teléfono del colaborador");
       }
@@ -51,21 +50,22 @@ exports.get_requests = async (request, response) => {
     selectedOption: "vacations",
     csrfToken: request.csrfToken(),
     permissions: request.session.permissions,
-    
-    
   });
 };
 
 exports.showPopUp = async (request, response) => {
+  
   try {
     const email = request.session.email;
 
     const [allRequestsData] = await Requests.fetchDaysApproved(email);
-    const [allPendingRequests] = await Requests.fetchDaysPending(email);
+    const [allPendingRequests] = await Requests.fetchDaysPending(email, request.query.id);
     const [holidaysData] = await Events.fetchEvents();
     const [approvedVacations] = await Requests.fetchApprovedVacationDays(email);
     const [pendingVacations] = await Requests.fetchPendingVacationDays(email);
-
+    const [colabData] = await Collab.fetchCollabById(request.session.id_colaborador);
+    
+    const fechaIngreso = colabData[0].fechaIngreso;
     const approvedDays = approvedVacations.length;
     const pendingDays = pendingVacations.length;
 
@@ -80,6 +80,7 @@ exports.showPopUp = async (request, response) => {
       pendingDays,
       diasTotales,
       remainingDays,
+      fechaIngreso
     });
   } catch (e) {
     console.error("Error en showPopUp:", e);
@@ -104,7 +105,7 @@ exports.get_vacations = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -129,7 +130,7 @@ exports.get_abscences = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -149,11 +150,13 @@ exports.get_collabs_requests = async (request, response) => {
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-  const acceptance_colab = await Promise.all(requests[0].map((e) => {
+
+  const acceptance_colab = await Promise.all(requests[0].map(async (e) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCollabsName(e.colabAprobador).then(([c]) => c)
+    const collab = await Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
+    return collab
   }))
 
   response.json({
@@ -165,30 +168,31 @@ exports.get_collabs_requests = async (request, response) => {
 };
 
 exports.post_abscence_requests = async (request, response, next) => {
-  console.log("hola")
   const daysOff = JSON.parse(request.body.validDays);
   const [type, subtype] = request.body.requestType.split("|");
 
   // Default status is "pending" (0)
   let estadoSolicitud = 0;
+  let colabAprobador;
 
   try {
      // Get the collaborator's role using their email (session)
     const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
     const idRol = rolData[0]?.id_rol;
-    console.log(idRol)
 
      /**If the role is SuperAdmin (id_rol = 3), automatically approve 
       * And if is lider (id_rol = 3), automatically status = 0.5 */ 
     if (idRol === 3) {
       estadoSolicitud = 1;
+      colabAprobador = request.session.id_colaborador;
     } else if (idRol === 2) {
         estadoSolicitud = 0.5;
+        colabAprobador = request.session.id_colaborador;
     } else {
         estadoSolicitud = 0;
+        colabAprobador = null;
     }
 
-    console.log(estadoSolicitud)
      // Create a new request with form inputs and the calculated status
     const request_register = new Requests(
       request.session.email,
@@ -197,12 +201,13 @@ exports.post_abscence_requests = async (request, response, next) => {
       request.body.location,
       request.body.description,
       request.body.evidence,
-      estadoSolicitud
+      // Unnecesary
+      estadoSolicitud, 
+      colabAprobador,
     );
 
     // Save the main request record to the database
-    
-    const result = await request_register.save(estadoSolicitud);
+    const result = await request_register.save(estadoSolicitud, colabAprobador);
     // Optional: simulate an error here if you want to test
     // throw new Error("Simulated server error");
 
@@ -237,6 +242,20 @@ exports.update_request = async (request, response) => {
 
   const [_ , subtype] = request.body.requestType.split("|");
 
+  const [rolData] = await Equipo.fetchRolByEmail(request.session.email);
+  const idRol = rolData[0]?.id_rol;
+
+  if (idRol === 3) {
+    estadoSolicitud = 1;
+    colabAprobador = request.session.id_colaborador;
+  } else if (idRol === 2) {
+      estadoSolicitud = 0.5;
+      colabAprobador = request.session.id_colaborador;
+  } else {
+      estadoSolicitud = 0;
+      colabAprobador = null;
+  }
+
   const request_update = Requests.updateConstructor(
     request.session.email,
     subtype, 
@@ -246,8 +265,7 @@ exports.update_request = async (request, response) => {
     request.body.evidence,
     request.body.request_id
   );
-  // console.log(request_update)
-  await request_update.update()
+  await request_update.update(estadoSolicitud, colabAprobador)
 
   request.session.successRequest = {
     startDate: daysOff[0],
@@ -258,4 +276,24 @@ exports.update_request = async (request, response) => {
     totalDays: daysOff.length,
   };
   response.redirect("/requests");
+}
+
+exports.delete_request = async (request, response) => {
+  try {
+    const id_request = request.body.valor;
+    const result = await Requests.deleteRequest(id_request);
+
+    response.json({
+      success: true,
+      message: `Solicitud eliminado correctamente.`,
+      result,
+    })
+  } catch (error) {
+    console.error("Error al eliminar solicitud:", error);
+
+    response.json({
+      success: false, 
+      error: 'Error al eliminar solicitud.' 
+    })
+  }
 }
