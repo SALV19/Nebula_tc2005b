@@ -7,6 +7,7 @@
 ## Tabla de contenidos
 
 - [Avances](#avances)  
+- [Especificaciones de APIs](./Manuals_Documents/API_Specifications.pdf) 
 - [Guía para desplegar una aplicación en Node.js utilizando la instancia EC2 de AWS](#gu%C3%ADa-para-desplegar-una-aplicaci%C3%B3n-en-nodejs-utilizando-la-instancia-ec2-de-aws)
 
     - [Creación del servidor](#creaci%C3%B3n-del-servidor)  
@@ -18,7 +19,6 @@
     - [Instalación de nginx](#instalaci%C3%B3n-de-nginx)  
     - [Levantar phpMyAdmin](#levantar-phpmyadmin)  
     - [Conclusión](#conclusi%C3%B3n)
-
 ---
 
 ## Avances
