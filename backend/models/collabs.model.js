@@ -35,9 +35,21 @@ module.exports = class Colaborador {
         ON e.id_colaborador = c.id_colaborador
       INNER JOIN departamento d
         ON d.id_departamento = e.id_departamento
-      WHERE e.id_rol <= 2 
+      WHERE e.id_rol <= 2       
       GROUP BY c.id_colaborador, c.nombre, c.apellidos, d.id_departamento
       `)
+  }
+  static fetchCollabAprobador(id) {
+    return db.execute(`
+                  SELECT c.id_colaborador, c.nombre, c.apellidos
+                  FROM colaborador c
+                  INNER JOIN equipo e
+                    ON e.id_colaborador = c.id_colaborador
+                  INNER JOIN departamento d
+                    ON d.id_departamento = e.id_departamento
+                  WHERE c.id_colaborador = ?
+                  GROUP BY c.id_colaborador, c.nombre, c.apellidos
+                  `, [id])
   }
 
   static fetchAllCompleteNameActive(){
@@ -399,7 +411,7 @@ module.exports = class Colaborador {
           FROM colaborador c WHERE c.id_colaborador = ?`, 
           [id_colaborador]
     );
-  }C
+  }
 
   static fetchColabVac(idColaborador){
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador

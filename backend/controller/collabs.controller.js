@@ -7,7 +7,8 @@ const Requests = require("../models/home.model");
 const fs = require('fs');
 const FaltaAdministrativa = require("../models/fa.model")
 const path = require('path')
-const pdf = require("html-pdf")
+const puppeteer = require("puppeteer")
+
 
 const {google} = require('googleapis');
 
@@ -452,11 +453,11 @@ exports.register_fault = async (request, response) => {
   
   const [[collab]] = await Colaborador.fetchCollabById(request.body.absent)
   const name = collab.nombre + " " + collab.apellidos;
-
+  
   const imgPath = path.join(__dirname, "../public/img/nuclea.png");
   const imgBase64 = fs.readFileSync(imgPath, "base64");
-
-
+  
+  
   response.render('template_fautl', {
     nuclea_img: `data:image/png;base64,${imgBase64}`,
     date: request.body.date,
@@ -466,120 +467,131 @@ exports.register_fault = async (request, response) => {
     consecuencias: request.body.consequences,
     desición: request.body.decisions
   }, 
-  (err, data) => {
+  async (err, data) => {
     if (err) {
       console.error(err)
       response.send(err);
+      return
     } else {
-      let options = {
-          "height": "11.25in",
-          "width": "8.5in",
-          "header": {
-              "height": "20mm"
-          },
-          "footer": {
-              "height": "20mm",
-          },
+      let browser;
+      if (process.env.PROD_ENVIROMENT == "develop") {
+        browser = await puppeteer.launch({
+          headless: "new",
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          executablePath: '/usr/bin/chromium-browser', // Absolute path
+        });
+      }
+      else {
+        browser = await puppeteer.launch({
+          headless: "new",
+          args: ['--no-sandbox', '--disable-setuid-sandbox'],
+          executablePath: 'chromium-browser', // Just the command name
+        });
+      }
+      
+
+      const page = await browser.newPage();
+
+      await page.setContent(data, {
+        waitUntil: 'networkidle0'
+      });
+
+      const pdfBuffer = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '20mm',
+          right: '20mm',
+          bottom: '20mm',
+          left: '20mm'
+        }
+      });
+
+      await browser.close();
+
+      const googleLogin = request.user?.accessToken ? 1 : 0;
+      fs.writeFileSync("report.pdf", pdfBuffer)
+
+      const fileName = `${Date.now()}_FA`; 
+
+      if (googleLogin == 1) {
+        const oauth2Client = new google.auth.OAuth2(
+          process.env.GOOGLE_CLIENT_ID, 
+          process.env.GOOGLE_CLIENT_SECRET, 
+          process.env.REDIRECT
+        );
+
+        oauth2Client.setCredentials({
+          access_token: request.user.accessToken 
+        });
+        const drive = google.drive({version: 'v3', auth: oauth2Client});
+
+        const requestBody = {
+          name: fileName,  
+          fields: 'id, name, webViewLink, mimeType',
         };
-        pdf.create(data, options).toFile("report.pdf", async function (err, data) {
-          if (err) {
-            console.error(err)
-            response.send(err);
-          } else {
-            const googleLogin = request.user?.accessToken ? 1 : 0;
-            const my_file = fs.readFileSync(data.filename)
+
+        const media = {
+          mimeType: 'application/pdf',
+          body: fs.createReadStream('report.pdf'),
+        };
+
+        try {
+          const fileUploaded = await drive.files.create({
+            requestBody,
+            media: media,
+          });
+
+          // Construye el enlace de visualización manualmente
+          const fileId = fileUploaded.data.id;
+          const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
+
+          const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, fileLink)
+          await fault.save();
+
+          const collab = await FaltaAdministrativa.count_faults(request.body.absent);
+
+          if (collab.count >= 3){
+            await FaltaAdministrativa.deactivate_collab(request.body.absent);
             
-            const fileName = `${Date.now()}_FA`; 
-
-            if (googleLogin == 1) {
-              const oauth2Client = new google.auth.OAuth2(
-                process.env.GOOGLE_CLIENT_ID, 
-                process.env.GOOGLE_CLIENT_SECRET, 
-                process.env.REDIRECT
-                // 'http://localhost:3000/log_in/success'
-              );
-                
-              oauth2Client.setCredentials({
-                access_token: request.user.accessToken 
-              });
-              const drive = google.drive({version: 'v3', auth: oauth2Client});
-
-              const requestBody = {
-                name: fileName,  
-                fields: 'id, name, webViewLink, mimeType',
-              };
-              const media = {
-                mimeType: my_file.mimetype,
-                body: fs.createReadStream(data.filename),
-              };
-
-              try {
-                const fileUploaded = await drive.files.create({
-                  requestBody,
-                  media: media,
-                });
-
-                //Borra el archivo Temporal
-                fs.unlinkSync(data.filename);
-
-                // Respuesta al frontend
-                
-                // Construye el enlace de visualización manualmente
-                const fileId = fileUploaded.data.id;
-                const fileLink = `https://drive.google.com/file/d/${fileId}/view`;
-              
-                const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, fileLink)
-                await fault.save();
-
-                const collab = await FaltaAdministrativa.count_faults(request.body.absent);
-
-                if (collab.count >= 3){
-                  await FaltaAdministrativa.deactivate_collab(request.body.absent);
-                  
-                  const id_colaborador = request.body.absent;
-                  const [[data]] = await Colaborador.fetchFaultNoti(id_colaborador);
-                  const { telefono, nombre, apellidos } = data;
-                  const completeName = nombre + " " + apellidos;
-                
-                  if (telefono) {
-                    await sendWhatsapp.sendFaultsNotification(completeName, telefono);
-                  }
-                
-                }                
-
-                return response.json({
+            const id_colaborador = request.body.absent;
+            const [[data]] = await Colaborador.fetchFaultNoti(id_colaborador);
+            const { telefono, nombre, apellidos } = data;
+            const completeName = nombre + " " + apellidos;
+          
+            if (telefono) {
+              await sendWhatsapp.sendFaultsNotification(completeName, telefono);
+            }
+          }  
+          return response.json({
                   success: true,
                   type: "drive",
                   name: fileUploaded.data.name,
                   viewLink: fileLink,
-                });
-                // return file.data;
-              } catch (err) {
-                console.error("Error uploading file to Drive:", err);
-                return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
-              }
-            } else {
-              const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
-              await fault.save()
+                }); 
+        } catch (err) {
+          console.error("Error uploading file to Drive:", err);
+          return response.status(500).json({ success: false, message: 'Error uploading file to Drive' });
+        }
+      } else {
+        const fault = new FaltaAdministrativa(request.body.absent, request.body.description, request.body.date, null)
+        await fault.save();
 
-              const collab = await FaltaAdministrativa.count_faults(request.body.absent);
-              if (collab.count >= 3){
-                await FaltaAdministrativa.deactivate_collab(request.body.absent);
-              }
+        const collab = await FaltaAdministrativa.count_faults(request.body.absent);
+        if (collab.count >= 3){
+          await FaltaAdministrativa.deactivate_collab(request.body.absent);
+        }
 
-                return response.json({
-                    success: true,
-                    type: "pdf",
-                    name: fileName,
-                    viewLink: `/view_collabs/download?filename=${fileName}`,
-                  });
-              
-            }
-            }
-        });
+        return response.json({
+            success: true,
+            type: "pdf",
+            name: fileName,
+            viewLink: `/view_collabs/download?filename=${fileName}`,
+          });
+      }
+      
     }
   })
-  return  
 }
 
 exports.download = (request, response) => {
@@ -605,6 +617,7 @@ exports.delete_Collab = async (request, response) => {
     })
   }
 }
+
 
 exports.reactivate_Collab = async (request, response) => {
   

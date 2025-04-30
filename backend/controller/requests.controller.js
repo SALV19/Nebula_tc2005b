@@ -50,8 +50,6 @@ exports.get_requests = async (request, response) => {
     selectedOption: "vacations",
     csrfToken: request.csrfToken(),
     permissions: request.session.permissions,
-    
-    
   });
 };
 
@@ -107,7 +105,7 @@ exports.get_vacations = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -132,7 +130,7 @@ exports.get_abscences = async (request, response) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
+    return Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
   }))
 
   response.json({
@@ -152,11 +150,13 @@ exports.get_collabs_requests = async (request, response) => {
   )
     .then((data) => data)
     .catch((e) => console.error(e));
-  const acceptance_colab = await Promise.all(requests[0].map((e) => {
+
+  const acceptance_colab = await Promise.all(requests[0].map(async (e) => {
     if (!e.colabAprobador){
       return 0;
     } 
-    return Collab.fetchAllCompleteName(e.colabAprobador).then(([c]) => c)
+    const collab = await Collab.fetchCollabAprobador(e.colabAprobador).then(([c]) => c)
+    return collab
   }))
 
   response.json({
