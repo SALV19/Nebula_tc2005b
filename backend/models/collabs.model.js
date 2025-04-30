@@ -411,7 +411,7 @@ module.exports = class Colaborador {
           FROM colaborador c WHERE c.id_colaborador = ?`, 
           [id_colaborador]
     );
-  }C
+  }
 
   static fetchColabVac(idColaborador){
       return db.execute (`SELECT id_colaborador, fechaIngreso FROM colaborador

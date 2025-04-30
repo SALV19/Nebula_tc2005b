@@ -116,7 +116,7 @@ Con todos los archivos necesarios, instalamos las dependencias necesarias y corr
 
 ```bash
 npm install
-npm run
+npm start app.js
 ```
 
 ## Levantar base de datos
@@ -137,9 +137,13 @@ sudo mysql_secure_installation
 Ahora crearemos nuestro usuario en la base de datos, por lo que corremos el script siguiente para acceder a nuestro gestor de base de datos:
 
 ```bash
-mariadb
+sudo mariadb
 ```
 
+Posteriormente se crea la base de datos, una vez está creada se bede pegar un script que se tenga anteriormente.
+```
+create database nombreDeTuBaseDeDatos;
+```
 Dentro de mariadb crearemos nuestro usuario con un comando parecido (recuerda sustituir tu información correspondiente):
 
 ```sql
@@ -148,11 +152,9 @@ GRANT ALL PRIVILEGES ON *.* TO 'usuario'@'%' WITH GRANT OPTION;
 FLUSH PRIVILEGES;
 ```
 
-Posteriormente se crea la base de datos, por lo que se recomendaría pegar un script que se tenga anteriormente para ésto.
-
 Teniendo la base de datos, se ocuparía habilitar el puerto para que se pueda acceder.
 
-En la configuración de mariadb permitir que se pueda acceder a dicho puerto, por lo que correr éste comando para editar su configuración:
+En la configuración de mariadb permitir que se pueda acceder a dicho puerto, por lo que correr éste comando para editar su configuración (se debe salir de la consola de mariadb con `exit`):
 
 ```bash
 sudo nano /etc/mysql/mariadb.conf.d/50-server.cnf
@@ -172,6 +174,36 @@ Habilitar el puerto 3306 en el firewall:
 sudo systemctl enable ufw
 sudo systemctl start ufw # Habilitar el firewall
 sudo ufw allow 3306/tcp
+```
+
+## Llenado del archivo .env:
+El archivo .env contiene información sensible, por esa razón no se subió al repositorio. Sin embargo, es necesario para la ejecución de nuestro programa. Es debido a esto que se tiene que crear manualmente.
+
+Para crear el archivo, dentro de la carpeta de workcells ejecutamos el comando touch .env para crear el archivo:
+```bash
+touch .env
+```
+Con nuestro editor de texto le añadimos lo siguiente:
+
+```bash
+GOOGLE_CLIENT_ID = [TU TOKEN DE GOOGLE AUTH]
+GOOGLE_CLIENT_SECRET = [TU TOKEN DE GOOGLE AUTH]
+REDIRECT = 'http://localhost:3000/redirect'
+
+SECRET = [TU TOKEN DE SESIÓN]
+
+MAIL_USERNAME = [TU CORREO DE GOOGLE AUTH]
+MAIL_PASSWORD = [TU CONTRASEÑA DE GOOGLE AUTH]
+OAUTH_CLIENTID = ''
+OAUTH_CLIENT_SECRET = ''
+OAUTH_REFRESH_TOKEN = ''
+
+WHATSAPP_TOKEN = [TU TOKEN DE WHATSAPP API]
+
+DATABASE_URL = [LA IP DE TU SERVIDOR]
+DATABASE_USER = [EL USUARIO DE TU BASE DE DATOS]
+DATABASE_PASSWORD = [LA CONTRASEÑA DE TU BASE DE DATOS]
+DATABASE_NAME  = 'nebula'
 ```
 
 ## Ejecutar aplicación de forma persistente
@@ -379,8 +411,6 @@ Dependiendo del tipo de conexión que quisiéramos tener se ocupan hacer distint
     }
     ```
 
-    
-
     Para corroborar que el archivo está escrito correctamente, correr:
 
     ```bash
@@ -393,6 +423,87 @@ Dependiendo del tipo de conexión que quisiéramos tener se ocupan hacer distint
     sudo systemctl restart nginx
     ```
 
+## Levantar phpMyAdmin
+Primeramente instalar paquetes necesarios:
+```bash
+sudo apt install software-properties-common -y
+sudo add-apt-repository ppa:ondrej/php -y
+sudo apt update
+sudo apt install phpmyadmin php-mbstring php-zip php-gd php-json php-curl php-mysql php8.2 php8.2-mbstring php8.2-fpm php8.2-mysql -y
+```
+
+Luego se tienen que habilitar las extensiones de php:
+
+```bash
+sudo phpenmod mbstring
+sudo systemctl enable --now php8.2-fpm
+sudo systemctl restart php8.2-fpm
+```
+Se crea el enlace simbólico de la carpeta de phpMyAdmin:
+```bash
+sudo ln -s /usr/share/phpmyadmin /var/www/html/phpmyadmin
+```
+Ya solo faltaría modificar nginx para aceptar la ruta con:
+```bash
+sudo nano /etc/nginx/sites-available/default
+```
+Y añadir:
+```nginx
+    location /phpmyadmin {
+        alias /usr/share/phpmyadmin/;
+        index index.php index.html index.htm;
+
+        location ~ ^/phpmyadmin/(.+\.php)$ {
+            alias /usr/share/phpmyadmin/$1;
+            include fastcgi-params;
+            fastcgi_pass unix:/run/php/php8.2-fpm.sock;
+            fastcgi_index index.php;
+            fastcgi_param SCRIPT_FILENAME /usr/share/phpmyadmin/$1;
+        }
+
+        location ~* ^/phpmyadmin/(.+\.(jpg|jpeg|gif|css|png|js|ico|html|xml|txt))$ {
+            alias /usr/share/phpmyadmin/$1;
+        }
+    }
+```
+Luego habilitamos los parámetros de nginx al correr éste comando:
+```bash
+sudo nano /etc/nginx/fastcgi-params
+```
+E introducir esto adentro:
+```bash
+fastcgi_param  QUERY_STRING       $query_string;
+fastcgi_param  REQUEST_METHOD     $request_method;
+fastcgi_param  CONTENT_TYPE       $content_type;
+fastcgi_param  CONTENT_LENGTH     $content_length;
+
+fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+fastcgi_param  SCRIPT_NAME        $fastcgi_script_name;
+fastcgi_param  REQUEST_URI        $request_uri;
+fastcgi_param  DOCUMENT_URI       $document_uri;
+fastcgi_param  DOCUMENT_ROOT      $document_root;
+fastcgi_param  SERVER_PROTOCOL    $server_protocol;
+
+fastcgi_param  GATEWAY_INTERFACE  CGI/1.1;
+fastcgi_param  SERVER_SOFTWARE    nginx/$nginx_version;
+
+fastcgi_param  REMOTE_ADDR        $remote_addr;
+fastcgi_param  REMOTE_PORT        $remote_port;
+fastcgi_param  SERVER_ADDR        $server_addr;
+fastcgi_param  SERVER_PORT        $server_port;
+fastcgi_param  SERVER_NAME        $server_name;
+
+# PHP only:
+fastcgi_param  SCRIPT_FILENAME    $request_filename;
+
+# Prevents URIs with the front controller from being passed to PHP.
+fastcgi_param  PATH_INFO          $fastcgi_path_info;
+fastcgi_param  PATH_TRANSLATED    $document_root$fastcgi_path_info;
+```
+Y faltaría reiniciar nginx para actualizar los cambios:
+```bash
+sudo systemctl restart nginx  
+```
 ## Conclusión
 
 Con estos pasos, deberías poder desplegar tu aplicación Node.js en una instancia EC2 de AWS y acceder a ella de forma segura. Recuerda que es importante mantener tu servidor y tus aplicaciones actualizadas para garantizar la seguridad y el rendimiento óptimo.
