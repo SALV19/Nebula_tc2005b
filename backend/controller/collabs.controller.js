@@ -479,7 +479,6 @@ exports.register_fault = async (request, response) => {
           headless: "new",
           args: ['--no-sandbox', '--disable-setuid-sandbox'],
           executablePath: '/usr/bin/chromium-browser', // Absolute path
-
         });
       }
       else {
