@@ -101,36 +101,15 @@ module.exports = class Requests {
   }
 
   // Get pending vacation days
-  static async fetchPendingVacationDays(email) {
-    return db.execute(`
+  static async fetchPendingVacationDays(email) {    
+    const val = await db.execute(`
       SELECT ds.fecha
       FROM solicitudes_falta sf
       JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
       JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
       WHERE c.email = ? AND sf.estado < 1 AND sf.tipo_falta = 'Vacation'
     `, [email]);
-  }
-
-  // Get approved vacation days
-  static async fetchApprovedVacationDays(email) {
-    return db.execute(`
-      SELECT ds.fecha
-      FROM solicitudes_falta sf
-      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
-      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
-      WHERE c.email = ? AND sf.estado = 1 AND sf.tipo_falta = 'Vacation'
-    `, [email]);
-  }
-
-  // Get pending vacation days
-  static async fetchPendingVacationDays(email) {
-    return db.execute(`
-      SELECT ds.fecha
-      FROM solicitudes_falta sf
-      JOIN dias_solicitados ds ON sf.id_solicitud_falta = ds.id_solicitud_falta
-      JOIN colaborador c ON c.id_colaborador = sf.id_colaborador
-      WHERE c.email = ? AND sf.estado = 0 AND sf.tipo_falta = 'Vacation'
-    `, [email]);
+    return val
   }
 
   static async fetchTeamRequests(email, offset, filter = null) {
