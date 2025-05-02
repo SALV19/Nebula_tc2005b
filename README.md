@@ -23,6 +23,10 @@
 
 ## Avances
 
+### Avance 6
+- **Video**: [Ver en Google Drive](https://drive.google.com/file/d/1GD6aT8StCZazNQ4Foosu2sHSsAacSNk0/view?usp=sharing)  
+- **Carpeta en el repo**: [Carpeta](./Avances/Avance6/)
+  
 ### Avance 5
 - **Video**: [Ver en Google Drive](https://drive.google.com/file/d/1L6aVgs3Do0e3bt590I8TmBSqEui0l3Yz/view?usp=sharing)  
 - **Presentación**: [Canva](https://www.canva.com/design/DAGkBFMvakE/fBqcN19ocpqrOPAcjIHrHw/view?utm_content=DAGkBFMvakE&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=h7c048e600a)
